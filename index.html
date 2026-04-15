@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agencia de Empleo y Emprendimiento — Comfenalco Antioquia</title>
+
+  <!-- Clerk SDK -->
+  <script
+    async
+    crossorigin="anonymous"
+    data-clerk-publishable-key="pk_test_bGlrZWQtYmlzb24tNTEuY2xlcmsuYWNjb3VudHMuZGV2JA"
+    src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@5/dist/clerk.browser.js"
+    type="text/javascript"
+  ></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --verde:     #094a4b;
+      --verde-c:   #0d6b6c;
+      --pist:      #a8c94e;
+      --pist-h:    #8fb53a;
+      --blanco:    #ffffff;
+      --fondo:     #f4f6f4;
+      --borde:     #d8e2d8;
+      --texto-g:   #4a5a4a;
+      --suave:     #e8efe8;
+      --negro:     #1a2a1a;
+      --sombra:    0 2px 16px rgba(9,74,75,.10);
+      --r:         8px;
+      --rc:        14px;
+      --t:         .22s ease;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:'Inter',sans-serif;font-size:15px;color:var(--negro);background:var(--fondo);min-height:100vh}
+    a{color:inherit;text-decoration:none}
+    button{cursor:pointer;font-family:inherit}
+    ul{list-style:none}
+
+    .hidden{display:none!important}
+    .mt-16{margin-top:16px}
+    .mt-24{margin-top:24px}
+    .text-verde{color:var(--verde)}
+
+    .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600}
+    .badge-activa{background:#d4edda;color:#155724}
+    .badge-seleccion{background:#fff3cd;color:#856404}
+
+    /* BOTONES */
+    .btn{display:inline-flex;align-items:center;gap:7px;padding:10px 22px;border-radius:var(--r);font-weight:700;font-size:14px;border:none;transition:background var(--t),transform var(--t),box-shadow var(--t)}
+    .btn:active{transform:scale(.97)}
+    .btn-primary{background:var(--pist);color:var(--verde)}
+    .btn-primary:hover{background:var(--pist-h);box-shadow:0 4px 14px rgba(168,201,78,.45)}
+    .btn-outline{background:transparent;color:var(--verde);border:2px solid var(--verde)}
+    .btn-outline:hover{background:var(--verde);color:var(--blanco)}
+    .btn-ghost{background:var(--suave);color:var(--texto-g)}
+    .btn-ghost:hover{background:var(--borde)}
+    .btn-sm{padding:7px 15px;font-size:13px}
+    .btn-lg{padding:14px 32px;font-size:16px;border-radius:10px}
+    .btn-blanco{background:var(--blanco);color:var(--verde);font-weight:800}
+    .btn-blanco:hover{background:var(--pist)}
+
+    /* INPUTS */
+    .input-group{display:flex;flex-direction:column;gap:6px}
+    .input-label{font-size:13px;font-weight:600;color:var(--verde)}
+    .input-field{padding:10px 14px;border:1.5px solid var(--borde);border-radius:var(--r);font-size:14px;font-family:inherit;color:var(--negro);background:var(--blanco);outline:none;transition:border-color var(--t)}
+    .input-field:focus{border-color:var(--verde-c);box-shadow:0 0 0 3px rgba(9,74,75,.10)}
+    select.input-field{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23094a4b' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px}
+
+    /* LAYOUT */
+    #shell{display:grid;grid-template-rows:64px 1fr;grid-template-columns:240px 1fr;grid-template-areas:"top top" "side main";min-height:100vh}
+
+    /* TOPBAR */
+    #topbar{grid-area:top;background:var(--verde);display:flex;align-items:center;justify-content:space-between;padding:0 20px;box-shadow:0 2px 12px rgba(9,74,75,.18);z-index:100;position:sticky;top:0}
+    .brand{display:flex;align-items:center}
+    .brand-logos{display:flex;align-items:center;background:var(--blanco);border-radius:10px;padding:4px 16px;height:54px}
+    .brand-logos img:first-child{height:42px;max-width:220px;object-fit:contain}
+    .brand-logos img:last-child{height:34px;max-width:160px;object-fit:contain}
+    .brand-sep{width:1.5px;height:34px;background:var(--borde);margin:0 14px;flex-shrink:0}
+    .topbar-right{display:flex;align-items:center;gap:12px}
+    .topbar-user{display:flex;align-items:center;gap:10px;cursor:pointer;padding:6px 10px;border-radius:8px;transition:background var(--t)}
+    .topbar-user:hover{background:rgba(255,255,255,.1)}
+    .topbar-avatar{width:36px;height:36px;border-radius:50%;background:var(--pist);color:var(--verde);font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0}
+    .topbar-avatar img{width:100%;height:100%;object-fit:cover}
+    .topbar-user-name{color:var(--blanco);font-size:13px;font-weight:600}
+    .topbar-user-role{color:var(--pist);font-size:11px}
+
+    /* SIDEBAR */
+    #sidebar{grid-area:side;background:var(--blanco);border-right:1.5px solid var(--borde);padding:20px 0;display:flex;flex-direction:column;gap:4px;overflow-y:auto;position:sticky;top:64px;height:calc(100vh - 64px)}
+    .sec-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--texto-g);padding:12px 20px 4px}
+    .nav-item{display:flex;align-items:center;gap:11px;padding:10px 20px;font-size:14px;font-weight:600;color:var(--texto-g);border-left:3px solid transparent;cursor:pointer;transition:background var(--t),color var(--t);border-radius:0 8px 8px 0;margin-right:12px}
+    .nav-item:hover{background:var(--suave);color:var(--verde)}
+    .nav-item.active{background:rgba(9,74,75,.08);color:var(--verde);border-left-color:var(--pist);font-weight:700}
+    .nav-icon{font-size:18px;width:22px;text-align:center;flex-shrink:0}
+    .nav-badge{margin-left:auto;background:var(--pist);color:var(--verde);font-size:11px;font-weight:800;padding:1px 7px;border-radius:20px}
+    .sidebar-div{height:1px;background:var(--borde);margin:10px 20px}
+
+    /* MAIN */
+    #main{grid-area:main;padding:28px;overflow-y:auto}
+    .page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+    .page-title{font-family:'Nunito',sans-serif;font-size:26px;font-weight:900;color:var(--verde);line-height:1.15}
+    .page-sub{font-size:14px;color:var(--texto-g);margin-top:3px}
+
+    /* STATS */
+    .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:28px}
+    .stat-card{background:var(--blanco);border-radius:var(--rc);box-shadow:var(--sombra);padding:20px 22px;display:flex;flex-direction:column;gap:6px;border-left:4px solid var(--pist);transition:transform var(--t)}
+    .stat-card:hover{transform:translateY(-3px);box-shadow:0 6px 22px rgba(9,74,75,.14)}
+    .stat-icon{font-size:26px}
+    .stat-value{font-family:'Nunito',sans-serif;font-size:32px;font-weight:900;color:var(--verde);line-height:1}
+    .stat-label{font-size:13px;color:var(--texto-g);font-weight:600}
+
+    /* MODAL */
+    .modal-overlay{position:fixed;inset:0;background:rgba(9,74,75,.45);display:flex;align-items:center;justify-content:center;z-index:999;backdrop-filter:blur(3px);animation:fadeIn .18s ease}
+    .modal-box{background:var(--blanco);border-radius:16px;box-shadow:0 20px 60px rgba(9,74,75,.25);width:min(520px,94vw);max-height:90vh;overflow-y:auto;animation:slideUp .22s ease}
+    .modal-header{display:flex;align-items:center;justify-content:space-between;padding:20px 24px 16px;border-bottom:1px solid var(--borde)}
+    .modal-title{font-family:'Nunito',sans-serif;font-size:18px;font-weight:800;color:var(--verde)}
+    .modal-close{background:var(--suave);border:none;border-radius:8px;width:32px;height:32px;font-size:18px;color:var(--texto-g);display:flex;align-items:center;justify-content:center}
+    .modal-close:hover{background:var(--borde)}
+    .modal-body{padding:20px 24px}
+    .modal-footer{padding:14px 24px;border-top:1px solid var(--borde);display:flex;justify-content:flex-end;gap:10px}
+
+    /* TOAST */
+    #toasts{position:fixed;bottom:24px;right:24px;display:flex;flex-direction:column;gap:10px;z-index:9999}
+    .toast{background:var(--verde);color:var(--blanco);padding:12px 20px;border-radius:10px;font-size:14px;font-weight:600;box-shadow:0 4px 20px rgba(9,74,75,.3);display:flex;align-items:center;gap:10px;animation:slideUp .22s ease;min-width:260px}
+    .toast.success{border-left:4px solid var(--pist)}
+    .toast.error{border-left:4px solid #e74c3c;background:#c0392b}
+
+    /* HERO */
+    .hero{background:linear-gradient(135deg,var(--verde) 60%,var(--verde-c));border-radius:18px;padding:48px 40px;color:var(--blanco);margin-bottom:28px;position:relative;overflow:hidden}
+    .hero::before{content:'';position:absolute;top:-60px;right:-60px;width:260px;height:260px;border-radius:50%;background:rgba(168,201,78,.12)}
+    .hero-eyebrow{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--pist);margin-bottom:10px}
+    .hero-title{font-family:'Nunito',sans-serif;font-size:36px;font-weight:900;line-height:1.15;margin-bottom:12px}
+    .hero-sub{font-size:16px;opacity:.85;max-width:460px;margin-bottom:28px}
+    .hero-search{display:flex;gap:10px;flex-wrap:wrap;max-width:600px}
+    .hero-search .input-field{flex:1;min-width:160px;border-color:rgba(255,255,255,.3);background:rgba(255,255,255,.12);color:var(--blanco)}
+    .hero-search .input-field::placeholder{color:rgba(255,255,255,.6)}
+    .hero-search .input-field:focus{border-color:var(--pist)}
+    .hero-btns{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+
+    /* VACANTES */
+    .vacantes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+    .vacante-card{background:var(--blanco);border-radius:12px;box-shadow:var(--sombra);padding:18px 20px;display:flex;flex-direction:column;gap:8px;border-left:4px solid var(--pist);transition:transform var(--t),box-shadow var(--t)}
+    .vacante-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(9,74,75,.15)}
+    .vacante-cargo{font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;color:var(--verde)}
+    .vacante-empresa{font-size:13px;color:var(--texto-g)}
+    .vacante-meta{display:flex;gap:12px;font-size:12px;color:var(--texto-g);flex-wrap:wrap}
+
+    /* LOADING */
+    .loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px;gap:16px;color:var(--texto-g)}
+    .spinner{width:36px;height:36px;border:3px solid var(--borde);border-top-color:var(--verde);border-radius:50%;animation:spin .8s linear infinite}
+
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    @keyframes slideUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    @media(max-width:768px){
+      #shell{grid-template-areas:"top" "main";grid-template-columns:1fr;grid-template-rows:56px 1fr}
+      #sidebar{display:none}
+      #main{padding:16px}
+      .stats-row{grid-template-columns:1fr 1fr}
+      .hero{padding:28px 20px}
+      .hero-title{font-size:26px}
+    }
+  </style>
+</head>
+<body>
+
+<div id="shell">
+
+  <!-- TOPBAR -->
+  <header id="topbar">
+    <div class="brand">
+      <div class="brand-logos">
+        <img src="assets/img/logo_comfe_y_servicio.jpeg" alt="Servicio Público de Empleo · Comfenalco Antioquia" />
+        <div class="brand-sep"></div>
+        <img src="assets/img/logo_agencia.png" alt="Agencia de Empleo y Emprendimiento" />
+      </div>
+    </div>
+    <div class="topbar-right" id="topbar-auth">
+      <!-- Se llena por JS -->
+    </div>
+  </header>
+
+  <!-- SIDEBAR -->
+  <nav id="sidebar">
+    <div class="sec-label">Principal</div>
+    <div class="nav-item active" data-page="landing"        onclick="App.nav.go('landing')"><span class="nav-icon">🏠</span> Inicio</div>
+    <div class="nav-item"        data-page="dashboard"      onclick="App.nav.go('dashboard')"><span class="nav-icon">📊</span> Dashboard</div>
+
+    <div class="sec-label">Gestión</div>
+    <div class="nav-item" data-page="candidatos"     onclick="App.nav.go('candidatos')"><span class="nav-icon">👤</span> Candidatos / HV <span class="nav-badge" id="badge-c">—</span></div>
+    <div class="nav-item" data-page="empresas"       onclick="App.nav.go('empresas')"><span class="nav-icon">🏢</span> Empresas <span class="nav-badge" id="badge-e">—</span></div>
+    <div class="nav-item" data-page="vacantes"       onclick="App.nav.go('vacantes')"><span class="nav-icon">💼</span> Vacantes <span class="nav-badge" id="badge-v">—</span></div>
+    <div class="nav-item" data-page="intermediacion" onclick="App.nav.go('intermediacion')"><span class="nav-icon">🔗</span> Intermediación</div>
+
+    <div class="sec-label">Herramientas</div>
+    <div class="nav-item" data-page="banco-hv"      onclick="App.nav.go('banco-hv')"><span class="nav-icon">🗄️</span> Banco de HV</div>
+    <div class="nav-item" data-page="pruebas"        onclick="App.nav.go('pruebas')"><span class="nav-icon">🧪</span> Pruebas</div>
+    <div class="nav-item" data-page="diagnosticos"   onclick="App.nav.go('diagnosticos')"><span class="nav-icon">📋</span> Diagnósticos</div>
+    <div class="nav-item" data-page="reportes"       onclick="App.nav.go('reportes')"><span class="nav-icon">📈</span> Reportes</div>
+
+    <div class="sidebar-div"></div>
+    <div class="sec-label">Sistema</div>
+    <div class="nav-item" onclick="App.ui.toast('Configuración — próximamente')"><span class="nav-icon">⚙️</span> Configuración</div>
+    <div class="nav-item" id="btn-logout" onclick="App.auth.cerrarSesion()"><span class="nav-icon">🚪</span> Cerrar sesión</div>
+  </nav>
+
+  <!-- MAIN -->
+  <main id="main">
+
+    <!-- LANDING -->
+    <section id="page-landing" class="page">
+      <div class="hero">
+        <div class="hero-eyebrow">Agencia de Empleo y Emprendimiento</div>
+        <h1 class="hero-title">Conectamos talento<br>con oportunidades</h1>
+        <p class="hero-sub">Busca vacantes, registra tu hoja de vida y accede a los mejores empleos de Antioquia.</p>
+        <div class="hero-search">
+          <input class="input-field" type="text" id="search-cargo" placeholder="🔍 Cargo o palabra clave" />
+          <select class="input-field" id="search-municipio">
+            <option value="">📍 Todos los municipios</option>
+          </select>
+          <button class="btn btn-primary btn-lg" onclick="App.modules.landing.buscar()">Buscar</button>
+        </div>
+        <div class="hero-btns" id="hero-btns">
+          <button class="btn btn-blanco" onclick="App.auth.registro()">✏️ Registrarme gratis</button>
+          <button class="btn btn-outline" style="border-color:rgba(255,255,255,.5);color:white" onclick="App.auth.login()">Iniciar sesión</button>
+        </div>
+      </div>
+
+      <div class="stats-row" id="stats">
+        <div class="loading" style="grid-column:1/-1"><div class="spinner"></div></div>
+      </div>
+
+      <div class="page-header">
+        <div>
+          <div class="page-title">Vacantes recientes</div>
+          <div class="page-sub">Oportunidades publicadas esta semana</div>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="App.nav.go('vacantes')">Ver todas →</button>
+      </div>
+      <div class="vacantes-grid" id="vacantes-grid">
+        <div class="loading" style="grid-column:1/-1"><div class="spinner"></div><span>Cargando vacantes...</span></div>
+      </div>
+    </section>
+
+    <!-- PÁGINAS MÓDULOS (se van completando) -->
+    <section id="page-dashboard"      class="page hidden"><div class="loading"><div class="spinner"></div><span>Cargando dashboard...</span></div></section>
+    <section id="page-candidatos"     class="page hidden"><div class="page-title text-verde mt-16">👤 Módulo Candidatos — próximamente</div></section>
+    <section id="page-empresas"       class="page hidden"><div class="page-title text-verde mt-16">🏢 Módulo Empresas — próximamente</div></section>
+    <section id="page-vacantes"       class="page hidden"><div class="page-title text-verde mt-16">💼 Módulo Vacantes — próximamente</div></section>
+    <section id="page-intermediacion" class="page hidden"><div class="page-title text-verde mt-16">🔗 Intermediación — próximamente</div></section>
+    <section id="page-banco-hv"       class="page hidden"><div class="page-title text-verde mt-16">🗄️ Banco de HV — próximamente</div></section>
+    <section id="page-pruebas"        class="page hidden"><div class="page-title text-verde mt-16">🧪 Pruebas Psicotécnicas — Fase 2</div></section>
+    <section id="page-diagnosticos"   class="page hidden"><div class="page-title text-verde mt-16">📋 Diagnósticos — Fase 2</div></section>
+    <section id="page-reportes"       class="page hidden"><div class="page-title text-verde mt-16">📈 Reportes — próximamente</div></section>
+
+  </main>
+</div>
+
+<!-- MODAL -->
+<div id="modal-overlay" class="modal-overlay hidden" onclick="App.ui.closeModal(event)">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title"></div>
+      <button class="modal-close" onclick="App.ui.closeModal()">✕</button>
+    </div>
+    <div class="modal-body"   id="modal-body"></div>
+    <div class="modal-footer" id="modal-footer"></div>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
+<script type="module">
+import DB from './config/db.js';
+
+// ── Store ────────────────────────────────────────────────────
+class Store {
+  constructor() {
+    this.state = { page: 'landing', usuario: null, municipios: [] };
+    this._l = {};
+  }
+  get(k)    { return this.state[k]; }
+  set(k, v) { this.state[k] = v; (this._l[k]||[]).forEach(fn=>fn(v)); }
+  on(k, fn) { if(!this._l[k]) this._l[k]=[]; this._l[k].push(fn); }
+}
+
+// ── UI ───────────────────────────────────────────────────────
+class UI {
+  toast(msg, type='success') {
+    const tc = document.getElementById('toasts');
+    const t  = document.createElement('div');
+    t.className = `toast ${type}`;
+    t.innerHTML = (type==='success'?'✅':'❌') + ' ' + msg;
+    tc.appendChild(t);
+    setTimeout(()=>t.remove(), 3500);
+  }
+  openModal(title, body, footer='') {
+    document.getElementById('modal-title').textContent = title;
+    document.getElementById('modal-body').innerHTML    = body;
+    document.getElementById('modal-footer').innerHTML  = footer;
+    document.getElementById('modal-overlay').classList.remove('hidden');
+  }
+  closeModal(e) {
+    if(!e || e.target===document.getElementById('modal-overlay'))
+      document.getElementById('modal-overlay').classList.add('hidden');
+  }
+  stats(id, lista) {
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.innerHTML = lista.map(s=>`
+      <div class="stat-card">
+        <div class="stat-icon">${s.icon}</div>
+        <div class="stat-value">${Number(s.value||0).toLocaleString('es-CO')}</div>
+        <div class="stat-label">${s.label}</div>
+      </div>`).join('');
+  }
+}
+
+// ── Router ───────────────────────────────────────────────────
+class Router {
+  constructor(store) { this.store = store; }
+  go(id) {
+    document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));
+    const p = document.getElementById(`page-${id}`);
+    if(p){ p.classList.remove('hidden'); p.style.animation='slideUp .22s ease'; }
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+    const n = document.querySelector(`[data-page="${id}"]`);
+    if(n) n.classList.add('active');
+    this.store.set('page', id);
+    const mod = App.modules[id.replace('-','')];
+    if(mod?.init) mod.init();
+  }
+}
+
+// ── Auth ─────────────────────────────────────────────────────
+class AuthManager {
+  constructor(store, ui) { this.store=store; this.ui=ui; }
+
+  async init() {
+    await window.Clerk?.load();
+    window.Clerk?.addListener(({user})=>{
+      this.store.set('usuario', user);
+      this._renderTopbar(user);
+      if(user) this._sincronizarPerfil(user);
+    });
+    const user = window.Clerk?.user ?? null;
+    this.store.set('usuario', user);
+    this._renderTopbar(user);
+    if(user) this._sincronizarPerfil(user);
+  }
+
+  async _sincronizarPerfil(user) {
+    const nombre   = user.firstName ?? '';
+    const apellidos= user.lastName  ?? '';
+    const correo   = user.emailAddresses?.[0]?.emailAddress ?? '';
+    await DB.upsertPerfil({
+      clerkUserId: user.id,
+      nombre, apellidos, correo
+    });
+  }
+
+  _renderTopbar(user) {
+    const c = document.getElementById('topbar-auth');
+    if(!c) return;
+    if(user) {
+      const nombre    = `${user.firstName??''} ${user.lastName??''}`.trim() || user.emailAddresses?.[0]?.emailAddress;
+      const iniciales = ((user.firstName?.[0]??'')+(user.lastName?.[0]??'')).toUpperCase() || nombre[0].toUpperCase();
+      const rol       = user.publicMetadata?.rol ?? 'candidato';
+      // Ocultar botones de registro en el hero
+      const hb = document.getElementById('hero-btns');
+      if(hb) hb.style.display='none';
+      c.innerHTML = `
+        <div class="topbar-user" onclick="App.auth.menuUsuario()">
+          <div class="topbar-avatar">
+            ${user.imageUrl?`<img src="${user.imageUrl}" alt="${nombre}"/>`:`<span>${iniciales}</span>`}
+          </div>
+          <div>
+            <div class="topbar-user-name">${nombre}</div>
+            <div class="topbar-user-role">Rol: ${rol}</div>
+          </div>
+        </div>`;
+    } else {
+      const hb = document.getElementById('hero-btns');
+      if(hb) hb.style.display='flex';
+      c.innerHTML = `
+        <button class="btn btn-ghost btn-sm" style="color:white;background:rgba(255,255,255,.15)" onclick="App.auth.login()">Iniciar sesión</button>
+        <button class="btn btn-primary btn-sm" onclick="App.auth.registro()">Registrarme</button>`;
+    }
+  }
+
+  login()    { window.Clerk?.openSignIn({ afterSignInUrl: window.location.href }); }
+  registro() { window.Clerk?.openSignUp({ afterSignUpUrl: window.location.href }); }
+  async cerrarSesion() {
+    await window.Clerk?.signOut();
+    this.ui.toast('Sesión cerrada');
+  }
+  menuUsuario() {
+    this.ui.openModal('Mi cuenta',
+      `<p style="color:var(--texto-g);margin-bottom:16px">Gestiona tu perfil desde el panel de usuario.</p>`,
+      `<button class="btn btn-ghost" onclick="App.ui.closeModal()">Cerrar</button>
+       <button class="btn btn-primary" onclick="window.Clerk?.openUserProfile();App.ui.closeModal()">Ver perfil</button>
+       <button class="btn btn-outline" onclick="App.auth.cerrarSesion();App.ui.closeModal()">Cerrar sesión</button>`
+    );
+  }
+}
+
+// ── Módulo Landing ───────────────────────────────────────────
+class ModuleLanding {
+  constructor(store, ui) { this.store=store; this.ui=ui; this._listo=false; }
+
+  async init() {
+    if(this._listo) return;
+    this._listo = true;
+    await Promise.all([
+      this._municipios(),
+      this._stats(),
+      this._vacantes()
+    ]);
+  }
+
+  async _municipios() {
+    const {data} = await DB.municipios();
+    if(!data) return;
+    this.store.set('municipios', data);
+    const sel = document.getElementById('search-municipio');
+    data.forEach(m=>{
+      const o = document.createElement('option');
+      o.value = m.id;
+      o.textContent = `${m.nombre} (${m.subregion})`;
+      sel.appendChild(o);
+    });
+  }
+
+  async _stats() {
+    const {data} = await DB.estadisticas();
+    const s = data ?? {};
+    this.ui.stats('stats', [
+      { icon:'👤', value: s.total_candidatos      ?? 0, label:'Candidatos registrados' },
+      { icon:'🏢', value: s.total_empresas         ?? 0, label:'Empresas aliadas'       },
+      { icon:'💼', value: s.total_vacantes_activas ?? 0, label:'Vacantes activas'       },
+      { icon:'✅', value: s.empleos_colocados      ?? 0, label:'Empleos gestionados'    }
+    ]);
+    const bv = document.getElementById('badge-v');
+    const be = document.getElementById('badge-e');
+    if(bv) bv.textContent = s.total_vacantes_activas ?? '—';
+    if(be) be.textContent = s.total_empresas ?? '—';
+  }
+
+  async _vacantes() {
+    const {data} = await DB.vacantesRecientes(6);
+    this._render(data ?? []);
+  }
+
+  _render(lista) {
+    const g = document.getElementById('vacantes-grid');
+    if(!g) return;
+    if(!lista.length) {
+      g.innerHTML = '<p style="color:var(--texto-g);padding:24px">No hay vacantes activas en este momento.</p>';
+      return;
+    }
+    g.innerHTML = lista.map(v=>`
+      <div class="vacante-card">
+        <div class="vacante-cargo">${v.cargo}</div>
+        <div class="vacante-empresa">🏢 ${v.empresa}</div>
+        <div class="vacante-meta">
+          <span>📍 ${v.municipio??'—'}</span>
+          <span>💵 ${v.salario_min?'$'+Number(v.salario_min).toLocaleString('es-CO'):'A convenir'}</span>
+          <span>📑 ${(v.tipo_contrato??'').replace(/_/g,' ')}</span>
+          <span>👥 ${v.total_postulados??0} postulados</span>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
+          <span class="badge ${v.estado==='activa'?'badge-activa':'badge-seleccion'}">${v.estado}</span>
+          <button class="btn btn-primary btn-sm" style="margin-left:auto"
+            onclick="App.modules.landing.postularse('${v.id}','${v.cargo}','${v.empresa}')">
+            Postularme
+          </button>
+        </div>
+      </div>`).join('');
+  }
+
+  async buscar() {
+    const texto       = document.getElementById('search-cargo').value.trim() || null;
+    const municipioId = document.getElementById('search-municipio').value || null;
+    const g = document.getElementById('vacantes-grid');
+    g.innerHTML = '<div class="loading" style="grid-column:1/-1"><div class="spinner"></div></div>';
+    const {data} = await DB.buscarVacantes({ texto, municipioId: municipioId?parseInt(municipioId):null });
+    this._render(data ?? []);
+    this.ui.toast(`${(data??[]).length} vacante(s) encontrada(s)`);
+  }
+
+  postularse(id, cargo, empresa) {
+    const usuario = App.store.get('usuario');
+    if(!usuario) {
+      this.ui.openModal('Inicia sesión para postularte',
+        `<p style="color:var(--texto-g)">Necesitas una cuenta para postularte a <b>${cargo}</b> en <b>${empresa}</b>.</p>`,
+        `<button class="btn btn-ghost" onclick="App.ui.closeModal()">Cancelar</button>
+         <button class="btn btn-outline" onclick="App.auth.login();App.ui.closeModal()">Iniciar sesión</button>
+         <button class="btn btn-primary" onclick="App.auth.registro();App.ui.closeModal()">Crear cuenta gratis</button>`
+      );
+      return;
+    }
+    this.ui.openModal(`Postularme: ${cargo}`,
+      `<p style="margin-bottom:12px;color:var(--texto-g)">Empresa: <b>${empresa}</b></p>
+       <p style="font-size:13px;color:var(--texto-g)">Tu perfil será enviado al equipo de selección.</p>`,
+      `<button class="btn btn-ghost" onclick="App.ui.closeModal()">Cancelar</button>
+       <button class="btn btn-primary" onclick="App.ui.closeModal();App.ui.toast('¡Postulación enviada!')">Confirmar</button>`
+    );
+  }
+}
+
+// ── Application ──────────────────────────────────────────────
+class Application {
+  constructor() {
+    this.store   = new Store();
+    this.ui      = new UI();
+    this.nav     = new Router(this.store);
+    this.auth    = new AuthManager(this.store, this.ui);
+    this.modules = {
+      landing: new ModuleLanding(this.store, this.ui)
+    };
+  }
+  async boot() {
+    await this.auth.init();
+    this.nav.go('landing');
+    console.log('✅ Plataforma Comfenalco — OK');
+  }
+}
+
+window.App = new Application();
+document.addEventListener('DOMContentLoaded', ()=>App.boot());
+</script>
+</body>
+</html>
