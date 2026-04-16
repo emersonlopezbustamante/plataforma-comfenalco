@@ -10,39 +10,27 @@
     type="text/javascript"></script>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
   <style>
-    :root{--verde:#094a4b;--verde-c:#0d6b6c;--pist:#a8c94e;--pist-h:#8fb53a;--blanco:#ffffff;--fondo:#f4f6f4;--borde:#d8e2d8;--texto-g:#4a5a4a;--suave:#e8efe8;--negro:#1a2a1a;--r:8px;--rc:14px;--t:.22s ease}
+    :root{--verde:#094a4b;--verde-c:#0d6b6c;--pist:#a8c94e;--pist-h:#8fb53a;--blanco:#fff;--fondo:#f4f6f4;--borde:#d8e2d8;--texto-g:#4a5a4a;--suave:#e8efe8;--negro:#1a2a1a;--r:8px;--rc:14px;--t:.22s ease}
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     html{scroll-behavior:smooth}
     body{font-family:'Inter',sans-serif;font-size:15px;color:var(--negro);background:var(--fondo);min-height:100vh}
     a{color:inherit;text-decoration:none}
-    button{cursor:pointer;font-family:inherit}
-
-    /* TOPBAR */
+    button{cursor:pointer;font-family:inherit;border:none}
     #topbar{background:var(--verde);padding:0 32px;height:64px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 12px rgba(9,74,75,.2);position:sticky;top:0;z-index:100}
-    .brand-logos{display:flex;align-items:center;background:var(--blanco);border-radius:10px;padding:4px 16px;height:52px}
+    .brand-logos{display:flex;align-items:center;background:#fff;border-radius:10px;padding:4px 16px;height:52px;gap:0}
     .brand-logos img:first-child{height:40px;max-width:200px;object-fit:contain}
     .brand-sep{width:1.5px;height:32px;background:var(--borde);margin:0 12px;flex-shrink:0}
     .brand-logos img:last-child{height:32px;max-width:150px;object-fit:contain}
-    .topbar-user{display:flex;align-items:center;gap:8px;cursor:pointer;padding:5px 10px;border-radius:8px;color:var(--blanco);font-size:13px;font-weight:600;transition:background var(--t)}
-    .topbar-user:hover{background:rgba(255,255,255,.1)}
-    .topbar-user-role{color:var(--pist);font-size:11px}
-    .topbar-avatar{width:34px;height:34px;border-radius:50%;background:var(--pist);color:var(--verde);font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;overflow:hidden}
-    .topbar-avatar img{width:100%;height:100%;object-fit:cover}
-
-    /* BOTONES */
-    .btn{display:inline-flex;align-items:center;gap:7px;padding:10px 22px;border-radius:var(--r);font-weight:700;font-size:14px;border:none;transition:all var(--t);cursor:pointer}
+    .btn{display:inline-flex;align-items:center;gap:7px;padding:10px 22px;border-radius:var(--r);font-weight:700;font-size:14px;border:none;transition:all var(--t);cursor:pointer;font-family:inherit}
     .btn:active{transform:scale(.97)}
     .btn-primary{background:var(--pist);color:var(--verde)}
-    .btn-primary:hover{background:var(--pist-h);box-shadow:0 4px 14px rgba(168,201,78,.4)}
-    .btn-outline-w{background:transparent;color:var(--blanco);border:2px solid rgba(255,255,255,.5)}
+    .btn-primary:hover{background:var(--pist-h)}
+    .btn-outline-w{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.5)}
     .btn-outline-w:hover{background:rgba(255,255,255,.1)}
     .btn-sm{padding:7px 16px;font-size:13px}
     .btn-lg{padding:16px 36px;font-size:16px;border-radius:10px}
-
-    /* HERO */
-    .hero{background:linear-gradient(140deg,var(--verde) 55%,var(--verde-c));padding:80px 32px 60px;text-align:center;color:var(--blanco);position:relative;overflow:hidden}
+    .hero{background:linear-gradient(140deg,var(--verde) 55%,var(--verde-c));padding:80px 32px 60px;text-align:center;color:#fff;position:relative;overflow:hidden}
     .hero::before{content:'';position:absolute;top:-80px;right:-80px;width:320px;height:320px;border-radius:50%;background:rgba(168,201,78,.1)}
-    .hero::after{content:'';position:absolute;bottom:-60px;left:-60px;width:240px;height:240px;border-radius:50%;background:rgba(168,201,78,.07)}
     .hero-eyebrow{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:var(--pist);margin-bottom:14px}
     .hero-title{font-family:'Nunito',sans-serif;font-size:48px;font-weight:900;line-height:1.1;margin-bottom:16px}
     .hero-title span{color:var(--pist)}
@@ -51,76 +39,60 @@
     .hero-stat-num{font-family:'Nunito',sans-serif;font-size:40px;font-weight:900;color:var(--pist);line-height:1}
     .hero-stat-label{font-size:13px;opacity:.8;margin-top:4px}
     .buscar-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-    .buscar-row .input-field{min-width:200px;flex:1;max-width:280px;background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.3);color:var(--blanco);padding:12px 14px;border:1.5px solid rgba(255,255,255,.3);border-radius:var(--r);font-size:14px;font-family:inherit;outline:none}
-    .buscar-row .input-field::placeholder{color:rgba(255,255,255,.6)}
-    .buscar-row .input-field:focus{background:rgba(255,255,255,.2);border-color:var(--pist)}
-    select.buscar-row .input-field{appearance:none}
-
-    /* PORTALES */
+    .buscar-inp{min-width:200px;flex:1;max-width:280px;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);border-radius:var(--r);color:#fff;padding:12px 14px;font-size:14px;font-family:inherit;outline:none}
+    .buscar-inp::placeholder{color:rgba(255,255,255,.6)}
+    .buscar-inp:focus{background:rgba(255,255,255,.2);border-color:var(--pist)}
     .portales-section{padding:64px 32px;max-width:1200px;margin:0 auto}
     .portales-title{font-family:'Nunito',sans-serif;font-size:32px;font-weight:900;color:var(--verde);text-align:center;margin-bottom:8px}
     .portales-sub{text-align:center;color:var(--texto-g);font-size:16px;margin-bottom:48px}
     .portales-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:28px}
-    .portal-card{background:var(--blanco);border-radius:20px;box-shadow:0 4px 24px rgba(9,74,75,.10);padding:40px 32px;display:flex;flex-direction:column;align-items:flex-start;gap:16px;border-top:5px solid var(--pist);cursor:pointer;transition:transform var(--t),box-shadow var(--t)}
+    .portal-card{background:#fff;border-radius:20px;box-shadow:0 4px 24px rgba(9,74,75,.10);padding:40px 32px;display:flex;flex-direction:column;align-items:flex-start;gap:16px;border-top:5px solid var(--pist);cursor:pointer;transition:transform var(--t),box-shadow var(--t)}
     .portal-card:hover{transform:translateY(-6px);box-shadow:0 12px 40px rgba(9,74,75,.18)}
     .portal-card.c2{border-top-color:var(--verde)}
     .portal-card.c3{border-top-color:#2d4a6b}
     .portal-icon{font-size:48px;line-height:1}
     .portal-tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--texto-g);background:var(--suave);padding:3px 10px;border-radius:20px}
-    .portal-nombre{font-family:'Nunito',sans-serif;font-size:24px;font-weight:900;color:var(--verde);line-height:1.2}
+    .portal-nombre{font-family:'Nunito',sans-serif;font-size:24px;font-weight:900;color:var(--verde)}
     .portal-desc{font-size:14px;color:var(--texto-g);line-height:1.6;flex:1}
     .portal-features{display:flex;flex-direction:column;gap:8px;width:100%}
-    .portal-feature{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--texto-g)}
-    .portal-feature::before{content:'✓';color:var(--pist);font-weight:900;flex-shrink:0}
+    .portal-feat{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--texto-g)}
+    .portal-feat::before{content:'✓';color:var(--pist);font-weight:900}
     .portal-btn{width:100%;justify-content:center;margin-top:8px;padding:14px;font-size:15px;border-radius:10px}
-
-    /* VACANTES */
     .vacantes-section{background:var(--suave);padding:64px 32px}
     .vacantes-inner{max-width:1200px;margin:0 auto}
-    .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;flex-wrap:wrap;gap:12px}
-    .section-title{font-family:'Nunito',sans-serif;font-size:28px;font-weight:900;color:var(--verde)}
-    .vacantes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
-    .vacante-card{background:var(--blanco);border-radius:14px;box-shadow:0 2px 16px rgba(9,74,75,.10);padding:20px 22px;display:flex;flex-direction:column;gap:8px;border-left:4px solid var(--pist);transition:transform var(--t)}
-    .vacante-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(9,74,75,.15)}
-    .vacante-cargo{font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;color:var(--verde)}
-    .vacante-empresa{font-size:13px;color:var(--texto-g)}
-    .vacante-meta{display:flex;gap:10px;font-size:12px;color:var(--texto-g);flex-wrap:wrap}
-    .badge-activa{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:600;background:#d4edda;color:#155724}
-
-    /* FOOTER */
-    footer{background:var(--verde);color:var(--blanco);padding:40px 32px;text-align:center}
+    .sec-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;flex-wrap:wrap;gap:12px}
+    .sec-title{font-family:'Nunito',sans-serif;font-size:28px;font-weight:900;color:var(--verde)}
+    .vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+    .vcard{background:#fff;border-radius:14px;box-shadow:0 2px 16px rgba(9,74,75,.08);padding:20px;display:flex;flex-direction:column;gap:8px;border-left:4px solid var(--pist);transition:transform var(--t)}
+    .vcard:hover{transform:translateY(-3px)}
+    .vcargo{font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;color:var(--verde)}
+    .vemp{font-size:13px;color:var(--texto-g)}
+    .vmeta{display:flex;gap:10px;font-size:12px;color:var(--texto-g);flex-wrap:wrap}
+    .badge-a{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:600;background:#d4edda;color:#155724}
+    footer{background:var(--verde);color:#fff;padding:40px 32px;text-align:center}
     footer p{opacity:.7;font-size:13px;margin-top:6px}
-
-    /* UTILS */
     .loading{display:flex;align-items:center;justify-content:center;padding:48px;gap:12px;color:var(--texto-g)}
-    .spinner{width:28px;height:28px;border:3px solid var(--borde);border-top-color:var(--verde);border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0}
-
+    .spinner{width:28px;height:28px;border:3px solid var(--borde);border-top-color:var(--verde);border-radius:50%;animation:spin .8s linear infinite}
+    .topbar-user{display:flex;align-items:center;gap:8px;cursor:pointer;padding:5px 10px;border-radius:8px;color:#fff;font-size:13px;font-weight:600;transition:background var(--t)}
+    .topbar-user:hover{background:rgba(255,255,255,.1)}
+    .topbar-rol{color:var(--pist);font-size:11px}
+    .tav{width:34px;height:34px;border-radius:50%;background:var(--pist);color:var(--verde);font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0}
+    .tav img{width:100%;height:100%;object-fit:cover}
     @keyframes spin{to{transform:rotate(360deg)}}
     @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
-    .fade-up{animation:fadeUp .5s ease both}
-
-    @media(max-width:768px){
-      #topbar{padding:0 16px}
-      .brand-logos{padding:3px 10px;height:44px}
-      .brand-logos img:first-child{height:32px}
-      .brand-logos img:last-child{height:26px}
-      .hero{padding:48px 16px 40px}
-      .hero-title{font-size:30px}
-      .hero-stats{gap:24px}
-      .portales-section{padding:40px 16px}
-      .vacantes-section{padding:40px 16px}
-    }
+    .fu{animation:fadeUp .5s ease both}
+    @media(max-width:768px){#topbar{padding:0 16px}.brand-logos{padding:3px 10px;height:44px}.brand-logos img:first-child{height:32px}.brand-logos img:last-child{height:26px}.hero{padding:48px 16px 40px}.hero-title{font-size:30px}.hero-stats{gap:24px}.portales-section,.vacantes-section{padding:40px 16px}}
   </style>
 </head>
 <body>
 
 <header id="topbar">
   <div class="brand-logos">
-    <img src="logo_comfe_y_servicio.jpeg" alt="Servicio Público de Empleo · Comfenalco Antioquia"/>
+    <img src="logo_comfe_y_servicio.jpeg" alt="SPE Comfenalco"/>
     <div class="brand-sep"></div>
-    <img src="logo_agencia.png" alt="Agencia de Empleo y Emprendimiento"/>
+    <img src="logo_agencia.png" alt="Agencia de Empleo"/>
   </div>
-  <div id="topbar-auth" style="display:flex;align-items:center;gap:10px"></div>
+  <div id="auth-area" style="display:flex;align-items:center;gap:10px"></div>
 </header>
 
 <section class="hero">
@@ -128,17 +100,15 @@
   <h1 class="hero-title">Conectamos <span>talento</span><br>con oportunidades</h1>
   <p class="hero-sub">La plataforma oficial de la Agencia de Empleo y Emprendimiento de Comfenalco Antioquia</p>
   <div class="hero-stats">
-    <div class="hero-stat"><div class="hero-stat-num" id="s-c">—</div><div class="hero-stat-label">Candidatos registrados</div></div>
-    <div class="hero-stat"><div class="hero-stat-num" id="s-e">—</div><div class="hero-stat-label">Empresas aliadas</div></div>
-    <div class="hero-stat"><div class="hero-stat-num" id="s-v">—</div><div class="hero-stat-label">Vacantes activas</div></div>
-    <div class="hero-stat"><div class="hero-stat-num" id="s-p">—</div><div class="hero-stat-label">Empleos gestionados</div></div>
+    <div><div class="hero-stat-num" id="sc">0</div><div class="hero-stat-label">Candidatos registrados</div></div>
+    <div><div class="hero-stat-num" id="se">8</div><div class="hero-stat-label">Empresas aliadas</div></div>
+    <div><div class="hero-stat-num" id="sv">10</div><div class="hero-stat-label">Vacantes activas</div></div>
+    <div><div class="hero-stat-num" id="sp">0</div><div class="hero-stat-label">Empleos gestionados</div></div>
   </div>
   <div class="buscar-row">
-    <input class="input-field" type="text" id="search-cargo" placeholder="🔍 Cargo o palabra clave"/>
-    <select class="input-field" id="search-municipio" style="appearance:none;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);border-radius:8px;color:white;padding:12px 36px 12px 14px;font-size:14px;font-family:inherit;outline:none">
-      <option value="" style="color:#000">📍 Todos los municipios</option>
-    </select>
-    <button class="btn btn-primary btn-lg" onclick="buscarVacantes()">Buscar vacantes</button>
+    <input class="buscar-inp" type="text" id="q-cargo" placeholder="🔍 Cargo o palabra clave"/>
+    <select class="buscar-inp" id="q-mpio" style="appearance:none"></select>
+    <button class="btn btn-primary btn-lg" onclick="buscar()">Buscar vacantes</button>
   </div>
 </section>
 
@@ -147,46 +117,46 @@
   <p class="portales-sub">Selecciona el portal que corresponde a tu perfil</p>
   <div class="portales-grid">
 
-    <div class="portal-card fade-up" style="animation-delay:.1s" onclick="window.location.href='candidatos.html'">
+    <div class="portal-card fu" style="animation-delay:.1s" onclick="ir('candidatos.html')">
       <div class="portal-icon">👤</div>
       <div class="portal-tag">Busco empleo</div>
       <div class="portal-nombre">Soy candidato</div>
       <p class="portal-desc">Crea tu hoja de vida, postúlate a vacantes y accede a los mejores empleos de Antioquia.</p>
       <div class="portal-features">
-        <div class="portal-feature">Registro y hoja de vida en 6 pasos</div>
-        <div class="portal-feature">Postulación directa a vacantes</div>
-        <div class="portal-feature">Descarga tu HV en PDF</div>
-        <div class="portal-feature">Seguimiento de postulaciones</div>
+        <div class="portal-feat">Registro y hoja de vida en 6 pasos</div>
+        <div class="portal-feat">Postulación directa a vacantes</div>
+        <div class="portal-feat">Descarga tu HV en PDF</div>
+        <div class="portal-feat">Seguimiento de postulaciones</div>
       </div>
       <button class="btn btn-primary portal-btn">Ingresar como candidato →</button>
     </div>
 
-    <div class="portal-card c2 fade-up" style="animation-delay:.2s" onclick="window.location.href='empresas.html'">
+    <div class="portal-card c2 fu" style="animation-delay:.2s" onclick="ir('empresas.html')">
       <div class="portal-icon">🏢</div>
       <div class="portal-tag">Busco talento</div>
       <div class="portal-nombre">Soy empresa</div>
       <p class="portal-desc">Accede al banco de candidatos, revisa postulaciones y encuentra el talento que necesitas.</p>
       <div class="portal-features">
-        <div class="portal-feature">Ver candidatos postulados</div>
-        <div class="portal-feature">Recibir hojas de vida por correo</div>
-        <div class="portal-feature">Diagnósticos organizacionales</div>
-        <div class="portal-feature">Gestión de vacantes activas</div>
+        <div class="portal-feat">Ver candidatos postulados</div>
+        <div class="portal-feat">Recibir hojas de vida por correo</div>
+        <div class="portal-feat">Diagnósticos organizacionales</div>
+        <div class="portal-feat">Gestión de vacantes activas</div>
       </div>
-      <button class="btn portal-btn" style="background:var(--verde);color:white">Ingresar como empresa →</button>
+      <button class="btn portal-btn" style="background:var(--verde);color:#fff">Ingresar como empresa →</button>
     </div>
 
-    <div class="portal-card c3 fade-up" style="animation-delay:.3s" onclick="window.location.href='interno.html'">
+    <div class="portal-card c3 fu" style="animation-delay:.3s" onclick="ir('interno.html')">
       <div class="portal-icon">🛡️</div>
       <div class="portal-tag">Equipo interno</div>
       <div class="portal-nombre">Soy de Comfenalco</div>
       <p class="portal-desc">Panel de gestión para asesores, intermediadores y administradores del equipo Comfenalco.</p>
       <div class="portal-features">
-        <div class="portal-feature">Registrar candidatos y empresas</div>
-        <div class="portal-feature">Publicar y gestionar vacantes</div>
-        <div class="portal-feature">Intermediación laboral</div>
-        <div class="portal-feature">Dashboard, reportes e indicadores</div>
+        <div class="portal-feat">Registrar candidatos y empresas</div>
+        <div class="portal-feat">Publicar y gestionar vacantes</div>
+        <div class="portal-feat">Intermediación laboral</div>
+        <div class="portal-feat">Dashboard, reportes e indicadores</div>
       </div>
-      <button class="btn portal-btn" style="background:#2d4a6b;color:white">Ingresar al panel interno →</button>
+      <button class="btn portal-btn" style="background:#2d4a6b;color:#fff">Ingresar al panel interno →</button>
     </div>
 
   </div>
@@ -194,12 +164,12 @@
 
 <section class="vacantes-section">
   <div class="vacantes-inner">
-    <div class="section-header">
-      <div class="section-title">Vacantes recientes</div>
-      <button class="btn btn-primary btn-sm" onclick="window.location.href='candidatos.html'">Ver todas →</button>
+    <div class="sec-header">
+      <div class="sec-title">Vacantes recientes</div>
+      <button class="btn btn-primary btn-sm" onclick="ir('candidatos.html')">Ver todas →</button>
     </div>
-    <div class="vacantes-grid" id="vacantes-grid">
-      <div class="loading" style="grid-column:1/-1"><div class="spinner"></div><span>Cargando vacantes...</span></div>
+    <div class="vgrid" id="vgrid">
+      <div class="loading" style="grid-column:1/-1"><div class="spinner"></div><span>Cargando...</span></div>
     </div>
   </div>
 </section>
@@ -210,85 +180,105 @@
   <p style="margin-top:12px">© 2025 · Todos los derechos reservados</p>
 </footer>
 
-<script type="module">
-import DB from './config/db.js';
+<script>
+// ── Datos ────────────────────────────────────────────────────
+var MUNICIPIOS = [
+  {id:1,n:'Medellín',s:'Valle de Aburrá'},{id:2,n:'Bello',s:'Valle de Aburrá'},
+  {id:3,n:'Itagüí',s:'Valle de Aburrá'},{id:4,n:'Envigado',s:'Valle de Aburrá'},
+  {id:5,n:'Sabaneta',s:'Valle de Aburrá'},{id:11,n:'Rionegro',s:'Oriente'},
+  {id:13,n:'La Ceja',s:'Oriente'},{id:21,n:'Santa Rosa de Osos',s:'Norte'},
+  {id:22,n:'Yarumal',s:'Norte'},{id:31,n:'Santa Fe de Antioquia',s:'Occidente'},
+  {id:41,n:'Andes',s:'Suroeste'},{id:51,n:'Caucasia',s:'Bajo Cauca'},
+  {id:61,n:'Segovia',s:'Nordeste'},{id:71,n:'Apartadó',s:'Urabá'},{id:72,n:'Turbo',s:'Urabá'}
+];
 
-async function initAuth() {
-  await window.Clerk?.load();
-  const user = window.Clerk?.user;
-  const area = document.getElementById('topbar-auth');
-  if(user) {
-    const nombre    = `${user.firstName??''} ${user.lastName??''}`.trim()||'Usuario';
-    const iniciales = ((user.firstName?.[0]??'')+(user.lastName?.[0]??'')).toUpperCase()||'U';
-    const rol       = user.publicMetadata?.rol??'candidato';
-    const destino   = rol==='empresa'?'empresas.html':rol==='candidato'?'candidatos.html':'interno.html';
-    area.innerHTML = `
-      <div class="topbar-user" onclick="window.location.href='${destino}'">
-        <div class="topbar-avatar">${user.imageUrl?`<img src="${user.imageUrl}"/>`:`<span>${iniciales}</span>`}</div>
-        <div><div>${nombre}</div><div class="topbar-user-role">${rol}</div></div>
-      </div>
-      <button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:white;border:none"
-        onclick="window.Clerk.signOut().then(()=>location.reload())">Salir</button>`;
+var VACANTES = [
+  {id:'1',cargo:'Auxiliar de Bodega',empresa:'Logística del Valle SAS',municipio:'Medellín',salario:1300000,contrato:'Término fijo',postulados:12,estado:'activa'},
+  {id:'2',cargo:'Desarrollador Web Jr.',empresa:'TechCo Colombia',municipio:'Envigado',salario:2500000,contrato:'Indefinido',postulados:5,estado:'activa'},
+  {id:'3',cargo:'Operario de Producción',empresa:'Manufacturas Bello SA',municipio:'Bello',salario:1160000,contrato:'Término fijo',postulados:28,estado:'activa'},
+  {id:'4',cargo:'Asesor Comercial',empresa:'Seguros Andinos Ltda',municipio:'Itagüí',salario:1800000,contrato:'Indefinido',postulados:9,estado:'activa'},
+  {id:'5',cargo:'Técnico de Refrigeración',empresa:'Fríos del Oriente SAS',municipio:'Rionegro',salario:1800000,contrato:'Término fijo',postulados:3,estado:'activa'},
+  {id:'6',cargo:'Auxiliar Contable',empresa:'Contadores Asociados Ltda',municipio:'Medellín',salario:1400000,contrato:'Término fijo',postulados:17,estado:'activa'},
+  {id:'7',cargo:'Inspector de Calidad',empresa:'Agrícola Urabá SA',municipio:'Apartadó',salario:1500000,contrato:'Obra labor',postulados:6,estado:'activa'},
+  {id:'8',cargo:'Auxiliar de Enfermería',empresa:'Hospital Regional Norte',municipio:'Santa Rosa de Osos',salario:1400000,contrato:'Término fijo',postulados:14,estado:'activa'},
+  {id:'9',cargo:'Analista de Datos',empresa:'TechCo Colombia',municipio:'Envigado',salario:3000000,contrato:'Indefinido',postulados:8,estado:'activa'},
+  {id:'10',cargo:'Conductor C2',empresa:'Logística del Valle SAS',municipio:'Medellín',salario:1500000,contrato:'Obra labor',postulados:21,estado:'activa'}
+];
+
+// ── Helpers ──────────────────────────────────────────────────
+function ir(url){ window.location.href = url; }
+
+function fmtCOP(n){ return '$' + Number(n).toLocaleString('es-CO'); }
+
+function renderVacantes(lista) {
+  var g = document.getElementById('vgrid');
+  if (!lista.length) { g.innerHTML='<p style="color:var(--texto-g);padding:24px;grid-column:1/-1">No hay vacantes que coincidan.</p>'; return; }
+  g.innerHTML = lista.map(function(v){
+    return '<div class="vcard">' +
+      '<div class="vcargo">'+v.cargo+'</div>' +
+      '<div class="vemp">🏢 '+v.empresa+'</div>' +
+      '<div class="vmeta"><span>📍 '+v.municipio+'</span><span>💵 '+fmtCOP(v.salario)+'</span><span>📑 '+v.contrato+'</span><span>👥 '+v.postulados+' postulados</span></div>' +
+      '<div style="display:flex;gap:8px;margin-top:8px;align-items:center">' +
+        '<span class="badge-a">'+v.estado+'</span>' +
+        '<button class="btn btn-primary btn-sm" style="margin-left:auto" onclick="ir(\'candidatos.html\')">Postularme</button>' +
+      '</div></div>';
+  }).join('');
+}
+
+function buscar() {
+  var q = document.getElementById('q-cargo').value.toLowerCase().trim();
+  var m = document.getElementById('q-mpio').value;
+  var lista = VACANTES.filter(function(v){
+    var okQ = !q || v.cargo.toLowerCase().indexOf(q) > -1 || v.empresa.toLowerCase().indexOf(q) > -1;
+    var muni = MUNICIPIOS.find(function(x){ return x.id === parseInt(m); });
+    var okM = !m || v.municipio === (muni ? muni.n : '');
+    return okQ && okM;
+  });
+  renderVacantes(lista);
+}
+
+// ── Auth ─────────────────────────────────────────────────────
+function renderAuth(user) {
+  var area = document.getElementById('auth-area');
+  if (user) {
+    var nombre = ((user.firstName||'') + ' ' + (user.lastName||'')).trim() || 'Usuario';
+    var ini    = ((user.firstName||'')[0]||'').toUpperCase() + ((user.lastName||'')[0]||'').toUpperCase() || 'U';
+    var rol    = (user.publicMetadata && user.publicMetadata.rol) || 'candidato';
+    var dest   = rol === 'empresa' ? 'empresas.html' : rol === 'candidato' ? 'candidatos.html' : 'interno.html';
+    area.innerHTML =
+      '<div class="topbar-user" onclick="ir(\''+dest+'\')">' +
+        '<div class="tav">' + (user.imageUrl ? '<img src="'+user.imageUrl+'"/>' : ini) + '</div>' +
+        '<div><div>'+nombre+'</div><div class="topbar-rol">'+rol+'</div></div>' +
+      '</div>' +
+      '<button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.signOut().then(function(){location.reload()})">Salir</button>';
   } else {
-    area.innerHTML = `
-      <button class="btn btn-outline-w btn-sm" onclick="window.Clerk?.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>
-      <button class="btn btn-primary btn-sm" onclick="window.Clerk?.openSignUp({afterSignUpUrl:'candidatos.html'})">Registrarme</button>`;
+    area.innerHTML =
+      '<button class="btn btn-outline-w btn-sm" onclick="window.Clerk.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>' +
+      '<button class="btn btn-primary btn-sm" onclick="window.Clerk.openSignUp({afterSignUpUrl:\'candidatos.html\'})">Registrarme</button>';
   }
-  window.Clerk?.addListener(()=>initAuth());
 }
 
-async function cargarStats() {
-  const {data} = await DB.estadisticas();
-  if(!data) return;
-  document.getElementById('s-c').textContent = Number(data.total_candidatos||0).toLocaleString('es-CO');
-  document.getElementById('s-e').textContent = Number(data.total_empresas||0).toLocaleString('es-CO');
-  document.getElementById('s-v').textContent = Number(data.total_vacantes_activas||0).toLocaleString('es-CO');
-  document.getElementById('s-p').textContent = Number(data.empleos_colocados||0).toLocaleString('es-CO');
-}
-
-async function cargarMunicipios() {
-  const {data} = await DB.municipios();
-  if(!data) return;
-  const sel = document.getElementById('search-municipio');
-  data.forEach(m=>{
-    const o = document.createElement('option');
-    o.value = m.id; o.textContent = `${m.nombre} (${m.subregion})`; o.style.color='#000';
+// ── Init ─────────────────────────────────────────────────────
+window.addEventListener('load', function(){
+  // Municipios select
+  var sel = document.getElementById('q-mpio');
+  sel.innerHTML = '<option value="" style="color:#000">📍 Todos los municipios</option>';
+  MUNICIPIOS.forEach(function(m){
+    var o = document.createElement('option');
+    o.value = m.id; o.textContent = m.n + ' (' + m.s + ')'; o.style.color='#000';
     sel.appendChild(o);
   });
-}
 
-async function cargarVacantes(texto=null, municipioId=null) {
-  const g = document.getElementById('vacantes-grid');
-  g.innerHTML = '<div class="loading" style="grid-column:1/-1"><div class="spinner"></div><span>Buscando...</span></div>';
-  const {data} = await DB.buscarVacantes({texto, municipioId, limite:6});
-  const lista = data??[];
-  if(!lista.length){ g.innerHTML='<p style="color:var(--texto-g);padding:24px;grid-column:1/-1">No hay vacantes activas en este momento.</p>'; return; }
-  g.innerHTML = lista.map(v=>`
-    <div class="vacante-card">
-      <div class="vacante-cargo">${v.cargo}</div>
-      <div class="vacante-empresa">🏢 ${v.empresa}</div>
-      <div class="vacante-meta">
-        <span>📍 ${v.municipio??'—'}</span>
-        <span>💵 ${v.salario_min?'$'+Number(v.salario_min).toLocaleString('es-CO'):'A convenir'}</span>
-        <span>📑 ${(v.tipo_contrato??'').replace(/_/g,' ')}</span>
-        <span>👥 ${v.total_postulados??0} postulados</span>
-      </div>
-      <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
-        <span class="badge-activa">${v.estado}</span>
-        <button class="btn btn-primary btn-sm" style="margin-left:auto"
-          onclick="window.location.href='candidatos.html'">Postularme</button>
-      </div>
-    </div>`).join('');
-}
+  // Vacantes
+  renderVacantes(VACANTES.slice(0,6));
 
-window.buscarVacantes = async()=>{
-  const texto = document.getElementById('search-cargo').value.trim()||null;
-  const mpio  = document.getElementById('search-municipio').value||null;
-  await cargarVacantes(texto, mpio?parseInt(mpio):null);
-};
-
-document.addEventListener('DOMContentLoaded', async()=>{
-  await Promise.all([cargarStats(), cargarMunicipios(), cargarVacantes(), initAuth()]);
+  // Clerk auth
+  if (window.Clerk) {
+    window.Clerk.load().then(function(){
+      renderAuth(window.Clerk.user);
+      window.Clerk.addListener(function(e){ renderAuth(e.user); });
+    });
+  }
 });
 </script>
 </body>

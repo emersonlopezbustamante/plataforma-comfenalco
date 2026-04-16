@@ -3,69 +3,53 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Portal Empresas — Agencia de Empleo Comfenalco</title>
+  <title>Portal Empresas — Comfenalco Antioquia</title>
   <script async crossorigin="anonymous"
     data-clerk-publishable-key="pk_test_bGlrZWQtYmlzb24tNTEuY2xlcmsuYWNjb3VudHMuZGV2JA"
     src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@5/dist/clerk.browser.js"
     type="text/javascript"></script>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
   <style>
-    :root{--verde:#094a4b;--verde-c:#0d6b6c;--pist:#a8c94e;--pist-h:#8fb53a;--blanco:#ffffff;--fondo:#f4f6f4;--borde:#d8e2d8;--texto-g:#4a5a4a;--suave:#e8efe8;--negro:#1a2a1a;--r:8px;--rc:14px;--t:.22s ease}
+    :root{--verde:#094a4b;--pist:#a8c94e;--blanco:#fff;--fondo:#f4f6f4;--borde:#d8e2d8;--texto-g:#4a5a4a;--suave:#e8efe8;--negro:#1a2a1a;--r:8px;--rc:14px;--t:.22s ease}
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     body{font-family:'Inter',sans-serif;font-size:15px;color:var(--negro);background:var(--fondo);min-height:100vh}
-    button{cursor:pointer;font-family:inherit}
-    #topbar{background:var(--verde);padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(9,74,75,.2)}
-    .brand-logos{display:flex;align-items:center;background:var(--blanco);border-radius:8px;padding:3px 12px;height:46px}
+    button{cursor:pointer;font-family:inherit;border:none}
+    .hidden{display:none!important}
+    #topbar{background:var(--verde);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(9,74,75,.2)}
+    .brand-logos{display:flex;align-items:center;background:#fff;border-radius:8px;padding:3px 12px;height:46px}
     .brand-logos img:first-child{height:36px;max-width:170px;object-fit:contain}
     .brand-sep{width:1px;height:28px;background:var(--borde);margin:0 10px}
     .brand-logos img:last-child{height:28px;max-width:130px;object-fit:contain}
-    .back-link{color:rgba(255,255,255,.7);font-size:13px;cursor:pointer;display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:6px;transition:background var(--t)}
-    .back-link:hover{background:rgba(255,255,255,.1);color:white}
-    .btn{display:inline-flex;align-items:center;gap:7px;padding:10px 22px;border-radius:var(--r);font-weight:700;font-size:14px;border:none;transition:all var(--t);cursor:pointer}
-    .btn:active{transform:scale(.97)}
+    .back{color:rgba(255,255,255,.7);font-size:13px;cursor:pointer;padding:6px 10px;border-radius:6px;transition:background var(--t)}
+    .back:hover{background:rgba(255,255,255,.1);color:#fff}
+    .btn{display:inline-flex;align-items:center;gap:7px;padding:10px 22px;border-radius:var(--r);font-weight:700;font-size:14px;border:none;transition:all var(--t);cursor:pointer;font-family:inherit}
     .btn-primary{background:var(--pist);color:var(--verde)}
-    .btn-primary:hover{background:var(--pist-h)}
     .btn-outline{background:transparent;color:var(--verde);border:2px solid var(--verde)}
-    .btn-outline:hover{background:var(--verde);color:white}
-    .btn-ghost{background:var(--suave);color:var(--texto-g)}
+    .btn-outline:hover{background:var(--verde);color:#fff}
     .btn-sm{padding:7px 16px;font-size:13px}
     .btn-lg{padding:14px 32px;font-size:16px;border-radius:10px}
-    .hidden{display:none!important}
     #shell{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 60px)}
-    #sidebar{background:var(--blanco);border-right:1.5px solid var(--borde);padding:20px 0;display:flex;flex-direction:column;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto}
-    .empresa-card-mini{padding:16px 20px 20px;border-bottom:1px solid var(--borde);margin-bottom:8px}
-    .empresa-nombre{font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;color:var(--verde)}
-    .empresa-tag{font-size:12px;color:var(--texto-g);margin-top:2px}
-    .sec-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--texto-g);padding:12px 20px 4px}
-    .nav-item{display:flex;align-items:center;gap:11px;padding:10px 20px;font-size:14px;font-weight:600;color:var(--texto-g);border-left:3px solid transparent;cursor:pointer;transition:background var(--t);border-radius:0 8px 8px 0;margin-right:12px}
-    .nav-item:hover{background:var(--suave);color:var(--verde)}
-    .nav-item.active{background:rgba(9,74,75,.08);color:var(--verde);border-left-color:var(--pist);font-weight:700}
-    .nav-icon{font-size:18px;width:22px;text-align:center;flex-shrink:0}
+    #sidebar{background:#fff;border-right:1.5px solid var(--borde);padding:20px 0;display:flex;flex-direction:column;position:sticky;top:60px;height:calc(100vh - 60px)}
+    .ecard{padding:16px 20px 20px;border-bottom:1px solid var(--borde);margin-bottom:8px}
+    .enombre{font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;color:var(--verde)}
+    .slabel{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--texto-g);padding:12px 20px 4px}
+    .nitem{display:flex;align-items:center;gap:11px;padding:10px 20px;font-size:14px;font-weight:600;color:var(--texto-g);border-left:3px solid transparent;cursor:pointer;transition:background var(--t);border-radius:0 8px 8px 0;margin-right:12px}
+    .nitem:hover{background:var(--suave);color:var(--verde)}
+    .nitem.active{background:rgba(9,74,75,.08);color:var(--verde);border-left-color:var(--pist);font-weight:700}
+    .nico{font-size:18px;width:22px;text-align:center}
     #main{padding:28px;overflow-y:auto}
-    .page{animation:fadeUp .3s ease}
-    .page-title{font-family:'Nunito',sans-serif;font-size:24px;font-weight:900;color:var(--verde);margin-bottom:4px}
-    .page-sub{font-size:14px;color:var(--texto-g);margin-bottom:24px}
-    .acceso-card{background:var(--blanco);border-radius:20px;box-shadow:0 4px 24px rgba(9,74,75,.10);padding:60px 40px;text-align:center;max-width:480px;margin:60px auto}
-    .acceso-icon{font-size:64px;margin-bottom:20px}
-    .acceso-title{font-family:'Nunito',sans-serif;font-size:26px;font-weight:900;color:var(--verde);margin-bottom:10px}
-    .acceso-sub{color:var(--texto-g);font-size:15px;margin-bottom:28px;line-height:1.6}
-    .acceso-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+    .ptitle{font-family:'Nunito',sans-serif;font-size:24px;font-weight:900;color:var(--verde);margin-bottom:4px}
+    .psub{font-size:14px;color:var(--texto-g);margin-bottom:24px}
+    .acc-card{background:#fff;border-radius:20px;box-shadow:0 4px 24px rgba(9,74,75,.10);padding:60px 40px;text-align:center;max-width:480px;margin:60px auto}
+    .acc-icon{font-size:64px;margin-bottom:20px}
+    .acc-title{font-family:'Nunito',sans-serif;font-size:26px;font-weight:900;color:var(--verde);margin-bottom:10px}
+    .acc-sub{color:var(--texto-g);font-size:15px;margin-bottom:28px;line-height:1.6}
     .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:28px}
-    .stat-card{background:var(--blanco);border-radius:var(--rc);box-shadow:0 2px 16px rgba(9,74,75,.08);padding:20px;display:flex;flex-direction:column;gap:6px;border-left:4px solid var(--pist)}
-    .stat-value{font-family:'Nunito',sans-serif;font-size:32px;font-weight:900;color:var(--verde)}
-    .stat-label{font-size:13px;color:var(--texto-g);font-weight:600}
-    .card{background:var(--blanco);border-radius:var(--rc);box-shadow:0 2px 16px rgba(9,74,75,.08);padding:24px;margin-bottom:20px}
-    .card-title{font-family:'Nunito',sans-serif;font-size:17px;font-weight:800;color:var(--verde);margin-bottom:16px}
-    table{width:100%;border-collapse:collapse;font-size:14px}
-    th{padding:10px 14px;text-align:left;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--verde);background:var(--suave)}
-    td{padding:12px 14px;border-bottom:1px solid var(--borde)}
-    tbody tr:hover{background:rgba(9,74,75,.02)}
-    .badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:600}
-    .badge-activa{background:#d4edda;color:#155724}
-    .badge-pendiente{background:#fff3cd;color:#856404}
-    .loading{display:flex;align-items:center;justify-content:center;padding:48px;gap:12px;color:var(--texto-g)}
-    .spinner{width:28px;height:28px;border:3px solid var(--borde);border-top-color:var(--verde);border-radius:50%;animation:spin .8s linear infinite}
-    @keyframes spin{to{transform:rotate(360deg)}}
+    .scard{background:#fff;border-radius:var(--rc);box-shadow:0 2px 16px rgba(9,74,75,.08);padding:20px;border-left:4px solid var(--pist)}
+    .sval{font-family:'Nunito',sans-serif;font-size:32px;font-weight:900;color:var(--verde)}
+    .slbl{font-size:13px;color:var(--texto-g);font-weight:600}
+    .card{background:#fff;border-radius:var(--rc);box-shadow:0 2px 16px rgba(9,74,75,.08);padding:24px;margin-bottom:20px}
+    .ctitle{font-family:'Nunito',sans-serif;font-size:17px;font-weight:800;color:var(--verde);margin-bottom:16px}
     @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
     @media(max-width:768px){#shell{grid-template-columns:1fr}#sidebar{display:none}#main{padding:16px}}
   </style>
@@ -73,146 +57,111 @@
 <body>
 
 <header id="topbar">
-  <div style="display:flex;align-items:center;gap:16px">
-    <span class="back-link" onclick="window.location.href='index.html'">← Inicio</span>
+  <div style="display:flex;align-items:center;gap:14px">
+    <span class="back" onclick="window.location.href='index.html'">← Inicio</span>
     <div class="brand-logos">
       <img src="logo_comfe_y_servicio.jpeg" alt="Comfenalco"/>
       <div class="brand-sep"></div>
       <img src="logo_agencia.png" alt="Agencia"/>
     </div>
   </div>
-  <div id="topbar-auth" style="display:flex;align-items:center;gap:10px"></div>
+  <div id="auth-area" style="display:flex;align-items:center;gap:10px"></div>
 </header>
 
 <div id="shell">
   <nav id="sidebar">
-    <div class="empresa-card-mini">
+    <div class="ecard">
       <div style="font-size:32px;margin-bottom:8px">🏢</div>
-      <div class="empresa-nombre" id="empresa-nombre">Mi empresa</div>
-      <div class="empresa-tag">Portal empresas</div>
+      <div class="enombre" id="enombre">Mi empresa</div>
+      <div style="font-size:12px;color:var(--texto-g);margin-top:2px">Portal empresas</div>
     </div>
-    <div class="sec-label">Gestión</div>
-    <div class="nav-item active" data-page="resumen"       onclick="App.nav('resumen')"><span class="nav-icon">📊</span> Resumen</div>
-    <div class="nav-item"        data-page="postulados"    onclick="App.nav('postulados')"><span class="nav-icon">👥</span> Candidatos postulados</div>
-    <div class="nav-item"        data-page="mis-vacantes"  onclick="App.nav('mis-vacantes')"><span class="nav-icon">💼</span> Mis vacantes</div>
-    <div class="nav-item"        data-page="diagnosticos"  onclick="App.nav('diagnosticos')"><span class="nav-icon">📋</span> Diagnósticos</div>
+    <div class="slabel">Gestión</div>
+    <div class="nitem active" onclick="nav('resumen')"><span class="nico">📊</span> Resumen</div>
+    <div class="nitem"        onclick="nav('postulados')"><span class="nico">👥</span> Candidatos postulados</div>
+    <div class="nitem"        onclick="nav('mis-vacantes')"><span class="nico">💼</span> Mis vacantes</div>
+    <div class="nitem"        onclick="nav('diagnosticos')"><span class="nico">📋</span> Diagnósticos</div>
   </nav>
 
   <main id="main">
 
-    <!-- ACCESO -->
-    <div id="page-acceso" class="hidden">
-      <div class="acceso-card">
-        <div class="acceso-icon">🏢</div>
-        <div class="acceso-title">Portal de Empresas</div>
-        <p class="acceso-sub">Inicia sesión con tu cuenta empresarial para acceder al banco de candidatos y gestionar tus vacantes.</p>
-        <div class="acceso-btns">
-          <button class="btn btn-outline btn-lg" onclick="window.Clerk?.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>
-        </div>
-        <p style="margin-top:20px;font-size:13px;color:var(--texto-g)">¿Tu empresa aún no está registrada? Contáctanos en la Agencia de Empleo.</p>
+    <div id="pg-acceso" class="hidden">
+      <div class="acc-card">
+        <div class="acc-icon">🏢</div>
+        <div class="acc-title">Portal de Empresas</div>
+        <p class="acc-sub">Inicia sesión con tu cuenta empresarial para acceder al banco de candidatos y gestionar tus vacantes.</p>
+        <button class="btn btn-outline btn-lg" onclick="window.Clerk.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>
+        <p style="margin-top:20px;font-size:13px;color:var(--texto-g)">¿Tu empresa aún no está registrada? Contáctanos en la Agencia.</p>
       </div>
     </div>
 
-    <!-- RESUMEN -->
-    <div id="page-resumen" class="page hidden">
-      <div class="page-title">📊 Resumen</div>
-      <p class="page-sub">Vista general de tu empresa en la plataforma</p>
+    <div id="pg-resumen" class="hidden">
+      <div class="ptitle">📊 Resumen</div>
+      <p class="psub">Vista general de tu empresa en la plataforma</p>
       <div class="stats-row">
-        <div class="stat-card"><div style="font-size:24px">💼</div><div class="stat-value">0</div><div class="stat-label">Vacantes activas</div></div>
-        <div class="stat-card"><div style="font-size:24px">👥</div><div class="stat-value">0</div><div class="stat-label">Candidatos postulados</div></div>
-        <div class="stat-card"><div style="font-size:24px">✅</div><div class="stat-value">0</div><div class="stat-label">Contratados</div></div>
+        <div class="scard"><div style="font-size:24px">💼</div><div class="sval">0</div><div class="slbl">Vacantes activas</div></div>
+        <div class="scard"><div style="font-size:24px">👥</div><div class="sval">0</div><div class="slbl">Candidatos postulados</div></div>
+        <div class="scard"><div style="font-size:24px">✅</div><div class="sval">0</div><div class="slbl">Contratados</div></div>
       </div>
       <div class="card">
-        <div class="card-title">Próximamente</div>
-        <p style="color:var(--texto-g)">El panel completo de tu empresa estará disponible cuando el equipo de Comfenalco registre tu información. Contáctanos para activar tu acceso completo.</p>
+        <div class="ctitle">¿Cómo activar tu portal?</div>
+        <p style="color:var(--texto-g);line-height:1.7">El equipo de Comfenalco registra tu empresa en la plataforma y te asigna las vacantes. Una vez activado verás aquí todos los candidatos postulados a tus vacantes y podrás recibir hojas de vida por correo.</p>
       </div>
     </div>
 
-    <!-- POSTULADOS -->
-    <div id="page-postulados" class="page hidden">
-      <div class="page-title">👥 Candidatos postulados</div>
-      <p class="page-sub">Personas que se han postulado a tus vacantes</p>
-      <div class="loading"><div class="spinner"></div><span>Cargando candidatos...</span></div>
+    <div id="pg-postulados" class="hidden">
+      <div class="ptitle">👥 Candidatos postulados</div>
+      <p class="psub">Personas postuladas a tus vacantes</p>
+      <div class="card"><p style="color:var(--texto-g)">No hay postulaciones activas aún. El equipo de Comfenalco te notificará cuando haya candidatos para revisar.</p></div>
     </div>
 
-    <!-- VACANTES -->
-    <div id="page-mis-vacantes" class="page hidden">
-      <div class="page-title">💼 Mis vacantes</div>
-      <p class="page-sub">Vacantes activas de tu empresa</p>
-      <div class="loading"><div class="spinner"></div><span>Cargando vacantes...</span></div>
+    <div id="pg-mis-vacantes" class="hidden">
+      <div class="ptitle">💼 Mis vacantes</div>
+      <p class="psub">Vacantes activas de tu empresa</p>
+      <div class="card"><p style="color:var(--texto-g)">Las vacantes son publicadas por el equipo asesor de Comfenalco. Contáctalos para registrar nuevas oportunidades.</p></div>
     </div>
 
-    <!-- DIAGNÓSTICOS -->
-    <div id="page-diagnosticos" class="page hidden">
-      <div class="page-title">📋 Diagnósticos organizacionales</div>
-      <p class="page-sub">Herramientas de clima organizacional y diagnóstico de talento</p>
-      <div class="card">
-        <div class="card-title">Diagnósticos disponibles — Fase 2</div>
-        <p style="color:var(--texto-g)">Esta funcionalidad estará disponible en la Fase 2 del proyecto. El equipo de Comfenalco te notificará cuando esté habilitada.</p>
-      </div>
+    <div id="pg-diagnosticos" class="hidden">
+      <div class="ptitle">📋 Diagnósticos organizacionales</div>
+      <p class="psub">Clima organizacional y diagnóstico de talento — Fase 2</p>
+      <div class="card"><p style="color:var(--texto-g)">Esta funcionalidad estará disponible en la Fase 2 del proyecto.</p></div>
     </div>
 
   </main>
 </div>
 
-<script type="module">
-const App = {
-  usuario: null,
+<script>
+function nav(p){
+  ['acceso','resumen','postulados','mis-vacantes','diagnosticos'].forEach(function(x){
+    var el=document.getElementById('pg-'+x); if(el) el.classList.add('hidden');
+  });
+  document.querySelectorAll('.nitem').forEach(function(n){n.classList.remove('active');});
+  var t=document.getElementById('pg-'+p); if(t) t.classList.remove('hidden');
+}
 
-  async boot() {
-    await window.Clerk?.load();
-    window.Clerk?.addListener(({user})=>{ this.usuario=user; this.render(); });
-    this.usuario = window.Clerk?.user ?? null;
-    await this.render();
-  },
-
-  async render() {
-    this.renderTopbar();
-    if(!this.usuario){
-      this.mostrar('acceso');
-      document.getElementById('sidebar').style.display='none';
-      return;
-    }
+function renderAuth(user){
+  var area=document.getElementById('auth-area');
+  if(user){
+    var nombre=((user.firstName||'')+' '+(user.lastName||'')).trim()||'Usuario';
+    document.getElementById('enombre').textContent=nombre;
+    area.innerHTML='<span style="color:rgba(255,255,255,.8);font-size:13px">'+nombre+'</span>'+
+      '<button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.signOut().then(function(){location.reload()})">Salir</button>';
     document.getElementById('sidebar').style.display='flex';
-    const nombre = `${this.usuario.firstName??''} ${this.usuario.lastName??''}`.trim();
-    document.getElementById('empresa-nombre').textContent = nombre||'Mi empresa';
-    this.nav('resumen');
-  },
-
-  renderTopbar() {
-    const area = document.getElementById('topbar-auth');
-    const u = this.usuario;
-    if(u) {
-      const nombre = `${u.firstName??''} ${u.lastName??''}`.trim()||'Usuario';
-      area.innerHTML = `
-        <span style="color:rgba(255,255,255,.8);font-size:13px">${nombre}</span>
-        <button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:white;border:none"
-          onclick="window.Clerk.signOut().then(()=>location.reload())">Salir</button>`;
-    } else {
-      area.innerHTML = `<button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:white;border:none"
-        onclick="window.Clerk?.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>`;
-    }
-  },
-
-  nav(pagina) {
-    ['acceso','resumen','postulados','mis-vacantes','diagnosticos'].forEach(p=>{
-      const el=document.getElementById(`page-${p}`); if(el) el.classList.add('hidden');
-    });
-    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-    const target=document.getElementById(`page-${pagina}`); if(target) target.classList.remove('hidden');
-    const nav=document.querySelector(`[data-page="${pagina}"]`); if(nav) nav.classList.add('active');
-  },
-
-  mostrar(p) {
-    ['acceso','resumen','postulados','mis-vacantes','diagnosticos'].forEach(id=>{
-      const el=document.getElementById(`page-${id}`); if(el) el.classList.add('hidden');
-    });
-    const t=document.getElementById(`page-${p}`); if(t) t.classList.remove('hidden');
+    nav('resumen');
+  } else {
+    area.innerHTML='<button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>';
+    document.getElementById('sidebar').style.display='none';
+    document.getElementById('pg-acceso').classList.remove('hidden');
   }
-};
+}
 
-window.App = App;
-document.addEventListener('DOMContentLoaded',()=>App.boot());
+window.addEventListener('load',function(){
+  if(window.Clerk){
+    window.Clerk.load().then(function(){
+      renderAuth(window.Clerk.user);
+      window.Clerk.addListener(function(e){renderAuth(e.user);});
+    });
+  }
+});
 </script>
 </body>
 </html>

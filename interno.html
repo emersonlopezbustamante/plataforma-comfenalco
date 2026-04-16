@@ -10,73 +10,61 @@
     type="text/javascript"></script>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
   <style>
-    :root{--verde:#094a4b;--verde-c:#0d6b6c;--pist:#a8c94e;--pist-h:#8fb53a;--blanco:#ffffff;--fondo:#f4f6f4;--borde:#d8e2d8;--texto-g:#4a5a4a;--suave:#e8efe8;--negro:#1a2a1a;--r:8px;--rc:14px;--t:.22s ease}
+    :root{--verde:#094a4b;--pist:#a8c94e;--pist-h:#8fb53a;--blanco:#fff;--fondo:#f4f6f4;--borde:#d8e2d8;--texto-g:#4a5a4a;--suave:#e8efe8;--negro:#1a2a1a;--r:8px;--rc:14px;--t:.22s ease}
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     body{font-family:'Inter',sans-serif;font-size:15px;color:var(--negro);background:var(--fondo);min-height:100vh}
-    button{cursor:pointer;font-family:inherit}
-    #topbar{background:var(--verde);padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(9,74,75,.2)}
-    .brand-logos{display:flex;align-items:center;background:var(--blanco);border-radius:8px;padding:3px 12px;height:46px}
+    button{cursor:pointer;font-family:inherit;border:none}
+    .hidden{display:none!important}
+    #topbar{background:var(--verde);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(9,74,75,.2)}
+    .brand-logos{display:flex;align-items:center;background:#fff;border-radius:8px;padding:3px 12px;height:46px}
     .brand-logos img:first-child{height:36px;max-width:170px;object-fit:contain}
     .brand-sep{width:1px;height:28px;background:var(--borde);margin:0 10px}
     .brand-logos img:last-child{height:28px;max-width:130px;object-fit:contain}
-    .topbar-badge{background:rgba(168,201,78,.2);color:var(--pist);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.04em}
-    .back-link{color:rgba(255,255,255,.7);font-size:13px;cursor:pointer;display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:6px;transition:background var(--t)}
-    .back-link:hover{background:rgba(255,255,255,.1);color:white}
-    .btn{display:inline-flex;align-items:center;gap:7px;padding:10px 22px;border-radius:var(--r);font-weight:700;font-size:14px;border:none;transition:all var(--t);cursor:pointer}
-    .btn:active{transform:scale(.97)}
+    .tbadge{background:rgba(168,201,78,.2);color:var(--pist);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px}
+    .back{color:rgba(255,255,255,.7);font-size:13px;cursor:pointer;padding:6px 10px;border-radius:6px;transition:background var(--t)}
+    .back:hover{background:rgba(255,255,255,.1);color:#fff}
+    .btn{display:inline-flex;align-items:center;gap:7px;padding:10px 22px;border-radius:var(--r);font-weight:700;font-size:14px;border:none;transition:all var(--t);cursor:pointer;font-family:inherit}
     .btn-primary{background:var(--pist);color:var(--verde)}
     .btn-primary:hover{background:var(--pist-h)}
-    .btn-outline{background:transparent;color:var(--verde);border:2px solid var(--verde)}
-    .btn-ghost{background:var(--suave);color:var(--texto-g)}
     .btn-sm{padding:7px 16px;font-size:13px}
-    .hidden{display:none!important}
     #shell{display:grid;grid-template-columns:250px 1fr;min-height:calc(100vh - 60px)}
     #sidebar{background:var(--verde);padding:20px 0;display:flex;flex-direction:column;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto}
-    .sidebar-user{padding:16px 20px 20px;border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:8px;display:flex;align-items:center;gap:12px}
-    .sidebar-avatar{width:40px;height:40px;border-radius:50%;background:var(--pist);color:var(--verde);font-weight:800;font-size:15px;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
-    .sidebar-avatar img{width:100%;height:100%;object-fit:cover}
-    .sidebar-user-nombre{font-weight:700;font-size:14px;color:var(--blanco)}
-    .sidebar-user-rol{font-size:11px;color:var(--pist);margin-top:2px}
-    .sec-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);padding:12px 20px 4px}
-    .nav-item{display:flex;align-items:center;gap:11px;padding:10px 20px;font-size:14px;font-weight:600;color:rgba(255,255,255,.7);border-left:3px solid transparent;cursor:pointer;transition:background var(--t),color var(--t);border-radius:0 8px 8px 0;margin-right:12px}
-    .nav-item:hover{background:rgba(255,255,255,.08);color:white}
-    .nav-item.active{background:rgba(168,201,78,.15);color:var(--pist);border-left-color:var(--pist)}
-    .nav-icon{font-size:18px;width:22px;text-align:center;flex-shrink:0}
-    .nav-badge{margin-left:auto;background:var(--pist);color:var(--verde);font-size:11px;font-weight:800;padding:1px 7px;border-radius:20px}
-    .sidebar-div{height:1px;background:rgba(255,255,255,.1);margin:10px 20px}
+    .suser{padding:16px 20px 20px;border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:8px;display:flex;align-items:center;gap:12px}
+    .sav{width:40px;height:40px;border-radius:50%;background:var(--pist);color:var(--verde);font-weight:800;font-size:15px;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
+    .sav img{width:100%;height:100%;object-fit:cover}
+    .snombre{font-weight:700;font-size:14px;color:#fff}
+    .srol{font-size:11px;color:var(--pist);margin-top:2px}
+    .slabel{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);padding:12px 20px 4px}
+    .nitem{display:flex;align-items:center;gap:11px;padding:10px 20px;font-size:14px;font-weight:600;color:rgba(255,255,255,.7);border-left:3px solid transparent;cursor:pointer;transition:background var(--t);border-radius:0 8px 8px 0;margin-right:12px}
+    .nitem:hover{background:rgba(255,255,255,.08);color:#fff}
+    .nitem.active{background:rgba(168,201,78,.15);color:var(--pist);border-left-color:var(--pist)}
+    .nico{font-size:18px;width:22px;text-align:center;flex-shrink:0}
+    .nbadge{margin-left:auto;background:var(--pist);color:var(--verde);font-size:11px;font-weight:800;padding:1px 7px;border-radius:20px}
+    .sdiv{height:1px;background:rgba(255,255,255,.1);margin:10px 20px}
     #main{padding:28px;overflow-y:auto}
-    .page{animation:fadeUp .3s ease}
-    .page-title{font-family:'Nunito',sans-serif;font-size:24px;font-weight:900;color:var(--verde);margin-bottom:4px}
-    .page-sub{font-size:14px;color:var(--texto-g);margin-bottom:24px}
-    .acceso-card{background:var(--blanco);border-radius:20px;box-shadow:0 4px 24px rgba(9,74,75,.10);padding:60px 40px;text-align:center;max-width:480px;margin:60px auto}
-    .acceso-icon{font-size:64px;margin-bottom:20px}
-    .acceso-title{font-family:'Nunito',sans-serif;font-size:26px;font-weight:900;color:var(--verde);margin-bottom:10px}
-    .acceso-sub{color:var(--texto-g);font-size:15px;margin-bottom:28px;line-height:1.6}
-    .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:28px}
-    .stat-card{background:var(--blanco);border-radius:var(--rc);box-shadow:0 2px 16px rgba(9,74,75,.08);padding:20px 22px;display:flex;flex-direction:column;gap:6px;border-left:4px solid var(--pist);transition:transform var(--t)}
-    .stat-card:hover{transform:translateY(-3px)}
-    .stat-icon{font-size:26px}
-    .stat-value{font-family:'Nunito',sans-serif;font-size:32px;font-weight:900;color:var(--verde);line-height:1}
-    .stat-label{font-size:13px;color:var(--texto-g);font-weight:600}
-    .card{background:var(--blanco);border-radius:var(--rc);box-shadow:0 2px 16px rgba(9,74,75,.08);padding:24px;margin-bottom:20px}
-    .card-title{font-family:'Nunito',sans-serif;font-size:17px;font-weight:800;color:var(--verde);margin-bottom:16px;display:flex;align-items:center;justify-content:space-between}
+    .ptitle{font-family:'Nunito',sans-serif;font-size:24px;font-weight:900;color:var(--verde);margin-bottom:4px}
+    .psub{font-size:14px;color:var(--texto-g);margin-bottom:24px}
+    .acc-card{background:#fff;border-radius:20px;box-shadow:0 4px 24px rgba(9,74,75,.10);padding:60px 40px;text-align:center;max-width:480px;margin:60px auto}
+    .acc-icon{font-size:64px;margin-bottom:20px}
+    .acc-title{font-family:'Nunito',sans-serif;font-size:26px;font-weight:900;color:var(--verde);margin-bottom:10px}
+    .acc-sub{color:var(--texto-g);font-size:15px;margin-bottom:28px;line-height:1.6}
+    .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:16px;margin-bottom:28px}
+    .scard{background:#fff;border-radius:var(--rc);box-shadow:0 2px 16px rgba(9,74,75,.08);padding:20px 22px;display:flex;flex-direction:column;gap:6px;border-left:4px solid var(--pist);transition:transform var(--t)}
+    .scard:hover{transform:translateY(-3px)}
+    .sico{font-size:26px}
+    .sval{font-family:'Nunito',sans-serif;font-size:32px;font-weight:900;color:var(--verde);line-height:1}
+    .slbl{font-size:13px;color:var(--texto-g);font-weight:600}
+    .twrap{background:#fff;border-radius:var(--rc);box-shadow:0 2px 16px rgba(9,74,75,.08);overflow:hidden;margin-bottom:24px}
+    .ttbar{padding:16px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--borde);flex-wrap:wrap}
+    .ttitle{font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;color:var(--verde);margin-right:auto}
     table{width:100%;border-collapse:collapse;font-size:14px}
-    .table-wrap{background:var(--blanco);border-radius:var(--rc);box-shadow:0 2px 16px rgba(9,74,75,.08);overflow:hidden;margin-bottom:24px}
-    .table-toolbar{padding:16px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--borde);flex-wrap:wrap}
-    .table-toolbar-title{font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;color:var(--verde);margin-right:auto}
     th{padding:10px 14px;text-align:left;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--verde);background:var(--suave);white-space:nowrap}
     td{padding:12px 14px;border-bottom:1px solid var(--borde)}
     tbody tr:last-child td{border-bottom:none}
     tbody tr:hover{background:rgba(9,74,75,.02)}
-    .badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:600}
-    .badge-activa{background:#d4edda;color:#155724}
-    .badge-pendiente{background:#fff3cd;color:#856404}
-    .badge-verde{background:rgba(168,201,78,.2);color:var(--verde)}
-    .loading{display:flex;align-items:center;justify-content:center;padding:48px;gap:12px;color:var(--texto-g)}
-    .spinner{width:28px;height:28px;border:3px solid var(--borde);border-top-color:var(--verde);border-radius:50%;animation:spin .8s linear infinite}
-    .input-field{padding:9px 13px;border:1.5px solid var(--borde);border-radius:var(--r);font-size:14px;font-family:inherit;color:var(--negro);background:var(--blanco);outline:none;transition:border-color var(--t)}
-    .input-field:focus{border-color:var(--verde-c)}
-    @keyframes spin{to{transform:rotate(360deg)}}
+    .badge-a{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:600;background:#d4edda;color:#155724}
+    .badge-p{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:600;background:#fff3cd;color:#856404}
+    .card{background:#fff;border-radius:var(--rc);box-shadow:0 2px 16px rgba(9,74,75,.08);padding:24px;margin-bottom:20px}
     @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
     @media(max-width:768px){#shell{grid-template-columns:1fr}#sidebar{display:none}#main{padding:16px}}
   </style>
@@ -84,298 +72,243 @@
 <body>
 
 <header id="topbar">
-  <div style="display:flex;align-items:center;gap:16px">
-    <span class="back-link" onclick="window.location.href='index.html'">← Inicio</span>
+  <div style="display:flex;align-items:center;gap:14px">
+    <span class="back" onclick="window.location.href='index.html'">← Inicio</span>
     <div class="brand-logos">
       <img src="logo_comfe_y_servicio.jpeg" alt="Comfenalco"/>
       <div class="brand-sep"></div>
       <img src="logo_agencia.png" alt="Agencia"/>
     </div>
-    <span class="topbar-badge">PANEL INTERNO</span>
+    <span class="tbadge">PANEL INTERNO</span>
   </div>
-  <div id="topbar-auth" style="display:flex;align-items:center;gap:10px"></div>
+  <div id="auth-area" style="display:flex;align-items:center;gap:10px"></div>
 </header>
 
 <div id="shell">
   <nav id="sidebar">
-    <div class="sidebar-user">
-      <div class="sidebar-avatar" id="s-avatar">?</div>
-      <div>
-        <div class="sidebar-user-nombre" id="s-nombre">Cargando...</div>
-        <div class="sidebar-user-rol" id="s-rol">Equipo Comfenalco</div>
-      </div>
+    <div class="suser">
+      <div class="sav" id="sav">?</div>
+      <div><div class="snombre" id="snombre">Cargando...</div><div class="srol" id="srol">Equipo Comfenalco</div></div>
     </div>
-
-    <div class="sec-label">Principal</div>
-    <div class="nav-item active" data-page="dashboard"      onclick="App.nav('dashboard')"><span class="nav-icon">📊</span> Dashboard</div>
-
-    <div class="sec-label">Gestión</div>
-    <div class="nav-item" data-page="candidatos"    onclick="App.nav('candidatos')"><span class="nav-icon">👤</span> Candidatos <span class="nav-badge" id="b-c">—</span></div>
-    <div class="nav-item" data-page="empresas"      onclick="App.nav('empresas')"><span class="nav-icon">🏢</span> Empresas <span class="nav-badge" id="b-e">—</span></div>
-    <div class="nav-item" data-page="vacantes"      onclick="App.nav('vacantes')"><span class="nav-icon">💼</span> Vacantes <span class="nav-badge" id="b-v">—</span></div>
-    <div class="nav-item" data-page="intermediacion" onclick="App.nav('intermediacion')"><span class="nav-icon">🔗</span> Intermediación</div>
-    <div class="nav-item" data-page="banco-hv"      onclick="App.nav('banco-hv')"><span class="nav-icon">🗄️</span> Banco de HV</div>
-
-    <div class="sec-label">Herramientas</div>
-    <div class="nav-item" data-page="pruebas"       onclick="App.nav('pruebas')"><span class="nav-icon">🧪</span> Pruebas</div>
-    <div class="nav-item" data-page="diagnosticos"  onclick="App.nav('diagnosticos')"><span class="nav-icon">📋</span> Diagnósticos</div>
-    <div class="nav-item" data-page="reportes"      onclick="App.nav('reportes')"><span class="nav-icon">📈</span> Reportes</div>
-
-    <div class="sidebar-div"></div>
-    <div class="nav-item" onclick="window.Clerk?.openUserProfile()"><span class="nav-icon">⚙️</span> Configuración</div>
-    <div class="nav-item" onclick="window.Clerk?.signOut().then(()=>window.location.href='index.html')"><span class="nav-icon">🚪</span> Cerrar sesión</div>
+    <div class="slabel">Principal</div>
+    <div class="nitem active" onclick="nav('dashboard')"><span class="nico">📊</span> Dashboard</div>
+    <div class="slabel">Gestión</div>
+    <div class="nitem" onclick="nav('candidatos')"><span class="nico">👤</span> Candidatos <span class="nbadge" id="bc">0</span></div>
+    <div class="nitem" onclick="nav('empresas')"><span class="nico">🏢</span> Empresas <span class="nbadge" id="be">8</span></div>
+    <div class="nitem" onclick="nav('vacantes')"><span class="nico">💼</span> Vacantes <span class="nbadge" id="bv">10</span></div>
+    <div class="nitem" onclick="nav('intermediacion')"><span class="nico">🔗</span> Intermediación</div>
+    <div class="nitem" onclick="nav('banco-hv')"><span class="nico">🗄️</span> Banco de HV</div>
+    <div class="slabel">Herramientas</div>
+    <div class="nitem" onclick="nav('pruebas')"><span class="nico">🧪</span> Pruebas</div>
+    <div class="nitem" onclick="nav('diagnosticos')"><span class="nico">📋</span> Diagnósticos</div>
+    <div class="nitem" onclick="nav('reportes')"><span class="nico">📈</span> Reportes</div>
+    <div class="sdiv"></div>
+    <div class="nitem" onclick="window.Clerk&&window.Clerk.openUserProfile()"><span class="nico">⚙️</span> Configuración</div>
+    <div class="nitem" onclick="window.Clerk&&window.Clerk.signOut().then(function(){window.location.href='index.html'})"><span class="nico">🚪</span> Cerrar sesión</div>
   </nav>
 
   <main id="main">
 
-    <!-- ACCESO RESTRINGIDO -->
-    <div id="page-acceso" class="hidden">
-      <div class="acceso-card">
-        <div class="acceso-icon">🛡️</div>
-        <div class="acceso-title">Acceso restringido</div>
-        <p class="acceso-sub">Este panel es exclusivo para el equipo de Comfenalco Antioquia. Inicia sesión con tu cuenta institucional.</p>
-        <button class="btn btn-primary btn-lg" onclick="window.Clerk?.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>
+    <div id="pg-acceso" class="hidden">
+      <div class="acc-card">
+        <div class="acc-icon">🛡️</div>
+        <div class="acc-title">Acceso restringido</div>
+        <p class="acc-sub">Este panel es exclusivo para el equipo de Comfenalco Antioquia. Inicia sesión con tu cuenta institucional.</p>
+        <button class="btn btn-primary" style="font-size:16px;padding:14px 32px;border-radius:10px" onclick="window.Clerk.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>
       </div>
     </div>
 
-    <!-- DASHBOARD -->
-    <div id="page-dashboard" class="page hidden">
-      <div class="page-title">📊 Dashboard</div>
-      <p class="page-sub">Indicadores en tiempo real de la Agencia de Empleo</p>
-      <div class="stats-row" id="dash-stats">
-        <div class="loading" style="grid-column:1/-1"><div class="spinner"></div></div>
+    <div id="pg-dashboard" class="hidden">
+      <div class="ptitle">📊 Dashboard</div>
+      <p class="psub">Indicadores en tiempo real de la Agencia de Empleo</p>
+      <div class="stats-row">
+        <div class="scard"><div class="sico">👤</div><div class="sval" id="d-c">0</div><div class="slbl">Candidatos</div></div>
+        <div class="scard"><div class="sico">🏢</div><div class="sval" id="d-e">8</div><div class="slbl">Empresas</div></div>
+        <div class="scard"><div class="sico">💼</div><div class="sval" id="d-v">10</div><div class="slbl">Vacantes activas</div></div>
+        <div class="scard"><div class="sico">📬</div><div class="sval" id="d-p">0</div><div class="slbl">Postulaciones</div></div>
+        <div class="scard"><div class="sico">✅</div><div class="sval" id="d-col">0</div><div class="slbl">Empleos colocados</div></div>
+        <div class="scard"><div class="sico">📊</div><div class="sval" id="d-tasa">0%</div><div class="slbl">Tasa de colocación</div></div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:8px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
         <div class="card">
-          <div class="card-title">Vacantes por subregión</div>
-          <div id="dash-subregiones" style="color:var(--texto-g);font-size:14px">Cargando...</div>
+          <div style="font-family:Nunito;font-weight:800;color:var(--verde);margin-bottom:16px;font-size:16px">Empresas registradas</div>
+          <table>
+            <thead><tr><th>Empresa</th><th>Sector</th><th>Estado</th></tr></thead>
+            <tbody id="dash-emp"></tbody>
+          </table>
         </div>
         <div class="card">
-          <div class="card-title">Últimas postulaciones</div>
-          <div id="dash-postulaciones" style="color:var(--texto-g);font-size:14px">Cargando...</div>
+          <div style="font-family:Nunito;font-weight:800;color:var(--verde);margin-bottom:16px;font-size:16px">Vacantes activas</div>
+          <table>
+            <thead><tr><th>Cargo</th><th>Municipio</th><th>Postulados</th></tr></thead>
+            <tbody id="dash-vac"></tbody>
+          </table>
         </div>
       </div>
     </div>
 
-    <!-- CANDIDATOS -->
-    <div id="page-candidatos" class="page hidden">
-      <div class="page-title">👤 Candidatos</div>
-      <p class="page-sub">Banco de hojas de vida registradas en la plataforma</p>
-      <div class="table-wrap">
-        <div class="table-toolbar">
-          <span class="table-toolbar-title">Todos los candidatos</span>
-          <input class="input-field" type="text" placeholder="Buscar..." style="width:200px"/>
-          <button class="btn btn-primary btn-sm">+ Registrar candidato</button>
-        </div>
-        <div class="loading"><div class="spinner"></div><span>Cargando candidatos...</span></div>
+    <div id="pg-candidatos" class="hidden">
+      <div class="ptitle">👤 Candidatos</div>
+      <p class="psub">Banco de hojas de vida registradas</p>
+      <div class="twrap">
+        <div class="ttbar"><span class="ttitle">Candidatos registrados</span><button class="btn btn-primary btn-sm">+ Registrar candidato</button></div>
+        <div style="padding:24px;color:var(--texto-g)">Aún no hay candidatos registrados en la plataforma. Cuando los candidatos se registren aparecerán aquí.</div>
       </div>
     </div>
 
-    <!-- EMPRESAS -->
-    <div id="page-empresas" class="page hidden">
-      <div class="page-title">🏢 Empresas</div>
-      <p class="page-sub">Directorio de empresas aliadas registradas</p>
-      <div class="table-wrap" id="tabla-empresas">
-        <div class="table-toolbar">
-          <span class="table-toolbar-title">Empresas registradas</span>
-          <button class="btn btn-primary btn-sm">+ Registrar empresa</button>
-        </div>
-        <div class="loading"><div class="spinner"></div><span>Cargando empresas...</span></div>
+    <div id="pg-empresas" class="hidden">
+      <div class="ptitle">🏢 Empresas</div>
+      <p class="psub">Directorio de empresas aliadas</p>
+      <div class="twrap" id="tabla-emp">
+        <div class="ttbar"><span class="ttitle">Empresas registradas</span><button class="btn btn-primary btn-sm">+ Registrar empresa</button></div>
+        <table>
+          <thead><tr><th>Empresa</th><th>NIT</th><th>Sector</th><th>Estado</th></tr></thead>
+          <tbody id="emp-tbody"></tbody>
+        </table>
       </div>
     </div>
 
-    <!-- VACANTES -->
-    <div id="page-vacantes" class="page hidden">
-      <div class="page-title">💼 Vacantes</div>
-      <p class="page-sub">Gestión de vacantes publicadas</p>
-      <div class="table-wrap" id="tabla-vacantes">
-        <div class="table-toolbar">
-          <span class="table-toolbar-title">Vacantes activas</span>
-          <button class="btn btn-primary btn-sm">+ Publicar vacante</button>
-        </div>
-        <div class="loading"><div class="spinner"></div><span>Cargando vacantes...</span></div>
+    <div id="pg-vacantes" class="hidden">
+      <div class="ptitle">💼 Vacantes</div>
+      <p class="psub">Gestión de vacantes publicadas</p>
+      <div class="twrap">
+        <div class="ttbar"><span class="ttitle">Vacantes activas</span><button class="btn btn-primary btn-sm">+ Publicar vacante</button></div>
+        <table>
+          <thead><tr><th>Cargo</th><th>Empresa</th><th>Municipio</th><th>Salario</th><th>Postulados</th></tr></thead>
+          <tbody id="vac-tbody"></tbody>
+        </table>
       </div>
     </div>
 
-    <!-- INTERMEDIACIÓN -->
-    <div id="page-intermediacion" class="page hidden">
-      <div class="page-title">🔗 Intermediación laboral</div>
-      <p class="page-sub">Revisión de postulados y match candidato-vacante</p>
+    <div id="pg-intermediacion" class="hidden">
+      <div class="ptitle">🔗 Intermediación laboral</div>
+      <p class="psub">Revisión de postulados y match candidato-vacante</p>
       <div class="card"><p style="color:var(--texto-g)">Módulo en desarrollo — próximamente disponible.</p></div>
     </div>
 
-    <!-- BANCO HV -->
-    <div id="page-banco-hv" class="page hidden">
-      <div class="page-title">🗄️ Banco de hojas de vida</div>
-      <p class="page-sub">Búsqueda avanzada de candidatos por perfil, municipio y competencias</p>
+    <div id="pg-banco-hv" class="hidden">
+      <div class="ptitle">🗄️ Banco de hojas de vida</div>
+      <p class="psub">Búsqueda avanzada de candidatos</p>
       <div class="card"><p style="color:var(--texto-g)">Módulo en desarrollo — próximamente disponible.</p></div>
     </div>
 
-    <!-- PRUEBAS -->
-    <div id="page-pruebas" class="page hidden">
-      <div class="page-title">🧪 Pruebas psicotécnicas</div>
-      <p class="page-sub">Envío y gestión de pruebas — Fase 2</p>
+    <div id="pg-pruebas" class="hidden">
+      <div class="ptitle">🧪 Pruebas psicotécnicas</div>
+      <p class="psub">Fase 2</p>
       <div class="card"><p style="color:var(--texto-g)">Esta funcionalidad estará disponible en la Fase 2.</p></div>
     </div>
 
-    <!-- DIAGNÓSTICOS -->
-    <div id="page-diagnosticos" class="page hidden">
-      <div class="page-title">📋 Diagnósticos organizacionales</div>
-      <p class="page-sub">Clima organizacional y diagnósticos a empresas — Fase 2</p>
+    <div id="pg-diagnosticos" class="hidden">
+      <div class="ptitle">📋 Diagnósticos organizacionales</div>
+      <p class="psub">Fase 2</p>
       <div class="card"><p style="color:var(--texto-g)">Esta funcionalidad estará disponible en la Fase 2.</p></div>
     </div>
 
-    <!-- REPORTES -->
-    <div id="page-reportes" class="page hidden">
-      <div class="page-title">📈 Reportes e indicadores</div>
-      <p class="page-sub">Indicadores de gestión y exportación de datos</p>
+    <div id="pg-reportes" class="hidden">
+      <div class="ptitle">📈 Reportes e indicadores</div>
+      <p class="psub">Indicadores de gestión y exportación</p>
       <div class="card"><p style="color:var(--texto-g)">Módulo en desarrollo — próximamente disponible.</p></div>
     </div>
 
   </main>
 </div>
 
-<script type="module">
-import DB from './config/db.js';
+<script>
+var EMPRESAS=[
+  {nombre:'Logística del Valle SAS',nit:'900.123.456-1',sector:'Logística y transporte',estado:'verificada'},
+  {nombre:'TechCo Colombia',nit:'900.234.567-2',sector:'Tecnología e informática',estado:'activa'},
+  {nombre:'Manufacturas Bello SA',nit:'811.345.678-3',sector:'Manufactura e industria',estado:'activa'},
+  {nombre:'Seguros Andinos Ltda',nit:'890.456.789-4',sector:'Servicios financieros',estado:'activa'},
+  {nombre:'Fríos del Oriente SAS',nit:'900.567.890-5',sector:'Refrigeración y HVAC',estado:'activa'},
+  {nombre:'Contadores Asociados Ltda',nit:'890.678.901-6',sector:'Contabilidad y auditoría',estado:'activa'},
+  {nombre:'Agrícola Urabá SA',nit:'900.789.012-7',sector:'Agroindustria',estado:'activa'},
+  {nombre:'Hospital Regional Norte',nit:'800.890.123-8',sector:'Salud y bienestar',estado:'verificada'}
+];
+var VACANTES=[
+  {cargo:'Auxiliar de Bodega',empresa:'Logística del Valle SAS',municipio:'Medellín',salario:1300000,postulados:12},
+  {cargo:'Desarrollador Web Jr.',empresa:'TechCo Colombia',municipio:'Envigado',salario:2500000,postulados:5},
+  {cargo:'Operario de Producción',empresa:'Manufacturas Bello SA',municipio:'Bello',salario:1160000,postulados:28},
+  {cargo:'Asesor Comercial',empresa:'Seguros Andinos Ltda',municipio:'Itagüí',salario:1800000,postulados:9},
+  {cargo:'Técnico de Refrigeración',empresa:'Fríos del Oriente SAS',municipio:'Rionegro',salario:1800000,postulados:3},
+  {cargo:'Auxiliar Contable',empresa:'Contadores Asociados Ltda',municipio:'Medellín',salario:1400000,postulados:17},
+  {cargo:'Inspector de Calidad',empresa:'Agrícola Urabá SA',municipio:'Apartadó',salario:1500000,postulados:6},
+  {cargo:'Auxiliar de Enfermería',empresa:'Hospital Regional Norte',municipio:'Santa Rosa de Osos',salario:1400000,postulados:14},
+  {cargo:'Analista de Datos',empresa:'TechCo Colombia',municipio:'Envigado',salario:3000000,postulados:8},
+  {cargo:'Conductor C2',empresa:'Logística del Valle SAS',municipio:'Medellín',salario:1500000,postulados:21}
+];
 
-const PAGINAS = ['acceso','dashboard','candidatos','empresas','vacantes','intermediacion','banco-hv','pruebas','diagnosticos','reportes'];
+var PAGS=['acceso','dashboard','candidatos','empresas','vacantes','intermediacion','banco-hv','pruebas','diagnosticos','reportes'];
 
-const App = {
-  usuario: null,
+function fmtCOP(n){return '$'+Number(n).toLocaleString('es-CO');}
 
-  async boot() {
-    await window.Clerk?.load();
-    window.Clerk?.addListener(({user})=>{ this.usuario=user; this.render(); });
-    this.usuario = window.Clerk?.user ?? null;
-    await this.render();
-  },
+function nav(p){
+  PAGS.forEach(function(x){ var el=document.getElementById('pg-'+x); if(el) el.classList.add('hidden'); });
+  document.querySelectorAll('.nitem').forEach(function(n){n.classList.remove('active');});
+  var t=document.getElementById('pg-'+p); if(t) t.classList.remove('hidden');
+  var ni=document.querySelector('[onclick*="nav(\''+p+'\')"]'); if(ni) ni.classList.add('active');
+  if(p==='dashboard') cargarDash();
+  if(p==='empresas')  cargarEmpresas();
+  if(p==='vacantes')  cargarVacantes();
+}
 
-  async render() {
-    this.renderTopbar();
-    if(!this.usuario){
-      this.mostrar('acceso');
-      document.getElementById('sidebar').style.display='none';
-      return;
-    }
+function cargarDash(){
+  // Empresas tabla
+  var eb=document.getElementById('dash-emp');
+  if(eb) eb.innerHTML=EMPRESAS.slice(0,5).map(function(e){
+    return '<tr><td><strong>'+e.nombre+'</strong></td><td style="color:var(--texto-g)">'+e.sector+'</td><td><span class="'+(e.estado==='verificada'?'badge-a':'badge-p')+'">'+e.estado+'</span></td></tr>';
+  }).join('');
+  // Vacantes tabla
+  var vb=document.getElementById('dash-vac');
+  if(vb) vb.innerHTML=VACANTES.slice(0,5).map(function(v){
+    return '<tr><td><strong>'+v.cargo+'</strong></td><td style="color:var(--texto-g)">'+v.municipio+'</td><td style="text-align:center"><strong>'+v.postulados+'</strong></td></tr>';
+  }).join('');
+}
+
+function cargarEmpresas(){
+  var tb=document.getElementById('emp-tbody');
+  if(!tb) return;
+  tb.innerHTML=EMPRESAS.map(function(e){
+    return '<tr><td><strong>'+e.nombre+'</strong></td><td style="color:var(--texto-g)">'+e.nit+'</td><td style="color:var(--texto-g)">'+e.sector+'</td><td><span class="'+(e.estado==='verificada'?'badge-a':'badge-p')+'">'+e.estado+'</span></td></tr>';
+  }).join('');
+}
+
+function cargarVacantes(){
+  var tb=document.getElementById('vac-tbody');
+  if(!tb) return;
+  tb.innerHTML=VACANTES.map(function(v){
+    return '<tr><td><strong>'+v.cargo+'</strong></td><td style="color:var(--texto-g)">'+v.empresa+'</td><td style="color:var(--texto-g)">'+v.municipio+'</td><td style="color:var(--texto-g)">'+fmtCOP(v.salario)+'</td><td style="text-align:center"><strong>'+v.postulados+'</strong></td></tr>';
+  }).join('');
+}
+
+function renderAuth(user){
+  var area=document.getElementById('auth-area');
+  if(user){
+    var nombre=((user.firstName||'')+' '+(user.lastName||'')).trim()||'Usuario';
+    var ini=((user.firstName||'')[0]||'').toUpperCase()+((user.lastName||'')[0]||'').toUpperCase()||'U';
+    var rol=(user.publicMetadata&&user.publicMetadata.rol)||'asesor_empresarial';
+    document.getElementById('snombre').textContent=nombre;
+    document.getElementById('srol').textContent=rol.replace(/_/g,' ');
+    var av=document.getElementById('sav');
+    av.innerHTML=user.imageUrl?'<img src="'+user.imageUrl+'"/>':ini;
+    area.innerHTML='<span style="color:rgba(255,255,255,.8);font-size:13px">'+nombre+'</span>'+
+      '<button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.signOut().then(function(){window.location.href=\'index.html\'})">Salir</button>';
     document.getElementById('sidebar').style.display='flex';
-    this.renderSidebarUser();
-    this.nav('dashboard');
-  },
-
-  renderTopbar() {
-    const area = document.getElementById('topbar-auth');
-    const u = this.usuario;
-    if(u) {
-      const nombre = `${u.firstName??''} ${u.lastName??''}`.trim()||'Usuario';
-      area.innerHTML = `
-        <span style="color:rgba(255,255,255,.8);font-size:13px">${nombre}</span>
-        <button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:white;border:none"
-          onclick="window.Clerk.signOut().then(()=>window.location.href='index.html')">Salir</button>`;
-    } else {
-      area.innerHTML = `<button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:white;border:none"
-        onclick="window.Clerk?.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>`;
-    }
-  },
-
-  renderSidebarUser() {
-    const u = this.usuario;
-    if(!u) return;
-    const nombre    = `${u.firstName??''} ${u.lastName??''}`.trim()||'Usuario';
-    const iniciales = ((u.firstName?.[0]??'')+(u.lastName?.[0]??'')).toUpperCase()||'U';
-    const rol       = u.publicMetadata?.rol ?? 'asesor_empresarial';
-    const av = document.getElementById('s-avatar');
-    av.innerHTML = u.imageUrl?`<img src="${u.imageUrl}"/>`:`<span>${iniciales}</span>`;
-    document.getElementById('s-nombre').textContent = nombre;
-    document.getElementById('s-rol').textContent    = rol.replace(/_/g,' ');
-  },
-
-  nav(pagina) {
-    PAGINAS.forEach(p=>{ const el=document.getElementById(`page-${p}`); if(el) el.classList.add('hidden'); });
-    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-    const target = document.getElementById(`page-${pagina}`); if(target) target.classList.remove('hidden');
-    const nav    = document.querySelector(`[data-page="${pagina}"]`); if(nav) nav.classList.add('active');
-    if(pagina==='dashboard') this.cargarDashboard();
-    if(pagina==='empresas')  this.cargarEmpresas();
-    if(pagina==='vacantes')  this.cargarVacantes();
-  },
-
-  mostrar(p) {
-    PAGINAS.forEach(id=>{ const el=document.getElementById(`page-${id}`); if(el) el.classList.add('hidden'); });
-    const t=document.getElementById(`page-${p}`); if(t) t.classList.remove('hidden');
-  },
-
-  async cargarDashboard() {
-    const {data} = await DB.estadisticas();
-    const s = data ?? {};
-    const statsEl = document.getElementById('dash-stats');
-    if(statsEl) statsEl.innerHTML = [
-      {icon:'👤', value:s.total_candidatos??0,       label:'Candidatos'},
-      {icon:'🏢', value:s.total_empresas??0,          label:'Empresas'},
-      {icon:'💼', value:s.total_vacantes_activas??0,  label:'Vacantes activas'},
-      {icon:'📬', value:s.total_postulaciones??0,     label:'Postulaciones'},
-      {icon:'✅', value:s.empleos_colocados??0,       label:'Empleos colocados'},
-      {icon:'📊', value:(s.tasa_colocacion??0)+'%',   label:'Tasa de colocación'},
-    ].map(s=>`
-      <div class="stat-card">
-        <div class="stat-icon">${s.icon}</div>
-        <div class="stat-value">${typeof s.value==='number'?Number(s.value).toLocaleString('es-CO'):s.value}</div>
-        <div class="stat-label">${s.label}</div>
-      </div>`).join('');
-    // Badges sidebar
-    const bv=document.getElementById('b-v'); if(bv) bv.textContent=s.total_vacantes_activas??'—';
-    const be=document.getElementById('b-e'); if(be) be.textContent=s.total_empresas??'—';
-    const bc=document.getElementById('b-c'); if(bc) bc.textContent=s.total_candidatos??'—';
-  },
-
-  async cargarEmpresas() {
-    const {data} = await DB.query('SELECT nombre, nit, sector, estado, created_at FROM empresas ORDER BY created_at DESC LIMIT 50');
-    const wrap = document.getElementById('tabla-empresas');
-    if(!wrap||!data) return;
-    wrap.innerHTML = `
-      <div class="table-toolbar">
-        <span class="table-toolbar-title">Empresas registradas (${data.length})</span>
-        <button class="btn btn-primary btn-sm">+ Registrar empresa</button>
-      </div>
-      <table>
-        <thead><tr><th>Empresa</th><th>NIT</th><th>Sector</th><th>Estado</th></tr></thead>
-        <tbody>${data.map(e=>`
-          <tr>
-            <td><strong>${e.nombre}</strong></td>
-            <td style="color:var(--texto-g)">${e.nit??'—'}</td>
-            <td style="color:var(--texto-g)">${e.sector??'—'}</td>
-            <td><span class="badge ${e.estado==='verificada'?'badge-activa':'badge-pendiente'}">${e.estado}</span></td>
-          </tr>`).join('')}
-        </tbody>
-      </table>`;
-  },
-
-  async cargarVacantes() {
-    const {data} = await DB.buscarVacantes({limite:50});
-    const wrap = document.getElementById('tabla-vacantes');
-    if(!wrap||!data) return;
-    wrap.innerHTML = `
-      <div class="table-toolbar">
-        <span class="table-toolbar-title">Vacantes activas (${data.length})</span>
-        <button class="btn btn-primary btn-sm">+ Publicar vacante</button>
-      </div>
-      <table>
-        <thead><tr><th>Cargo</th><th>Empresa</th><th>Municipio</th><th>Salario</th><th>Postulados</th><th>Estado</th></tr></thead>
-        <tbody>${data.map(v=>`
-          <tr>
-            <td><strong>${v.cargo}</strong></td>
-            <td style="color:var(--texto-g)">${v.empresa}</td>
-            <td style="color:var(--texto-g)">${v.municipio??'—'}</td>
-            <td style="color:var(--texto-g)">${v.salario_min?'$'+Number(v.salario_min).toLocaleString('es-CO'):'A convenir'}</td>
-            <td style="text-align:center"><strong>${v.total_postulados??0}</strong></td>
-            <td><span class="badge badge-activa">${v.estado}</span></td>
-          </tr>`).join('')}
-        </tbody>
-      </table>`;
+    nav('dashboard');
+  } else {
+    area.innerHTML='<button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>';
+    document.getElementById('sidebar').style.display='none';
+    document.getElementById('pg-acceso').classList.remove('hidden');
   }
-};
+}
 
-window.App = App;
-document.addEventListener('DOMContentLoaded',()=>App.boot());
+window.addEventListener('load',function(){
+  if(window.Clerk){
+    window.Clerk.load().then(function(){
+      renderAuth(window.Clerk.user);
+      window.Clerk.addListener(function(e){renderAuth(e.user);});
+    });
+  }
+});
 </script>
 </body>
 </html>
