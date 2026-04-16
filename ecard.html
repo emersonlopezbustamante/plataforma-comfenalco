@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Generador E-Card Vacantes — Comfenalco Antioquia</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <!-- html2canvas para convertir a imagen -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <style>
+    :root{
+      --verde:#094a4b;--pist:#a8c94e;--celeste:#b2d8d8;
+      --celeste-f:#e8f4f4;--blanco:#fff;--negro:#1a1a1a;
+      --texto-g:#4a4a4a;--borde:#d0e0e0;--r:8px;--t:.2s ease
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;background:#f0f4f4;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:32px 16px}
+
+    /* PANEL DE CONTROL */
+    .control-panel{background:#fff;border-radius:16px;box-shadow:0 4px 24px rgba(9,74,75,.12);padding:28px;width:100%;max-width:700px;margin-bottom:32px}
+    .panel-title{font-family:'Nunito',sans-serif;font-size:20px;font-weight:900;color:var(--verde);margin-bottom:20px;display:flex;align-items:center;gap:10px}
+    .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .fgrid.one{grid-template-columns:1fr}
+    .fgroup{display:flex;flex-direction:column;gap:5px}
+    .flabel{font-size:12px;font-weight:700;color:var(--verde);text-transform:uppercase;letter-spacing:.04em}
+    .fval{padding:9px 13px;border:1.5px solid var(--borde);border-radius:var(--r);font-size:14px;font-family:inherit;color:var(--negro);outline:none;transition:border-color var(--t)}
+    .fval:focus{border-color:var(--verde);box-shadow:0 0 0 3px rgba(9,74,75,.08)}
+    textarea.fval{resize:vertical;min-height:100px;line-height:1.5}
+    .fsep{font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:var(--verde);margin:16px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--pist);grid-column:1/-1}
+    .btn-row{display:flex;gap:12px;margin-top:20px;flex-wrap:wrap}
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:11px 24px;border-radius:var(--r);font-weight:700;font-size:14px;border:none;cursor:pointer;font-family:inherit;transition:all var(--t)}
+    .btn:active{transform:scale(.97)}
+    .btn-primary{background:var(--pist);color:var(--verde)}
+    .btn-primary:hover{background:#8fb53a;box-shadow:0 4px 14px rgba(168,201,78,.4)}
+    .btn-verde{background:var(--verde);color:#fff}
+    .btn-verde:hover{background:#0d6b6c}
+    .btn-ghost{background:#f0f4f4;color:var(--texto-g)}
+    .btn-ghost:hover{background:#e0e8e8}
+    .btn-back{background:transparent;color:var(--verde);border:2px solid var(--verde);padding:9px 20px}
+    .btn-back:hover{background:var(--verde);color:#fff}
+
+    /* PREVIEW LABEL */
+    .preview-label{font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;color:var(--verde);margin-bottom:14px;display:flex;align-items:center;gap:10px}
+    .preview-actions{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;justify-content:center}
+
+    /* ════════════════════════════════════════
+       E-CARD — Formato exacto Comfenalco
+       Dimensiones: 600×900px (proporción póster vertical)
+    ════════════════════════════════════════ */
+    #ecard{
+      width:600px;
+      background:var(--celeste-f);
+      font-family:'Nunito',sans-serif;
+      border-radius:12px;
+      overflow:hidden;
+      box-shadow:0 8px 40px rgba(9,74,75,.2);
+      flex-shrink:0;
+    }
+
+    /* HEADER */
+    .ec-header{
+      background:var(--celeste-f);
+      padding:20px 24px 12px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+    }
+    .ec-titulo-vacantes{
+      font-family:'Nunito',sans-serif;
+      font-size:38px;
+      font-weight:900;
+      color:var(--verde);
+      font-style:italic;
+      line-height:1;
+    }
+    .ec-logo-agencia{
+      width:120px;
+      height:auto;
+      object-fit:contain;
+    }
+
+    /* CÓDIGO */
+    .ec-codigo{
+      background:var(--celeste-f);
+      padding:6px 24px 12px;
+      display:flex;
+      align-items:center;
+      gap:0;
+    }
+    .ec-codigo-label{
+      background:var(--celeste);
+      color:var(--verde);
+      font-size:14px;
+      font-weight:700;
+      padding:6px 14px;
+      border-radius:4px 0 0 4px;
+    }
+    .ec-codigo-val{
+      background:var(--verde);
+      color:#fff;
+      font-size:14px;
+      font-weight:700;
+      padding:6px 16px;
+      border-radius:0 4px 4px 0;
+      letter-spacing:.04em;
+    }
+
+    /* NOMBRE VACANTE */
+    .ec-nombre-wrap{
+      margin:0 20px 12px;
+      background:var(--celeste);
+      border-radius:6px;
+      padding:10px 16px 6px;
+    }
+    .ec-nombre-label{
+      font-size:14px;
+      font-weight:800;
+      color:var(--verde);
+      margin-bottom:4px;
+    }
+    .ec-nombre-cargo{
+      font-size:18px;
+      font-weight:900;
+      color:var(--verde);
+      text-transform:uppercase;
+      line-height:1.2;
+    }
+
+    /* PERFIL */
+    .ec-perfil-wrap{
+      margin:0 20px 12px;
+      background:#fff;
+      border-radius:10px;
+      padding:14px 18px;
+    }
+    .ec-perfil-title{
+      font-size:18px;
+      font-weight:900;
+      color:var(--verde);
+      margin-bottom:8px;
+    }
+    .ec-perfil-texto{
+      font-family:'Inter',sans-serif;
+      font-size:13.5px;
+      color:var(--negro);
+      line-height:1.65;
+    }
+
+    /* FILAS DE DATOS */
+    .ec-fila{
+      padding:8px 24px;
+      border-bottom:1px solid var(--borde);
+    }
+    .ec-fila:last-of-type{border-bottom:none}
+    .ec-fila-label{
+      display:inline-block;
+      background:var(--celeste);
+      color:var(--verde);
+      font-size:13px;
+      font-weight:800;
+      padding:3px 12px;
+      border-radius:4px;
+      margin-bottom:5px;
+    }
+    .ec-fila-val{
+      font-family:'Inter',sans-serif;
+      font-size:14px;
+      color:var(--negro);
+      padding-left:4px;
+    }
+
+    /* SEPARADOR INFORMES */
+    .ec-sep-informes{
+      margin:8px 20px;
+      border-top:2px dashed #94c5c5;
+    }
+    .ec-informes-wrap{
+      padding:10px 24px;
+    }
+    .ec-informes-label{
+      display:inline-block;
+      background:var(--celeste);
+      color:var(--verde);
+      font-size:13px;
+      font-weight:800;
+      padding:3px 12px;
+      border-radius:4px;
+      margin-bottom:6px;
+    }
+    .ec-telefonos{
+      font-family:'Nunito',sans-serif;
+      font-size:14px;
+      font-weight:800;
+      color:var(--verde);
+      line-height:1.5;
+    }
+
+    /* DISCLAIMER */
+    .ec-disclaimer{
+      background:var(--celeste);
+      margin:10px 20px;
+      border-radius:6px;
+      padding:8px 14px;
+      font-family:'Inter',sans-serif;
+      font-size:11.5px;
+      color:var(--verde);
+      text-align:center;
+      line-height:1.5;
+    }
+
+    /* FOOTER */
+    .ec-footer{
+      background:var(--celeste-f);
+      padding:14px 24px 18px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:20px;
+    }
+    .ec-footer-logos{
+      display:flex;
+      align-items:center;
+      gap:16px;
+    }
+    .ec-footer img{
+      height:44px;
+      object-fit:contain;
+    }
+    .ec-footer-sep{
+      width:1px;
+      height:36px;
+      background:var(--verde);
+      opacity:.3;
+    }
+    .ec-vigilado{
+      font-family:'Inter',sans-serif;
+      font-size:9px;
+      color:var(--texto-g);
+      writing-mode:vertical-rl;
+      text-orientation:mixed;
+      opacity:.6;
+    }
+
+    /* LOADING / DESCARGA */
+    .download-area{text-align:center;margin-top:16px}
+    .progress{height:4px;background:var(--borde);border-radius:2px;overflow:hidden;margin-top:12px;display:none}
+    .progress-fill{height:100%;background:var(--pist);width:0%;transition:width .4s ease;border-radius:2px}
+
+    @media(max-width:660px){
+      #ecard{width:100%;max-width:400px}
+      .ec-titulo-vacantes{font-size:28px}
+      .fgrid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+
+<!-- PANEL DE CONTROL -->
+<div class="control-panel">
+  <div class="panel-title">
+    🎨 Generador de E-Card — Vacante
+    <button class="btn btn-back btn-ghost" onclick="window.location.href='interno.html'" style="margin-left:auto;font-size:13px;padding:6px 14px">← Volver al panel</button>
+  </div>
+
+  <div class="fgrid">
+    <div class="fsep">📋 Información de la vacante</div>
+
+    <div class="fgroup">
+      <label class="flabel">Código de vacante</label>
+      <input class="fval" id="f-codigo" placeholder="Ej: 1626502154-29" value="1626502154-29" oninput="actualizar()"/>
+    </div>
+    <div class="fgroup">
+      <label class="flabel">Nombre del cargo *</label>
+      <input class="fval" id="f-cargo" placeholder="Ej: AUXILIAR DE BODEGA" value="OFICIAL DE OBRA Y ESTRUCTURA OCC" oninput="actualizar()"/>
+    </div>
+
+    <div class="fgroup fgrid one">
+      <label class="flabel">Perfil (descripción completa)</label>
+      <textarea class="fval" id="f-perfil" rows="5" oninput="actualizar()">Empresa del sector de construcción, solicita para su equipo de trabajo oficiales de obra con 12 meses de experiencia en el área, sus funciones estarán orientadas a montar y levantar andamiajes y otras armazones provisionales de madera o metal en los lugares de obras y otras afines al área. Debe poseer competencias en liderazgo y orientación al logro. Contrato obra y labor.</textarea>
+    </div>
+
+    <div class="fsep">📍 Detalles</div>
+
+    <div class="fgroup">
+      <label class="flabel">Lugar de trabajo</label>
+      <input class="fval" id="f-lugar" placeholder="Ej: Medellín – Antioquia" value="Sabanalarga – Antioquia" oninput="actualizar()"/>
+    </div>
+    <div class="fgroup">
+      <label class="flabel">Salario</label>
+      <input class="fval" id="f-salario" placeholder="Ej: $1.300.000 – $1.500.000" value="1 a 2 SMMLV" oninput="actualizar()"/>
+    </div>
+    <div class="fgroup">
+      <label class="flabel">Fecha de cierre</label>
+      <input class="fval" type="date" id="f-cierre" oninput="actualizar()"/>
+    </div>
+    <div class="fgroup">
+      <label class="flabel">NBC (Núcleo básico del conocimiento)</label>
+      <input class="fval" id="f-nbc" placeholder="Ej: Ingeniería civil y afines" value="Oficiales de obras y estructura" oninput="actualizar()"/>
+    </div>
+    <div class="fgroup">
+      <label class="flabel">Cargos equivalentes</label>
+      <input class="fval" id="f-equivalentes" placeholder="Ej: Auxiliar de construcción" value="Oficial de obra negra" oninput="actualizar()"/>
+    </div>
+    <div class="fgroup">
+      <label class="flabel">Teléfonos de informes</label>
+      <input class="fval" id="f-telefonos" placeholder="604 444 91 84 EXT 3615..." value="604 444 91 84 EXT 3615 – 3616 – 3811  3812 – 3813 – 3815 – 4103 - 4163" oninput="actualizar()"/>
+    </div>
+
+    <div class="fsep">🎨 Personalización</div>
+
+    <div class="fgroup">
+      <label class="flabel">Tipo de vacante</label>
+      <select class="fval" id="f-tipo" onchange="actualizar()">
+        <option value="normal">Normal</option>
+        <option value="hidrocarburos">⚡ Hidrocarburos</option>
+        <option value="incluyente">♿ Incluyente</option>
+      </select>
+    </div>
+    <div class="fgroup">
+      <label class="flabel">Disclaimer (pie de nota)</label>
+      <input class="fval" id="f-disclaimer" value="Estas vacantes son ofertadas por diferentes empresas inscritas a nuestra Agencia de Empleo. No son para trabajar en Comfenalco Antioquia" oninput="actualizar()"/>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="descargarPNG()">📥 Descargar PNG</button>
+    <button class="btn btn-verde" onclick="descargarJPG()">📷 Descargar JPG</button>
+    <button class="btn btn-ghost" onclick="imprimirEcard()">🖨️ Imprimir / PDF</button>
+    <button class="btn btn-ghost" onclick="compartirWhatsApp()">💬 WhatsApp</button>
+  </div>
+  <div class="progress" id="progress-bar">
+    <div class="progress-fill" id="progress-fill"></div>
+  </div>
+</div>
+
+<!-- PREVIEW LABEL -->
+<div class="preview-label">
+  👁️ Vista previa en tiempo real
+</div>
+
+<!-- E-CARD -->
+<div id="ecard">
+
+  <!-- HEADER -->
+  <div class="ec-header">
+    <div class="ec-titulo-vacantes">Vacantes</div>
+    <img class="ec-logo-agencia" src="logo_agencia.png" alt="Agencia de Empleo y Emprendimiento"
+         onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
+         id="logo-agencia"/>
+    <!-- Fallback texto si no carga el logo -->
+    <div style="display:none;flex-direction:column;align-items:flex-end">
+      <span style="font-family:Nunito;font-weight:900;font-size:13px;color:var(--verde)">Agencia</span>
+      <span style="font-family:Nunito;font-weight:900;font-size:18px;color:var(--verde)">de empleo</span>
+      <span style="font-family:Nunito;font-size:11px;color:var(--texto-g)">Y EMPRENDIMIENTO</span>
+    </div>
+  </div>
+
+  <!-- CÓDIGO -->
+  <div class="ec-codigo">
+    <span class="ec-codigo-label">Código</span>
+    <span class="ec-codigo-val" id="ec-codigo">1626502154-29</span>
+  </div>
+
+  <!-- NOMBRE VACANTE -->
+  <div class="ec-nombre-wrap">
+    <div class="ec-nombre-label">Nombre de la vacante:</div>
+    <div class="ec-nombre-cargo" id="ec-cargo">OFICIAL DE OBRA Y ESTRUCTURA OCC</div>
+  </div>
+
+  <!-- PERFIL -->
+  <div class="ec-perfil-wrap">
+    <div class="ec-perfil-title">Perfil:</div>
+    <div class="ec-perfil-texto" id="ec-perfil">Empresa del sector de construcción, solicita para su equipo de trabajo oficiales de obra con 12 meses de experiencia en el área, sus funciones estarán orientadas a montar y levantar andamiajes y otras armazones provisionales de madera o metal en los lugares de obras y otras afines al área. Debe poseer competencias en liderazgo y orientación al logro. Contrato obra y labor.</div>
+  </div>
+
+  <!-- FILAS DE DATOS -->
+  <div class="ec-fila">
+    <div class="ec-fila-label">Lugar de trabajo:</div>
+    <div class="ec-fila-val" id="ec-lugar">Sabanalarga – Antioquia</div>
+  </div>
+  <div class="ec-fila">
+    <div class="ec-fila-label">Salario:</div>
+    <div class="ec-fila-val" id="ec-salario">1 a 2 SMMLV</div>
+  </div>
+  <div class="ec-fila">
+    <div class="ec-fila-label">Fecha de cierre:</div>
+    <div class="ec-fila-val" id="ec-cierre">21/04/2025</div>
+  </div>
+  <div class="ec-fila">
+    <div class="ec-fila-label">Núcleo básico del conocimiento (NBC):</div>
+    <div class="ec-fila-val" id="ec-nbc">Oficiales de obras y estructura</div>
+  </div>
+  <div class="ec-fila">
+    <div class="ec-fila-label">Cargos equivalentes:</div>
+    <div class="ec-fila-val" id="ec-equiv">Oficial de obra negra</div>
+  </div>
+
+  <!-- SEPARADOR INFORMES -->
+  <div class="ec-sep-informes"></div>
+  <div class="ec-informes-wrap">
+    <div class="ec-informes-label">Informes:</div>
+    <div class="ec-telefonos" id="ec-telefonos">604 444 91 84 EXT 3615 – 3616 – 3811  3812 – 3813 – 3815 – 4103 - 4163</div>
+  </div>
+
+  <!-- DISCLAIMER -->
+  <div class="ec-disclaimer" id="ec-disclaimer">
+    Estas vacantes son ofertadas por diferentes empresas inscritas a nuestra Agencia de Empleo.<br/>No son para trabajar en Comfenalco Antioquia
+  </div>
+
+  <!-- FOOTER CON LOGOS -->
+  <div class="ec-footer">
+    <div class="ec-footer-logos">
+      <img src="logo_comfe_y_servicio.jpeg" alt="SPE Comfenalco"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='block'"
+           id="logo-footer"/>
+      <div style="display:none">
+        <div style="font-family:Nunito;font-weight:900;font-size:12px;color:var(--verde)">Servicio Público<br/>de Empleo</div>
+      </div>
+      <div class="ec-footer-sep"></div>
+      <div style="font-family:Nunito;font-weight:900;font-size:16px;color:var(--verde);line-height:1.2">
+        Comfe<span style="color:var(--pist)">ñ</span>alco<br/>
+        <span style="font-size:11px;font-weight:600;letter-spacing:.08em">A N T I O Q U I A</span>
+      </div>
+    </div>
+    <div class="ec-vigilado">Vigilado Supersaluddad</div>
+  </div>
+
+</div>
+
+<!-- ACCIONES EXTRA -->
+<div class="preview-actions">
+  <button class="btn btn-primary" onclick="descargarPNG()">📥 Descargar PNG</button>
+  <button class="btn btn-verde" onclick="descargarJPG()">📷 Descargar JPG</button>
+  <button class="btn btn-ghost" onclick="compartirWhatsApp()">💬 Compartir WhatsApp</button>
+</div>
+
+<br/><br/>
+
+<script>
+// ── Actualizar E-Card en tiempo real ────────────────────────
+function actualizar(){
+  var campos = {
+    'ec-codigo':    'f-codigo',
+    'ec-cargo':     'f-cargo',
+    'ec-perfil':    'f-perfil',
+    'ec-lugar':     'f-lugar',
+    'ec-salario':   'f-salario',
+    'ec-nbc':       'f-nbc',
+    'ec-equiv':     'f-equivalentes',
+    'ec-telefonos': 'f-telefonos',
+    'ec-disclaimer':'f-disclaimer'
+  };
+  Object.keys(campos).forEach(function(ecId){
+    var el = document.getElementById(ecId);
+    var in_ = document.getElementById(campos[ecId]);
+    if(el && in_) el.textContent = in_.value || el.textContent;
+  });
+
+  // Fecha cierre
+  var fc = document.getElementById('f-cierre').value;
+  if(fc){
+    var d = new Date(fc + 'T12:00:00');
+    document.getElementById('ec-cierre').textContent =
+      d.toLocaleDateString('es-CO',{day:'2-digit',month:'2-digit',year:'numeric'});
+  }
+
+  // Tipo de vacante — cambiar color del header
+  var tipo = document.getElementById('f-tipo').value;
+  var header = document.querySelector('.ec-header');
+  var nombreWrap = document.querySelector('.ec-nombre-wrap');
+  if(tipo==='hidrocarburos'){
+    header.style.background = '#fffbeb';
+    nombreWrap.style.background = '#fde68a';
+    document.querySelector('.ec-titulo-vacantes').style.color = '#92400e';
+  } else if(tipo==='incluyente'){
+    header.style.background = '#f0fdf4';
+    nombreWrap.style.background = '#bbf7d0';
+    document.querySelector('.ec-titulo-vacantes').style.color = '#14532d';
+  } else {
+    header.style.background = 'var(--celeste-f)';
+    nombreWrap.style.background = 'var(--celeste)';
+    document.querySelector('.ec-titulo-vacantes').style.color = 'var(--verde)';
+  }
+}
+
+// ── Descargar como imagen ────────────────────────────────────
+function mostrarProgress(){
+  var pb = document.getElementById('progress-bar');
+  var pf = document.getElementById('progress-fill');
+  pb.style.display='block';
+  var w=0;
+  var int=setInterval(function(){ w+=10; pf.style.width=w+'%'; if(w>=90) clearInterval(int); },80);
+  return function(){ pf.style.width='100%'; setTimeout(function(){ pb.style.display='none'; pf.style.width='0%'; },600); };
+}
+
+function capturar(callback){
+  var done = mostrarProgress();
+  var ecard = document.getElementById('ecard');
+  html2canvas(ecard, {
+    scale: 3,
+    useCORS: true,
+    allowTaint: true,
+    backgroundColor: '#e8f4f4',
+    logging: false
+  }).then(function(canvas){
+    done();
+    callback(canvas);
+  }).catch(function(err){
+    done();
+    console.error('Error capturando:', err);
+    alert('Error al generar la imagen. Intenta de nuevo.');
+  });
+}
+
+function descargarPNG(){
+  var cargo = document.getElementById('f-cargo').value.replace(/\s+/g,'_').toLowerCase() || 'vacante';
+  capturar(function(canvas){
+    var link = document.createElement('a');
+    link.download = 'ecard_' + cargo + '.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  });
+}
+
+function descargarJPG(){
+  var cargo = document.getElementById('f-cargo').value.replace(/\s+/g,'_').toLowerCase() || 'vacante';
+  capturar(function(canvas){
+    var link = document.createElement('a');
+    link.download = 'ecard_' + cargo + '.jpg';
+    link.href = canvas.toDataURL('image/jpeg', 0.95);
+    link.click();
+  });
+}
+
+function imprimirEcard(){
+  window.print();
+}
+
+function compartirWhatsApp(){
+  var cargo  = document.getElementById('f-cargo').value  || 'Vacante';
+  var lugar  = document.getElementById('f-lugar').value  || '';
+  var sal    = document.getElementById('f-salario').value|| '';
+  var tels   = document.getElementById('f-telefonos').value || '';
+  var texto  = '💼 *' + cargo + '*\n' +
+               '📍 ' + lugar + '\n' +
+               '💵 ' + sal + '\n\n' +
+               '📞 Informes: ' + tels + '\n\n' +
+               '_Agencia de Empleo y Emprendimiento — Comfenalco Antioquia_';
+  var url = 'https://wa.me/?text=' + encodeURIComponent(texto);
+  window.open(url, '_blank');
+}
+
+// ── Leer parámetros de URL (cuando viene desde tabla de vacantes) ──
+function cargarDesdeURL(){
+  var params = new URLSearchParams(window.location.search);
+  var map = {
+    'codigo':   'f-codigo',
+    'cargo':    'f-cargo',
+    'perfil':   'f-perfil',
+    'lugar':    'f-lugar',
+    'salario':  'f-salario',
+    'nbc':      'f-nbc',
+    'tipo':     'f-tipo'
+  };
+  Object.keys(map).forEach(function(p){
+    if(params.has(p)){
+      var el = document.getElementById(map[p]);
+      if(el) el.value = params.get(p);
+    }
+  });
+}
+
+// ── Inicializar ──────────────────────────────────────────────
+window.addEventListener('load', function(){
+  // Fecha cierre por defecto 30 días
+  var d = new Date();
+  d.setDate(d.getDate() + 30);
+  document.getElementById('f-cierre').value = d.toISOString().split('T')[0];
+  // Cargar datos desde URL si vienen
+  cargarDesdeURL();
+  // Renderizar
+  actualizar();
+});
+</script>
+
+<!-- ESTILOS DE IMPRESIÓN -->
+<style>
+@media print{
+  body{background:#fff;padding:0;align-items:center}
+  .control-panel,.preview-label,.preview-actions,.btn-row,.progress{display:none!important}
+  #ecard{box-shadow:none;border-radius:0;width:100%;max-width:600px;margin:0 auto}
+}
+</style>
+
+</body>
+</html>

@@ -10,12 +10,14 @@
     type="text/javascript"></script>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
   <style>
-    :root{--verde:#094a4b;--pist:#a8c94e;--pist-h:#8fb53a;--blanco:#fff;--fondo:#f4f6f4;--borde:#d8e2d8;--texto-g:#4a5a4a;--suave:#e8efe8;--negro:#1a2a1a;--r:8px;--rc:14px;--t:.22s ease}
+    :root{--verde:#094a4b;--pist:#a8c94e;--pist-h:#8fb53a;--blanco:#fff;--fondo:#f4f6f4;--borde:#d8e2d8;--texto-g:#4a5a4a;--suave:#e8efe8;--negro:#1a2a1a;--naranja:#e67e22;--azul:#2d4a6b;--r:8px;--rc:14px;--t:.22s ease}
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     body{font-family:'Inter',sans-serif;font-size:15px;color:var(--negro);background:var(--fondo);min-height:100vh}
     button{cursor:pointer;font-family:inherit;border:none}
     .hidden{display:none!important}
-    #topbar{background:var(--verde);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(9,74,75,.2)}
+
+    /* TOPBAR */
+    #topbar{background:var(--verde);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(9,74,75,.2)}
     .brand-logos{display:flex;align-items:center;background:#fff;border-radius:8px;padding:3px 12px;height:46px}
     .brand-logos img:first-child{height:36px;max-width:170px;object-fit:contain}
     .brand-sep{width:1px;height:28px;background:var(--borde);margin:0 10px}
@@ -23,11 +25,30 @@
     .tbadge{background:rgba(168,201,78,.2);color:var(--pist);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px}
     .back{color:rgba(255,255,255,.7);font-size:13px;cursor:pointer;padding:6px 10px;border-radius:6px;transition:background var(--t)}
     .back:hover{background:rgba(255,255,255,.1);color:#fff}
+
+    /* BOTONES */
     .btn{display:inline-flex;align-items:center;gap:7px;padding:10px 22px;border-radius:var(--r);font-weight:700;font-size:14px;border:none;transition:all var(--t);cursor:pointer;font-family:inherit}
+    .btn:active{transform:scale(.97)}
     .btn-primary{background:var(--pist);color:var(--verde)}
-    .btn-primary:hover{background:var(--pist-h)}
-    .btn-sm{padding:7px 16px;font-size:13px}
+    .btn-primary:hover{background:var(--pist-h);box-shadow:0 4px 12px rgba(168,201,78,.4)}
+    .btn-verde{background:var(--verde);color:#fff}
+    .btn-verde:hover{background:#0d6b6c}
+    .btn-outline{background:transparent;color:var(--verde);border:2px solid var(--verde)}
+    .btn-outline:hover{background:var(--verde);color:#fff}
+    .btn-ghost{background:var(--suave);color:var(--texto-g)}
+    .btn-ghost:hover{background:var(--borde)}
+    .btn-danger{background:#e74c3c;color:#fff}
+    .btn-danger:hover{background:#c0392b}
+    .btn-naranja{background:var(--naranja);color:#fff}
+    .btn-naranja:hover{background:#d35400}
+    .btn-sm{padding:7px 14px;font-size:13px}
+    .btn-xs{padding:4px 10px;font-size:12px}
+    .btn-lg{padding:14px 32px;font-size:16px;border-radius:10px}
+
+    /* LAYOUT */
     #shell{display:grid;grid-template-columns:250px 1fr;min-height:calc(100vh - 60px)}
+
+    /* SIDEBAR */
     #sidebar{background:var(--verde);padding:20px 0;display:flex;flex-direction:column;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto}
     .suser{padding:16px 20px 20px;border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:8px;display:flex;align-items:center;gap:12px}
     .sav{width:40px;height:40px;border-radius:50%;background:var(--pist);color:var(--verde);font-weight:800;font-size:15px;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
@@ -41,36 +62,121 @@
     .nico{font-size:18px;width:22px;text-align:center;flex-shrink:0}
     .nbadge{margin-left:auto;background:var(--pist);color:var(--verde);font-size:11px;font-weight:800;padding:1px 7px;border-radius:20px}
     .sdiv{height:1px;background:rgba(255,255,255,.1);margin:10px 20px}
+
+    /* MAIN */
     #main{padding:28px;overflow-y:auto}
     .ptitle{font-family:'Nunito',sans-serif;font-size:24px;font-weight:900;color:var(--verde);margin-bottom:4px}
     .psub{font-size:14px;color:var(--texto-g);margin-bottom:24px}
+    .ph{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+
+    /* ACCESO */
     .acc-card{background:#fff;border-radius:20px;box-shadow:0 4px 24px rgba(9,74,75,.10);padding:60px 40px;text-align:center;max-width:480px;margin:60px auto}
     .acc-icon{font-size:64px;margin-bottom:20px}
     .acc-title{font-family:'Nunito',sans-serif;font-size:26px;font-weight:900;color:var(--verde);margin-bottom:10px}
     .acc-sub{color:var(--texto-g);font-size:15px;margin-bottom:28px;line-height:1.6}
-    .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:16px;margin-bottom:28px}
+
+    /* STATS */
+    .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:28px}
     .scard{background:#fff;border-radius:var(--rc);box-shadow:0 2px 16px rgba(9,74,75,.08);padding:20px 22px;display:flex;flex-direction:column;gap:6px;border-left:4px solid var(--pist);transition:transform var(--t)}
     .scard:hover{transform:translateY(-3px)}
     .sico{font-size:26px}
     .sval{font-family:'Nunito',sans-serif;font-size:32px;font-weight:900;color:var(--verde);line-height:1}
     .slbl{font-size:13px;color:var(--texto-g);font-weight:600}
+
+    /* CARDS */
+    .card{background:#fff;border-radius:var(--rc);box-shadow:0 2px 16px rgba(9,74,75,.08);padding:24px;margin-bottom:20px}
+    .ctitle{font-family:'Nunito',sans-serif;font-size:17px;font-weight:800;color:var(--verde);margin-bottom:16px}
+
+    /* TABLAS */
     .twrap{background:#fff;border-radius:var(--rc);box-shadow:0 2px 16px rgba(9,74,75,.08);overflow:hidden;margin-bottom:24px}
-    .ttbar{padding:16px 20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--borde);flex-wrap:wrap}
+    .ttbar{padding:14px 20px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--borde);flex-wrap:wrap}
     .ttitle{font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;color:var(--verde);margin-right:auto}
     table{width:100%;border-collapse:collapse;font-size:14px}
-    th{padding:10px 14px;text-align:left;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--verde);background:var(--suave);white-space:nowrap}
-    td{padding:12px 14px;border-bottom:1px solid var(--borde)}
+    th{padding:10px 14px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--verde);background:var(--suave);white-space:nowrap}
+    td{padding:11px 14px;border-bottom:1px solid var(--borde);vertical-align:middle}
     tbody tr:last-child td{border-bottom:none}
     tbody tr:hover{background:rgba(9,74,75,.02)}
-    .badge-a{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:600;background:#d4edda;color:#155724}
-    .badge-p{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:600;background:#fff3cd;color:#856404}
-    .card{background:#fff;border-radius:var(--rc);box-shadow:0 2px 16px rgba(9,74,75,.08);padding:24px;margin-bottom:20px}
+    .td-actions{display:flex;gap:6px;align-items:center}
+
+    /* BADGES */
+    .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+    .b-activa{background:#d4edda;color:#155724}
+    .b-seleccion{background:#cce5ff;color:#004085}
+    .b-cerrada{background:#f8d7da;color:#721c24}
+    .b-cubierta{background:#d1ecf1;color:#0c5460}
+    .b-normal{background:var(--suave);color:var(--texto-g)}
+    .b-hidro{background:#fff3cd;color:#856404}
+    .b-incluyente{background:#d4edda;color:#155724}
+
+    /* FILTROS */
+    .filtros-bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;padding:16px;background:#fff;border-radius:var(--rc);box-shadow:0 2px 16px rgba(9,74,75,.08)}
+    .finput{padding:9px 13px;border:1.5px solid var(--borde);border-radius:var(--r);font-size:13px;font-family:inherit;color:var(--negro);background:#fff;outline:none;transition:border-color var(--t)}
+    .finput:focus{border-color:var(--verde);box-shadow:0 0 0 3px rgba(9,74,75,.08)}
+    select.finput{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23094a4b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:30px}
+
+    /* MODAL */
+    .modal-bg{position:fixed;inset:0;background:rgba(9,74,75,.5);display:flex;align-items:center;justify-content:center;z-index:999;backdrop-filter:blur(3px);animation:fadeIn .18s ease}
+    .modal{background:#fff;border-radius:18px;box-shadow:0 20px 60px rgba(9,74,75,.25);width:min(680px,95vw);max-height:92vh;overflow-y:auto;animation:slideUp .22s ease}
+    .modal-head{display:flex;align-items:center;justify-content:space-between;padding:20px 24px 16px;border-bottom:1px solid var(--borde);position:sticky;top:0;background:#fff;z-index:1}
+    .modal-title{font-family:'Nunito',sans-serif;font-size:19px;font-weight:900;color:var(--verde)}
+    .modal-close{background:var(--suave);border:none;border-radius:8px;width:34px;height:34px;font-size:18px;color:var(--texto-g);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background var(--t)}
+    .modal-close:hover{background:var(--borde)}
+    .modal-body{padding:24px}
+    .modal-foot{padding:16px 24px;border-top:1px solid var(--borde);display:flex;justify-content:flex-end;gap:10px;position:sticky;bottom:0;background:#fff}
+
+    /* FORM */
+    .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .fgrid.one{grid-template-columns:1fr}
+    .fgroup{display:flex;flex-direction:column;gap:6px}
+    .flabel{font-size:13px;font-weight:600;color:var(--verde)}
+    .flabel .req{color:#e74c3c;margin-left:2px}
+    .fval{padding:10px 14px;border:1.5px solid var(--borde);border-radius:var(--r);font-size:14px;font-family:inherit;color:var(--negro);background:#fff;outline:none;transition:border-color var(--t)}
+    .fval:focus{border-color:var(--verde);box-shadow:0 0 0 3px rgba(9,74,75,.08)}
+    select.fval{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23094a4b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+    textarea.fval{resize:vertical;min-height:80px}
+    .fsection{font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;color:var(--verde);margin:20px 0 12px;padding-bottom:6px;border-bottom:2px solid var(--pist)}
+
+    /* HIDROCARBUROS */
+    .hidro-panel{background:#fffbeb;border:1.5px solid #fbbf24;border-radius:12px;padding:20px;margin-top:16px}
+    .hidro-title{font-family:'Nunito',sans-serif;font-weight:800;color:#92400e;font-size:15px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+    .contador-dias{background:var(--verde);color:#fff;border-radius:10px;padding:10px 16px;text-align:center;display:inline-block}
+    .contador-num{font-family:'Nunito',sans-serif;font-size:28px;font-weight:900;color:var(--pist);line-height:1}
+    .contador-lbl{font-size:11px;opacity:.8;margin-top:2px}
+    .dias-ok{color:#155724;font-weight:700}
+    .dias-pend{color:#856404;font-weight:700}
+
+    /* DETALLE VACANTE */
+    .det-header{background:linear-gradient(135deg,var(--verde),#0d6b6c);color:#fff;border-radius:14px;padding:24px 28px;margin-bottom:20px;position:relative;overflow:hidden}
+    .det-header::before{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;border-radius:50%;background:rgba(168,201,78,.12)}
+    .det-cargo{font-family:'Nunito',sans-serif;font-size:22px;font-weight:900;margin-bottom:6px}
+    .det-empresa{font-size:15px;opacity:.85;margin-bottom:12px}
+    .det-meta{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;opacity:.85}
+    .det-section{font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;color:var(--verde);margin:18px 0 10px;display:flex;align-items:center;gap:8px}
+    .det-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+    .det-item label{font-size:12px;font-weight:600;color:var(--texto-g);text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:2px}
+    .det-item span{font-size:14px;color:var(--negro);font-weight:500}
+
+    /* TOAST */
+    #toasts{position:fixed;bottom:24px;right:24px;display:flex;flex-direction:column;gap:10px;z-index:9999}
+    .toast{background:var(--verde);color:#fff;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:600;box-shadow:0 4px 20px rgba(9,74,75,.3);display:flex;align-items:center;gap:10px;animation:slideUp .22s ease;min-width:260px}
+    .toast.ok{border-left:4px solid var(--pist)}
+    .toast.err{border-left:4px solid #e74c3c;background:#c0392b}
+
+    /* LOADING */
+    .loading{display:flex;align-items:center;justify-content:center;padding:48px;gap:12px;color:var(--texto-g)}
+    .spinner{width:28px;height:28px;border:3px solid var(--borde);border-top-color:var(--verde);border-radius:50%;animation:spin .8s linear infinite}
+
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    @keyframes slideUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
     @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-    @media(max-width:768px){#shell{grid-template-columns:1fr}#sidebar{display:none}#main{padding:16px}}
+
+    @media(max-width:900px){#shell{grid-template-columns:1fr}#sidebar{display:none}#main{padding:16px}.fgrid{grid-template-columns:1fr}.det-grid{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
 
+<!-- TOPBAR -->
 <header id="topbar">
   <div style="display:flex;align-items:center;gap:14px">
     <span class="back" onclick="window.location.href='index.html'">← Inicio</span>
@@ -85,6 +191,8 @@
 </header>
 
 <div id="shell">
+
+  <!-- SIDEBAR -->
   <nav id="sidebar">
     <div class="suser">
       <div class="sav" id="sav">?</div>
@@ -107,205 +215,872 @@
     <div class="nitem" onclick="window.Clerk&&window.Clerk.signOut().then(function(){window.location.href='index.html'})"><span class="nico">🚪</span> Cerrar sesión</div>
   </nav>
 
+  <!-- MAIN -->
   <main id="main">
 
+    <!-- ACCESO RESTRINGIDO -->
     <div id="pg-acceso" class="hidden">
       <div class="acc-card">
         <div class="acc-icon">🛡️</div>
         <div class="acc-title">Acceso restringido</div>
         <p class="acc-sub">Este panel es exclusivo para el equipo de Comfenalco Antioquia. Inicia sesión con tu cuenta institucional.</p>
-        <button class="btn btn-primary" style="font-size:16px;padding:14px 32px;border-radius:10px" onclick="window.Clerk.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>
+        <button class="btn btn-primary btn-lg" onclick="window.Clerk.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>
       </div>
     </div>
 
+    <!-- DASHBOARD -->
     <div id="pg-dashboard" class="hidden">
       <div class="ptitle">📊 Dashboard</div>
       <p class="psub">Indicadores en tiempo real de la Agencia de Empleo</p>
       <div class="stats-row">
-        <div class="scard"><div class="sico">👤</div><div class="sval" id="d-c">0</div><div class="slbl">Candidatos</div></div>
-        <div class="scard"><div class="sico">🏢</div><div class="sval" id="d-e">8</div><div class="slbl">Empresas</div></div>
+        <div class="scard"><div class="sico">👤</div><div class="sval">0</div><div class="slbl">Candidatos</div></div>
+        <div class="scard"><div class="sico">🏢</div><div class="sval">8</div><div class="slbl">Empresas</div></div>
         <div class="scard"><div class="sico">💼</div><div class="sval" id="d-v">10</div><div class="slbl">Vacantes activas</div></div>
-        <div class="scard"><div class="sico">📬</div><div class="sval" id="d-p">0</div><div class="slbl">Postulaciones</div></div>
-        <div class="scard"><div class="sico">✅</div><div class="sval" id="d-col">0</div><div class="slbl">Empleos colocados</div></div>
-        <div class="scard"><div class="sico">📊</div><div class="sval" id="d-tasa">0%</div><div class="slbl">Tasa de colocación</div></div>
+        <div class="scard"><div class="sico">⚡</div><div class="sval" id="d-h">0</div><div class="slbl">Vacantes hidrocarburos</div></div>
+        <div class="scard"><div class="sico">📬</div><div class="sval">0</div><div class="slbl">Postulaciones</div></div>
+        <div class="scard"><div class="sico">✅</div><div class="sval">0</div><div class="slbl">Empleos colocados</div></div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
         <div class="card">
-          <div style="font-family:Nunito;font-weight:800;color:var(--verde);margin-bottom:16px;font-size:16px">Empresas registradas</div>
-          <table>
-            <thead><tr><th>Empresa</th><th>Sector</th><th>Estado</th></tr></thead>
-            <tbody id="dash-emp"></tbody>
-          </table>
+          <div class="ctitle">Empresas registradas</div>
+          <table><thead><tr><th>Empresa</th><th>Sector</th><th>Estado</th></tr></thead>
+          <tbody id="dash-emp"></tbody></table>
         </div>
         <div class="card">
-          <div style="font-family:Nunito;font-weight:800;color:var(--verde);margin-bottom:16px;font-size:16px">Vacantes activas</div>
-          <table>
-            <thead><tr><th>Cargo</th><th>Municipio</th><th>Postulados</th></tr></thead>
-            <tbody id="dash-vac"></tbody>
-          </table>
+          <div class="ctitle">Últimas vacantes</div>
+          <table><thead><tr><th>Cargo</th><th>Municipio</th><th>Tipo</th></tr></thead>
+          <tbody id="dash-vac"></tbody></table>
         </div>
       </div>
     </div>
 
+    <!-- CANDIDATOS -->
     <div id="pg-candidatos" class="hidden">
       <div class="ptitle">👤 Candidatos</div>
       <p class="psub">Banco de hojas de vida registradas</p>
       <div class="twrap">
-        <div class="ttbar"><span class="ttitle">Candidatos registrados</span><button class="btn btn-primary btn-sm">+ Registrar candidato</button></div>
-        <div style="padding:24px;color:var(--texto-g)">Aún no hay candidatos registrados en la plataforma. Cuando los candidatos se registren aparecerán aquí.</div>
+        <div class="ttbar"><span class="ttitle">Candidatos registrados (0)</span>
+          <button class="btn btn-primary btn-sm">+ Registrar candidato</button></div>
+        <div style="padding:24px;color:var(--texto-g)">Aún no hay candidatos registrados. Cuando se registren aparecerán aquí.</div>
       </div>
     </div>
 
+    <!-- EMPRESAS -->
     <div id="pg-empresas" class="hidden">
-      <div class="ptitle">🏢 Empresas</div>
-      <p class="psub">Directorio de empresas aliadas</p>
-      <div class="twrap" id="tabla-emp">
-        <div class="ttbar"><span class="ttitle">Empresas registradas</span><button class="btn btn-primary btn-sm">+ Registrar empresa</button></div>
-        <table>
-          <thead><tr><th>Empresa</th><th>NIT</th><th>Sector</th><th>Estado</th></tr></thead>
-          <tbody id="emp-tbody"></tbody>
-        </table>
+      <div class="ph">
+        <div><div class="ptitle">🏢 Empresas</div><p class="psub">Directorio de empresas aliadas registradas</p></div>
+        <button class="btn btn-primary" onclick="abrirModalEmpresa()">+ Registrar empresa</button>
+      </div>
+      <div class="filtros-bar">
+        <input class="finput" type="text" id="fe-q" placeholder="🔍 Buscar empresa..." style="flex:1;min-width:160px" oninput="filtrarEmpresas()"/>
+        <select class="finput" id="fe-est" onchange="filtrarEmpresas()">
+          <option value="">Todos los estados</option>
+          <option value="activa">Activa</option>
+          <option value="verificada">Verificada</option>
+          <option value="inactiva">Inactiva</option>
+        </select>
+        <select class="finput" id="fe-sec" onchange="filtrarEmpresas()">
+          <option value="">Todos los sectores</option>
+          <option>Logística y transporte</option>
+          <option>Tecnología e informática</option>
+          <option>Manufactura e industria</option>
+          <option>Servicios financieros</option>
+          <option>Refrigeración y HVAC</option>
+          <option>Contabilidad y auditoría</option>
+          <option>Agroindustria</option>
+          <option>Salud y bienestar</option>
+          <option>Hidrocarburos</option>
+        </select>
+      </div>
+      <div class="twrap">
+        <div class="ttbar"><span class="ttitle" id="emp-count">8 empresas</span></div>
+        <table><thead><tr><th>Empresa</th><th>NIT</th><th>Sector</th><th>Municipio</th><th>Estado</th><th>Vacantes</th><th>Acciones</th></tr></thead>
+        <tbody id="emp-tbody"></tbody></table>
       </div>
     </div>
 
+    <!-- VACANTES — MÓDULO PRINCIPAL -->
     <div id="pg-vacantes" class="hidden">
-      <div class="ptitle">💼 Vacantes</div>
-      <p class="psub">Gestión de vacantes publicadas</p>
+      <div class="ph">
+        <div>
+          <div class="ptitle">💼 Gestión de Vacantes</div>
+          <p class="psub">Publica, edita y gestiona todas las vacantes de la agencia</p>
+        </div>
+        <div style="display:flex;gap:10px">
+          <button class="btn btn-primary" onclick="abrirModalVacante('normal')">+ Nueva vacante</button>
+          <button class="btn btn-naranja" onclick="abrirModalVacante('hidrocarburos')">⚡ Vacante Hidrocarburos</button>
+        </div>
+      </div>
+
+      <!-- Resumen rápido -->
+      <div class="stats-row" style="grid-template-columns:repeat(5,1fr);margin-bottom:20px">
+        <div class="scard" style="border-left-color:var(--pist)"><div class="sval" id="rv-total">10</div><div class="slbl">Total vacantes</div></div>
+        <div class="scard" style="border-left-color:#27ae60"><div class="sval" id="rv-activa">8</div><div class="slbl">Activas</div></div>
+        <div class="scard" style="border-left-color:#3498db"><div class="sval" id="rv-selec">2</div><div class="slbl">En selección</div></div>
+        <div class="scard" style="border-left-color:var(--naranja)"><div class="sval" id="rv-hidro">0</div><div class="slbl">Hidrocarburos</div></div>
+        <div class="scard" style="border-left-color:var(--verde)"><div class="sval" id="rv-post">114</div><div class="slbl">Postulaciones</div></div>
+      </div>
+
+      <!-- Filtros -->
+      <div class="filtros-bar">
+        <input class="finput" type="text" id="fv-q" placeholder="🔍 Buscar cargo o empresa..." style="flex:1;min-width:180px" oninput="filtrarVacantes()"/>
+        <select class="finput" id="fv-est" onchange="filtrarVacantes()">
+          <option value="">Todos los estados</option>
+          <option value="activa">Activa</option>
+          <option value="en_seleccion">En selección</option>
+          <option value="cerrada">Cerrada</option>
+          <option value="cubierta">Cubierta</option>
+        </select>
+        <select class="finput" id="fv-tipo" onchange="filtrarVacantes()">
+          <option value="">Todos los tipos</option>
+          <option value="normal">Normal</option>
+          <option value="hidrocarburos">⚡ Hidrocarburos</option>
+          <option value="incluyente">Incluyente</option>
+        </select>
+        <select class="finput" id="fv-mpio" onchange="filtrarVacantes()">
+          <option value="">Todos los municipios</option>
+        </select>
+        <button class="btn btn-ghost btn-sm" onclick="limpiarFiltrosV()">✕ Limpiar</button>
+      </div>
+
+      <!-- Tabla vacantes -->
       <div class="twrap">
-        <div class="ttbar"><span class="ttitle">Vacantes activas</span><button class="btn btn-primary btn-sm">+ Publicar vacante</button></div>
+        <div class="ttbar">
+          <span class="ttitle" id="vac-count">10 vacantes</span>
+          <button class="btn btn-ghost btn-sm" onclick="exportarVacantes()">📥 Exportar</button>
+        </div>
         <table>
-          <thead><tr><th>Cargo</th><th>Empresa</th><th>Municipio</th><th>Salario</th><th>Postulados</th></tr></thead>
+          <thead>
+            <tr>
+              <th>Cargo</th>
+              <th>Empresa</th>
+              <th>Municipio</th>
+              <th>Salario</th>
+              <th>Tipo</th>
+              <th>Estado</th>
+              <th>Postulados</th>
+              <th>Días pub.</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
           <tbody id="vac-tbody"></tbody>
         </table>
       </div>
     </div>
 
+    <!-- INTERMEDIACIÓN -->
     <div id="pg-intermediacion" class="hidden">
       <div class="ptitle">🔗 Intermediación laboral</div>
       <p class="psub">Revisión de postulados y match candidato-vacante</p>
       <div class="card"><p style="color:var(--texto-g)">Módulo en desarrollo — próximamente disponible.</p></div>
     </div>
 
+    <!-- BANCO HV -->
     <div id="pg-banco-hv" class="hidden">
       <div class="ptitle">🗄️ Banco de hojas de vida</div>
       <p class="psub">Búsqueda avanzada de candidatos</p>
       <div class="card"><p style="color:var(--texto-g)">Módulo en desarrollo — próximamente disponible.</p></div>
     </div>
 
+    <!-- PRUEBAS -->
     <div id="pg-pruebas" class="hidden">
-      <div class="ptitle">🧪 Pruebas psicotécnicas</div>
-      <p class="psub">Fase 2</p>
-      <div class="card"><p style="color:var(--texto-g)">Esta funcionalidad estará disponible en la Fase 2.</p></div>
+      <div class="ptitle">🧪 Pruebas psicotécnicas — Fase 2</div>
+      <div class="card"><p style="color:var(--texto-g)">Disponible en la Fase 2.</p></div>
     </div>
 
+    <!-- DIAGNÓSTICOS -->
     <div id="pg-diagnosticos" class="hidden">
-      <div class="ptitle">📋 Diagnósticos organizacionales</div>
-      <p class="psub">Fase 2</p>
-      <div class="card"><p style="color:var(--texto-g)">Esta funcionalidad estará disponible en la Fase 2.</p></div>
+      <div class="ptitle">📋 Diagnósticos organizacionales — Fase 2</div>
+      <div class="card"><p style="color:var(--texto-g)">Disponible en la Fase 2.</p></div>
     </div>
 
+    <!-- REPORTES -->
     <div id="pg-reportes" class="hidden">
       <div class="ptitle">📈 Reportes e indicadores</div>
-      <p class="psub">Indicadores de gestión y exportación</p>
       <div class="card"><p style="color:var(--texto-g)">Módulo en desarrollo — próximamente disponible.</p></div>
     </div>
 
   </main>
 </div>
 
+<!-- MODAL VACANTE -->
+<div id="modal-vac" class="modal-bg hidden">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="mv-title">Nueva vacante</div>
+      <button class="modal-close" onclick="cerrarModal('modal-vac')">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <div class="fsection">📋 Información básica</div>
+      <div class="fgrid">
+        <div class="fgroup">
+          <label class="flabel">Cargo <span class="req">*</span></label>
+          <input class="fval" type="text" id="mv-cargo" placeholder="Ej: Auxiliar de Bodega"/>
+        </div>
+        <div class="fgroup">
+          <label class="flabel">Empresa <span class="req">*</span></label>
+          <select class="fval" id="mv-empresa">
+            <option value="">Selecciona la empresa...</option>
+          </select>
+        </div>
+        <div class="fgroup">
+          <label class="flabel">Municipio <span class="req">*</span></label>
+          <select class="fval" id="mv-municipio">
+            <option value="">Selecciona municipio...</option>
+          </select>
+        </div>
+        <div class="fgroup">
+          <label class="flabel">Número de vacantes</label>
+          <input class="fval" type="number" id="mv-num" value="1" min="1"/>
+        </div>
+      </div>
+
+      <div class="fsection">💰 Condiciones laborales</div>
+      <div class="fgrid">
+        <div class="fgroup">
+          <label class="flabel">Salario mínimo (COP)</label>
+          <input class="fval" type="number" id="mv-sal-min" placeholder="1160000"/>
+        </div>
+        <div class="fgroup">
+          <label class="flabel">Salario máximo (COP)</label>
+          <input class="fval" type="number" id="mv-sal-max" placeholder="2000000"/>
+        </div>
+        <div class="fgroup">
+          <label class="flabel">Tipo de contrato</label>
+          <select class="fval" id="mv-contrato">
+            <option value="termino_fijo">Término fijo</option>
+            <option value="termino_indefinido">Término indefinido</option>
+            <option value="prestacion_servicios">Prestación de servicios</option>
+            <option value="obra_labor">Obra o labor</option>
+            <option value="aprendizaje">Contrato de aprendizaje</option>
+            <option value="temporal">Temporal</option>
+          </select>
+        </div>
+        <div class="fgroup">
+          <label class="flabel">Jornada</label>
+          <select class="fval" id="mv-jornada">
+            <option value="completa">Completa</option>
+            <option value="medio_tiempo">Medio tiempo</option>
+            <option value="nocturna">Nocturna</option>
+            <option value="fines_de_semana">Fines de semana</option>
+            <option value="flexible">Flexible</option>
+            <option value="teletrabajo">Teletrabajo</option>
+          </select>
+        </div>
+        <div class="fgroup">
+          <label class="flabel">Nivel educativo mínimo</label>
+          <select class="fval" id="mv-edu">
+            <option value="primaria">Primaria</option>
+            <option value="secundaria">Secundaria</option>
+            <option value="tecnico">Técnico</option>
+            <option value="tecnologo">Tecnólogo</option>
+            <option value="profesional">Profesional</option>
+            <option value="especializacion">Especialización</option>
+          </select>
+        </div>
+        <div class="fgroup">
+          <label class="flabel">Experiencia mínima (meses)</label>
+          <input class="fval" type="number" id="mv-exp" value="0" min="0"/>
+        </div>
+        <div class="fgroup">
+          <label class="flabel">Fecha de cierre</label>
+          <input class="fval" type="date" id="mv-cierre"/>
+        </div>
+        <div class="fgroup">
+          <label class="flabel">¿Es vacante incluyente?</label>
+          <select class="fval" id="mv-incluyente">
+            <option value="no">No</option>
+            <option value="si">Sí — población especial</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="fsection">📝 Descripción</div>
+      <div class="fgrid one">
+        <div class="fgroup">
+          <label class="flabel">Descripción del cargo</label>
+          <textarea class="fval" id="mv-desc" placeholder="Describe las funciones principales del cargo..."></textarea>
+        </div>
+        <div class="fgroup">
+          <label class="flabel">Requisitos específicos</label>
+          <textarea class="fval" id="mv-req" placeholder="Conocimientos, habilidades, certificaciones requeridas..."></textarea>
+        </div>
+      </div>
+
+      <!-- PANEL HIDROCARBUROS (se muestra solo si el tipo es hidrocarburos) -->
+      <div id="hidro-panel" class="hidro-panel hidden">
+        <div class="hidro-title">⚡ Configuración especial — Vacante Hidrocarburos</div>
+        <p style="font-size:13px;color:#78350f;margin-bottom:16px;line-height:1.6">
+          Por ley, las empresas del sector de hidrocarburos deben dar prioridad a la mano de obra local del municipio de influencia. Esta vacante tendrá publicación preferente y restringida al municipio seleccionado durante el período de ventana legal.
+        </p>
+        <div class="fgrid">
+          <div class="fgroup">
+            <label class="flabel" style="color:#92400e">Tipo de mano de obra <span class="req">*</span></label>
+            <select class="fval" id="mv-mano-obra" style="border-color:#fbbf24">
+              <option value="no_calificada">No calificada (100% local por ley)</option>
+              <option value="semicalificada">Semicalificada (preferencia local)</option>
+              <option value="calificada">Calificada (preferencia local)</option>
+            </select>
+          </div>
+          <div class="fgroup">
+            <label class="flabel" style="color:#92400e">Días de ventana local <span class="req">*</span></label>
+            <input class="fval" type="number" id="mv-ventana" value="5" min="1" style="border-color:#fbbf24"/>
+            <span style="font-size:12px;color:#92400e">Días mínimos de publicación local antes de ampliar</span>
+          </div>
+          <div class="fgroup">
+            <label class="flabel" style="color:#92400e">Referencia contrato ANH</label>
+            <input class="fval" type="text" id="mv-anh" placeholder="Ej: CPO-09, Bloque Llanos 47..." style="border-color:#fbbf24"/>
+          </div>
+          <div class="fgroup">
+            <label class="flabel" style="color:#92400e">Fecha publicación local</label>
+            <input class="fval" type="date" id="mv-fecha-local" style="border-color:#fbbf24"/>
+          </div>
+        </div>
+        <div style="background:#fff;border-radius:8px;padding:12px;margin-top:12px;font-size:13px;color:#92400e;border:1px solid #fbbf24">
+          ⚠️ <strong>Aviso legal:</strong> La mano de obra no calificada debe ser 100% del municipio de influencia (Ley 1530/2012, Decreto 1073/2015). El sistema bloqueará postulaciones de candidatos de otros municipios durante la ventana legal.
+        </div>
+      </div>
+
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-vac')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarVacante()">💾 Guardar vacante</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DETALLE VACANTE -->
+<div id="modal-det" class="modal-bg hidden">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">Detalle de vacante</div>
+      <button class="modal-close" onclick="cerrarModal('modal-det')">✕</button>
+    </div>
+    <div class="modal-body" id="det-body"></div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-det')">Cerrar</button>
+      <button class="btn btn-outline btn-sm" onclick="cerrarModal('modal-det')">✏️ Editar</button>
+      <button class="btn btn-primary btn-sm">👥 Ver postulados</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EMPRESA -->
+<div id="modal-emp" class="modal-bg hidden">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">Registrar empresa</div>
+      <button class="modal-close" onclick="cerrarModal('modal-emp')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="fgrid">
+        <div class="fgroup"><label class="flabel">Nombre empresa <span class="req">*</span></label><input class="fval" type="text" id="me-nombre" placeholder="Razón social"/></div>
+        <div class="fgroup"><label class="flabel">NIT</label><input class="fval" type="text" id="me-nit" placeholder="900.123.456-1"/></div>
+        <div class="fgroup"><label class="flabel">Sector</label>
+          <select class="fval" id="me-sector">
+            <option>Logística y transporte</option><option>Tecnología e informática</option>
+            <option>Manufactura e industria</option><option>Servicios financieros</option>
+            <option>Salud y bienestar</option><option>Agroindustria</option>
+            <option>Hidrocarburos</option><option>Construcción</option><option>Otro</option>
+          </select>
+        </div>
+        <div class="fgroup"><label class="flabel">Municipio</label>
+          <select class="fval" id="me-municipio"><option value="">Selecciona...</option></select>
+        </div>
+        <div class="fgroup"><label class="flabel">Correo contacto</label><input class="fval" type="email" id="me-correo" placeholder="rrhh@empresa.com"/></div>
+        <div class="fgroup"><label class="flabel">Correo selección (para envío HV)</label><input class="fval" type="email" id="me-correo-sel" placeholder="seleccion@empresa.com"/></div>
+        <div class="fgroup"><label class="flabel">Nombre contacto</label><input class="fval" type="text" id="me-contacto" placeholder="Nombre del responsable"/></div>
+        <div class="fgroup"><label class="flabel">Teléfono</label><input class="fval" type="tel" id="me-tel" placeholder="604 123 4567"/></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-emp')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarEmpresa()">💾 Guardar empresa</button>
+    </div>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
 <script>
+// ═══════════════════════════════════════════════════════
+// DATOS
+// ═══════════════════════════════════════════════════════
+var MUNICIPIOS=[
+  {id:1,n:'Medellín',s:'Valle de Aburrá'},{id:2,n:'Bello',s:'Valle de Aburrá'},
+  {id:3,n:'Itagüí',s:'Valle de Aburrá'},{id:4,n:'Envigado',s:'Valle de Aburrá'},
+  {id:5,n:'Sabaneta',s:'Valle de Aburrá'},{id:6,n:'La Estrella',s:'Valle de Aburrá'},
+  {id:11,n:'Rionegro',s:'Oriente'},{id:12,n:'El Carmen de Viboral',s:'Oriente'},
+  {id:13,n:'La Ceja',s:'Oriente'},{id:14,n:'Marinilla',s:'Oriente'},
+  {id:21,n:'Santa Rosa de Osos',s:'Norte'},{id:22,n:'Yarumal',s:'Norte'},
+  {id:31,n:'Santa Fe de Antioquia',s:'Occidente'},
+  {id:41,n:'Andes',s:'Suroeste'},{id:42,n:'Jericó',s:'Suroeste'},
+  {id:51,n:'Caucasia',s:'Bajo Cauca'},{id:52,n:'El Bagre',s:'Bajo Cauca'},
+  {id:61,n:'Segovia',s:'Nordeste'},{id:62,n:'Remedios',s:'Nordeste'},
+  {id:71,n:'Apartadó',s:'Urabá'},{id:72,n:'Turbo',s:'Urabá'},
+  {id:73,n:'Carepa',s:'Urabá'},{id:74,n:'Chigorodó',s:'Urabá'}
+];
+
 var EMPRESAS=[
-  {nombre:'Logística del Valle SAS',nit:'900.123.456-1',sector:'Logística y transporte',estado:'verificada'},
-  {nombre:'TechCo Colombia',nit:'900.234.567-2',sector:'Tecnología e informática',estado:'activa'},
-  {nombre:'Manufacturas Bello SA',nit:'811.345.678-3',sector:'Manufactura e industria',estado:'activa'},
-  {nombre:'Seguros Andinos Ltda',nit:'890.456.789-4',sector:'Servicios financieros',estado:'activa'},
-  {nombre:'Fríos del Oriente SAS',nit:'900.567.890-5',sector:'Refrigeración y HVAC',estado:'activa'},
-  {nombre:'Contadores Asociados Ltda',nit:'890.678.901-6',sector:'Contabilidad y auditoría',estado:'activa'},
-  {nombre:'Agrícola Urabá SA',nit:'900.789.012-7',sector:'Agroindustria',estado:'activa'},
-  {nombre:'Hospital Regional Norte',nit:'800.890.123-8',sector:'Salud y bienestar',estado:'verificada'}
+  {id:1,nombre:'Logística del Valle SAS',nit:'900.123.456-1',sector:'Logística y transporte',municipio:'Medellín',estado:'verificada',vacantes:2},
+  {id:2,nombre:'TechCo Colombia',nit:'900.234.567-2',sector:'Tecnología e informática',municipio:'Envigado',estado:'activa',vacantes:2},
+  {id:3,nombre:'Manufacturas Bello SA',nit:'811.345.678-3',sector:'Manufactura e industria',municipio:'Bello',estado:'activa',vacantes:1},
+  {id:4,nombre:'Seguros Andinos Ltda',nit:'890.456.789-4',sector:'Servicios financieros',municipio:'Itagüí',estado:'activa',vacantes:1},
+  {id:5,nombre:'Fríos del Oriente SAS',nit:'900.567.890-5',sector:'Refrigeración y HVAC',municipio:'Rionegro',estado:'activa',vacantes:1},
+  {id:6,nombre:'Contadores Asociados Ltda',nit:'890.678.901-6',sector:'Contabilidad y auditoría',municipio:'Medellín',estado:'activa',vacantes:1},
+  {id:7,nombre:'Agrícola Urabá SA',nit:'900.789.012-7',sector:'Agroindustria',municipio:'Apartadó',estado:'activa',vacantes:1},
+  {id:8,nombre:'Hospital Regional Norte',nit:'800.890.123-8',sector:'Salud y bienestar',municipio:'Santa Rosa de Osos',estado:'verificada',vacantes:1}
 ];
+
 var VACANTES=[
-  {cargo:'Auxiliar de Bodega',empresa:'Logística del Valle SAS',municipio:'Medellín',salario:1300000,postulados:12},
-  {cargo:'Desarrollador Web Jr.',empresa:'TechCo Colombia',municipio:'Envigado',salario:2500000,postulados:5},
-  {cargo:'Operario de Producción',empresa:'Manufacturas Bello SA',municipio:'Bello',salario:1160000,postulados:28},
-  {cargo:'Asesor Comercial',empresa:'Seguros Andinos Ltda',municipio:'Itagüí',salario:1800000,postulados:9},
-  {cargo:'Técnico de Refrigeración',empresa:'Fríos del Oriente SAS',municipio:'Rionegro',salario:1800000,postulados:3},
-  {cargo:'Auxiliar Contable',empresa:'Contadores Asociados Ltda',municipio:'Medellín',salario:1400000,postulados:17},
-  {cargo:'Inspector de Calidad',empresa:'Agrícola Urabá SA',municipio:'Apartadó',salario:1500000,postulados:6},
-  {cargo:'Auxiliar de Enfermería',empresa:'Hospital Regional Norte',municipio:'Santa Rosa de Osos',salario:1400000,postulados:14},
-  {cargo:'Analista de Datos',empresa:'TechCo Colombia',municipio:'Envigado',salario:3000000,postulados:8},
-  {cargo:'Conductor C2',empresa:'Logística del Valle SAS',municipio:'Medellín',salario:1500000,postulados:21}
+  {id:1,cargo:'Auxiliar de Bodega',empresa:'Logística del Valle SAS',municipio:'Medellín',sal_min:1300000,sal_max:1500000,contrato:'Término fijo',jornada:'Completa',edu:'Secundaria',exp:6,estado:'activa',tipo:'normal',postulados:12,fecha_pub:'2025-03-01',dias_pub:46,desc:'Apoyo en recepción y despacho de mercancía',incluyente:false},
+  {id:2,cargo:'Desarrollador Web Jr.',empresa:'TechCo Colombia',municipio:'Envigado',sal_min:2500000,sal_max:3500000,contrato:'Indefinido',jornada:'Completa',edu:'Tecnólogo',exp:12,estado:'activa',tipo:'normal',postulados:5,fecha_pub:'2025-03-10',dias_pub:37,desc:'Desarrollo con React y Node.js',incluyente:false},
+  {id:3,cargo:'Operario de Producción',empresa:'Manufacturas Bello SA',municipio:'Bello',sal_min:1160000,sal_max:1400000,contrato:'Término fijo',jornada:'Completa',edu:'Secundaria',exp:0,estado:'activa',tipo:'normal',postulados:28,fecha_pub:'2025-02-15',dias_pub:60,desc:'Manejo de maquinaria en línea de producción',incluyente:false},
+  {id:4,cargo:'Asesor Comercial',empresa:'Seguros Andinos Ltda',municipio:'Itagüí',sal_min:1800000,sal_max:2500000,contrato:'Indefinido',jornada:'Completa',edu:'Técnico',exp:6,estado:'en_seleccion',tipo:'normal',postulados:9,fecha_pub:'2025-03-05',dias_pub:42,desc:'Venta de seguros con portafolio asignado',incluyente:false},
+  {id:5,cargo:'Técnico de Refrigeración',empresa:'Fríos del Oriente SAS',municipio:'Rionegro',sal_min:1800000,sal_max:2200000,contrato:'Término fijo',jornada:'Completa',edu:'Técnico',exp:12,estado:'activa',tipo:'normal',postulados:3,fecha_pub:'2025-03-20',dias_pub:27,desc:'Mantenimiento de equipos de frío industrial',incluyente:false},
+  {id:6,cargo:'Auxiliar Contable',empresa:'Contadores Asociados Ltda',municipio:'Medellín',sal_min:1400000,sal_max:1700000,contrato:'Término fijo',jornada:'Completa',edu:'Tecnólogo',exp:6,estado:'activa',tipo:'normal',postulados:17,fecha_pub:'2025-03-12',dias_pub:35,desc:'Registro y conciliación de cuentas',incluyente:false},
+  {id:7,cargo:'Inspector de Calidad',empresa:'Agrícola Urabá SA',municipio:'Apartadó',sal_min:1500000,sal_max:1800000,contrato:'Obra labor',jornada:'Completa',edu:'Técnico',exp:12,estado:'activa',tipo:'normal',postulados:6,fecha_pub:'2025-03-22',dias_pub:25,desc:'Control de calidad en proceso agroindustrial',incluyente:false},
+  {id:8,cargo:'Auxiliar de Enfermería',empresa:'Hospital Regional Norte',municipio:'Santa Rosa de Osos',sal_min:1400000,sal_max:1700000,contrato:'Término fijo',jornada:'Completa',edu:'Técnico',exp:6,estado:'activa',tipo:'incluyente',postulados:14,fecha_pub:'2025-03-08',dias_pub:39,desc:'Apoyo en atención al paciente hospitalizado',incluyente:true},
+  {id:9,cargo:'Analista de Datos',empresa:'TechCo Colombia',municipio:'Envigado',sal_min:3000000,sal_max:4500000,contrato:'Indefinido',jornada:'Teletrabajo',edu:'Profesional',exp:24,estado:'activa',tipo:'normal',postulados:8,fecha_pub:'2025-03-25',dias_pub:22,desc:'Análisis con Python y Power BI',incluyente:false},
+  {id:10,cargo:'Conductor C2',empresa:'Logística del Valle SAS',municipio:'Medellín',sal_min:1500000,sal_max:1800000,contrato:'Obra labor',jornada:'Completa',edu:'Secundaria',exp:12,estado:'en_seleccion',tipo:'normal',postulados:21,fecha_pub:'2025-02-28',dias_pub:47,desc:'Transporte urbano de mercancía',incluyente:false}
 ];
 
-var PAGS=['acceso','dashboard','candidatos','empresas','vacantes','intermediacion','banco-hv','pruebas','diagnosticos','reportes'];
+var vacantesActuales = VACANTES.slice();
+var empresasActuales = EMPRESAS.slice();
+var tipoModalVacante = 'normal';
+var PAGS = ['acceso','dashboard','candidatos','empresas','vacantes','intermediacion','banco-hv','pruebas','diagnosticos','reportes'];
 
-function fmtCOP(n){return '$'+Number(n).toLocaleString('es-CO');}
+// ═══════════════════════════════════════════════════════
+// UTILIDADES
+// ═══════════════════════════════════════════════════════
+function fmtCOP(n){ return n ? '$' + Number(n).toLocaleString('es-CO') : 'A convenir'; }
+function fmtFecha(s){ if(!s) return '—'; var d=new Date(s); return d.toLocaleDateString('es-CO',{day:'2-digit',month:'short',year:'numeric'}); }
 
+function toast(msg, tipo){
+  var tc = document.getElementById('toasts');
+  var t  = document.createElement('div');
+  t.className = 'toast ' + (tipo||'ok');
+  t.innerHTML = (tipo==='err'?'❌':'✅') + ' ' + msg;
+  tc.appendChild(t);
+  setTimeout(function(){ t.remove(); }, 3500);
+}
+
+function cerrarModal(id){
+  document.getElementById(id).classList.add('hidden');
+}
+
+function abrirModal(id){
+  document.getElementById(id).classList.remove('hidden');
+}
+
+// ═══════════════════════════════════════════════════════
+// NAVEGACIÓN
+// ═══════════════════════════════════════════════════════
 function nav(p){
   PAGS.forEach(function(x){ var el=document.getElementById('pg-'+x); if(el) el.classList.add('hidden'); });
-  document.querySelectorAll('.nitem').forEach(function(n){n.classList.remove('active');});
-  var t=document.getElementById('pg-'+p); if(t) t.classList.remove('hidden');
-  var ni=document.querySelector('[onclick*="nav(\''+p+'\')"]'); if(ni) ni.classList.add('active');
-  if(p==='dashboard') cargarDash();
-  if(p==='empresas')  cargarEmpresas();
-  if(p==='vacantes')  cargarVacantes();
+  document.querySelectorAll('.nitem').forEach(function(n){ n.classList.remove('active'); });
+  var t = document.getElementById('pg-'+p); if(t) t.classList.remove('hidden');
+  var ni = document.querySelector('[onclick*="nav(\''+p+'\')"]'); if(ni) ni.classList.add('active');
+  if(p==='dashboard')  cargarDash();
+  if(p==='empresas')   renderEmpresas(empresasActuales);
+  if(p==='vacantes')   renderVacantes(vacantesActuales);
 }
 
+// ═══════════════════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════════════════
 function cargarDash(){
-  // Empresas tabla
-  var eb=document.getElementById('dash-emp');
-  if(eb) eb.innerHTML=EMPRESAS.slice(0,5).map(function(e){
-    return '<tr><td><strong>'+e.nombre+'</strong></td><td style="color:var(--texto-g)">'+e.sector+'</td><td><span class="'+(e.estado==='verificada'?'badge-a':'badge-p')+'">'+e.estado+'</span></td></tr>';
+  var hidro = vacantesActuales.filter(function(v){ return v.tipo==='hidrocarburos'; }).length;
+  var dv = document.getElementById('d-v'); if(dv) dv.textContent = vacantesActuales.filter(function(v){ return v.estado==='activa'; }).length;
+  var dh = document.getElementById('d-h'); if(dh) dh.textContent = hidro;
+  var bv = document.getElementById('bv'); if(bv) bv.textContent = vacantesActuales.length;
+
+  var eb = document.getElementById('dash-emp');
+  if(eb) eb.innerHTML = empresasActuales.slice(0,5).map(function(e){
+    return '<tr><td><strong>'+e.nombre+'</strong></td><td style="color:var(--texto-g)">'+e.sector+'</td><td><span class="badge '+(e.estado==='verificada'?'b-activa':'b-normal')+'">'+e.estado+'</span></td></tr>';
   }).join('');
-  // Vacantes tabla
-  var vb=document.getElementById('dash-vac');
-  if(vb) vb.innerHTML=VACANTES.slice(0,5).map(function(v){
-    return '<tr><td><strong>'+v.cargo+'</strong></td><td style="color:var(--texto-g)">'+v.municipio+'</td><td style="text-align:center"><strong>'+v.postulados+'</strong></td></tr>';
+
+  var vb = document.getElementById('dash-vac');
+  if(vb) vb.innerHTML = vacantesActuales.slice(0,5).map(function(v){
+    return '<tr><td><strong>'+v.cargo+'</strong></td><td style="color:var(--texto-g)">'+v.municipio+'</td><td>'+badgeTipo(v.tipo)+'</td></tr>';
   }).join('');
 }
 
-function cargarEmpresas(){
-  var tb=document.getElementById('emp-tbody');
+// ═══════════════════════════════════════════════════════
+// EMPRESAS
+// ═══════════════════════════════════════════════════════
+function renderEmpresas(lista){
+  var tb = document.getElementById('emp-tbody');
+  var ct = document.getElementById('emp-count');
+  if(ct) ct.textContent = lista.length + ' empresa' + (lista.length!==1?'s':'');
   if(!tb) return;
-  tb.innerHTML=EMPRESAS.map(function(e){
-    return '<tr><td><strong>'+e.nombre+'</strong></td><td style="color:var(--texto-g)">'+e.nit+'</td><td style="color:var(--texto-g)">'+e.sector+'</td><td><span class="'+(e.estado==='verificada'?'badge-a':'badge-p')+'">'+e.estado+'</span></td></tr>';
+  if(!lista.length){ tb.innerHTML='<tr><td colspan="7" style="padding:24px;color:var(--texto-g);text-align:center">No hay empresas que coincidan con los filtros</td></tr>'; return; }
+  tb.innerHTML = lista.map(function(e){
+    return '<tr>'+
+      '<td><strong>'+e.nombre+'</strong></td>'+
+      '<td style="color:var(--texto-g);font-size:13px">'+e.nit+'</td>'+
+      '<td style="color:var(--texto-g)">'+e.sector+'</td>'+
+      '<td style="color:var(--texto-g)">'+e.municipio+'</td>'+
+      '<td><span class="badge '+(e.estado==='verificada'?'b-activa':'b-normal')+'">'+e.estado+'</span></td>'+
+      '<td style="text-align:center"><strong>'+e.vacantes+'</strong></td>'+
+      '<td><div class="td-actions">'+
+        '<button class="btn btn-ghost btn-xs" onclick="verEmpresa('+e.id+')">Ver</button>'+
+        '<button class="btn btn-primary btn-xs" onclick="abrirModalVacante(\'normal\')">+ Vacante</button>'+
+      '</div></td>'+
+    '</tr>';
   }).join('');
 }
 
-function cargarVacantes(){
-  var tb=document.getElementById('vac-tbody');
+function filtrarEmpresas(){
+  var q   = document.getElementById('fe-q').value.toLowerCase().trim();
+  var est = document.getElementById('fe-est').value;
+  var sec = document.getElementById('fe-sec').value;
+  var lista = empresasActuales.filter(function(e){
+    var okQ   = !q   || e.nombre.toLowerCase().indexOf(q)>-1 || (e.nit&&e.nit.indexOf(q)>-1);
+    var okEst = !est || e.estado===est;
+    var okSec = !sec || e.sector===sec;
+    return okQ && okEst && okSec;
+  });
+  renderEmpresas(lista);
+}
+
+function verEmpresa(id){
+  var e = empresasActuales.find(function(x){ return x.id===id; });
+  if(!e) return;
+  toast('Empresa: ' + e.nombre);
+}
+
+function abrirModalEmpresa(){
+  // Llenar municipios
+  var sel = document.getElementById('me-municipio');
+  if(sel && sel.options.length===1){
+    MUNICIPIOS.forEach(function(m){ var o=document.createElement('option'); o.value=m.id; o.textContent=m.n+' ('+m.s+')'; sel.appendChild(o); });
+  }
+  abrirModal('modal-emp');
+}
+
+function guardarEmpresa(){
+  var nombre = document.getElementById('me-nombre').value.trim();
+  if(!nombre){ toast('El nombre de la empresa es obligatorio','err'); return; }
+  var nueva = {
+    id: empresasActuales.length + 1,
+    nombre: nombre,
+    nit: document.getElementById('me-nit').value,
+    sector: document.getElementById('me-sector').value,
+    municipio: MUNICIPIOS.find(function(m){ return m.id===parseInt(document.getElementById('me-municipio').value); })?.n || '—',
+    estado: 'activa',
+    vacantes: 0
+  };
+  empresasActuales.push(nueva);
+  EMPRESAS.push(nueva);
+  cerrarModal('modal-emp');
+  renderEmpresas(empresasActuales);
+  var be = document.getElementById('be'); if(be) be.textContent = empresasActuales.length;
+  toast('Empresa "'+nombre+'" registrada exitosamente');
+}
+
+// ═══════════════════════════════════════════════════════
+// VACANTES
+// ═══════════════════════════════════════════════════════
+function badgeEstado(est){
+  var map={activa:'b-activa',en_seleccion:'b-seleccion',cerrada:'b-cerrada',cubierta:'b-cubierta'};
+  var lbl={activa:'Activa',en_seleccion:'En selección',cerrada:'Cerrada',cubierta:'Cubierta'};
+  return '<span class="badge '+(map[est]||'b-normal')+'">'+(lbl[est]||est)+'</span>';
+}
+
+function badgeTipo(tipo){
+  if(tipo==='hidrocarburos') return '<span class="badge b-hidro">⚡ Hidrocarburos</span>';
+  if(tipo==='incluyente')    return '<span class="badge b-incluyente">♿ Incluyente</span>';
+  return '<span class="badge b-normal">Normal</span>';
+}
+
+function diasColor(dias, ventana){
+  ventana = ventana || 5;
+  if(dias >= ventana) return '<span class="dias-ok">'+dias+' días ✓</span>';
+  return '<span class="dias-pend">'+dias+'/'+ventana+' días</span>';
+}
+
+function renderVacantes(lista){
+  var tb = document.getElementById('vac-tbody');
+  var ct = document.getElementById('vac-count');
+  if(ct) ct.textContent = lista.length + ' vacante' + (lista.length!==1?'s':'');
+
+  // Stats rápidos
+  var activas  = lista.filter(function(v){ return v.estado==='activa'; }).length;
+  var selec    = lista.filter(function(v){ return v.estado==='en_seleccion'; }).length;
+  var hidro    = lista.filter(function(v){ return v.tipo==='hidrocarburos'; }).length;
+  var posts    = lista.reduce(function(a,v){ return a+(v.postulados||0); }, 0);
+  var rv = document.getElementById('rv-total'); if(rv) rv.textContent = lista.length;
+  var ra = document.getElementById('rv-activa'); if(ra) ra.textContent = activas;
+  var rs = document.getElementById('rv-selec');  if(rs) rs.textContent = selec;
+  var rh = document.getElementById('rv-hidro');  if(rh) rh.textContent = hidro;
+  var rp = document.getElementById('rv-post');   if(rp) rp.textContent = posts;
+
   if(!tb) return;
-  tb.innerHTML=VACANTES.map(function(v){
-    return '<tr><td><strong>'+v.cargo+'</strong></td><td style="color:var(--texto-g)">'+v.empresa+'</td><td style="color:var(--texto-g)">'+v.municipio+'</td><td style="color:var(--texto-g)">'+fmtCOP(v.salario)+'</td><td style="text-align:center"><strong>'+v.postulados+'</strong></td></tr>';
+  if(!lista.length){
+    tb.innerHTML='<tr><td colspan="9" style="padding:28px;color:var(--texto-g);text-align:center">No hay vacantes que coincidan con los filtros aplicados.</td></tr>';
+    return;
+  }
+
+  tb.innerHTML = lista.map(function(v){
+    var diasCell = v.tipo==='hidrocarburos' ? diasColor(v.dias_pub, v.ventana||5) : '<span style="color:var(--texto-g)">'+v.dias_pub+'</span>';
+    return '<tr>'+
+      '<td><div style="font-weight:700">'+v.cargo+'</div>'+(v.incluyente?'<div style="font-size:11px;color:#155724">♿ Incluyente</div>':'')+'</td>'+
+      '<td style="color:var(--texto-g);font-size:13px">'+v.empresa+'</td>'+
+      '<td style="color:var(--texto-g)">'+v.municipio+'</td>'+
+      '<td style="color:var(--texto-g);font-size:13px">'+fmtCOP(v.sal_min)+(v.sal_max?' – '+fmtCOP(v.sal_max):'')+'</td>'+
+      '<td>'+badgeTipo(v.tipo)+'</td>'+
+      '<td>'+badgeEstado(v.estado)+'</td>'+
+      '<td style="text-align:center"><strong style="color:var(--verde)">'+v.postulados+'</strong></td>'+
+      '<td style="text-align:center;font-size:13px">'+diasCell+'</td>'+
+      '<td><div class="td-actions">'+
+        '<button class="btn btn-ghost btn-xs" onclick="verVacante('+v.id+')">Ver</button>'+
+        '<button class="btn btn-primary btn-xs" onclick="cambiarEstado('+v.id+')">Estado</button>'+
+        '<button class="btn btn-verde btn-xs" onclick="abrirEcard('+v.id+')">🎨 E-Card</button>'+
+        (v.tipo==='hidrocarburos'?'<button class="btn btn-naranja btn-xs" onclick="reporteHidro('+v.id+')">📄 Reporte</button>':'')+
+      '</div></td>'+
+    '</tr>';
   }).join('');
 }
 
+function filtrarVacantes(){
+  var q    = document.getElementById('fv-q').value.toLowerCase().trim();
+  var est  = document.getElementById('fv-est').value;
+  var tipo = document.getElementById('fv-tipo').value;
+  var mpio = document.getElementById('fv-mpio').value;
+  var lista = VACANTES.filter(function(v){
+    var okQ    = !q    || v.cargo.toLowerCase().indexOf(q)>-1 || v.empresa.toLowerCase().indexOf(q)>-1;
+    var okEst  = !est  || v.estado===est;
+    var okTipo = !tipo || v.tipo===tipo;
+    var okMpio = !mpio || v.municipio===mpio;
+    return okQ && okEst && okTipo && okMpio;
+  });
+  vacantesActuales = lista;
+  renderVacantes(lista);
+}
+
+function limpiarFiltrosV(){
+  document.getElementById('fv-q').value='';
+  document.getElementById('fv-est').value='';
+  document.getElementById('fv-tipo').value='';
+  document.getElementById('fv-mpio').value='';
+  vacantesActuales = VACANTES.slice();
+  renderVacantes(vacantesActuales);
+}
+
+function verVacante(id){
+  var v = VACANTES.find(function(x){ return x.id===id; });
+  if(!v) return;
+  var hidroHtml = '';
+  if(v.tipo==='hidrocarburos'){
+    hidroHtml = '<div class="hidro-panel" style="margin-top:12px">'+
+      '<div class="hidro-title">⚡ Vacante Hidrocarburos</div>'+
+      '<div class="det-grid">'+
+        '<div class="det-item"><label>Tipo mano de obra</label><span>'+(v.mano_obra||'No calificada')+'</span></div>'+
+        '<div class="det-item"><label>Contrato ANH</label><span>'+(v.contrato_anh||'—')+'</span></div>'+
+        '<div class="det-item"><label>Ventana legal</label><span>'+(v.ventana||5)+' días</span></div>'+
+        '<div class="det-item"><label>Días publicado</label><span>'+diasColor(v.dias_pub, v.ventana||5)+'</span></div>'+
+      '</div>'+
+      '<div style="margin-top:10px;padding:10px;background:#fff;border-radius:6px;border:1px solid #fbbf24;font-size:13px;color:#92400e">'+
+        (v.dias_pub>=(v.ventana||5) ? '✅ Período legal cumplido. Esta vacante puede ampliarse a candidatos de otras regiones.' : '⏳ Período legal en curso. Solo candidatos de '+v.municipio+' pueden postularse.')+
+      '</div>'+
+    '</div>';
+  }
+
+  document.getElementById('det-body').innerHTML =
+    '<div class="det-header">'+
+      '<div class="det-cargo">'+v.cargo+'</div>'+
+      '<div class="det-empresa">🏢 '+v.empresa+'</div>'+
+      '<div class="det-meta">'+
+        '<span>📍 '+v.municipio+'</span>'+
+        '<span>💵 '+fmtCOP(v.sal_min)+' – '+fmtCOP(v.sal_max)+'</span>'+
+        '<span>📑 '+v.contrato+'</span>'+
+        '<span>⏰ '+v.jornada+'</span>'+
+      '</div>'+
+    '</div>'+
+    '<div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap">'+
+      badgeEstado(v.estado)+badgeTipo(v.tipo)+
+      (v.incluyente?'<span class="badge b-incluyente">♿ Incluyente</span>':'')+
+      '<span class="badge b-normal">👥 '+v.postulados+' postulados</span>'+
+      '<span class="badge b-normal">📅 '+v.dias_pub+' días publicada</span>'+
+    '</div>'+
+    '<div class="det-section">📋 Requisitos</div>'+
+    '<div class="det-grid">'+
+      '<div class="det-item"><label>Educación mínima</label><span>'+v.edu+'</span></div>'+
+      '<div class="det-item"><label>Experiencia mínima</label><span>'+v.exp+' meses</span></div>'+
+    '</div>'+
+    '<div class="det-section">📝 Descripción</div>'+
+    '<p style="color:var(--texto-g);line-height:1.7;font-size:14px">'+v.desc+'</p>'+
+    hidroHtml;
+
+  abrirModal('modal-det');
+}
+
+function cambiarEstado(id){
+  var v = VACANTES.find(function(x){ return x.id===id; });
+  if(!v) return;
+  var estados = ['activa','en_seleccion','cerrada','cubierta'];
+  var idx = estados.indexOf(v.estado);
+  var siguiente = estados[(idx+1) % estados.length];
+  v.estado = siguiente;
+  // Actualizar en vacantesActuales también
+  var va = vacantesActuales.find(function(x){ return x.id===id; });
+  if(va) va.estado = siguiente;
+  renderVacantes(vacantesActuales);
+  toast('Estado cambiado a: '+siguiente);
+}
+
+function abrirEcard(id){
+  var v = VACANTES.find(function(x){ return x.id===id; });
+  if(!v) return;
+  var params = new URLSearchParams({
+    codigo:   'VAC-' + String(id).padStart(6,'0'),
+    cargo:    v.cargo,
+    perfil:   v.desc || '',
+    lugar:    v.municipio + ' – Antioquia',
+    salario:  v.sal_min ? '$' + Number(v.sal_min).toLocaleString('es-CO') + (v.sal_max?' – $'+Number(v.sal_max).toLocaleString('es-CO'):'') : 'A convenir',
+    nbc:      v.edu || '',
+    tipo:     v.tipo || 'normal'
+  });
+  window.open('ecard.html?' + params.toString(), '_blank');
+}
+
+function reporteHidro(id){
+  var v = VACANTES.find(function(x){ return x.id===id; });
+  if(!v) return;
+  toast('Generando reporte ANH para: '+v.cargo+'...');
+  setTimeout(function(){ toast('Reporte listo — descarga iniciada'); }, 1500);
+}
+
+function exportarVacantes(){
+  toast('Exportando '+vacantesActuales.length+' vacantes a Excel...');
+  setTimeout(function(){ toast('Archivo descargado exitosamente'); }, 1500);
+}
+
+// ═══════════════════════════════════════════════════════
+// MODAL NUEVA VACANTE
+// ═══════════════════════════════════════════════════════
+function abrirModalVacante(tipo){
+  tipoModalVacante = tipo;
+  var titulo = tipo==='hidrocarburos' ? '⚡ Nueva vacante Hidrocarburos' : '💼 Nueva vacante';
+  document.getElementById('mv-title').textContent = titulo;
+
+  // Mostrar/ocultar panel hidrocarburos
+  var hp = document.getElementById('hidro-panel');
+  if(tipo==='hidrocarburos') hp.classList.remove('hidden');
+  else hp.classList.add('hidden');
+
+  // Llenar empresas
+  var sel = document.getElementById('mv-empresa');
+  sel.innerHTML = '<option value="">Selecciona la empresa...</option>';
+  EMPRESAS.forEach(function(e){ var o=document.createElement('option'); o.value=e.id; o.textContent=e.nombre; sel.appendChild(o); });
+
+  // Llenar municipios
+  var selM = document.getElementById('mv-municipio');
+  selM.innerHTML = '<option value="">Selecciona municipio...</option>';
+  MUNICIPIOS.forEach(function(m){ var o=document.createElement('option'); o.value=m.id; o.textContent=m.n+' ('+m.s+')'; selM.appendChild(o); });
+
+  // Fecha cierre por defecto 30 días
+  var fc = document.getElementById('mv-cierre');
+  var d = new Date(); d.setDate(d.getDate()+30);
+  fc.value = d.toISOString().split('T')[0];
+
+  // Fecha publicación local hoy
+  var fl = document.getElementById('mv-fecha-local');
+  if(fl) fl.value = new Date().toISOString().split('T')[0];
+
+  abrirModal('modal-vac');
+}
+
+function guardarVacante(){
+  var cargo   = document.getElementById('mv-cargo').value.trim();
+  var empId   = document.getElementById('mv-empresa').value;
+  var mpioId  = document.getElementById('mv-municipio').value;
+
+  if(!cargo)  { toast('El cargo es obligatorio','err'); return; }
+  if(!empId)  { toast('Selecciona la empresa','err'); return; }
+  if(!mpioId) { toast('Selecciona el municipio','err'); return; }
+
+  var emp  = EMPRESAS.find(function(e){ return e.id===parseInt(empId); });
+  var mpio = MUNICIPIOS.find(function(m){ return m.id===parseInt(mpioId); });
+
+  var nueva = {
+    id: VACANTES.length + 1,
+    cargo: cargo,
+    empresa: emp ? emp.nombre : '—',
+    municipio: mpio ? mpio.n : '—',
+    sal_min: parseInt(document.getElementById('mv-sal-min').value)||0,
+    sal_max: parseInt(document.getElementById('mv-sal-max').value)||0,
+    contrato: document.getElementById('mv-contrato').value.replace(/_/g,' '),
+    jornada: document.getElementById('mv-jornada').value.replace(/_/g,' '),
+    edu: document.getElementById('mv-edu').value,
+    exp: parseInt(document.getElementById('mv-exp').value)||0,
+    estado: 'activa',
+    tipo: tipoModalVacante,
+    postulados: 0,
+    fecha_pub: new Date().toISOString().split('T')[0],
+    dias_pub: 0,
+    desc: document.getElementById('mv-desc').value,
+    incluyente: document.getElementById('mv-incluyente').value==='si'
+  };
+
+  if(tipoModalVacante==='hidrocarburos'){
+    nueva.mano_obra    = document.getElementById('mv-mano-obra').value;
+    nueva.ventana      = parseInt(document.getElementById('mv-ventana').value)||5;
+    nueva.contrato_anh = document.getElementById('mv-anh').value;
+  }
+
+  VACANTES.push(nueva);
+  vacantesActuales = VACANTES.slice();
+
+  // Actualizar vacantes de la empresa
+  if(emp) emp.vacantes = (emp.vacantes||0) + 1;
+
+  cerrarModal('modal-vac');
+  renderVacantes(vacantesActuales);
+  var bv = document.getElementById('bv'); if(bv) bv.textContent = VACANTES.length;
+  toast('Vacante "'+cargo+'" publicada exitosamente' + (tipoModalVacante==='hidrocarburos'?' ⚡':''));
+}
+
+// ═══════════════════════════════════════════════════════
+// AUTH
+// ═══════════════════════════════════════════════════════
 function renderAuth(user){
-  var area=document.getElementById('auth-area');
+  var area = document.getElementById('auth-area');
   if(user){
-    var nombre=((user.firstName||'')+' '+(user.lastName||'')).trim()||'Usuario';
-    var ini=((user.firstName||'')[0]||'').toUpperCase()+((user.lastName||'')[0]||'').toUpperCase()||'U';
-    var rol=(user.publicMetadata&&user.publicMetadata.rol)||'asesor_empresarial';
-    document.getElementById('snombre').textContent=nombre;
-    document.getElementById('srol').textContent=rol.replace(/_/g,' ');
-    var av=document.getElementById('sav');
-    av.innerHTML=user.imageUrl?'<img src="'+user.imageUrl+'"/>':ini;
-    area.innerHTML='<span style="color:rgba(255,255,255,.8);font-size:13px">'+nombre+'</span>'+
+    var nombre = ((user.firstName||'')+' '+(user.lastName||'')).trim()||'Usuario';
+    var ini    = ((user.firstName||'')[0]||'').toUpperCase()+((user.lastName||'')[0]||'').toUpperCase()||'U';
+    var rol    = (user.publicMetadata&&user.publicMetadata.rol)||'asesor_empresarial';
+    document.getElementById('snombre').textContent = nombre;
+    document.getElementById('srol').textContent    = rol.replace(/_/g,' ');
+    var av = document.getElementById('sav');
+    av.innerHTML = user.imageUrl ? '<img src="'+user.imageUrl+'"/>' : ini;
+    area.innerHTML =
+      '<span style="color:rgba(255,255,255,.8);font-size:13px">'+nombre+'</span>'+
       '<button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.signOut().then(function(){window.location.href=\'index.html\'})">Salir</button>';
-    document.getElementById('sidebar').style.display='flex';
+    document.getElementById('sidebar').style.display = 'flex';
     nav('dashboard');
   } else {
-    area.innerHTML='<button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>';
-    document.getElementById('sidebar').style.display='none';
+    area.innerHTML = '<button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>';
+    document.getElementById('sidebar').style.display = 'none';
     document.getElementById('pg-acceso').classList.remove('hidden');
   }
 }
 
-window.addEventListener('load',function(){
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
+window.addEventListener('load', function(){
+  // Llenar municipios en filtro vacantes
+  var selM = document.getElementById('fv-mpio');
+  MUNICIPIOS.forEach(function(m){ var o=document.createElement('option'); o.value=m.n; o.textContent=m.n; selM.appendChild(o); });
+
+  // Clerk
   if(window.Clerk){
     window.Clerk.load().then(function(){
       renderAuth(window.Clerk.user);
-      window.Clerk.addListener(function(e){renderAuth(e.user);});
+      window.Clerk.addListener(function(e){ renderAuth(e.user); });
     });
   }
 });
