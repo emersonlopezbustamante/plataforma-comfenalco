@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Laboratorios de Empleo — Comfenalco Antioquia</title>
+  <script async crossorigin="anonymous"
+    data-clerk-publishable-key="pk_test_bGlrZWQtYmlzb24tNTEuY2xlcmsuYWNjb3VudHMuZGV2JA"
+    src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@5/dist/clerk.browser.js"
+    type="text/javascript"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--verde:#094a4b;--pist:#a8c94e;--pist-h:#8fb53a;--blanco:#fff;--fondo:#f4f6f4;--borde:#d8e2d8;--texto-g:#4a5a4a;--suave:#e8efe8;--negro:#1a2a1a;--naranja:#e67e22;--azul:#2d4a6b;--rojo:#e74c3c;--r:8px;--rc:14px;--t:.22s ease;
+      --n0:#e74c3c;--n1:#e67e22;--n2:#f1c40f;--n3:#2ecc71;--n4:#27ae60}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;font-size:15px;color:var(--negro);background:var(--fondo);min-height:100vh}
+    button{cursor:pointer;font-family:inherit;border:none}
+    input,select,textarea{font-family:inherit}
+    .hidden{display:none!important}
+
+    #topbar{background:var(--verde);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(9,74,75,.2)}
+    .brand-logos{display:flex;align-items:center;background:#fff;border-radius:8px;padding:3px 12px;height:46px}
+    .brand-logos img:first-child{height:36px;max-width:170px;object-fit:contain}
+    .brand-sep{width:1px;height:28px;background:var(--borde);margin:0 10px}
+    .brand-logos img:last-child{height:28px;max-width:130px;object-fit:contain}
+    .tbadge{background:rgba(168,201,78,.2);color:var(--pist);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px}
+    .back{color:rgba(255,255,255,.7);font-size:13px;cursor:pointer;padding:6px 10px;border-radius:6px;transition:background var(--t)}
+    .back:hover{background:rgba(255,255,255,.1);color:#fff}
+
+    .btn{display:inline-flex;align-items:center;gap:7px;padding:10px 22px;border-radius:var(--r);font-weight:700;font-size:14px;border:none;transition:all var(--t);cursor:pointer;font-family:inherit}
+    .btn:active{transform:scale(.97)}
+    .btn-primary{background:var(--pist);color:var(--verde)}
+    .btn-primary:hover{background:var(--pist-h)}
+    .btn-verde{background:var(--verde);color:#fff}
+    .btn-verde:hover{background:#0d6b6c}
+    .btn-ghost{background:var(--suave);color:var(--texto-g)}
+    .btn-ghost:hover{background:var(--borde)}
+    .btn-outline{background:transparent;color:var(--verde);border:2px solid var(--verde)}
+    .btn-outline:hover{background:var(--verde);color:#fff}
+    .btn-sm{padding:7px 14px;font-size:13px}
+    .btn-xs{padding:4px 10px;font-size:12px}
+    .btn-lg{padding:14px 32px;font-size:16px;border-radius:10px}
+
+    #shell{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 60px)}
+    #sidebar{background:var(--verde);padding:20px 0;display:flex;flex-direction:column;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto}
+    .suser{padding:16px 20px 20px;border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:8px;display:flex;align-items:center;gap:12px}
+    .sav{width:38px;height:38px;border-radius:50%;background:var(--pist);color:var(--verde);font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
+    .sav img{width:100%;height:100%;object-fit:cover}
+    .snombre{font-weight:700;font-size:13px;color:#fff}
+    .srol{font-size:11px;color:var(--pist);margin-top:2px}
+    .slabel{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);padding:12px 20px 4px}
+    .nitem{display:flex;align-items:center;gap:11px;padding:10px 20px;font-size:13px;font-weight:600;color:rgba(255,255,255,.7);border-left:3px solid transparent;cursor:pointer;transition:background var(--t);border-radius:0 8px 8px 0;margin-right:12px}
+    .nitem:hover{background:rgba(255,255,255,.08);color:#fff}
+    .nitem.active{background:rgba(168,201,78,.15);color:var(--pist);border-left-color:var(--pist)}
+    .nico{font-size:17px;width:20px;text-align:center;flex-shrink:0}
+    .nbadge{margin-left:auto;background:var(--pist);color:var(--verde);font-size:10px;font-weight:800;padding:1px 6px;border-radius:20px}
+    .sdiv{height:1px;background:rgba(255,255,255,.1);margin:10px 20px}
+
+    #main{padding:28px;overflow-y:auto}
+    .ptitle{font-family:'Nunito',sans-serif;font-size:24px;font-weight:900;color:var(--verde);margin-bottom:4px}
+    .psub{font-size:14px;color:var(--texto-g);margin-bottom:24px}
+    .ph{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+
+    .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:28px}
+    .scard{background:#fff;border-radius:var(--rc);box-shadow:0 2px 16px rgba(9,74,75,.08);padding:18px 20px;display:flex;flex-direction:column;gap:5px;border-left:4px solid var(--pist);transition:transform var(--t)}
+    .scard:hover{transform:translateY(-3px)}
+    .sico{font-size:24px}
+    .sval{font-family:'Nunito',sans-serif;font-size:30px;font-weight:900;color:var(--verde);line-height:1}
+    .slbl{font-size:12px;color:var(--texto-g);font-weight:600}
+
+    .card{background:#fff;border-radius:var(--rc);box-shadow:0 2px 16px rgba(9,74,75,.08);padding:24px;margin-bottom:20px}
+    .ctitle{font-family:'Nunito',sans-serif;font-size:17px;font-weight:800;color:var(--verde);margin-bottom:16px}
+
+    .filtros-bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;padding:14px 18px;background:#fff;border-radius:var(--rc);box-shadow:0 2px 16px rgba(9,74,75,.06)}
+    .finput{padding:8px 12px;border:1.5px solid var(--borde);border-radius:var(--r);font-size:13px;font-family:inherit;color:var(--negro);background:#fff;outline:none;transition:border-color var(--t)}
+    .finput:focus{border-color:var(--verde)}
+    select.finput{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23094a4b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+
+    .twrap{background:#fff;border-radius:var(--rc);box-shadow:0 2px 16px rgba(9,74,75,.08);overflow:hidden;margin-bottom:24px}
+    .ttbar{padding:14px 20px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--borde);flex-wrap:wrap}
+    .ttitle{font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;color:var(--verde);margin-right:auto}
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    th{padding:9px 12px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--verde);background:var(--suave);white-space:nowrap}
+    td{padding:10px 12px;border-bottom:1px solid var(--borde);vertical-align:middle}
+    tbody tr:last-child td{border-bottom:none}
+    tbody tr:hover{background:rgba(9,74,75,.02)}
+
+    /* MODAL */
+    .modal-bg{position:fixed;inset:0;background:rgba(9,74,75,.5);display:flex;align-items:flex-start;justify-content:center;z-index:999;backdrop-filter:blur(3px);animation:fadeIn .18s ease;padding:20px;overflow-y:auto}
+    .modal{background:#fff;border-radius:18px;box-shadow:0 20px 60px rgba(9,74,75,.25);width:min(860px,95vw);animation:slideUp .22s ease;margin:auto}
+    .modal-head{display:flex;align-items:center;justify-content:space-between;padding:20px 24px 16px;border-bottom:1px solid var(--borde);position:sticky;top:0;background:#fff;z-index:1;border-radius:18px 18px 0 0}
+    .modal-title{font-family:'Nunito',sans-serif;font-size:19px;font-weight:900;color:var(--verde)}
+    .modal-close{background:var(--suave);border:none;border-radius:8px;width:34px;height:34px;font-size:18px;color:var(--texto-g);display:flex;align-items:center;justify-content:center;cursor:pointer}
+    .modal-close:hover{background:var(--borde)}
+    .modal-body{padding:24px}
+    .modal-foot{padding:16px 24px;border-top:1px solid var(--borde);display:flex;justify-content:flex-end;gap:10px}
+
+    .modal-tabs{display:flex;gap:0;border-bottom:2px solid var(--borde);margin-bottom:20px}
+    .mtab{padding:10px 18px;font-size:13px;font-weight:600;color:var(--texto-g);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
+    .mtab.active{color:var(--verde);border-bottom-color:var(--pist)}
+
+    /* FORM */
+    .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .fgrid.one{grid-template-columns:1fr}
+    .fgrid.three{grid-template-columns:1fr 1fr 1fr}
+    .fgroup{display:flex;flex-direction:column;gap:5px}
+    .flabel{font-size:12px;font-weight:700;color:var(--verde);text-transform:uppercase;letter-spacing:.04em}
+    .req{color:var(--rojo);margin-left:2px}
+    .fval{padding:9px 13px;border:1.5px solid var(--borde);border-radius:var(--r);font-size:14px;font-family:inherit;color:var(--negro);background:#fff;outline:none;transition:border-color var(--t)}
+    .fval:focus{border-color:var(--verde);box-shadow:0 0 0 3px rgba(9,74,75,.08)}
+    select.fval{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23094a4b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:30px}
+    textarea.fval{resize:vertical;min-height:70px}
+    .fsep{font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:var(--verde);margin:16px 0 10px;padding-bottom:5px;border-bottom:2px solid var(--pist);grid-column:1/-1}
+
+    /* NIVELES */
+    .nivel-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;color:#fff}
+    .n4{background:var(--n4)}.n3{background:var(--n3)}.n2{background:var(--n2);color:#333}.n1{background:var(--n1)}.n0{background:var(--n0)}
+
+    /* RADAR / PERFIL VISUAL */
+    .perfil-destreza{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:12px}
+    .destreza-item{background:var(--suave);border-radius:10px;padding:12px 14px}
+    .destreza-nombre{font-size:12px;font-weight:700;color:var(--verde);margin-bottom:6px}
+    .destreza-bar{height:8px;background:var(--borde);border-radius:4px;overflow:hidden}
+    .destreza-fill{height:100%;border-radius:4px;transition:width .6s ease}
+
+    /* PRUEBA CARD en evaluación */
+    .prueba-card{background:#fff;border:1.5px solid var(--borde);border-radius:12px;padding:16px;margin-bottom:12px}
+    .prueba-card.seleccionada{border-color:var(--pist);background:rgba(168,201,78,.04)}
+    .prueba-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+    .prueba-num{background:var(--verde);color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0}
+    .prueba-nombre{font-family:'Nunito',sans-serif;font-weight:800;color:var(--verde);font-size:15px}
+    .prueba-destrezas{font-size:11px;color:var(--texto-g);margin-bottom:10px;line-height:1.5}
+    .prueba-inputs{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}
+    .baremo-info{font-size:11px;color:var(--texto-g);background:var(--suave);border-radius:6px;padding:6px 10px;margin-top:6px;line-height:1.5}
+
+    /* RECOMENDACIONES */
+    .rec-card{border-radius:10px;padding:14px 16px;margin-bottom:10px;border-left:4px solid}
+    .rec-alto{background:#f0fdf4;border-color:var(--n4)}
+    .rec-medio{background:#fffbeb;border-color:var(--n2)}
+    .rec-bajo{background:#fff5f5;border-color:var(--n0)}
+    .rec-titulo{font-weight:700;font-size:13px;margin-bottom:4px}
+    .rec-texto{font-size:13px;color:var(--texto-g);line-height:1.6}
+
+    /* TOAST */
+    #toasts{position:fixed;bottom:24px;right:24px;display:flex;flex-direction:column;gap:10px;z-index:9999}
+    .toast{background:var(--verde);color:#fff;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:600;box-shadow:0 4px 20px rgba(9,74,75,.3);display:flex;align-items:center;gap:10px;animation:slideUp .22s ease;min-width:260px}
+    .toast.ok{border-left:4px solid var(--pist)}
+    .toast.err{border-left:4px solid var(--rojo);background:#c0392b}
+    .toast.warn{border-left:4px solid var(--naranja)}
+
+    .loading{display:flex;align-items:center;justify-content:center;padding:48px;gap:12px;color:var(--texto-g)}
+    .spinner{width:28px;height:28px;border:3px solid var(--borde);border-top-color:var(--verde);border-radius:50%;animation:spin .8s linear infinite}
+
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    @keyframes slideUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+
+    @media(max-width:900px){#shell{grid-template-columns:1fr}#sidebar{display:none}#main{padding:16px}.fgrid,.fgrid.three{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<header id="topbar">
+  <div style="display:flex;align-items:center;gap:14px">
+    <span class="back" onclick="window.location.href='interno.html'">← Panel interno</span>
+    <div class="brand-logos">
+      <img src="logo_comfe_y_servicio.jpeg" alt="Comfenalco"/>
+      <div class="brand-sep"></div>
+      <img src="logo_agencia.png" alt="Agencia"/>
+    </div>
+    <span class="tbadge">🔬 LABORATORIOS DE EMPLEO</span>
+  </div>
+  <div id="auth-area" style="display:flex;align-items:center;gap:10px"></div>
+</header>
+
+<div id="shell">
+  <nav id="sidebar">
+    <div class="suser">
+      <div class="sav" id="sav">?</div>
+      <div><div class="snombre" id="snombre">Cargando...</div><div class="srol" id="srol">Orientador</div></div>
+    </div>
+    <div class="slabel">Módulos</div>
+    <div class="nitem active" onclick="nav('sesiones')"><span class="nico">📋</span> Sesiones <span class="nbadge" id="nb-ses">0</span></div>
+    <div class="nitem" onclick="nav('nueva-evaluacion')"><span class="nico">➕</span> Nueva evaluación</div>
+    <div class="nitem" onclick="nav('participantes')"><span class="nico">👥</span> Participantes <span class="nbadge" id="nb-part">0</span></div>
+    <div class="nitem" onclick="nav('indicadores')"><span class="nico">📊</span> Indicadores</div>
+    <div class="slabel">Regiones</div>
+    <div class="nitem" onclick="filtrarRegion('Valle de Aburrá')"><span class="nico">🏙️</span> Valle de Aburrá</div>
+    <div class="nitem" onclick="filtrarRegion('Oriente')"><span class="nico">🌄</span> Oriente</div>
+    <div class="nitem" onclick="filtrarRegion('Urabá')"><span class="nico">🌴</span> Urabá</div>
+    <div class="nitem" onclick="filtrarRegion('')"><span class="nico">🗺️</span> Todas las regiones</div>
+    <div class="sdiv"></div>
+    <div class="slabel">Exportar</div>
+    <div class="nitem" onclick="exportarSesiones()"><span class="nico">📥</span> Exportar Excel</div>
+    <div class="nitem" onclick="descargarPlantilla()"><span class="nico">📄</span> Plantilla evaluación</div>
+  </nav>
+
+  <main id="main">
+
+    <!-- SESIONES -->
+    <div id="pg-sesiones">
+      <div class="ph">
+        <div>
+          <div class="ptitle">🔬 Laboratorios de Empleo</div>
+          <p class="psub">Gestión de sesiones, evaluaciones y seguimiento por región</p>
+        </div>
+        <div style="display:flex;gap:10px">
+          <button class="btn btn-primary" onclick="nav('nueva-evaluacion')">+ Nueva evaluación</button>
+          <button class="btn btn-verde btn-sm" onclick="importarExcel()">📂 Importar Excel</button>
+          <input type="file" id="excel-input" accept=".xlsx,.xls,.xlsm" style="display:none" onchange="procesarExcelImport(this)"/>
+        </div>
+      </div>
+
+      <div class="stats-row">
+        <div class="scard"><div class="sico">📋</div><div class="sval" id="st-ses">0</div><div class="slbl">Total sesiones</div></div>
+        <div class="scard" style="border-left-color:#27ae60"><div class="sico">👥</div><div class="sval" id="st-part">0</div><div class="slbl">Personas evaluadas</div></div>
+        <div class="scard" style="border-left-color:var(--n4)"><div class="sico">🏆</div><div class="sval" id="st-alto">0</div><div class="slbl">Perfil Alto/Muy Alto</div></div>
+        <div class="scard" style="border-left-color:var(--naranja)"><div class="sico">📍</div><div class="sval" id="st-reg">0</div><div class="slbl">Regiones atendidas</div></div>
+        <div class="scard" style="border-left-color:var(--azul)"><div class="sico">🔬</div><div class="sval" id="st-pruebas">0</div><div class="slbl">Pruebas aplicadas</div></div>
+      </div>
+
+      <div class="filtros-bar">
+        <input class="finput" type="text" id="fq" placeholder="🔍 Buscar por nombre, empresa o municipio..." style="flex:1;min-width:180px" oninput="filtrar()"/>
+        <select class="finput" id="f-region" onchange="filtrar()">
+          <option value="">Todas las regiones</option>
+          <option>Valle de Aburrá</option><option>Oriente</option><option>Norte</option>
+          <option>Occidente</option><option>Suroeste</option><option>Bajo Cauca</option>
+          <option>Nordeste</option><option>Magdalena Medio</option><option>Urabá</option>
+        </select>
+        <select class="finput" id="f-perfil" onchange="filtrar()">
+          <option value="">Todos los perfiles</option>
+          <option>Operativo</option><option>Administrativo</option><option>Agroindustrial</option><option>Construcción</option>
+        </select>
+        <input class="finput" type="month" id="f-mes" onchange="filtrar()"/>
+        <button class="btn btn-ghost btn-sm" onclick="limpiarFiltros()">✕ Limpiar</button>
+      </div>
+
+      <div class="twrap">
+        <div class="ttbar">
+          <span class="ttitle" id="ses-count">0 sesiones</span>
+          <button class="btn btn-ghost btn-sm" onclick="exportarSesiones()">📥 Exportar</button>
+        </div>
+        <table>
+          <thead><tr>
+            <th>Fecha</th><th>Participante</th><th>Documento</th><th>Empresa / Cargo</th>
+            <th>Región</th><th>Orientador</th><th>Pruebas</th><th>Perfil global</th><th>Acciones</th>
+          </tr></thead>
+          <tbody id="ses-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- NUEVA EVALUACIÓN -->
+    <div id="pg-nueva-evaluacion" class="hidden">
+      <div class="ph">
+        <div>
+          <div class="ptitle">➕ Nueva evaluación</div>
+          <p class="psub">Registra los datos del participante y califica las pruebas aplicadas</p>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="nav('sesiones')">← Volver a sesiones</button>
+      </div>
+
+      <!-- PASO 1: Datos del participante -->
+      <div class="card">
+        <div class="ctitle">👤 Datos del participante</div>
+        <div class="fgrid">
+          <div class="fgroup"><label class="flabel">Tipo documento</label>
+            <select class="fval" id="e-tipo-doc"><option value="CC">Cédula de ciudadanía</option><option value="TI">Tarjeta de identidad</option><option value="CE">Cédula extranjería</option><option value="PEP">PEP</option><option value="PA">Pasaporte</option></select>
+          </div>
+          <div class="fgroup"><label class="flabel">Número documento <span class="req">*</span></label><input class="fval" id="e-doc" type="text" placeholder="1.234.567.890"/></div>
+          <div class="fgroup"><label class="flabel">Primer nombre <span class="req">*</span></label><input class="fval" id="e-nombre1" type="text"/></div>
+          <div class="fgroup"><label class="flabel">Segundo nombre</label><input class="fval" id="e-nombre2" type="text"/></div>
+          <div class="fgroup"><label class="flabel">Primer apellido <span class="req">*</span></label><input class="fval" id="e-apell1" type="text"/></div>
+          <div class="fgroup"><label class="flabel">Segundo apellido</label><input class="fval" id="e-apell2" type="text"/></div>
+          <div class="fgroup"><label class="flabel">Sexo</label>
+            <select class="fval" id="e-sexo"><option value="F">Femenino</option><option value="M">Masculino</option><option value="O">Otro</option></select>
+          </div>
+          <div class="fgroup"><label class="flabel">Fecha de nacimiento</label><input class="fval" id="e-fnac" type="date"/></div>
+          <div class="fgroup"><label class="flabel">Fecha de evaluación</label><input class="fval" id="e-feval" type="date"/></div>
+          <div class="fgroup"><label class="flabel">Cargo al que aspira</label><input class="fval" id="e-cargo" type="text" placeholder="Ej: Operario de producción"/></div>
+          <div class="fgroup"><label class="flabel">Perfil</label>
+            <select class="fval" id="e-perfil"><option>Operativo</option><option>Administrativo</option><option>Agroindustrial</option><option>Construcción</option><option>Otro</option></select>
+          </div>
+          <div class="fgroup"><label class="flabel">Orientador <span class="req">*</span></label><input class="fval" id="e-orientador" type="text" placeholder="Nombre del orientador"/></div>
+          <div class="fgroup"><label class="flabel">Región</label>
+            <select class="fval" id="e-region"><option>Valle de Aburrá</option><option>Oriente</option><option>Norte</option><option>Occidente</option><option>Suroeste</option><option>Bajo Cauca</option><option>Nordeste</option><option>Magdalena Medio</option><option>Urabá</option></select>
+          </div>
+          <div class="fgroup"><label class="flabel">Municipio</label><input class="fval" id="e-municipio" type="text" placeholder="Ej: Medellín"/></div>
+          <div class="fgroup"><label class="flabel">Empresa (opcional)</label>
+            <select class="fval" id="e-empresa"><option value="">Ninguna / Particular</option><option>Logística del Valle SAS</option><option>TechCo Colombia</option><option>Manufacturas Bello SA</option><option>Seguros Andinos Ltda</option><option>Fríos del Oriente SAS</option><option>Contadores Asociados Ltda</option><option>Agrícola Urabá SA</option><option>Hospital Regional Norte</option></select>
+          </div>
+          <div class="fgroup"><label class="flabel">Sede del laboratorio</label>
+            <select class="fval" id="e-sede"><option>Medellín — Sede Educativa Comfenalco</option><option>Rionegro — Parque principal</option><option>El Santuario — Foremsa</option><option>Urabá — CC Nuestro Urabá</option><option>Laboratorio móvil itinerante</option></select>
+          </div>
+        </div>
+      </div>
+
+      <!-- PASO 2: Selección y calificación de pruebas -->
+      <div class="card">
+        <div class="ctitle" style="display:flex;align-items:center;justify-content:space-between">
+          <span>🔬 Pruebas aplicadas</span>
+          <span style="font-size:13px;color:var(--texto-g);font-weight:400">Selecciona las pruebas aplicadas y registra los resultados</span>
+        </div>
+        <div id="pruebas-container"></div>
+      </div>
+
+      <!-- PASO 3: Observaciones -->
+      <div class="card">
+        <div class="ctitle">📝 Observaciones y recomendaciones</div>
+        <div class="fgrid one">
+          <div class="fgroup"><label class="flabel">Observaciones generales</label>
+            <textarea class="fval" id="e-obs" rows="3" placeholder="Comportamiento durante las pruebas, aspectos a destacar..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:12px;justify-content:flex-end;margin-bottom:32px">
+        <button class="btn btn-ghost" onclick="nav('sesiones')">Cancelar</button>
+        <button class="btn btn-outline" onclick="previsualizarResultado()">👁️ Previsualizar resultado</button>
+        <button class="btn btn-primary btn-lg" onclick="guardarEvaluacion()">💾 Guardar evaluación</button>
+      </div>
+    </div>
+
+    <!-- PARTICIPANTES -->
+    <div id="pg-participantes" class="hidden">
+      <div class="ptitle">👥 Participantes evaluados</div>
+      <p class="psub">Historial de todas las personas que han pasado por el laboratorio</p>
+      <div class="twrap">
+        <div class="ttbar"><span class="ttitle" id="part-count">0 participantes</span>
+          <button class="btn btn-ghost btn-sm" onclick="exportarParticipantes()">📥 Exportar</button>
+        </div>
+        <table>
+          <thead><tr><th>Nombre</th><th>Documento</th><th>Fecha</th><th>Región</th><th>Cargo aspirado</th><th>Empresa</th><th>Perfil global</th><th>Acciones</th></tr></thead>
+          <tbody id="part-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- INDICADORES -->
+    <div id="pg-indicadores" class="hidden">
+      <div class="ptitle">📊 Indicadores del mes</div>
+      <p class="psub">Resumen de gestión para reportes mensuales</p>
+      <div class="stats-row" id="ind-stats"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+        <div class="card">
+          <div class="ctitle">Participantes por región</div>
+          <div id="ind-regiones"></div>
+        </div>
+        <div class="card">
+          <div class="ctitle">Distribución de perfiles</div>
+          <div id="ind-perfiles"></div>
+        </div>
+        <div class="card" style="grid-column:1/-1">
+          <div class="ctitle">Pruebas más aplicadas</div>
+          <div id="ind-pruebas-top"></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- MODAL RESULTADO EVALUACIÓN -->
+<div id="modal-resultado" class="modal-bg hidden">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="mr-title">Resultado de evaluación</div>
+      <button class="modal-close" onclick="cerrarModal('modal-resultado')">✕</button>
+    </div>
+    <div class="modal-body" id="mr-body"></div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-resultado')">Cerrar</button>
+      <button class="btn btn-verde btn-sm" onclick="exportarResultadoExcel()">📥 Exportar Excel</button>
+      <button class="btn btn-primary" onclick="guardarEvaluacion();cerrarModal('modal-resultado')">💾 Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// CATÁLOGO DE PRUEBAS — extraído del Excel real
+// ═══════════════════════════════════════════════════
+var PRUEBAS = [
+  {
+    id:1, nombre:'BATAK', grupo:'Individual',
+    destrezas:'Visión periférica · Visión adelantada · Seguimiento de estándares · Coordinación bimanual · Coordinación mano-ojo · Agilidad · Concentración',
+    campos:[{id:'resultado',label:'Toques / minuto',tipo:'number',placeholder:'Ej: 75'}],
+    baremo:'Nivel 0 <60 toques/min · Nivel 1: 61-69 · Nivel 2: 70-79 · Nivel 3: 80-89 · Nivel 4 >90',
+    calcNivel:function(v){var n=parseInt(v.resultado)||0;return n<60?0:n<=69?1:n<=79?2:n<=89?3:4;}
+  },
+  {
+    id:2, nombre:'MINNESOTA', grupo:'Colocación/Rotación/Desplazamiento',
+    destrezas:'Motricidad media y gruesa · Coordinación mano-ojo · Visión adelantada · Agilidad · Concentración · Seguimiento de estándares · Precisión',
+    campos:[{id:'colocacion',label:'Colocación (seg)',tipo:'number'},{id:'rotacion',label:'Rotación (seg)',tipo:'number'},{id:'desplaz',label:'Desplazamiento (seg)',tipo:'number'}],
+    baremo:'Colocación: MuyAlto 1-108 · Alto 109-116 · Medio 117-127 · Bajo 128-138 · MuyBajo 139-147',
+    calcNivel:function(v){var c=parseInt(v.colocacion)||999;return c<=108?4:c<=116?3:c<=127?2:c<=138?1:0;}
+  },
+  {
+    id:3, nombre:'PURDUE PEGBOARD', grupo:'Mano dominante/No dominante/Ambas/Ensamble',
+    destrezas:'Motricidad fina · Coordinación mano-ojo · Agilidad · Concentración · Disociación de dedos · Visión adelantada · Precisión · Seguimiento de estándares',
+    campos:[{id:'dom',label:'Mano dominante',tipo:'number'},{id:'nodom',label:'Mano no dominante',tipo:'number'},{id:'ambas',label:'Ambas manos',tipo:'number'},{id:'ensamble',label:'Ensamble',tipo:'number'}],
+    baremo:'Dominante: MuyAlto 22-23 · Alto 20-21 · Medio 18-19 · Bajo 16-17 · MuyBajo 14-15',
+    calcNivel:function(v){var d=parseInt(v.dom)||0;return d>=22?4:d>=20?3:d>=18?2:d>=16?1:0;}
+  },
+  {
+    id:4, nombre:'HALLEY', grupo:'Individual',
+    destrezas:'Coordinación mano-ojo · Concentración · Agilidad · Seguimiento de estándares · Motricidad fina · Coordinación bimanual · Precisión',
+    campos:[{id:'toques',label:'Número de toques',tipo:'number',placeholder:'0 = perfecto'}],
+    baremo:'Nivel 4: 0 toques · Nivel 3: 1 toque · Nivel 2: 2-3 toques · Nivel 1: 4-6 toques · Nivel 0: >7 toques',
+    calcNivel:function(v){var t=parseInt(v.toques)||0;return t===0?4:t===1?3:t<=3?2:t<=6?1:0;}
+  },
+  {
+    id:5, nombre:'VASOS ALTA VELOCIDAD', grupo:'Individual',
+    destrezas:'Agilidad · Concentración · Coordinación mano-ojo · Seguimiento de estándares · Motricidad fina · Precisión',
+    campos:[{id:'seg',label:'Tiempo (segundos)',tipo:'number',placeholder:'Ej: 13'}],
+    baremo:'Nivel 4 <11 seg · Nivel 3: 12-15 seg · Nivel 2: 16-20 seg · Nivel 1: 21-24 seg · Nivel 0 >25 seg',
+    calcNivel:function(v){var s=parseInt(v.seg)||999;return s<=11?4:s<=15?3:s<=20?2:s<=24?1:0;}
+  },
+  {
+    id:6, nombre:'WIREGAME', grupo:'Individual',
+    destrezas:'Agilidad · Concentración · Coordinación bimanual · Motricidad fina · Coordinación mano-ojo · Precisión · Seguimiento de estándares',
+    campos:[{id:'toques',label:'Número de toques',tipo:'number',placeholder:'0 = perfecto'}],
+    baremo:'Nivel 4: 0 toques · Nivel 3: 1 toque · Nivel 2: 2-3 toques · Nivel 1: 4-6 toques · Nivel 0: >7 toques',
+    calcNivel:function(v){var t=parseInt(v.toques)||0;return t===0?4:t===1?3:t<=3?2:t<=6?1:0;}
+  },
+  {
+    id:7, nombre:'TEST FINGER', grupo:'Individual',
+    destrezas:'Motricidad fina · Agilidad · Coordinación mano-ojo · Disociación de dedos · Seguimiento de estándares · Concentración',
+    campos:[{id:'seg',label:'Tiempo (segundos)',tipo:'number',placeholder:'Ej: 10'}],
+    baremo:'Nivel 4 <8 seg · Nivel 3: 9-14 seg · Nivel 2: 15-18 seg · Nivel 1: 19-23 seg · Nivel 0 >24 seg',
+    calcNivel:function(v){var s=parseInt(v.seg)||999;return s<=8?4:s<=14?3:s<=18?2:s<=23?1:0;}
+  },
+  {
+    id:8, nombre:'SHOOT MOON', grupo:'Individual',
+    destrezas:'Coordinación mano-ojo · Motricidad fina · Precisión · Seguimiento de estándares · Coordinación bimanual · Concentración',
+    campos:[{id:'planeta',label:'Planeta alcanzado',tipo:'select',opciones:['Ninguno','Mercurio','Tierra','Marte','Júpiter','Saturno','Plutón']}],
+    baremo:'Nivel 4: Plutón · Nivel 3: Saturno · Nivel 2: Júpiter/Marte · Nivel 1: Tierra/Mercurio · Nivel 0: Ninguno',
+    calcNivel:function(v){var m={'Plutón':4,'Saturno':3,'Júpiter':2,'Marte':2,'Tierra':1,'Mercurio':1,'Ninguno':0};return m[v.planeta]||0;}
+  },
+  {
+    id:9, nombre:'CARGAS ERGONÓMICAS', grupo:'Individual',
+    destrezas:'Motricidad media y gruesa · Concentración · Seguimiento de estándares',
+    campos:[{id:'kilos',label:'Kilos de carga',tipo:'number'},{id:'postura',label:'Postura correcta',tipo:'select',opciones:['Sí','Parcialmente','No']}],
+    baremo:'Evalúa: espalda recta, pie adelante/atrás, carga pegada al cuerpo, sin rotación, kilos manejados',
+    calcNivel:function(v){return v.postura==='Sí'?3:v.postura==='Parcialmente'?2:1;}
+  },
+  {
+    id:10, nombre:'PRUEBA DE AGARRE — DINAMÓMETRO', grupo:'Individual',
+    destrezas:'Seguimiento de estándar · Motricidad media y gruesa · Fuerza de agarre',
+    campos:[{id:'kg',label:'Fuerza (kg)',tipo:'number',placeholder:'Ej: 42'},{id:'mano',label:'Mano evaluada',tipo:'select',opciones:['Dominante','No dominante','Ambas']}],
+    baremo:'Varía por edad y sexo. Ver tabla de baremos en el Excel de configuración',
+    calcNivel:function(v){var k=parseInt(v.kg)||0;return k>=45?4:k>=35?3:k>=25?2:k>=15?1:0;}
+  },
+  {
+    id:11, nombre:'CAMA DE FLORES', grupo:'Acierto/Defectos/Punto apertura/Largo tallo/Tiempo',
+    destrezas:'Agilidad · Destreza cognitiva · Seguimiento de estándares · Visión periférica · Concentración · Visión adelantada',
+    campos:[{id:'aciertos',label:'Aciertos (de 10)',tipo:'number'},{id:'defectos',label:'Defectos',tipo:'number'},{id:'tiempo',label:'Tiempo (seg)',tipo:'number'}],
+    baremo:'Meta: 10 tallos en 30 segundos según criterios de calidad',
+    calcNivel:function(v){var a=parseInt(v.aciertos)||0;return a>=9?4:a>=7?3:a>=5?2:a>=3?1:0;}
+  },
+  {
+    id:12, nombre:'PRUEBA DE TRIÁNGULOS', grupo:'Individual',
+    destrezas:'Concentración · Seguimiento de estándares · Agilidad · Coordinación bimanual · Destreza cognitiva · Motricidad fina · Precisión',
+    campos:[{id:'errores',label:'Número de errores',tipo:'number',placeholder:'0 = perfecto'}],
+    baremo:'Nivel 4: 0 errores · Nivel 3: 1 error · Nivel 2: 2-3 errores · Nivel 1: 4-6 errores · Nivel 0: >7 errores',
+    calcNivel:function(v){var e=parseInt(v.errores)||0;return e===0?4:e===1?3:e<=3?2:e<=6?1:0;}
+  },
+  {
+    id:13, nombre:'PRUEBA 360 — REALIDAD VIRTUAL', grupo:'Individual',
+    destrezas:'Concentración · Impresión frente a la labor · Seguimiento de estándares · Destreza cognitiva',
+    campos:[{id:'percepcion',label:'Percepción frente a la labor',tipo:'select',opciones:['Percepción positiva hacia la labor','Percepción neutra hacia la labor','Percepción negativa hacia la labor']}],
+    baremo:'Nivel 3: Positiva · Nivel 2: Neutra · Nivel 1: Negativa',
+    calcNivel:function(v){return v.percepcion&&v.percepcion.includes('positiva')?3:v.percepcion&&v.percepcion.includes('neutra')?2:1;}
+  },
+  {
+    id:14, nombre:'MEMORIA Y COLOR', grupo:'Individual',
+    destrezas:'Visión adelantada · Coordinación mano-ojo · Coordinación bimanual · Agilidad · Concentración · Seguimiento de estándares · Precisión',
+    campos:[{id:'puntaje',label:'Puntaje obtenido',tipo:'number',placeholder:'Ej: 28'}],
+    baremo:'Muy Alto >30 · Alto 26-30 · Medio 21-25 · Bajo 16-20 · Muy Bajo <16',
+    calcNivel:function(v){var p=parseInt(v.puntaje)||0;return p>30?4:p>=26?3:p>=21?2:p>=16?1:0;}
+  },
+  {
+    id:15, nombre:'PUERCO ESPÍN', grupo:'Individual',
+    destrezas:'Concentración · Agilidad · Destreza cognitiva · Motricidad fina · Seguimiento de estándares · Precisión',
+    campos:[{id:'errores',label:'Número de errores',tipo:'number',placeholder:'0 = perfecto'}],
+    baremo:'Nivel 4: 0 errores · Nivel 3: 1 error · Nivel 2: 2-3 errores · Nivel 1: 4-6 errores · Nivel 0: >7 errores',
+    calcNivel:function(v){var e=parseInt(v.errores)||0;return e===0?4:e===1?3:e<=3?2:e<=6?1:0;}
+  },
+  {
+    id:16, nombre:'ENTRENAMIENTO CEREBRAL (Gafas VR)', grupo:'Solución conflictos/Flexibilidad/Memoria/Velocidad',
+    destrezas:'Concentración · Agilidad · Precisión · Seguimiento de estándares · Destreza cognitiva',
+    campos:[{id:'percepcion',label:'Resultado general',tipo:'select',opciones:['Positiva','Neutral','Negativa']}],
+    baremo:'Nivel 3: Positiva · Nivel 2: Neutra · Nivel 1: Negativa',
+    calcNivel:function(v){return v.percepcion==='Positiva'?3:v.percepcion==='Neutral'?2:1;}
+  },
+  {
+    id:17, nombre:'AUTOCUIDADO', grupo:'Individual',
+    destrezas:'Concentración · Seguimiento de estándares · Destreza cognitiva',
+    campos:[{id:'resultado',label:'Resultado',tipo:'select',opciones:['Positiva','Neutral','Negativa']}],
+    baremo:'Nivel 3: Positiva · Nivel 2: Neutra · Nivel 1: Negativa',
+    calcNivel:function(v){return v.resultado==='Positiva'?3:v.resultado==='Neutral'?2:1;}
+  },
+  {
+    id:18, nombre:'ROMPECABEZAS MULTICOLOR', grupo:'Individual',
+    destrezas:'Concentración · Agilidad · Destreza cognitiva · Motricidad fina · Seguimiento de estándares · Precisión',
+    campos:[{id:'errores',label:'Número de errores',tipo:'number',placeholder:'0 = perfecto'}],
+    baremo:'Nivel 4: 0 errores · Nivel 3: 1 error · Nivel 2: 2-3 errores · Nivel 1: 4-6 errores · Nivel 0: >7 errores',
+    calcNivel:function(v){var e=parseInt(v.errores)||0;return e===0?4:e===1?3:e<=3?2:e<=6?1:0;}
+  },
+  {
+    id:19, nombre:'ISHIHARA', grupo:'Individual',
+    destrezas:'Destreza cognitiva · Concentración · Seguimiento de estándares · Visión cromática',
+    campos:[{id:'resultado',label:'Resultado',tipo:'select',opciones:['Diferencia totalmente colores y tonalidades','No diferencia completamente colores y tonalidades','No diferencia en absoluto colores y tonalidades']}],
+    baremo:'Diferencia totalmente / Parcialmente / No diferencia en absoluto',
+    calcNivel:function(v){return v.resultado&&v.resultado.includes('totalmente')?3:v.resultado&&v.resultado.includes('completamente')?2:1;}
+  },
+  {
+    id:20, nombre:'PRUEBA DE TALADRO', grupo:'Seguimiento/Tiempo/Ángulo/Comportamiento',
+    destrezas:'Concentración · Impresión frente a la labor · Seguimiento de estándares · Precisión · Motricidad media y gruesa',
+    campos:[{id:'tiempo',label:'Tiempo (seg)',tipo:'number'},{id:'angulo',label:'Ángulo correcto',tipo:'select',opciones:['Sí','No']},{id:'seguro',label:'Comportamientos seguros',tipo:'select',opciones:['Sí','Parcialmente','No']}],
+    baremo:'Evalúa seguimiento del estándar, tiempo, ángulo correcto y comportamientos seguros',
+    calcNivel:function(v){return v.angulo==='Sí'&&v.seguro==='Sí'?4:v.seguro==='Parcialmente'?2:1;}
+  },
+  {
+    id:21, nombre:'CORTE DE LÁMINA', grupo:'Individual',
+    destrezas:'Concentración · Impresión frente a la labor · Coordinación mano-ojo · Seguimiento de estándares · Precisión · Motricidad media y gruesa',
+    campos:[{id:'resultado',label:'Resultado',tipo:'select',opciones:['Muy Alto','Alto','Medio','Bajo','Muy Bajo']}],
+    baremo:'Evalúa precisión en el corte, seguimiento de línea y manejo de herramienta',
+    calcNivel:function(v){var m={'Muy Alto':4,'Alto':3,'Medio':2,'Bajo':1,'Muy Bajo':0};return m[v.resultado]||0;}
+  },
+  {
+    id:22, nombre:'WISCONSIN', grupo:'Individual',
+    destrezas:'Destreza cognitiva (memoria, atención y concentración) · Seguimiento de estándares · Agilidad',
+    campos:[{id:'resultado',label:'Resultado',tipo:'select',opciones:['Muy Alto','Alto','Medio','Bajo','Muy Bajo']}],
+    baremo:'Evalúa flexibilidad cognitiva, memoria de trabajo y adaptación a cambios',
+    calcNivel:function(v){var m={'Muy Alto':4,'Alto':3,'Medio':2,'Bajo':1,'Muy Bajo':0};return m[v.resultado]||0;}
+  },
+  {
+    id:23, nombre:'PINBOARD', grupo:'Retirar pines / Insertar pines',
+    destrezas:'Visión adelantada · Seguimiento de estándares · Coordinación bimanual · Coordinación mano-ojo · Motricidad fina · Agilidad · Economía de movimientos · Destreza cognitiva',
+    campos:[{id:'retirar',label:'Tiempo retirar (seg)',tipo:'number'},{id:'insertar',label:'Tiempo insertar (seg)',tipo:'number'}],
+    baremo:'Menor tiempo = mayor nivel. Evalúa velocidad y economía de movimientos',
+    calcNivel:function(v){var t=(parseInt(v.retirar)||999)+(parseInt(v.insertar)||999);return t<30?4:t<45?3:t<60?2:t<80?1:0;}
+  },
+  {
+    id:24, nombre:'CONCENTRACIÓN AL CONTEO', grupo:'Dispersión / Agrupación',
+    destrezas:'Motricidad fina · Agilidad · Destreza cognitiva (concentración, atención, memoria) · Coordinación bimanual · Seguimiento de estándares · Visión adelantada · Coordinación mano-ojo',
+    campos:[{id:'dispersion',label:'Dispersión (errores)',tipo:'number'},{id:'agrupacion',label:'Agrupación (errores)',tipo:'number'}],
+    baremo:'Menor cantidad de errores = mayor nivel',
+    calcNivel:function(v){var e=(parseInt(v.dispersion)||0)+(parseInt(v.agrupacion)||0);return e===0?4:e<=2?3:e<=5?2:e<=9?1:0;}
+  }
+];
+
+var NIVEL_LABELS = ['Muy Bajo','Bajo','Medio','Alto','Muy Alto'];
+var NIVEL_COLORS = ['var(--n0)','var(--n1)','var(--n2)','var(--n3)','var(--n4)'];
+
+var SESIONES = [];
+var sesionActual = null;
+var tabActiva = 'pg-sesiones';
+
+// ═══════════════════════════════════════════════════
+// UTILIDADES
+// ═══════════════════════════════════════════════════
+function toast(msg,tipo){var tc=document.getElementById('toasts'),t=document.createElement('div');t.className='toast '+(tipo||'ok');t.innerHTML=(tipo==='err'?'❌':tipo==='warn'?'⚠️':'✅')+' '+msg;tc.appendChild(t);setTimeout(function(){t.remove();},3500);}
+function cerrarModal(id){document.getElementById(id).classList.add('hidden');}
+function abrirModal(id){document.getElementById(id).classList.remove('hidden');}
+function fmtFecha(s){if(!s)return '—';var d=new Date(s+'T12:00:00');return d.toLocaleDateString('es-CO',{day:'2-digit',month:'short',year:'numeric'});}
+function nivelBadge(n){return '<span class="nivel-badge n'+n+'">'+NIVEL_LABELS[n]+'</span>';}
+function nivelGlobal(sesion){
+  var suma=0,cnt=0;
+  sesion.pruebas.forEach(function(p){suma+=p.nivel;cnt++;});
+  return cnt>0?Math.round(suma/cnt):0;
+}
+
+// ═══════════════════════════════════════════════════
+// NAVEGACIÓN
+// ═══════════════════════════════════════════════════
+function nav(p){
+  ['sesiones','nueva-evaluacion','participantes','indicadores'].forEach(function(x){
+    var el=document.getElementById('pg-'+x); if(el) el.classList.add('hidden');
+  });
+  document.querySelectorAll('.nitem').forEach(function(n){n.classList.remove('active');});
+  var t=document.getElementById('pg-'+p); if(t) t.classList.remove('hidden');
+  var ni=document.querySelector('[onclick*="nav(\''+p+'\')"]'); if(ni) ni.classList.add('active');
+  if(p==='sesiones')      renderSesiones(SESIONES);
+  if(p==='nueva-evaluacion') initFormEval();
+  if(p==='participantes') renderParticipantes();
+  if(p==='indicadores')   renderIndicadores();
+}
+
+function filtrarRegion(r){
+  document.getElementById('f-region').value=r;
+  filtrar();
+}
+
+// ═══════════════════════════════════════════════════
+// STATS
+// ═══════════════════════════════════════════════════
+function actualizarStats(){
+  var regiones=new Set(SESIONES.map(function(s){return s.region;}));
+  var altos=SESIONES.filter(function(s){return nivelGlobal(s)>=3;}).length;
+  var pruebas=SESIONES.reduce(function(a,s){return a+s.pruebas.length;},0);
+  document.getElementById('st-ses').textContent=SESIONES.length;
+  document.getElementById('st-part').textContent=SESIONES.length;
+  document.getElementById('st-alto').textContent=altos;
+  document.getElementById('st-reg').textContent=regiones.size;
+  document.getElementById('st-pruebas').textContent=pruebas;
+  document.getElementById('nb-ses').textContent=SESIONES.length;
+  document.getElementById('nb-part').textContent=SESIONES.length;
+}
+
+// ═══════════════════════════════════════════════════
+// RENDER SESIONES
+// ═══════════════════════════════════════════════════
+function renderSesiones(lista){
+  var tb=document.getElementById('ses-tbody');
+  var ct=document.getElementById('ses-count');
+  if(ct) ct.textContent=lista.length+' sesión'+(lista.length!==1?'es':'');
+  if(!tb) return;
+  if(!lista.length){
+    tb.innerHTML='<tr><td colspan="9" style="padding:28px;text-align:center;color:var(--texto-g)">Aún no hay evaluaciones registradas. Haz clic en "+ Nueva evaluación".</td></tr>';
+    return;
+  }
+  tb.innerHTML=lista.map(function(s){
+    var ng=nivelGlobal(s);
+    return '<tr>'+
+      '<td style="color:var(--texto-g);font-size:12px">'+fmtFecha(s.fecha)+'</td>'+
+      '<td><strong>'+s.nombre+'</strong></td>'+
+      '<td style="color:var(--texto-g);font-size:12px">'+s.documento+'</td>'+
+      '<td style="color:var(--texto-g)">'+s.empresa+'<br/><span style="font-size:11px;color:var(--texto-g)">'+s.cargo+'</span></td>'+
+      '<td style="color:var(--texto-g)">'+s.region+'<br/><span style="font-size:11px">'+s.municipio+'</span></td>'+
+      '<td style="color:var(--texto-g);font-size:12px">'+s.orientador+'</td>'+
+      '<td style="text-align:center"><strong>'+s.pruebas.length+'</strong></td>'+
+      '<td>'+nivelBadge(ng)+'</td>'+
+      '<td><div style="display:flex;gap:4px">'+
+        '<button class="btn btn-ghost btn-xs" onclick="verSesion('+s.id+')">Ver</button>'+
+        '<button class="btn btn-primary btn-xs" onclick="exportarSesionExcel('+s.id+')">📥</button>'+
+      '</div></td>'+
+    '</tr>';
+  }).join('');
+}
+
+function filtrar(){
+  var q=document.getElementById('fq').value.toLowerCase().trim();
+  var r=document.getElementById('f-region').value;
+  var p=document.getElementById('f-perfil').value;
+  var m=document.getElementById('f-mes').value;
+  var lista=SESIONES.filter(function(s){
+    var okQ=!q||(s.nombre.toLowerCase().indexOf(q)>-1||s.documento.indexOf(q)>-1||s.empresa.toLowerCase().indexOf(q)>-1||s.municipio.toLowerCase().indexOf(q)>-1);
+    var okR=!r||s.region===r;
+    var okP=!p||s.perfil===p;
+    var okM=!m||s.fecha.startsWith(m);
+    return okQ&&okR&&okP&&okM;
+  });
+  renderSesiones(lista);
+}
+
+function limpiarFiltros(){
+  ['fq','f-region','f-perfil','f-mes'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  renderSesiones(SESIONES);
+}
+
+// ═══════════════════════════════════════════════════
+// INICIALIZAR FORMULARIO DE EVALUACIÓN
+// ═══════════════════════════════════════════════════
+function initFormEval(){
+  // Fecha hoy por defecto
+  var hoy=new Date().toISOString().split('T')[0];
+  document.getElementById('e-feval').value=hoy;
+
+  // Renderizar todas las pruebas
+  var cont=document.getElementById('pruebas-container');
+  cont.innerHTML=PRUEBAS.map(function(p){
+    var inputsHtml=p.campos.map(function(c){
+      if(c.tipo==='select'){
+        return '<div class="fgroup">'+
+          '<label class="flabel" style="font-size:11px">'+c.label+'</label>'+
+          '<select class="fval" id="pr-'+p.id+'-'+c.id+'" style="font-size:13px;padding:7px 10px">'+
+            c.opciones.map(function(o){return '<option>'+o+'</option>';}).join('')+
+          '</select></div>';
+      }
+      return '<div class="fgroup">'+
+        '<label class="flabel" style="font-size:11px">'+c.label+'</label>'+
+        '<input class="fval" id="pr-'+p.id+'-'+c.id+'" type="'+c.tipo+'" placeholder="'+(c.placeholder||'')+'" style="font-size:13px;padding:7px 10px"/>'+
+      '</div>';
+    }).join('');
+
+    return '<div class="prueba-card" id="pcard-'+p.id+'">'+
+      '<div style="display:flex;align-items:flex-start;gap:10px">'+
+        '<input type="checkbox" id="pcheck-'+p.id+'" style="margin-top:3px;accent-color:var(--verde);width:16px;height:16px;cursor:pointer" onchange="togglePrueba('+p.id+')"/>'+
+        '<div style="flex:1">'+
+          '<div class="prueba-header">'+
+            '<div class="prueba-num">'+p.id+'</div>'+
+            '<div><div class="prueba-nombre">'+p.nombre+'</div><div style="font-size:11px;color:var(--texto-g)">'+p.grupo+'</div></div>'+
+          '</div>'+
+          '<div class="prueba-destrezas">🎯 '+p.destrezas+'</div>'+
+          '<div id="pinputs-'+p.id+'" class="hidden">'+
+            '<div class="prueba-inputs">'+inputsHtml+'</div>'+
+            '<div class="baremo-info">📊 '+p.baremo+'</div>'+
+          '</div>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+function togglePrueba(id){
+  var ch=document.getElementById('pcheck-'+id);
+  var inp=document.getElementById('pinputs-'+id);
+  var card=document.getElementById('pcard-'+id);
+  if(ch.checked){inp.classList.remove('hidden');card.classList.add('seleccionada');}
+  else{inp.classList.add('hidden');card.classList.remove('seleccionada');}
+}
+
+// ═══════════════════════════════════════════════════
+// GUARDAR EVALUACIÓN
+// ═══════════════════════════════════════════════════
+function guardarEvaluacion(){
+  var doc=document.getElementById('e-doc').value.trim();
+  var n1=document.getElementById('e-nombre1').value.trim();
+  var a1=document.getElementById('e-apell1').value.trim();
+  var ori=document.getElementById('e-orientador').value.trim();
+  if(!doc||!n1||!a1||!ori){toast('Completa los campos obligatorios (*)','err');return;}
+
+  var pruebasApp=[];
+  PRUEBAS.forEach(function(p){
+    var ch=document.getElementById('pcheck-'+p.id);
+    if(!ch||!ch.checked) return;
+    var vals={};
+    p.campos.forEach(function(c){
+      var el=document.getElementById('pr-'+p.id+'-'+c.id);
+      if(el) vals[c.id]=el.value;
+    });
+    var nivel=p.calcNivel(vals);
+    pruebasApp.push({id:p.id,nombre:p.nombre,vals:vals,nivel:nivel,destrezas:p.destrezas});
+  });
+
+  if(!pruebasApp.length){toast('Selecciona al menos una prueba','warn');return;}
+
+  var nueva={
+    id:SESIONES.length+1,
+    documento:doc,
+    tipoDoc:document.getElementById('e-tipo-doc').value,
+    nombre:n1+' '+(document.getElementById('e-nombre2').value||'').trim()+' '+a1+' '+(document.getElementById('e-apell2').value||'').trim(),
+    nombre1:n1, nombre2:document.getElementById('e-nombre2').value||'',
+    apell1:a1, apell2:document.getElementById('e-apell2').value||'',
+    sexo:document.getElementById('e-sexo').value,
+    fnac:document.getElementById('e-fnac').value,
+    fecha:document.getElementById('e-feval').value,
+    cargo:document.getElementById('e-cargo').value||'—',
+    perfil:document.getElementById('e-perfil').value,
+    orientador:ori,
+    region:document.getElementById('e-region').value,
+    municipio:document.getElementById('e-municipio').value||'—',
+    empresa:document.getElementById('e-empresa').value||'Particular',
+    sede:document.getElementById('e-sede').value,
+    obs:document.getElementById('e-obs').value||'',
+    pruebas:pruebasApp
+  };
+  SESIONES.push(nueva);
+  actualizarStats();
+  toast('Evaluación de "'+nueva.nombre.trim()+'" guardada exitosamente');
+  nav('sesiones');
+}
+
+// ═══════════════════════════════════════════════════
+// PREVISUALIZAR RESULTADO
+// ═══════════════════════════════════════════════════
+function previsualizarResultado(){
+  var n1=document.getElementById('e-nombre1').value.trim();
+  var a1=document.getElementById('e-apell1').value.trim();
+  if(!n1||!a1){toast('Completa al menos el nombre y apellido','warn');return;}
+
+  var pruebasApp=[];
+  PRUEBAS.forEach(function(p){
+    var ch=document.getElementById('pcheck-'+p.id);
+    if(!ch||!ch.checked) return;
+    var vals={};
+    p.campos.forEach(function(c){var el=document.getElementById('pr-'+p.id+'-'+c.id);if(el)vals[c.id]=el.value;});
+    pruebasApp.push({nombre:p.nombre,nivel:p.calcNivel(vals),destrezas:p.destrezas});
+  });
+
+  if(!pruebasApp.length){toast('Selecciona al menos una prueba','warn');return;}
+
+  var ng=Math.round(pruebasApp.reduce(function(a,p){return a+p.nivel;},0)/pruebasApp.length);
+  document.getElementById('mr-title').textContent='Resultado: '+n1+' '+a1;
+
+  // Construir resumen de destrezas
+  var destrezaMap={};
+  pruebasApp.forEach(function(p){
+    p.destrezas.split('·').forEach(function(d){
+      d=d.trim();
+      if(!destrezaMap[d]) destrezaMap[d]=[];
+      destrezaMap[d].push(p.nivel);
+    });
+  });
+
+  var destrezasHtml=Object.keys(destrezaMap).map(function(d){
+    var promD=Math.round(destrezaMap[d].reduce(function(a,v){return a+v;},0)/destrezaMap[d].length);
+    var pct=[0,25,50,75,100][promD];
+    var color=NIVEL_COLORS[promD];
+    return '<div class="destreza-item">'+
+      '<div class="destreza-nombre">'+d+'</div>'+
+      '<div class="destreza-bar"><div class="destreza-fill" style="width:'+pct+'%;background:'+color+'"></div></div>'+
+      '<div style="font-size:11px;color:var(--texto-g);margin-top:3px">'+NIVEL_LABELS[promD]+'</div>'+
+    '</div>';
+  }).join('');
+
+  document.getElementById('mr-body').innerHTML=
+    '<div style="background:linear-gradient(135deg,var(--verde),#0d6b6c);color:#fff;border-radius:12px;padding:20px 24px;margin-bottom:20px">'+
+      '<div style="font-family:Nunito;font-size:20px;font-weight:900;margin-bottom:4px">'+n1+' '+a1+'</div>'+
+      '<div style="opacity:.8;font-size:13px">'+document.getElementById('e-cargo').value+' · '+document.getElementById('e-region').value+'</div>'+
+      '<div style="margin-top:12px;display:flex;align-items:center;gap:16px">'+
+        '<div style="background:rgba(255,255,255,.15);border-radius:8px;padding:10px 18px;text-align:center">'+
+          '<div style="font-family:Nunito;font-size:28px;font-weight:900;color:var(--pist)">'+NIVEL_LABELS[ng]+'</div>'+
+          '<div style="font-size:12px;opacity:.8">Perfil global</div>'+
+        '</div>'+
+        '<div style="font-size:13px;opacity:.85">'+pruebasApp.length+' pruebas aplicadas</div>'+
+      '</div>'+
+    '</div>'+
+    '<div style="font-family:Nunito;font-weight:800;color:var(--verde);margin-bottom:12px;font-size:15px">Resultados por prueba</div>'+
+    '<table style="margin-bottom:20px"><thead><tr><th>Prueba</th><th>Nivel</th></tr></thead><tbody>'+
+      pruebasApp.map(function(p){return '<tr><td><strong>'+p.nombre+'</strong></td><td>'+nivelBadge(p.nivel)+'</td></tr>';}).join('')+
+    '</tbody></table>'+
+    '<div style="font-family:Nunito;font-weight:800;color:var(--verde);margin-bottom:10px;font-size:15px">Perfil de destrezas</div>'+
+    '<div class="perfil-destreza">'+destrezasHtml+'</div>';
+
+  abrirModal('modal-resultado');
+}
+
+// ═══════════════════════════════════════════════════
+// VER SESIÓN
+// ═══════════════════════════════════════════════════
+function verSesion(id){
+  var s=SESIONES.find(function(x){return x.id===id;});
+  if(!s) return;
+  sesionActual=s;
+  var ng=nivelGlobal(s);
+
+  var destrezaMap={};
+  s.pruebas.forEach(function(p){
+    (p.destrezas||'').split('·').forEach(function(d){
+      d=d.trim(); if(!d) return;
+      if(!destrezaMap[d]) destrezaMap[d]=[];
+      destrezaMap[d].push(p.nivel);
+    });
+  });
+
+  document.getElementById('mr-title').textContent='Evaluación: '+s.nombre.trim();
+  document.getElementById('mr-body').innerHTML=
+    '<div style="background:linear-gradient(135deg,var(--verde),#0d6b6c);color:#fff;border-radius:12px;padding:20px 24px;margin-bottom:20px">'+
+      '<div style="font-family:Nunito;font-size:20px;font-weight:900;margin-bottom:2px">'+s.nombre.trim()+'</div>'+
+      '<div style="opacity:.8;font-size:13px;margin-bottom:8px">'+s.documento+' · '+s.cargo+' · '+s.region+', '+s.municipio+'</div>'+
+      '<div style="opacity:.7;font-size:12px">Orientador: '+s.orientador+' · Fecha: '+fmtFecha(s.fecha)+' · Sede: '+s.sede+'</div>'+
+      '<div style="margin-top:12px;display:flex;align-items:center;gap:16px">'+
+        '<div style="background:rgba(255,255,255,.15);border-radius:8px;padding:10px 18px;text-align:center">'+
+          '<div style="font-family:Nunito;font-size:26px;font-weight:900;color:var(--pist)">'+NIVEL_LABELS[ng]+'</div>'+
+          '<div style="font-size:12px;opacity:.8">Perfil global</div>'+
+        '</div>'+
+        '<div style="font-size:13px;opacity:.85">'+s.pruebas.length+' pruebas · Empresa: '+s.empresa+'</div>'+
+      '</div>'+
+    '</div>'+
+    '<table style="margin-bottom:20px"><thead><tr><th>Prueba</th><th>Nivel</th></tr></thead><tbody>'+
+      s.pruebas.map(function(p){return '<tr><td><strong>'+p.nombre+'</strong></td><td>'+nivelBadge(p.nivel)+'</td></tr>';}).join('')+
+    '</tbody></table>'+
+    '<div style="font-family:Nunito;font-weight:800;color:var(--verde);margin-bottom:10px">Perfil de destrezas</div>'+
+    '<div class="perfil-destreza">'+Object.keys(destrezaMap).map(function(d){
+      var pv=Math.round(destrezaMap[d].reduce(function(a,v){return a+v;},0)/destrezaMap[d].length);
+      return '<div class="destreza-item"><div class="destreza-nombre">'+d+'</div><div class="destreza-bar"><div class="destreza-fill" style="width:'+[0,25,50,75,100][pv]+'%;background:'+NIVEL_COLORS[pv]+'"></div></div><div style="font-size:11px;color:var(--texto-g);margin-top:3px">'+NIVEL_LABELS[pv]+'</div></div>';
+    }).join('')+'</div>'+
+    (s.obs?'<div style="margin-top:16px;background:var(--suave);border-radius:8px;padding:12px"><strong style="font-size:12px;color:var(--verde)">OBSERVACIONES</strong><p style="font-size:13px;color:var(--texto-g);margin-top:4px">'+s.obs+'</p></div>':'');
+
+  abrirModal('modal-resultado');
+}
+
+// ═══════════════════════════════════════════════════
+// PARTICIPANTES
+// ═══════════════════════════════════════════════════
+function renderParticipantes(){
+  var tb=document.getElementById('part-tbody');
+  var ct=document.getElementById('part-count');
+  if(ct) ct.textContent=SESIONES.length+' participante'+(SESIONES.length!==1?'s':'');
+  if(!tb) return;
+  if(!SESIONES.length){tb.innerHTML='<tr><td colspan="8" style="padding:24px;text-align:center;color:var(--texto-g)">Sin registros</td></tr>';return;}
+  tb.innerHTML=SESIONES.map(function(s){
+    return '<tr>'+
+      '<td><strong>'+s.nombre.trim()+'</strong></td>'+
+      '<td style="color:var(--texto-g)">'+s.documento+'</td>'+
+      '<td style="color:var(--texto-g)">'+fmtFecha(s.fecha)+'</td>'+
+      '<td style="color:var(--texto-g)">'+s.region+'</td>'+
+      '<td style="color:var(--texto-g)">'+s.cargo+'</td>'+
+      '<td style="color:var(--texto-g)">'+s.empresa+'</td>'+
+      '<td>'+nivelBadge(nivelGlobal(s))+'</td>'+
+      '<td><button class="btn btn-ghost btn-xs" onclick="verSesion('+s.id+')">Ver resultado</button></td>'+
+    '</tr>';
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════
+// INDICADORES
+// ═══════════════════════════════════════════════════
+function renderIndicadores(){
+  var altos=SESIONES.filter(function(s){return nivelGlobal(s)>=3;}).length;
+  var regiones={};
+  var perfiles={};
+  var pruebasCount={};
+  SESIONES.forEach(function(s){
+    regiones[s.region]=(regiones[s.region]||0)+1;
+    perfiles[s.perfil]=(perfiles[s.perfil]||0)+1;
+    s.pruebas.forEach(function(p){pruebasCount[p.nombre]=(pruebasCount[p.nombre]||0)+1;});
+  });
+
+  var el=document.getElementById('ind-stats');
+  if(el) el.innerHTML=[
+    {ico:'📋',val:SESIONES.length,lbl:'Total evaluaciones'},
+    {ico:'🏆',val:altos,lbl:'Perfil Alto o superior'},
+    {ico:'📍',val:Object.keys(regiones).length,lbl:'Regiones'},
+    {ico:'🔬',val:Object.keys(pruebasCount).length,lbl:'Pruebas distintas usadas'}
+  ].map(function(s){return '<div class="scard"><div class="sico">'+s.ico+'</div><div class="sval">'+s.val+'</div><div class="slbl">'+s.lbl+'</div></div>';}).join('');
+
+  var er=document.getElementById('ind-regiones');
+  if(er) er.innerHTML=Object.entries(regiones).sort(function(a,b){return b[1]-a[1];}).map(function(e){
+    var pct=SESIONES.length?Math.round(e[1]/SESIONES.length*100):0;
+    return '<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px"><span>'+e[0]+'</span><strong>'+e[1]+'</strong></div><div style="height:6px;background:var(--borde);border-radius:3px"><div style="height:100%;width:'+pct+'%;background:var(--pist);border-radius:3px"></div></div></div>';
+  }).join('')||'<p style="color:var(--texto-g)">Sin datos</p>';
+
+  var ep=document.getElementById('ind-perfiles');
+  if(ep) ep.innerHTML=Object.entries(perfiles).map(function(e){
+    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--borde);font-size:14px"><span>'+e[0]+'</span><strong>'+e[1]+'</strong></div>';
+  }).join('')||'<p style="color:var(--texto-g)">Sin datos</p>';
+
+  var top=Object.entries(pruebasCount).sort(function(a,b){return b[1]-a[1];}).slice(0,10);
+  var epr=document.getElementById('ind-pruebas-top');
+  if(epr) epr.innerHTML=top.map(function(e){
+    var pct=SESIONES.length?Math.round(e[1]/SESIONES.length*100):0;
+    return '<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:3px"><span>'+e[0]+'</span><strong>'+e[1]+'</strong></div><div style="height:5px;background:var(--borde);border-radius:3px"><div style="height:100%;width:'+pct+'%;background:var(--verde);border-radius:3px"></div></div></div>';
+  }).join('')||'<p style="color:var(--texto-g)">Sin datos</p>';
+}
+
+// ═══════════════════════════════════════════════════
+// EXPORTAR
+// ═══════════════════════════════════════════════════
+function exportarSesionExcel(id){
+  var s=SESIONES.find(function(x){return x.id===id;});
+  if(!s){toast('Sesión no encontrada','err');return;}
+  var wb=XLSX.utils.book_new();
+  var rows=[['RESULTADOS LABORATORIO DE EMPLEO — COMFENALCO ANTIOQUIA'],
+    [],
+    ['DATOS DEL PARTICIPANTE'],
+    ['Documento',s.tipoDoc+' '+s.documento],
+    ['Nombre completo',s.nombre.trim()],
+    ['Sexo',s.sexo==='F'?'Femenino':s.sexo==='M'?'Masculino':'Otro'],
+    ['Fecha nacimiento',s.fnac],['Fecha evaluación',s.fecha],
+    ['Cargo aspirado',s.cargo],['Perfil',s.perfil],
+    ['Orientador',s.orientador],['Región',s.region],['Municipio',s.municipio],
+    ['Empresa',s.empresa],['Sede',s.sede],[],
+    ['PRUEBAS APLICADAS'],
+    ['N°','Prueba','Nivel (0-4)','Nivel texto','Destrezas evaluadas']
+  ];
+  s.pruebas.forEach(function(p,i){rows.push([i+1,p.nombre,p.nivel,NIVEL_LABELS[p.nivel],p.destrezas]);});
+  rows.push([],['PERFIL GLOBAL','',nivelGlobal(s),NIVEL_LABELS[nivelGlobal(s)]]);
+  rows.push([],['OBSERVACIONES',s.obs||'']);
+  var ws=XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols']=[{wch:25},{wch:40},{wch:12},{wch:15},{wch:60}];
+  XLSX.utils.book_append_sheet(wb,ws,'Resultado');
+  XLSX.writeFile(wb,'evaluacion_'+s.documento+'_'+s.fecha+'.xlsx');
+  toast('Excel de evaluación descargado');
+}
+
+function exportarSesionExcelActual(){if(sesionActual) exportarSesionExcel(sesionActual.id);}
+function exportarResultadoExcel(){if(sesionActual) exportarSesionExcel(sesionActual.id);}
+
+function exportarSesiones(){
+  if(!SESIONES.length){toast('Sin datos para exportar','warn');return;}
+  var wb=XLSX.utils.book_new();
+  var rows=[['Fecha','Nombre','Documento','Región','Municipio','Cargo','Perfil','Empresa','Orientador','Pruebas aplicadas','Nivel global','Nivel texto']];
+  SESIONES.forEach(function(s){
+    rows.push([s.fecha,s.nombre.trim(),s.documento,s.region,s.municipio,s.cargo,s.perfil,s.empresa,s.orientador,s.pruebas.length,nivelGlobal(s),NIVEL_LABELS[nivelGlobal(s)]]);
+  });
+  var ws=XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols']=rows[0].map(function(){return {wch:20};});
+  XLSX.utils.book_append_sheet(wb,ws,'Sesiones');
+  XLSX.writeFile(wb,'laboratorios_comfenalco.xlsx');
+  toast('Excel general descargado');
+}
+
+function exportarParticipantes(){exportarSesiones();}
+
+function descargarPlantilla(){
+  var wb=XLSX.utils.book_new();
+  var headers=['Tipo Doc','Documento','Primer Nombre','Segundo Nombre','Primer Apellido','Segundo Apellido','Sexo','Fecha Nacimiento','Fecha Evaluación','Cargo Aspirado','Perfil','Orientador','Región','Municipio','Empresa','Sede'];
+  PRUEBAS.forEach(function(p){headers.push(p.nombre+' — Nivel (0-4)');});
+  var ejemplo=['CC','1.234.567.890','Juan Carlos','','Gómez','Pérez','M','1990-05-15',new Date().toISOString().split('T')[0],'Operario de producción','Operativo','Ana Bermúdez','Valle de Aburrá','Medellín','Logística del Valle SAS','Medellín — Sede Educativa Comfenalco'];
+  PRUEBAS.forEach(function(){ejemplo.push('');});
+  var ws=XLSX.utils.aoa_to_sheet([headers,ejemplo]);
+  ws['!cols']=headers.map(function(){return {wch:22};});
+  XLSX.utils.book_append_sheet(wb,ws,'Evaluaciones');
+  XLSX.writeFile(wb,'plantilla_laboratorio_comfenalco.xlsx');
+  toast('Plantilla Excel descargada');
+}
+
+function importarExcel(){document.getElementById('excel-input').click();}
+
+function procesarExcelImport(input){
+  if(!input.files||!input.files[0]) return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      var wb=XLSX.read(e.target.result,{type:'binary'});
+      var ws=wb.Sheets[wb.SheetNames[0]];
+      var data=XLSX.utils.sheet_to_json(ws,{header:1});
+      var importados=0;
+      for(var i=1;i<data.length;i++){
+        var r=data[i];
+        if(!r[2]&&!r[4]) continue;
+        var pruebas=[];
+        for(var j=0;j<PRUEBAS.length;j++){
+          var nivel=parseInt(r[16+j]);
+          if(!isNaN(nivel)&&nivel>=0&&nivel<=4){
+            pruebas.push({id:PRUEBAS[j].id,nombre:PRUEBAS[j].nombre,nivel:nivel,destrezas:PRUEBAS[j].destrezas,vals:{}});
+          }
+        }
+        SESIONES.push({
+          id:SESIONES.length+1,
+          tipoDoc:String(r[0]||'CC'),documento:String(r[1]||''),
+          nombre:[r[2],r[3],r[4],r[5]].filter(Boolean).join(' '),
+          nombre1:r[2]||'',nombre2:r[3]||'',apell1:r[4]||'',apell2:r[5]||'',
+          sexo:String(r[6]||'M'),fnac:String(r[7]||''),fecha:String(r[8]||new Date().toISOString().split('T')[0]),
+          cargo:String(r[9]||'—'),perfil:String(r[10]||'Operativo'),orientador:String(r[11]||'—'),
+          region:String(r[12]||'—'),municipio:String(r[13]||'—'),empresa:String(r[14]||'Particular'),
+          sede:String(r[15]||'—'),obs:'',pruebas:pruebas
+        });
+        importados++;
+      }
+      actualizarStats();
+      renderSesiones(SESIONES);
+      toast(importados+' evaluaciones importadas desde Excel');
+      input.value='';
+    }catch(err){toast('Error leyendo el Excel','err');console.error(err);}
+  };
+  reader.readAsBinaryString(input.files[0]);
+}
+
+// ═══════════════════════════════════════════════════
+// AUTH
+// ═══════════════════════════════════════════════════
+function renderAuth(user){
+  var area=document.getElementById('auth-area');
+  if(user){
+    var nombre=((user.firstName||'')+' '+(user.lastName||'')).trim()||'Usuario';
+    var ini=((user.firstName||'')[0]||'').toUpperCase()+((user.lastName||'')[0]||'').toUpperCase()||'U';
+    document.getElementById('snombre').textContent=nombre;
+    document.getElementById('e-orientador')&&(document.getElementById('e-orientador').value=nombre);
+    var av=document.getElementById('sav');
+    av.innerHTML=user.imageUrl?'<img src="'+user.imageUrl+'"/>':ini;
+    area.innerHTML='<span style="color:rgba(255,255,255,.8);font-size:13px">'+nombre+'</span>'+
+      '<button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.signOut().then(function(){window.location.href=\'interno.html\'})">Salir</button>';
+  } else {
+    area.innerHTML='<button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>';
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════
+window.addEventListener('load',function(){
+  actualizarStats();
+  renderSesiones(SESIONES);
+  if(window.Clerk){
+    window.Clerk.load().then(function(){
+      renderAuth(window.Clerk.user);
+      window.Clerk.addListener(function(e){renderAuth(e.user);});
+    });
+  }
+});
+</script>
+</body>
+</html>
