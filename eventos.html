@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gestión de Eventos — Comfenalco Antioquia</title>
+  <script async crossorigin="anonymous"
+    data-clerk-publishable-key="pk_test_bGlrZWQtYmlzb24tNTEuY2xlcmsuYWNjb3VudHMuZGV2JA"
+    src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@5/dist/clerk.browser.js"
+    type="text/javascript"></script>
+  <!-- SheetJS para exportar/importar Excel -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--verde:#094a4b;--pist:#a8c94e;--pist-h:#8fb53a;--blanco:#fff;--fondo:#f4f6f4;--borde:#d8e2d8;--texto-g:#4a5a4a;--suave:#e8efe8;--negro:#1a2a1a;--naranja:#e67e22;--azul:#2d4a6b;--rojo:#e74c3c;--r:8px;--rc:14px;--t:.22s ease}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;font-size:15px;color:var(--negro);background:var(--fondo);min-height:100vh}
+    button{cursor:pointer;font-family:inherit;border:none}
+    input,select,textarea{font-family:inherit}
+    .hidden{display:none!important}
+
+    /* TOPBAR */
+    #topbar{background:var(--verde);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(9,74,75,.2)}
+    .brand-logos{display:flex;align-items:center;background:#fff;border-radius:8px;padding:3px 12px;height:46px}
+    .brand-logos img:first-child{height:36px;max-width:170px;object-fit:contain}
+    .brand-sep{width:1px;height:28px;background:var(--borde);margin:0 10px}
+    .brand-logos img:last-child{height:28px;max-width:130px;object-fit:contain}
+    .tbadge{background:rgba(168,201,78,.2);color:var(--pist);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px}
+    .back{color:rgba(255,255,255,.7);font-size:13px;cursor:pointer;padding:6px 10px;border-radius:6px;transition:background var(--t)}
+    .back:hover{background:rgba(255,255,255,.1);color:#fff}
+
+    /* BOTONES */
+    .btn{display:inline-flex;align-items:center;gap:7px;padding:10px 22px;border-radius:var(--r);font-weight:700;font-size:14px;border:none;transition:all var(--t);cursor:pointer;font-family:inherit}
+    .btn:active{transform:scale(.97)}
+    .btn-primary{background:var(--pist);color:var(--verde)}
+    .btn-primary:hover{background:var(--pist-h);box-shadow:0 4px 12px rgba(168,201,78,.4)}
+    .btn-verde{background:var(--verde);color:#fff}
+    .btn-verde:hover{background:#0d6b6c}
+    .btn-outline{background:transparent;color:var(--verde);border:2px solid var(--verde)}
+    .btn-outline:hover{background:var(--verde);color:#fff}
+    .btn-ghost{background:var(--suave);color:var(--texto-g)}
+    .btn-ghost:hover{background:var(--borde)}
+    .btn-danger{background:var(--rojo);color:#fff}
+    .btn-danger:hover{background:#c0392b}
+    .btn-naranja{background:var(--naranja);color:#fff}
+    .btn-azul{background:var(--azul);color:#fff}
+    .btn-sm{padding:7px 14px;font-size:13px}
+    .btn-xs{padding:4px 10px;font-size:12px}
+    .btn-lg{padding:14px 32px;font-size:16px;border-radius:10px}
+
+    /* LAYOUT */
+    #shell{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 60px)}
+
+    /* SIDEBAR */
+    #sidebar{background:var(--verde);padding:20px 0;display:flex;flex-direction:column;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto}
+    .suser{padding:16px 20px 20px;border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:8px;display:flex;align-items:center;gap:12px}
+    .sav{width:38px;height:38px;border-radius:50%;background:var(--pist);color:var(--verde);font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
+    .sav img{width:100%;height:100%;object-fit:cover}
+    .snombre{font-weight:700;font-size:13px;color:#fff}
+    .srol{font-size:11px;color:var(--pist);margin-top:2px}
+    .slabel{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);padding:12px 20px 4px}
+    .nitem{display:flex;align-items:center;gap:11px;padding:10px 20px;font-size:13px;font-weight:600;color:rgba(255,255,255,.7);border-left:3px solid transparent;cursor:pointer;transition:background var(--t);border-radius:0 8px 8px 0;margin-right:12px}
+    .nitem:hover{background:rgba(255,255,255,.08);color:#fff}
+    .nitem.active{background:rgba(168,201,78,.15);color:var(--pist);border-left-color:var(--pist)}
+    .nico{font-size:17px;width:20px;text-align:center;flex-shrink:0}
+    .nbadge{margin-left:auto;background:var(--pist);color:var(--verde);font-size:10px;font-weight:800;padding:1px 6px;border-radius:20px}
+    .sdiv{height:1px;background:rgba(255,255,255,.1);margin:10px 20px}
+
+    /* MAIN */
+    #main{padding:28px;overflow-y:auto}
+    .ptitle{font-family:'Nunito',sans-serif;font-size:24px;font-weight:900;color:var(--verde);margin-bottom:4px}
+    .psub{font-size:14px;color:var(--texto-g);margin-bottom:24px}
+    .ph{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+
+    /* STATS */
+    .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:28px}
+    .scard{background:#fff;border-radius:var(--rc);box-shadow:0 2px 16px rgba(9,74,75,.08);padding:18px 20px;display:flex;flex-direction:column;gap:5px;border-left:4px solid var(--pist);transition:transform var(--t)}
+    .scard:hover{transform:translateY(-3px)}
+    .sico{font-size:24px}
+    .sval{font-family:'Nunito',sans-serif;font-size:30px;font-weight:900;color:var(--verde);line-height:1}
+    .slbl{font-size:12px;color:var(--texto-g);font-weight:600}
+
+    /* TARJETAS EVENTO */
+    .eventos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:20px}
+    .evento-card{background:#fff;border-radius:16px;box-shadow:0 4px 20px rgba(9,74,75,.10);overflow:hidden;transition:transform var(--t),box-shadow var(--t);cursor:pointer}
+    .evento-card:hover{transform:translateY(-4px);box-shadow:0 10px 32px rgba(9,74,75,.16)}
+    .evento-header{padding:16px 20px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+    .evento-tipo-icon{font-size:36px;flex-shrink:0}
+    .evento-tipo-badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;flex-shrink:0}
+    .et-jornada{background:#dbeafe;color:#1d4ed8}
+    .et-perioscopio{background:#fce7f3;color:#9d174d}
+    .et-laboratorio{background:#d1fae5;color:#065f46}
+    .et-feria{background:#fef3c7;color:#92400e}
+    .et-otro{background:var(--suave);color:var(--texto-g)}
+    .evento-nombre{font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;color:var(--verde);margin-bottom:4px}
+    .evento-region{font-size:13px;color:var(--texto-g)}
+    .evento-body{padding:0 20px 16px}
+    .evento-meta{display:flex;gap:14px;font-size:12px;color:var(--texto-g);flex-wrap:wrap;margin-bottom:12px}
+    .evento-meta span{display:flex;align-items:center;gap:4px}
+    .evento-footer{padding:12px 20px;border-top:1px solid var(--borde);display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .evento-estado{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px}
+    .ee-activo{background:#d4edda;color:#155724}
+    .ee-cerrado{background:#f8d7da;color:#721c24}
+    .ee-planificado{background:#fff3cd;color:#856404}
+    .evento-acciones{display:flex;gap:6px}
+    .evento-progress{height:4px;background:var(--borde);margin:8px 0;border-radius:2px;overflow:hidden}
+    .evento-progress-fill{height:100%;background:var(--pist);border-radius:2px;transition:width .5s}
+
+    /* FILTROS */
+    .filtros-bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;padding:14px 18px;background:#fff;border-radius:var(--rc);box-shadow:0 2px 16px rgba(9,74,75,.06)}
+    .finput{padding:8px 12px;border:1.5px solid var(--borde);border-radius:var(--r);font-size:13px;font-family:inherit;color:var(--negro);background:#fff;outline:none;transition:border-color var(--t)}
+    .finput:focus{border-color:var(--verde)}
+    select.finput{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23094a4b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+
+    /* MODAL */
+    .modal-bg{position:fixed;inset:0;background:rgba(9,74,75,.5);display:flex;align-items:flex-start;justify-content:center;z-index:999;backdrop-filter:blur(3px);animation:fadeIn .18s ease;padding:20px;overflow-y:auto}
+    .modal{background:#fff;border-radius:18px;box-shadow:0 20px 60px rgba(9,74,75,.25);width:min(720px,95vw);animation:slideUp .22s ease;margin:auto}
+    .modal-head{display:flex;align-items:center;justify-content:space-between;padding:20px 24px 16px;border-bottom:1px solid var(--borde);position:sticky;top:0;background:#fff;z-index:1;border-radius:18px 18px 0 0}
+    .modal-title{font-family:'Nunito',sans-serif;font-size:19px;font-weight:900;color:var(--verde)}
+    .modal-close{background:var(--suave);border:none;border-radius:8px;width:34px;height:34px;font-size:18px;color:var(--texto-g);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background var(--t)}
+    .modal-close:hover{background:var(--borde)}
+    .modal-body{padding:24px}
+    .modal-foot{padding:16px 24px;border-top:1px solid var(--borde);display:flex;justify-content:flex-end;gap:10px}
+    .modal-tabs{display:flex;gap:0;border-bottom:2px solid var(--borde);margin-bottom:20px}
+    .mtab{padding:10px 20px;font-size:14px;font-weight:600;color:var(--texto-g);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:color var(--t)}
+    .mtab.active{color:var(--verde);border-bottom-color:var(--pist)}
+    .mtab:hover{color:var(--verde)}
+
+    /* FORM */
+    .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .fgrid.one{grid-template-columns:1fr}
+    .fgrid.three{grid-template-columns:1fr 1fr 1fr}
+    .fgroup{display:flex;flex-direction:column;gap:5px}
+    .flabel{font-size:12px;font-weight:700;color:var(--verde);text-transform:uppercase;letter-spacing:.04em}
+    .req{color:var(--rojo);margin-left:2px}
+    .fval{padding:9px 13px;border:1.5px solid var(--borde);border-radius:var(--r);font-size:14px;font-family:inherit;color:var(--negro);background:#fff;outline:none;transition:border-color var(--t)}
+    .fval:focus{border-color:var(--verde);box-shadow:0 0 0 3px rgba(9,74,75,.08)}
+    select.fval{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23094a4b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:30px}
+    textarea.fval{resize:vertical;min-height:70px;line-height:1.5}
+    .fsep{font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:var(--verde);margin:16px 0 10px;padding-bottom:5px;border-bottom:2px solid var(--pist);grid-column:1/-1;display:flex;align-items:center;gap:8px}
+    .checkbox-group{display:flex;flex-wrap:wrap;gap:8px}
+    .checkbox-item{display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer;padding:5px 10px;border-radius:6px;border:1.5px solid var(--borde);transition:all var(--t)}
+    .checkbox-item:hover{border-color:var(--pist);background:rgba(168,201,78,.08)}
+    .checkbox-item input{accent-color:var(--verde);width:14px;height:14px}
+
+    /* PARTICIPANTES */
+    .part-table-wrap{background:#fff;border-radius:var(--rc);border:1.5px solid var(--borde);overflow:hidden;margin-top:12px}
+    .part-toolbar{padding:12px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--borde);background:var(--suave);flex-wrap:wrap}
+    .part-title{font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;color:var(--verde);margin-right:auto}
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    th{padding:9px 12px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--verde);background:var(--suave);white-space:nowrap}
+    td{padding:10px 12px;border-bottom:1px solid var(--borde)}
+    tbody tr:last-child td{border-bottom:none}
+    tbody tr:hover{background:rgba(9,74,75,.02)}
+
+    /* EVIDENCIAS */
+    .evidencias-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-top:12px}
+    .evidencia-item{border-radius:10px;overflow:hidden;background:var(--suave);border:1.5px solid var(--borde);position:relative;aspect-ratio:1}
+    .evidencia-item img{width:100%;height:100%;object-fit:cover}
+    .evidencia-item.pdf-item{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px;text-align:center}
+    .evidencia-item .ev-del{position:absolute;top:4px;right:4px;background:rgba(231,76,60,.9);color:#fff;border:none;border-radius:50%;width:22px;height:22px;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+    .upload-zone{border:2px dashed var(--borde);border-radius:12px;padding:28px;text-align:center;cursor:pointer;transition:all var(--t);color:var(--texto-g)}
+    .upload-zone:hover{border-color:var(--pist);background:rgba(168,201,78,.05)}
+    .upload-zone input{display:none}
+
+    /* TOAST */
+    #toasts{position:fixed;bottom:24px;right:24px;display:flex;flex-direction:column;gap:10px;z-index:9999}
+    .toast{background:var(--verde);color:#fff;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:600;box-shadow:0 4px 20px rgba(9,74,75,.3);display:flex;align-items:center;gap:10px;animation:slideUp .22s ease;min-width:260px}
+    .toast.ok{border-left:4px solid var(--pist)}
+    .toast.err{border-left:4px solid var(--rojo);background:#c0392b}
+    .toast.warn{border-left:4px solid var(--naranja)}
+
+    /* LOADING */
+    .loading{display:flex;align-items:center;justify-content:center;padding:48px;gap:12px;color:var(--texto-g)}
+    .spinner{width:28px;height:28px;border:3px solid var(--borde);border-top-color:var(--verde);border-radius:50%;animation:spin .8s linear infinite}
+
+    /* CIERRE EVENTO */
+    .cierre-panel{background:#fff5f5;border:2px solid #fca5a5;border-radius:12px;padding:20px;margin-top:16px}
+    .cierre-title{font-family:'Nunito',sans-serif;font-weight:800;color:#991b1b;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    @keyframes slideUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+
+    @media(max-width:900px){#shell{grid-template-columns:1fr}#sidebar{display:none}#main{padding:16px}.fgrid,.fgrid.three{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<header id="topbar">
+  <div style="display:flex;align-items:center;gap:14px">
+    <span class="back" onclick="window.location.href='interno.html'">← Panel interno</span>
+    <div class="brand-logos">
+      <img src="logo_comfe_y_servicio.jpeg" alt="Comfenalco"/>
+      <div class="brand-sep"></div>
+      <img src="logo_agencia.png" alt="Agencia"/>
+    </div>
+    <span class="tbadge">EVENTOS Y JORNADAS</span>
+  </div>
+  <div id="auth-area" style="display:flex;align-items:center;gap:10px"></div>
+</header>
+
+<div id="shell">
+  <!-- SIDEBAR -->
+  <nav id="sidebar">
+    <div class="suser">
+      <div class="sav" id="sav">?</div>
+      <div><div class="snombre" id="snombre">Cargando...</div><div class="srol" id="srol">Equipo Comfenalco</div></div>
+    </div>
+    <div class="slabel">Vistas</div>
+    <div class="nitem active" onclick="nav('todos')"><span class="nico">🗓️</span> Todos los eventos <span class="nbadge" id="nb-total">0</span></div>
+    <div class="nitem" onclick="nav('activos')"><span class="nico">🟢</span> Activos <span class="nbadge" id="nb-activos">0</span></div>
+    <div class="nitem" onclick="nav('planificados')"><span class="nico">📅</span> Planificados</div>
+    <div class="nitem" onclick="nav('cerrados')"><span class="nico">🔒</span> Cerrados</div>
+    <div class="slabel">Tipos</div>
+    <div class="nitem" onclick="filtrarTipo('Jornada de empleo')"><span class="nico">💼</span> Jornadas de empleo</div>
+    <div class="nitem" onclick="filtrarTipo('Perioscópio')"><span class="nico">🔭</span> Perioscópios</div>
+    <div class="nitem" onclick="filtrarTipo('Laboratorio de empleo')"><span class="nico">🧪</span> Laboratorios</div>
+    <div class="nitem" onclick="filtrarTipo('Feria empresarial')"><span class="nico">🏪</span> Ferias empresariales</div>
+    <div class="sdiv"></div>
+    <div class="slabel">Reportes</div>
+    <div class="nitem" onclick="generarInformeGeneral()"><span class="nico">📊</span> Informe general</div>
+    <div class="nitem" onclick="exportarTodosExcel()"><span class="nico">📥</span> Exportar todo Excel</div>
+  </nav>
+
+  <!-- MAIN -->
+  <main id="main">
+
+    <!-- ENCABEZADO -->
+    <div class="ph">
+      <div>
+        <div class="ptitle">🗓️ Gestión de Eventos y Jornadas</div>
+        <p class="psub">Jornadas · Perioscópios · Laboratorios de empleo · Ferias · Eventos especiales</p>
+      </div>
+      <button class="btn btn-primary btn-lg" onclick="abrirModalEvento()">+ Crear evento</button>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-row">
+      <div class="scard"><div class="sico">🗓️</div><div class="sval" id="st-total">0</div><div class="slbl">Total eventos</div></div>
+      <div class="scard" style="border-left-color:#27ae60"><div class="sico">🟢</div><div class="sval" id="st-activos">0</div><div class="slbl">Activos</div></div>
+      <div class="scard" style="border-left-color:var(--naranja)"><div class="sico">📅</div><div class="sval" id="st-plan">0</div><div class="slbl">Planificados</div></div>
+      <div class="scard" style="border-left-color:var(--azul)"><div class="sico">🔒</div><div class="sval" id="st-cerr">0</div><div class="slbl">Cerrados</div></div>
+      <div class="scard" style="border-left-color:#9d174d"><div class="sico">👥</div><div class="sval" id="st-part">0</div><div class="slbl">Total participantes</div></div>
+    </div>
+
+    <!-- FILTROS -->
+    <div class="filtros-bar">
+      <input class="finput" type="text" id="fq" placeholder="🔍 Buscar evento..." style="flex:1;min-width:160px" oninput="filtrar()"/>
+      <select class="finput" id="f-tipo" onchange="filtrar()">
+        <option value="">Todos los tipos</option>
+        <option>Jornada de empleo</option>
+        <option>Perioscópio</option>
+        <option>Laboratorio de empleo</option>
+        <option>Feria empresarial</option>
+        <option>Otro</option>
+      </select>
+      <select class="finput" id="f-estado" onchange="filtrar()">
+        <option value="">Todos los estados</option>
+        <option value="Activo">Activo</option>
+        <option value="Planificado">Planificado</option>
+        <option value="Cerrado">Cerrado</option>
+      </select>
+      <select class="finput" id="f-region" onchange="filtrar()">
+        <option value="">Todas las subregiones</option>
+        <option>Valle de Aburrá</option><option>Oriente</option><option>Norte</option>
+        <option>Occidente</option><option>Suroeste</option><option>Bajo Cauca</option>
+        <option>Nordeste</option><option>Magdalena Medio</option><option>Urabá</option>
+      </select>
+      <button class="btn btn-ghost btn-sm" onclick="limpiarFiltros()">✕ Limpiar</button>
+    </div>
+
+    <!-- GRID EVENTOS -->
+    <div class="eventos-grid" id="eventos-grid">
+      <div class="loading" style="grid-column:1/-1"><div class="spinner"></div><span>Cargando eventos...</span></div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     MODAL CREAR / EDITAR EVENTO
+══════════════════════════════════════════════════════════ -->
+<div id="modal-evento" class="modal-bg hidden">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="me-title">Crear nuevo evento</div>
+      <button class="modal-close" onclick="cerrarModal('modal-evento')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="fgrid">
+        <div class="fsep">📋 Información general</div>
+
+        <div class="fgroup" style="grid-column:1/-1">
+          <label class="flabel">Nombre del evento <span class="req">*</span></label>
+          <input class="fval" id="me-nombre" type="text" placeholder="Ej: Jornada de empleo Valle de Aburrá"/>
+        </div>
+        <div class="fgroup">
+          <label class="flabel">Tipo de evento <span class="req">*</span></label>
+          <select class="fval" id="me-tipo">
+            <option value="">Selecciona...</option>
+            <option>Jornada de empleo</option>
+            <option>Perioscópio</option>
+            <option>Laboratorio de empleo</option>
+            <option>Feria empresarial</option>
+            <option>Otro</option>
+          </select>
+        </div>
+        <div class="fgroup">
+          <label class="flabel">Subregión <span class="req">*</span></label>
+          <select class="fval" id="me-region">
+            <option value="">Selecciona...</option>
+            <option>Valle de Aburrá</option><option>Oriente</option><option>Norte</option>
+            <option>Occidente</option><option>Suroeste</option><option>Bajo Cauca</option>
+            <option>Nordeste</option><option>Magdalena Medio</option><option>Urabá</option>
+          </select>
+        </div>
+        <div class="fgroup">
+          <label class="flabel">Municipio(s)</label>
+          <input class="fval" id="me-municipio" type="text" placeholder="Ej: Medellín, Bello, Itagüí"/>
+        </div>
+        <div class="fgroup">
+          <label class="flabel">Lugar / Sede</label>
+          <input class="fval" id="me-lugar" type="text" placeholder="Ej: Parque principal, Casa de la cultura"/>
+        </div>
+        <div class="fgroup">
+          <label class="flabel">Fecha inicio <span class="req">*</span></label>
+          <input class="fval" id="me-fecha-ini" type="date"/>
+        </div>
+        <div class="fgroup">
+          <label class="flabel">Fecha fin</label>
+          <input class="fval" id="me-fecha-fin" type="date"/>
+        </div>
+        <div class="fgroup">
+          <label class="flabel">Hora</label>
+          <input class="fval" id="me-hora" type="time" value="08:00"/>
+        </div>
+        <div class="fgroup">
+          <label class="flabel">Meta de participantes</label>
+          <input class="fval" id="me-meta" type="number" placeholder="Ej: 100" min="0"/>
+        </div>
+
+        <div class="fsep">👥 Responsables del evento</div>
+
+        <div class="fgroup">
+          <label class="flabel">Responsable principal <span class="req">*</span></label>
+          <input class="fval" id="me-resp-principal" type="text" placeholder="Nombre del asesor responsable"/>
+        </div>
+        <div class="fgroup">
+          <label class="flabel">Cargo / Rol</label>
+          <input class="fval" id="me-resp-cargo" type="text" placeholder="Ej: Asesor territorial"/>
+        </div>
+        <div class="fgroup" style="grid-column:1/-1">
+          <label class="flabel">Otros responsables / apoyo</label>
+          <input class="fval" id="me-resp-otros" type="text" placeholder="Nombres separados por coma"/>
+        </div>
+
+        <div class="fsep">🏢 Empresas vinculadas</div>
+
+        <div class="fgroup" style="grid-column:1/-1">
+          <label class="flabel">Selecciona empresas participantes</label>
+          <div class="checkbox-group" id="me-empresas-check">
+            <!-- Se llena dinámicamente -->
+          </div>
+        </div>
+
+        <div class="fsep">📝 Descripción y objetivos</div>
+
+        <div class="fgroup" style="grid-column:1/-1">
+          <label class="flabel">Descripción del evento</label>
+          <textarea class="fval" id="me-desc" placeholder="Describe el evento, objetivos, actividades previstas..."></textarea>
+        </div>
+        <div class="fgroup" style="grid-column:1/-1">
+          <label class="flabel">Observaciones adicionales</label>
+          <textarea class="fval" id="me-obs" placeholder="Notas internas, condiciones especiales..." style="min-height:60px"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-evento')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarEvento()">💾 Guardar evento</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     MODAL GESTIÓN DE EVENTO (tabs)
+══════════════════════════════════════════════════════════ -->
+<div id="modal-gestion" class="modal-bg hidden">
+  <div class="modal" style="width:min(860px,95vw)">
+    <div class="modal-head">
+      <div>
+        <div class="modal-title" id="mg-title">Gestión del evento</div>
+        <div style="font-size:13px;color:var(--texto-g);margin-top:2px" id="mg-sub"></div>
+      </div>
+      <button class="modal-close" onclick="cerrarModal('modal-gestion')">✕</button>
+    </div>
+    <div class="modal-body">
+      <!-- TABS -->
+      <div class="modal-tabs">
+        <div class="mtab active" onclick="switchTab('tab-info')">📋 Info</div>
+        <div class="mtab" onclick="switchTab('tab-participantes')">👥 Participantes</div>
+        <div class="mtab" onclick="switchTab('tab-evidencias')">📷 Evidencias</div>
+        <div class="mtab" onclick="switchTab('tab-cierre')">🔒 Cierre</div>
+      </div>
+
+      <!-- TAB INFO -->
+      <div id="tab-info" class="tab-content">
+        <div id="mg-info-content"></div>
+      </div>
+
+      <!-- TAB PARTICIPANTES -->
+      <div id="tab-participantes" class="tab-content hidden">
+        <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+          <button class="btn btn-primary btn-sm" onclick="abrirModalParticipante()">+ Registrar participante</button>
+          <button class="btn btn-verde btn-sm" onclick="importarExcel()">📂 Importar Excel masivo</button>
+          <button class="btn btn-ghost btn-sm" onclick="descargarPlantilla()">📥 Descargar plantilla Excel</button>
+          <input type="file" id="excel-input" accept=".xlsx,.xls" style="display:none" onchange="procesarExcel(this)"/>
+          <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="exportarParticipantesEvento()">📊 Exportar lista</button>
+        </div>
+        <div class="part-table-wrap">
+          <div class="part-toolbar">
+            <span class="part-title" id="mg-part-count">0 participantes registrados</span>
+            <input class="finput" type="text" id="fpart-q" placeholder="Buscar participante..." style="width:200px" oninput="filtrarParticipantes()"/>
+          </div>
+          <table>
+            <thead><tr>
+              <th>#</th><th>Nombres y apellidos</th><th>Documento</th>
+              <th>Municipio</th><th>Celular</th><th>Correo</th>
+              <th>Área interés</th><th>Condición</th><th>Acciones</th>
+            </tr></thead>
+            <tbody id="mg-part-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB EVIDENCIAS -->
+      <div id="tab-evidencias" class="tab-content hidden">
+        <div style="margin-bottom:16px">
+          <p style="font-size:14px;color:var(--texto-g);margin-bottom:12px">Sube fotos del evento y el PDF de la lista de asistencia firmada.</p>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn btn-primary btn-sm" onclick="document.getElementById('foto-input').click()">📷 Subir fotos</button>
+            <button class="btn btn-verde btn-sm" onclick="document.getElementById('pdf-input').click()">📄 Subir PDF asistencia</button>
+            <input type="file" id="foto-input" accept="image/*" multiple style="display:none" onchange="subirFotos(this)"/>
+            <input type="file" id="pdf-input" accept=".pdf" style="display:none" onchange="subirPDF(this)"/>
+          </div>
+        </div>
+        <div class="evidencias-grid" id="mg-evidencias-grid">
+          <div class="upload-zone" onclick="document.getElementById('foto-input').click()">
+            <div style="font-size:36px;margin-bottom:8px">📷</div>
+            <div style="font-size:14px;font-weight:600;color:var(--verde)">Arrastra fotos aquí</div>
+            <div style="font-size:12px;color:var(--texto-g);margin-top:4px">o haz clic para seleccionar</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB CIERRE -->
+      <div id="tab-cierre" class="tab-content hidden">
+        <div id="mg-cierre-content"></div>
+      </div>
+
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-gestion')">Cerrar</button>
+      <button class="btn btn-primary btn-sm" onclick="exportarParticipantesEvento()">📊 Exportar participantes</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PARTICIPANTE -->
+<div id="modal-participante" class="modal-bg hidden">
+  <div class="modal" style="width:min(600px,95vw)">
+    <div class="modal-head">
+      <div class="modal-title">Registrar participante</div>
+      <button class="modal-close" onclick="cerrarModal('modal-participante')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="fgrid">
+        <div class="fgroup"><label class="flabel">Nombres <span class="req">*</span></label><input class="fval" id="mp-nombres" type="text" placeholder="Nombres completos"/></div>
+        <div class="fgroup"><label class="flabel">Apellidos <span class="req">*</span></label><input class="fval" id="mp-apellidos" type="text" placeholder="Apellidos completos"/></div>
+        <div class="fgroup"><label class="flabel">Tipo documento</label>
+          <select class="fval" id="mp-tipo-doc"><option>CC</option><option>CE</option><option>TI</option><option>PA</option></select>
+        </div>
+        <div class="fgroup"><label class="flabel">Número documento <span class="req">*</span></label><input class="fval" id="mp-doc" type="text" placeholder="1.234.567.890"/></div>
+        <div class="fgroup"><label class="flabel">Municipio de residencia</label>
+          <select class="fval" id="mp-municipio"><option value="">Selecciona...</option></select>
+        </div>
+        <div class="fgroup"><label class="flabel">Celular</label><input class="fval" id="mp-celular" type="tel" placeholder="300 123 4567"/></div>
+        <div class="fgroup"><label class="flabel">Correo electrónico</label><input class="fval" id="mp-correo" type="email" placeholder="correo@ejemplo.com"/></div>
+        <div class="fgroup"><label class="flabel">Área de interés</label>
+          <select class="fval" id="mp-area">
+            <option value="">Selecciona...</option>
+            <option>Administración</option><option>Logística</option><option>Sistemas</option>
+            <option>Salud</option><option>Educación</option><option>Manufactura</option>
+            <option>Comercio</option><option>Construcción</option><option>Agroindustria</option><option>Otro</option>
+          </select>
+        </div>
+        <div class="fgroup"><label class="flabel">Condición especial</label>
+          <select class="fval" id="mp-condicion">
+            <option value="ninguna">Ninguna</option>
+            <option value="joven">Joven (18-28 años)</option>
+            <option value="victima">Víctima del conflicto</option>
+            <option value="discapacidad">Persona con discapacidad</option>
+            <option value="migrante">Migrante</option>
+            <option value="adulto_mayor">Adulto mayor</option>
+            <option value="madre_cabeza">Madre cabeza de hogar</option>
+          </select>
+        </div>
+        <div class="fgroup"><label class="flabel">Género</label>
+          <select class="fval" id="mp-genero"><option>Masculino</option><option>Femenino</option><option>No binario</option><option>Prefiero no decir</option></select>
+        </div>
+        <div class="fgroup"><label class="flabel">Edad</label><input class="fval" id="mp-edad" type="number" min="14" max="99" placeholder="Ej: 28"/></div>
+        <div class="fgroup"><label class="flabel">Nivel educativo</label>
+          <select class="fval" id="mp-edu">
+            <option>Primaria</option><option>Secundaria</option><option>Técnico</option>
+            <option>Tecnólogo</option><option>Profesional</option><option>Posgrado</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-participante')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarParticipante()">💾 Registrar participante</button>
+    </div>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// DATOS
+// ═══════════════════════════════════════════════════
+var MUNICIPIOS_LIST = [
+  'Medellín','Bello','Itagüí','Envigado','Sabaneta','La Estrella','Copacabana','Girardota','Caldas','Barbosa',
+  'Rionegro','El Carmen de Viboral','La Ceja','Marinilla','Guarne','El Retiro','El Santuario',
+  'Santa Rosa de Osos','Yarumal','Donmatías',
+  'Santa Fe de Antioquia','Sopetrán','San Jerónimo',
+  'Andes','Jericó','Fredonia','Salgar','Jardín',
+  'Caucasia','El Bagre','Nechí','Tarazá',
+  'Segovia','Remedios','Yolombó','Amalfi',
+  'Puerto Berrío','Puerto Nare','Puerto Triunfo',
+  'Apartadó','Turbo','Carepa','Chigorodó','Necoclí'
+];
+
+var EMPRESAS_LISTA = [
+  'Logística del Valle SAS','TechCo Colombia','Manufacturas Bello SA',
+  'Seguros Andinos Ltda','Fríos del Oriente SAS','Contadores Asociados Ltda',
+  'Agrícola Urabá SA','Hospital Regional Norte'
+];
+
+var EVENTOS = [
+  {
+    id:1, nombre:'Jornada de Empleo Valle de Aburrá', tipo:'Jornada de empleo',
+    region:'Valle de Aburrá', municipio:'Medellín', lugar:'Parque de Berrío',
+    fecha_ini:'2025-03-15', fecha_fin:'2025-03-15', hora:'08:00',
+    estado:'Cerrado', meta:200, responsable:'Ana Bermúdez', resp_cargo:'Asesora territorial',
+    resp_otros:'Carlos Reyes, María López',
+    empresas:['Logística del Valle SAS','TechCo Colombia','Manufacturas Bello SA'],
+    desc:'Jornada de empleo masiva en el centro de Medellín con 8 empresas participantes.',
+    participantes:[
+      {id:1,nombres:'Juan',apellidos:'García',doc:'1023456789',municipio:'Medellín',celular:'3001234567',correo:'juan@mail.com',area:'Logística',condicion:'ninguna',genero:'Masculino',edad:28,edu:'Técnico'},
+      {id:2,nombres:'María',apellidos:'Torres',doc:'1152345678',municipio:'Bello',celular:'3112345678',correo:'maria@mail.com',area:'Administración',condicion:'madre_cabeza',genero:'Femenino',edad:34,edu:'Tecnólogo'}
+    ],
+    evidencias:[], fotos_count:0, pdf_asistencia:null,
+    fecha_cierre_real:'2025-03-16', obs_cierre:'Evento exitoso, superó la meta.'
+  },
+  {
+    id:2, nombre:'Perioscópio Jóvenes Oriente', tipo:'Perioscópio',
+    region:'Oriente', municipio:'Rionegro', lugar:'SENA Regional Oriente',
+    fecha_ini:'2025-04-10', fecha_fin:'2025-04-12', hora:'09:00',
+    estado:'Activo', meta:80, responsable:'Jorge Salazar', resp_cargo:'Asesor jóvenes',
+    resp_otros:'Luisa Fernández',
+    empresas:['TechCo Colombia','Fríos del Oriente SAS'],
+    desc:'Estrategia sociolaboral para jóvenes de la subregión Oriente. 3 días de actividades.',
+    participantes:[
+      {id:1,nombres:'Camila',apellidos:'Ríos',doc:'1098765432',municipio:'Rionegro',celular:'3201234567',correo:'camila@mail.com',area:'Sistemas',condicion:'joven',genero:'Femenino',edad:22,edu:'Tecnólogo'}
+    ],
+    evidencias:[], fotos_count:0, pdf_asistencia:null,
+    fecha_cierre_real:null, obs_cierre:''
+  },
+  {
+    id:3, nombre:'Laboratorio de Empleo Norte', tipo:'Laboratorio de empleo',
+    region:'Norte', municipio:'Santa Rosa de Osos', lugar:'Casa de la Cultura',
+    fecha_ini:'2025-05-20', fecha_fin:'2025-05-20', hora:'08:30',
+    estado:'Planificado', meta:50, responsable:'Pedro Montoya', resp_cargo:'Asesor norte',
+    resp_otros:'',
+    empresas:['Hospital Regional Norte'],
+    desc:'Laboratorio de orientación ocupacional para desempleados del Norte antioqueño.',
+    participantes:[], evidencias:[], fotos_count:0, pdf_asistencia:null,
+    fecha_cierre_real:null, obs_cierre:''
+  }
+];
+
+var eventoActual = null;
+var eventosFiltrados = EVENTOS.slice();
+var tabActiva = 'tab-info';
+
+// ═══════════════════════════════════════════════════
+// UTILIDADES
+// ═══════════════════════════════════════════════════
+function toast(msg, tipo){
+  var tc=document.getElementById('toasts'), t=document.createElement('div');
+  t.className='toast '+(tipo||'ok');
+  t.innerHTML=(tipo==='err'?'❌':tipo==='warn'?'⚠️':'✅')+' '+msg;
+  tc.appendChild(t); setTimeout(function(){t.remove();},3500);
+}
+function cerrarModal(id){ document.getElementById(id).classList.add('hidden'); }
+function abrirModal(id){ document.getElementById(id).classList.remove('hidden'); }
+function fmtFecha(s){ if(!s) return '—'; var d=new Date(s+'T12:00:00'); return d.toLocaleDateString('es-CO',{day:'2-digit',month:'short',year:'numeric'}); }
+
+function tipoIcon(tipo){
+  var m={'Jornada de empleo':'💼','Perioscópio':'🔭','Laboratorio de empleo':'🧪','Feria empresarial':'🏪'};
+  return m[tipo]||'📅';
+}
+function tipoBadgeClass(tipo){
+  var m={'Jornada de empleo':'et-jornada','Perioscópio':'et-perioscopio','Laboratorio de empleo':'et-laboratorio','Feria empresarial':'et-feria'};
+  return m[tipo]||'et-otro';
+}
+function estadoClass(est){
+  return est==='Activo'?'ee-activo':est==='Cerrado'?'ee-cerrado':'ee-planificado';
+}
+
+// ═══════════════════════════════════════════════════
+// STATS
+// ═══════════════════════════════════════════════════
+function actualizarStats(){
+  var total   = EVENTOS.length;
+  var activos = EVENTOS.filter(function(e){ return e.estado==='Activo'; }).length;
+  var plan    = EVENTOS.filter(function(e){ return e.estado==='Planificado'; }).length;
+  var cerr    = EVENTOS.filter(function(e){ return e.estado==='Cerrado'; }).length;
+  var part    = EVENTOS.reduce(function(a,e){ return a+(e.participantes?e.participantes.length:0); },0);
+  document.getElementById('st-total').textContent  = total;
+  document.getElementById('st-activos').textContent = activos;
+  document.getElementById('st-plan').textContent   = plan;
+  document.getElementById('st-cerr').textContent   = cerr;
+  document.getElementById('st-part').textContent   = part;
+  document.getElementById('nb-total').textContent  = total;
+  document.getElementById('nb-activos').textContent = activos;
+}
+
+// ═══════════════════════════════════════════════════
+// RENDER EVENTOS
+// ═══════════════════════════════════════════════════
+function renderEventos(lista){
+  var g = document.getElementById('eventos-grid');
+  if(!lista.length){
+    g.innerHTML='<div style="grid-column:1/-1;padding:48px;text-align:center;color:var(--texto-g)">No hay eventos que coincidan con los filtros.</div>';
+    return;
+  }
+  g.innerHTML = lista.map(function(e){
+    var pct = e.meta>0 ? Math.min(Math.round((e.participantes.length/e.meta)*100),100) : 0;
+    return '<div class="evento-card" onclick="abrirGestion('+e.id+')">'+
+      '<div class="evento-header">'+
+        '<div>'+
+          '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">'+
+            '<span style="font-size:28px">'+tipoIcon(e.tipo)+'</span>'+
+            '<span class="evento-tipo-badge '+tipoBadgeClass(e.tipo)+'">'+e.tipo+'</span>'+
+          '</div>'+
+          '<div class="evento-nombre">'+e.nombre+'</div>'+
+          '<div class="evento-region">📍 '+e.region+' · '+e.municipio+'</div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="evento-body">'+
+        '<div class="evento-meta">'+
+          '<span>📅 '+fmtFecha(e.fecha_ini)+'</span>'+
+          '<span>🏛️ '+e.lugar+'</span>'+
+          '<span>👤 '+e.responsable+'</span>'+
+        '</div>'+
+        '<div style="display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--texto-g);margin-bottom:4px">'+
+          '<span>👥 '+e.participantes.length+' / '+e.meta+' participantes</span>'+
+          '<span>'+pct+'%</span>'+
+        '</div>'+
+        '<div class="evento-progress"><div class="evento-progress-fill" style="width:'+pct+'%"></div></div>'+
+        (e.empresas.length ? '<div style="font-size:12px;color:var(--texto-g);margin-top:6px">🏢 '+e.empresas.slice(0,2).join(', ')+(e.empresas.length>2?' +'+( e.empresas.length-2)+' más':'')+'</div>' : '')+
+      '</div>'+
+      '<div class="evento-footer">'+
+        '<span class="evento-estado '+estadoClass(e.estado)+'">'+e.estado+'</span>'+
+        '<div class="evento-acciones" onclick="event.stopPropagation()">'+
+          '<button class="btn btn-ghost btn-xs" onclick="abrirGestion('+e.id+')">Gestionar</button>'+
+          (e.estado!=='Cerrado'?'<button class="btn btn-primary btn-xs" onclick="abrirRegistroRapido('+e.id+')">+ Participante</button>':'')+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════
+// FILTROS
+// ═══════════════════════════════════════════════════
+function filtrar(){
+  var q    = document.getElementById('fq').value.toLowerCase().trim();
+  var tipo = document.getElementById('f-tipo').value;
+  var est  = document.getElementById('f-estado').value;
+  var reg  = document.getElementById('f-region').value;
+  eventosFiltrados = EVENTOS.filter(function(e){
+    var okQ   = !q   || e.nombre.toLowerCase().indexOf(q)>-1 || e.municipio.toLowerCase().indexOf(q)>-1;
+    var okT   = !tipo || e.tipo===tipo;
+    var okE   = !est  || e.estado===est;
+    var okR   = !reg  || e.region===reg;
+    return okQ && okT && okE && okR;
+  });
+  renderEventos(eventosFiltrados);
+}
+
+function filtrarTipo(tipo){ document.getElementById('f-tipo').value=tipo; filtrar(); }
+
+function nav(vista){
+  document.querySelectorAll('.nitem').forEach(function(n){n.classList.remove('active');});
+  document.getElementById('f-estado').value = vista==='todos'?'':vista==='activos'?'Activo':vista==='planificados'?'Planificado':vista==='cerrados'?'Cerrado':'';
+  filtrar();
+}
+
+function limpiarFiltros(){
+  document.getElementById('fq').value='';
+  document.getElementById('f-tipo').value='';
+  document.getElementById('f-estado').value='';
+  document.getElementById('f-region').value='';
+  eventosFiltrados=EVENTOS.slice();
+  renderEventos(eventosFiltrados);
+}
+
+// ═══════════════════════════════════════════════════
+// CREAR / EDITAR EVENTO
+// ═══════════════════════════════════════════════════
+function abrirModalEvento(id){
+  document.getElementById('me-title').textContent = id ? 'Editar evento' : 'Crear nuevo evento';
+  // Llenar empresas checkboxes
+  var cb = document.getElementById('me-empresas-check');
+  cb.innerHTML = EMPRESAS_LISTA.map(function(e){
+    return '<label class="checkbox-item"><input type="checkbox" value="'+e+'"/> '+e+'</label>';
+  }).join('');
+  // Fecha por defecto
+  var hoy = new Date().toISOString().split('T')[0];
+  document.getElementById('me-fecha-ini').value = hoy;
+  // Limpiar campos
+  ['me-nombre','me-municipio','me-lugar','me-resp-principal','me-resp-cargo','me-resp-otros','me-desc','me-obs'].forEach(function(x){ var el=document.getElementById(x); if(el) el.value=''; });
+  document.getElementById('me-meta').value='50';
+  abrirModal('modal-evento');
+}
+
+function guardarEvento(){
+  var nombre = document.getElementById('me-nombre').value.trim();
+  var tipo   = document.getElementById('me-tipo').value;
+  var region = document.getElementById('me-region').value;
+  var resp   = document.getElementById('me-resp-principal').value.trim();
+  if(!nombre||!tipo||!region||!resp){ toast('Completa los campos obligatorios (*)','err'); return; }
+
+  var empresasSel = [];
+  document.querySelectorAll('#me-empresas-check input:checked').forEach(function(cb){ empresasSel.push(cb.value); });
+
+  var nuevo = {
+    id: EVENTOS.length+1,
+    nombre: nombre,
+    tipo: tipo,
+    region: region,
+    municipio: document.getElementById('me-municipio').value||region,
+    lugar: document.getElementById('me-lugar').value||'—',
+    fecha_ini: document.getElementById('me-fecha-ini').value,
+    fecha_fin: document.getElementById('me-fecha-fin').value||document.getElementById('me-fecha-ini').value,
+    hora: document.getElementById('me-hora').value||'08:00',
+    estado: 'Planificado',
+    meta: parseInt(document.getElementById('me-meta').value)||50,
+    responsable: resp,
+    resp_cargo: document.getElementById('me-resp-cargo').value||'Asesor/a',
+    resp_otros: document.getElementById('me-resp-otros').value||'',
+    empresas: empresasSel,
+    desc: document.getElementById('me-desc').value||'',
+    obs: document.getElementById('me-obs').value||'',
+    participantes: [],
+    evidencias: [],
+    fotos_count: 0,
+    pdf_asistencia: null,
+    fecha_cierre_real: null,
+    obs_cierre: ''
+  };
+  EVENTOS.push(nuevo);
+  eventosFiltrados = EVENTOS.slice();
+  cerrarModal('modal-evento');
+  actualizarStats();
+  renderEventos(eventosFiltrados);
+  toast('Evento "'+nombre+'" creado exitosamente');
+}
+
+// ═══════════════════════════════════════════════════
+// GESTIÓN DEL EVENTO (tabs)
+// ═══════════════════════════════════════════════════
+function abrirGestion(id){
+  eventoActual = EVENTOS.find(function(e){ return e.id===id; });
+  if(!eventoActual) return;
+  document.getElementById('mg-title').textContent = eventoActual.nombre;
+  document.getElementById('mg-sub').textContent   = eventoActual.tipo+' · '+eventoActual.region+' · '+fmtFecha(eventoActual.fecha_ini);
+  switchTab('tab-info');
+  abrirModal('modal-gestion');
+}
+
+function switchTab(tabId){
+  tabActiva = tabId;
+  document.querySelectorAll('.tab-content').forEach(function(t){ t.classList.add('hidden'); });
+  document.querySelectorAll('.mtab').forEach(function(t){ t.classList.remove('active'); });
+  document.getElementById(tabId).classList.remove('hidden');
+  // Activar tab label
+  var idx = ['tab-info','tab-participantes','tab-evidencias','tab-cierre'].indexOf(tabId);
+  document.querySelectorAll('.mtab')[idx].classList.add('active');
+  if(tabId==='tab-info') renderTabInfo();
+  if(tabId==='tab-participantes') renderTabParticipantes();
+  if(tabId==='tab-evidencias') renderTabEvidencias();
+  if(tabId==='tab-cierre') renderTabCierre();
+}
+
+function renderTabInfo(){
+  if(!eventoActual) return;
+  var e = eventoActual;
+  document.getElementById('mg-info-content').innerHTML =
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">'+
+      '<div style="background:var(--suave);border-radius:10px;padding:16px">'+
+        '<div style="font-size:12px;font-weight:700;color:var(--verde);text-transform:uppercase;margin-bottom:8px">Información del evento</div>'+
+        '<table style="width:100%;font-size:13px"><tbody>'+
+          '<tr><td style="color:var(--texto-g);padding:5px 0;width:40%">Tipo:</td><td><strong>'+e.tipo+'</strong></td></tr>'+
+          '<tr><td style="color:var(--texto-g);padding:5px 0">Subregión:</td><td>'+e.region+'</td></tr>'+
+          '<tr><td style="color:var(--texto-g);padding:5px 0">Municipio:</td><td>'+e.municipio+'</td></tr>'+
+          '<tr><td style="color:var(--texto-g);padding:5px 0">Lugar:</td><td>'+e.lugar+'</td></tr>'+
+          '<tr><td style="color:var(--texto-g);padding:5px 0">Fecha:</td><td>'+fmtFecha(e.fecha_ini)+(e.fecha_fin&&e.fecha_fin!==e.fecha_ini?' – '+fmtFecha(e.fecha_fin):'')+'</td></tr>'+
+          '<tr><td style="color:var(--texto-g);padding:5px 0">Hora:</td><td>'+e.hora+'</td></tr>'+
+          '<tr><td style="color:var(--texto-g);padding:5px 0">Estado:</td><td><span class="evento-estado '+estadoClass(e.estado)+'">'+e.estado+'</span></td></tr>'+
+        '</tbody></table>'+
+      '</div>'+
+      '<div style="background:var(--suave);border-radius:10px;padding:16px">'+
+        '<div style="font-size:12px;font-weight:700;color:var(--verde);text-transform:uppercase;margin-bottom:8px">Responsables</div>'+
+        '<div style="font-size:13px"><strong>'+e.responsable+'</strong><br/><span style="color:var(--texto-g)">'+e.resp_cargo+'</span></div>'+
+        (e.resp_otros?'<div style="font-size:12px;color:var(--texto-g);margin-top:8px">Apoyo: '+e.resp_otros+'</div>':'')+
+        '<div style="margin-top:14px;font-size:12px;font-weight:700;color:var(--verde);text-transform:uppercase">Empresas vinculadas</div>'+
+        '<div style="font-size:13px;margin-top:6px">'+(e.empresas.length?e.empresas.map(function(em){return '<span style="display:inline-block;background:#d4edda;color:#155724;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;margin:2px">🏢 '+em+'</span>';}).join(''):'<span style="color:var(--texto-g)">Sin empresas vinculadas</span>')+'</div>'+
+      '</div>'+
+      '<div style="grid-column:1/-1;background:var(--suave);border-radius:10px;padding:16px">'+
+        '<div style="font-size:12px;font-weight:700;color:var(--verde);text-transform:uppercase;margin-bottom:6px">Descripción</div>'+
+        '<p style="font-size:13px;color:var(--texto-g);line-height:1.65">'+(e.desc||'Sin descripción')+'</p>'+
+      '</div>'+
+      '<div style="grid-column:1/-1;background:var(--suave);border-radius:10px;padding:14px;display:flex;align-items:center;gap:24px">'+
+        '<div style="text-align:center"><div style="font-family:Nunito;font-size:28px;font-weight:900;color:var(--verde)">'+e.participantes.length+'</div><div style="font-size:12px;color:var(--texto-g)">Participantes</div></div>'+
+        '<div style="text-align:center"><div style="font-family:Nunito;font-size:28px;font-weight:900;color:var(--verde)">'+e.meta+'</div><div style="font-size:12px;color:var(--texto-g)">Meta</div></div>'+
+        '<div style="text-align:center"><div style="font-family:Nunito;font-size:28px;font-weight:900;color:'+(e.fotos_count>0?'var(--verde)':'var(--texto-g)')+'">'+e.fotos_count+'</div><div style="font-size:12px;color:var(--texto-g)">Fotos</div></div>'+
+        '<div style="text-align:center"><div style="font-family:Nunito;font-size:28px;font-weight:900;color:'+(e.pdf_asistencia?'var(--verde)':'var(--texto-g)')+'">'+( e.pdf_asistencia?'✅':'—')+'</div><div style="font-size:12px;color:var(--texto-g)">PDF asistencia</div></div>'+
+        '<div style="margin-left:auto;display:flex;gap:8px">'+
+          (e.estado!=='Cerrado'?'<button class="btn btn-primary btn-sm" onclick="switchTab(\'tab-participantes\')">+ Participantes</button>':'')+''+
+          (e.estado!=='Cerrado'?'<button class="btn btn-verde btn-sm" onclick="switchTab(\'tab-evidencias\')">📷 Evidencias</button>':'')+
+        '</div>'+
+      '</div>'+
+    '</div>';
+}
+
+function renderTabParticipantes(){
+  if(!eventoActual) return;
+  var lista = eventoActual.participantes;
+  var ct = document.getElementById('mg-part-count');
+  if(ct) ct.textContent = lista.length+' participante'+(lista.length!==1?'s':'')+' registrado'+(lista.length!==1?'s':'');
+  var tb = document.getElementById('mg-part-tbody');
+  if(!tb) return;
+  if(!lista.length){
+    tb.innerHTML='<tr><td colspan="9" style="padding:24px;text-align:center;color:var(--texto-g)">Aún no hay participantes registrados. Usa el botón "+ Registrar participante" o importa desde Excel.</td></tr>';
+    return;
+  }
+  tb.innerHTML = lista.map(function(p,i){
+    return '<tr>'+
+      '<td style="color:var(--texto-g)">'+(i+1)+'</td>'+
+      '<td><strong>'+p.nombres+' '+p.apellidos+'</strong></td>'+
+      '<td style="color:var(--texto-g)">'+p.doc+'</td>'+
+      '<td style="color:var(--texto-g)">'+p.municipio+'</td>'+
+      '<td style="color:var(--texto-g)">'+p.celular+'</td>'+
+      '<td style="color:var(--texto-g);font-size:12px">'+p.correo+'</td>'+
+      '<td><span style="background:var(--suave);color:var(--texto-g);padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600">'+p.area+'</span></td>'+
+      '<td><span style="background:'+(p.condicion!=='ninguna'?'#d4edda':'var(--suave)')+';color:'+(p.condicion!=='ninguna'?'#155724':'var(--texto-g)')+';padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600">'+p.condicion+'</span></td>'+
+      '<td><button class="btn btn-ghost btn-xs" onclick="eliminarParticipante('+i+')" title="Eliminar">✕</button></td>'+
+    '</tr>';
+  }).join('');
+}
+
+function filtrarParticipantes(){
+  var q = document.getElementById('fpart-q').value.toLowerCase();
+  var tb = document.getElementById('mg-part-tbody');
+  if(!tb||!eventoActual) return;
+  var lista = eventoActual.participantes.filter(function(p){
+    return !q || (p.nombres+' '+p.apellidos).toLowerCase().indexOf(q)>-1 || p.doc.indexOf(q)>-1;
+  });
+  tb.innerHTML = lista.map(function(p,i){
+    return '<tr><td>'+(i+1)+'</td><td><strong>'+p.nombres+' '+p.apellidos+'</strong></td><td>'+p.doc+'</td><td>'+p.municipio+'</td><td>'+p.celular+'</td><td style="font-size:12px">'+p.correo+'</td><td>'+p.area+'</td><td>'+p.condicion+'</td><td><button class="btn btn-ghost btn-xs">✕</button></td></tr>';
+  }).join('');
+}
+
+function renderTabEvidencias(){
+  if(!eventoActual) return;
+  var g = document.getElementById('mg-evidencias-grid');
+  if(!g) return;
+  var html = '';
+  if(eventoActual.pdf_asistencia){
+    html += '<div class="evidencia-item pdf-item">'+
+      '<div style="font-size:32px">📄</div>'+
+      '<div style="font-size:12px;font-weight:700;color:var(--verde);margin-top:6px">PDF Asistencia</div>'+
+      '<button class="ev-del" onclick="eventoActual.pdf_asistencia=null;renderTabEvidencias()">✕</button>'+
+    '</div>';
+  }
+  for(var i=0;i<eventoActual.fotos_count;i++){
+    html += '<div class="evidencia-item" style="background:var(--suave);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px">'+
+      '<div style="font-size:28px">📷</div>'+
+      '<div style="font-size:11px;color:var(--texto-g)">Foto '+(i+1)+'</div>'+
+      '<button class="ev-del" onclick="eventoActual.fotos_count=Math.max(0,eventoActual.fotos_count-1);renderTabEvidencias()">✕</button>'+
+    '</div>';
+  }
+  html += '<div class="upload-zone" onclick="document.getElementById(\'foto-input\').click()" style="aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center">'+
+    '<div style="font-size:28px">➕</div>'+
+    '<div style="font-size:12px;color:var(--texto-g);margin-top:4px">Agregar foto</div>'+
+  '</div>';
+  g.innerHTML = html;
+}
+
+function renderTabCierre(){
+  if(!eventoActual) return;
+  var e = eventoActual;
+  var content = '';
+  if(e.estado==='Cerrado'){
+    content = '<div style="background:#d4edda;border-radius:12px;padding:20px;text-align:center;margin-bottom:16px">'+
+      '<div style="font-size:48px;margin-bottom:8px">🔒</div>'+
+      '<div style="font-family:Nunito;font-size:18px;font-weight:800;color:#155724">Evento cerrado</div>'+
+      '<div style="font-size:14px;color:#155724;margin-top:4px">Cerrado el '+fmtFecha(e.fecha_cierre_real)+'</div>'+
+    '</div>'+
+    '<div style="background:var(--suave);border-radius:10px;padding:16px">'+
+      '<div style="font-size:12px;font-weight:700;color:var(--verde);margin-bottom:6px">OBSERVACIONES DE CIERRE</div>'+
+      '<p style="font-size:14px;color:var(--texto-g)">'+( e.obs_cierre||'Sin observaciones')+'</p>'+
+    '</div>'+
+    '<div style="margin-top:16px;display:flex;gap:10px">'+
+      '<button class="btn btn-verde btn-sm" onclick="exportarParticipantesEvento()">📊 Exportar participantes</button>'+
+      '<button class="btn btn-ghost btn-sm" onclick="generarInformeEvento()">📋 Informe completo</button>'+
+    '</div>';
+  } else {
+    content = '<p style="color:var(--texto-g);margin-bottom:16px;font-size:14px">Al cerrar el evento quedará bloqueado para nuevas modificaciones. Asegúrate de haber registrado todos los participantes y subido las evidencias.</p>'+
+      '<div style="background:var(--suave);border-radius:10px;padding:16px;margin-bottom:16px">'+
+        '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;text-align:center">'+
+          '<div><div style="font-family:Nunito;font-size:24px;font-weight:900;color:var(--verde)">'+e.participantes.length+'</div><div style="font-size:12px;color:var(--texto-g)">Participantes</div></div>'+
+          '<div><div style="font-family:Nunito;font-size:24px;font-weight:900;color:'+(e.fotos_count>0?'var(--verde)':'#e74c3c')+'">'+e.fotos_count+'</div><div style="font-size:12px;color:var(--texto-g)">Fotos</div></div>'+
+          '<div><div style="font-family:Nunito;font-size:24px;font-weight:900;color:'+(e.pdf_asistencia?'var(--verde)':'#e74c3c')+'">'+( e.pdf_asistencia?'✅':'❌')+'</div><div style="font-size:12px;color:var(--texto-g)">PDF asistencia</div></div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="cierre-panel">'+
+        '<div class="cierre-title">🔒 Cerrar evento definitivamente</div>'+
+        '<p style="font-size:13px;color:#991b1b;margin-bottom:12px">Esta acción no se puede deshacer. El evento quedará guardado en el historial.</p>'+
+        '<div class="fgroup" style="margin-bottom:12px">'+
+          '<label class="flabel" style="color:#991b1b">Observaciones de cierre</label>'+
+          '<textarea class="fval" id="obs-cierre-input" placeholder="Describe cómo resultó el evento, logros, inconvenientes..." style="min-height:80px"></textarea>'+
+        '</div>'+
+        '<button class="btn btn-danger" onclick="cerrarEvento()">🔒 Confirmar cierre del evento</button>'+
+      '</div>';
+  }
+  document.getElementById('mg-cierre-content').innerHTML = content;
+}
+
+function cerrarEvento(){
+  if(!eventoActual) return;
+  var obs = document.getElementById('obs-cierre-input');
+  eventoActual.estado = 'Cerrado';
+  eventoActual.fecha_cierre_real = new Date().toISOString().split('T')[0];
+  eventoActual.obs_cierre = obs ? obs.value : '';
+  actualizarStats();
+  renderEventos(eventosFiltrados);
+  renderTabCierre();
+  toast('Evento cerrado y guardado en el historial');
+}
+
+// ═══════════════════════════════════════════════════
+// PARTICIPANTES
+// ═══════════════════════════════════════════════════
+function abrirModalParticipante(){
+  // Llenar municipios
+  var sel = document.getElementById('mp-municipio');
+  if(sel.options.length===1){
+    MUNICIPIOS_LIST.forEach(function(m){ var o=document.createElement('option'); o.value=m; o.textContent=m; sel.appendChild(o); });
+  }
+  ['mp-nombres','mp-apellidos','mp-doc','mp-celular','mp-correo','mp-edad'].forEach(function(x){ var el=document.getElementById(x); if(el) el.value=''; });
+  abrirModal('modal-participante');
+}
+
+function abrirRegistroRapido(id){
+  eventoActual = EVENTOS.find(function(e){ return e.id===id; });
+  if(!eventoActual) return;
+  abrirModalParticipante();
+}
+
+function guardarParticipante(){
+  if(!eventoActual){ toast('Selecciona un evento primero','err'); return; }
+  var nombres  = document.getElementById('mp-nombres').value.trim();
+  var apellidos= document.getElementById('mp-apellidos').value.trim();
+  var doc      = document.getElementById('mp-doc').value.trim();
+  if(!nombres||!apellidos||!doc){ toast('Nombres, apellidos y documento son obligatorios','err'); return; }
+  var nuevo = {
+    id: eventoActual.participantes.length+1,
+    nombres: nombres,
+    apellidos: apellidos,
+    tipoDoc: document.getElementById('mp-tipo-doc').value,
+    doc: doc,
+    municipio: document.getElementById('mp-municipio').value||'—',
+    celular: document.getElementById('mp-celular').value||'—',
+    correo: document.getElementById('mp-correo').value||'—',
+    area: document.getElementById('mp-area').value||'—',
+    condicion: document.getElementById('mp-condicion').value||'ninguna',
+    genero: document.getElementById('mp-genero').value||'—',
+    edad: document.getElementById('mp-edad').value||'—',
+    edu: document.getElementById('mp-edu').value||'—'
+  };
+  eventoActual.participantes.push(nuevo);
+  cerrarModal('modal-participante');
+  actualizarStats();
+  renderEventos(eventosFiltrados);
+  if(tabActiva==='tab-participantes') renderTabParticipantes();
+  toast('Participante "'+nombres+' '+apellidos+'" registrado');
+}
+
+function eliminarParticipante(idx){
+  if(!eventoActual) return;
+  eventoActual.participantes.splice(idx,1);
+  actualizarStats();
+  renderTabParticipantes();
+  toast('Participante eliminado','warn');
+}
+
+// ═══════════════════════════════════════════════════
+// EXCEL — IMPORTAR / EXPORTAR
+// ═══════════════════════════════════════════════════
+function descargarPlantilla(){
+  var wb = XLSX.utils.book_new();
+  var headers = [
+    ['Nombres','Apellidos','Tipo Documento','Número Documento','Municipio',
+     'Celular','Correo','Área de Interés','Condición Especial','Género','Edad','Nivel Educativo']
+  ];
+  var ejemplo = [
+    ['Juan Carlos','Gómez Pérez','CC','1.234.567.890','Medellín',
+     '300 123 4567','juan@mail.com','Logística','ninguna','Masculino','28','Técnico']
+  ];
+  var ws = XLSX.utils.aoa_to_sheet(headers.concat(ejemplo));
+  // Ancho columnas
+  ws['!cols'] = headers[0].map(function(){ return {wch:20}; });
+  XLSX.utils.book_append_sheet(wb, ws, 'Participantes');
+  XLSX.writeFile(wb, 'plantilla_participantes_comfenalco.xlsx');
+  toast('Plantilla Excel descargada');
+}
+
+function importarExcel(){
+  document.getElementById('excel-input').click();
+}
+
+function procesarExcel(input){
+  if(!input.files||!input.files[0]) return;
+  if(!eventoActual){ toast('Selecciona un evento primero','err'); return; }
+  var reader = new FileReader();
+  reader.onload = function(e){
+    try{
+      var wb   = XLSX.read(e.target.result, {type:'binary'});
+      var ws   = wb.Sheets[wb.SheetNames[0]];
+      var data = XLSX.utils.sheet_to_json(ws, {header:1});
+      var importados = 0;
+      for(var i=1;i<data.length;i++){
+        var row = data[i];
+        if(!row[0]&&!row[1]) continue;
+        eventoActual.participantes.push({
+          id: eventoActual.participantes.length+1,
+          nombres:   String(row[0]||'').trim(),
+          apellidos: String(row[1]||'').trim(),
+          tipoDoc:   String(row[2]||'CC').trim(),
+          doc:       String(row[3]||'').trim(),
+          municipio: String(row[4]||'—').trim(),
+          celular:   String(row[5]||'—').trim(),
+          correo:    String(row[6]||'—').trim(),
+          area:      String(row[7]||'—').trim(),
+          condicion: String(row[8]||'ninguna').trim(),
+          genero:    String(row[9]||'—').trim(),
+          edad:      String(row[10]||'—').trim(),
+          edu:       String(row[11]||'—').trim()
+        });
+        importados++;
+      }
+      actualizarStats();
+      renderEventos(eventosFiltrados);
+      renderTabParticipantes();
+      toast(importados+' participantes importados desde Excel');
+      input.value='';
+    }catch(err){
+      toast('Error leyendo el archivo Excel','err');
+      console.error(err);
+    }
+  };
+  reader.readAsBinaryString(input.files[0]);
+}
+
+function exportarParticipantesEvento(){
+  if(!eventoActual||!eventoActual.participantes.length){ toast('No hay participantes para exportar','warn'); return; }
+  var wb = XLSX.utils.book_new();
+  var rows = [['#','Nombres','Apellidos','Tipo Doc','Documento','Municipio','Celular','Correo','Área','Condición','Género','Edad','Educación']];
+  eventoActual.participantes.forEach(function(p,i){
+    rows.push([i+1,p.nombres,p.apellidos,p.tipoDoc||'CC',p.doc,p.municipio,p.celular,p.correo,p.area,p.condicion,p.genero,p.edad,p.edu]);
+  });
+  var ws = XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols'] = rows[0].map(function(){ return {wch:18}; });
+  XLSX.utils.book_append_sheet(wb, ws, 'Participantes');
+  var nombre = eventoActual.nombre.replace(/\s+/g,'_').toLowerCase();
+  XLSX.writeFile(wb, 'participantes_'+nombre+'.xlsx');
+  toast('Excel de participantes descargado');
+}
+
+function exportarTodosExcel(){
+  var wb = XLSX.utils.book_new();
+  // Hoja resumen
+  var resumen = [['Evento','Tipo','Subregión','Municipio','Fecha','Responsable','Estado','Meta','Participantes']];
+  EVENTOS.forEach(function(e){
+    resumen.push([e.nombre,e.tipo,e.region,e.municipio,e.fecha_ini,e.responsable,e.estado,e.meta,e.participantes.length]);
+  });
+  var ws1 = XLSX.utils.aoa_to_sheet(resumen);
+  XLSX.utils.book_append_sheet(wb, ws1, 'Resumen eventos');
+  // Hoja todos participantes
+  var todos = [['Evento','Nombres','Apellidos','Documento','Municipio','Celular','Correo','Área','Condición']];
+  EVENTOS.forEach(function(e){
+    e.participantes.forEach(function(p){
+      todos.push([e.nombre,p.nombres,p.apellidos,p.doc,p.municipio,p.celular,p.correo,p.area,p.condicion]);
+    });
+  });
+  var ws2 = XLSX.utils.aoa_to_sheet(todos);
+  XLSX.utils.book_append_sheet(wb, ws2, 'Todos los participantes');
+  XLSX.writeFile(wb, 'informe_eventos_comfenalco.xlsx');
+  toast('Informe completo descargado en Excel');
+}
+
+function generarInformeEvento(){
+  if(!eventoActual) return;
+  toast('Generando informe del evento...');
+  setTimeout(function(){ toast('Informe listo — próximamente descarga PDF'); }, 1500);
+}
+
+function generarInformeGeneral(){
+  exportarTodosExcel();
+}
+
+// ═══════════════════════════════════════════════════
+// EVIDENCIAS
+// ═══════════════════════════════════════════════════
+function subirFotos(input){
+  if(!input.files||!eventoActual) return;
+  eventoActual.fotos_count += input.files.length;
+  renderTabEvidencias();
+  actualizarStats();
+  renderEventos(eventosFiltrados);
+  toast(input.files.length+' foto(s) subida(s) al evento');
+  input.value='';
+}
+
+function subirPDF(input){
+  if(!input.files||!input.files[0]||!eventoActual) return;
+  eventoActual.pdf_asistencia = input.files[0].name;
+  renderTabEvidencias();
+  toast('PDF de asistencia subido: '+input.files[0].name);
+  input.value='';
+}
+
+// ═══════════════════════════════════════════════════
+// AUTH
+// ═══════════════════════════════════════════════════
+function renderAuth(user){
+  var area=document.getElementById('auth-area');
+  if(user){
+    var nombre=((user.firstName||'')+' '+(user.lastName||'')).trim()||'Usuario';
+    var ini=((user.firstName||'')[0]||'').toUpperCase()+((user.lastName||'')[0]||'').toUpperCase()||'U';
+    document.getElementById('snombre').textContent=nombre;
+    document.getElementById('srol').textContent=((user.publicMetadata&&user.publicMetadata.rol)||'asesor').replace(/_/g,' ');
+    var av=document.getElementById('sav');
+    av.innerHTML=user.imageUrl?'<img src="'+user.imageUrl+'"/>':ini;
+    area.innerHTML='<span style="color:rgba(255,255,255,.8);font-size:13px">'+nombre+'</span>'+
+      '<button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.signOut().then(function(){window.location.href=\'interno.html\'})">Salir</button>';
+  } else {
+    area.innerHTML='<button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>';
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════
+window.addEventListener('load',function(){
+  actualizarStats();
+  renderEventos(EVENTOS);
+  if(window.Clerk){
+    window.Clerk.load().then(function(){
+      renderAuth(window.Clerk.user);
+      window.Clerk.addListener(function(e){ renderAuth(e.user); });
+    });
+  }
+});
+</script>
+</body>
+</html>
