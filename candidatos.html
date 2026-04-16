@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Portal Candidatos — Agencia de Empleo Comfenalco</title>
+  <script async crossorigin="anonymous"
+    data-clerk-publishable-key="pk_test_bGlrZWQtYmlzb24tNTEuY2xlcmsuYWNjb3VudHMuZGV2JA"
+    src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@5/dist/clerk.browser.js"
+    type="text/javascript"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--verde:#094a4b;--verde-c:#0d6b6c;--pist:#a8c94e;--pist-h:#8fb53a;--blanco:#ffffff;--fondo:#f4f6f4;--borde:#d8e2d8;--texto-g:#4a5a4a;--suave:#e8efe8;--negro:#1a2a1a;--r:8px;--rc:14px;--t:.22s ease}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;font-size:15px;color:var(--negro);background:var(--fondo);min-height:100vh}
+    button{cursor:pointer;font-family:inherit}
+
+    /* TOPBAR */
+    #topbar{background:var(--verde);padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(9,74,75,.2)}
+    .brand-logos{display:flex;align-items:center;background:var(--blanco);border-radius:8px;padding:3px 12px;height:46px}
+    .brand-logos img:first-child{height:36px;max-width:170px;object-fit:contain}
+    .brand-sep{width:1px;height:28px;background:var(--borde);margin:0 10px}
+    .brand-logos img:last-child{height:28px;max-width:130px;object-fit:contain}
+    .topbar-right{display:flex;align-items:center;gap:10px}
+    .back-link{color:rgba(255,255,255,.7);font-size:13px;cursor:pointer;display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:6px;transition:background var(--t)}
+    .back-link:hover{background:rgba(255,255,255,.1);color:white}
+
+    /* BOTONES */
+    .btn{display:inline-flex;align-items:center;gap:7px;padding:10px 22px;border-radius:var(--r);font-weight:700;font-size:14px;border:none;transition:all var(--t);cursor:pointer}
+    .btn:active{transform:scale(.97)}
+    .btn-primary{background:var(--pist);color:var(--verde)}
+    .btn-primary:hover{background:var(--pist-h)}
+    .btn-outline{background:transparent;color:var(--verde);border:2px solid var(--verde)}
+    .btn-outline:hover{background:var(--verde);color:white}
+    .btn-ghost{background:var(--suave);color:var(--texto-g)}
+    .btn-ghost:hover{background:var(--borde)}
+    .btn-sm{padding:7px 16px;font-size:13px}
+    .btn-lg{padding:14px 32px;font-size:16px;border-radius:10px}
+
+    /* LAYOUT */
+    #shell{display:grid;grid-template-columns:260px 1fr;min-height:calc(100vh - 60px)}
+
+    /* SIDEBAR */
+    #sidebar{background:var(--blanco);border-right:1.5px solid var(--borde);padding:24px 0;display:flex;flex-direction:column;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto}
+    .user-card{padding:16px 20px 20px;border-bottom:1px solid var(--borde);margin-bottom:8px;text-align:center}
+    .user-avatar-big{width:64px;height:64px;border-radius:50%;background:var(--pist);color:var(--verde);font-weight:900;font-size:24px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;overflow:hidden}
+    .user-avatar-big img{width:100%;height:100%;object-fit:cover}
+    .user-nombre{font-family:'Nunito',sans-serif;font-weight:800;font-size:16px;color:var(--verde)}
+    .user-tag{font-size:12px;color:var(--texto-g);margin-top:2px}
+    .completitud-bar{height:6px;background:var(--borde);border-radius:3px;margin-top:10px;overflow:hidden}
+    .completitud-fill{height:100%;background:var(--pist);border-radius:3px;transition:width .5s ease}
+    .completitud-label{font-size:11px;color:var(--texto-g);margin-top:4px;text-align:right}
+    .sec-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--texto-g);padding:12px 20px 4px}
+    .nav-item{display:flex;align-items:center;gap:11px;padding:10px 20px;font-size:14px;font-weight:600;color:var(--texto-g);border-left:3px solid transparent;cursor:pointer;transition:background var(--t),color var(--t);border-radius:0 8px 8px 0;margin-right:12px}
+    .nav-item:hover{background:var(--suave);color:var(--verde)}
+    .nav-item.active{background:rgba(9,74,75,.08);color:var(--verde);border-left-color:var(--pist);font-weight:700}
+    .nav-icon{font-size:18px;width:22px;text-align:center;flex-shrink:0}
+
+    /* MAIN */
+    #main{padding:28px;overflow-y:auto}
+    .page{animation:fadeUp .3s ease}
+    .hidden{display:none!important}
+    .page-title{font-family:'Nunito',sans-serif;font-size:24px;font-weight:900;color:var(--verde);margin-bottom:4px}
+    .page-sub{font-size:14px;color:var(--texto-g);margin-bottom:24px}
+
+    /* ACCESO RESTRINGIDO */
+    .acceso-card{background:var(--blanco);border-radius:20px;box-shadow:0 4px 24px rgba(9,74,75,.10);padding:60px 40px;text-align:center;max-width:480px;margin:60px auto}
+    .acceso-icon{font-size:64px;margin-bottom:20px}
+    .acceso-title{font-family:'Nunito',sans-serif;font-size:26px;font-weight:900;color:var(--verde);margin-bottom:10px}
+    .acceso-sub{color:var(--texto-g);font-size:15px;margin-bottom:28px;line-height:1.6}
+    .acceso-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+
+    /* VACANTES */
+    .vacantes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+    .vacante-card{background:var(--blanco);border-radius:14px;box-shadow:0 2px 16px rgba(9,74,75,.08);padding:20px;display:flex;flex-direction:column;gap:8px;border-left:4px solid var(--pist);transition:transform var(--t)}
+    .vacante-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(9,74,75,.15)}
+    .vacante-cargo{font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;color:var(--verde)}
+    .vacante-empresa{font-size:13px;color:var(--texto-g)}
+    .vacante-meta{display:flex;gap:10px;font-size:12px;color:var(--texto-g);flex-wrap:wrap}
+    .badge-activa{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:600;background:#d4edda;color:#155724}
+
+    /* PASOS HV */
+    .pasos-bar{display:flex;align-items:center;margin-bottom:32px;overflow-x:auto;padding-bottom:4px}
+    .paso-item{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;position:relative;min-width:80px}
+    .paso-item::after{content:'';position:absolute;top:16px;left:50%;width:100%;height:2px;background:var(--borde)}
+    .paso-item:last-child::after{display:none}
+    .paso-item.done::after{background:var(--pist)}
+    .paso-circle{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;z-index:1;background:var(--suave);color:var(--texto-g);border:2px solid var(--borde);transition:all var(--t)}
+    .paso-item.done .paso-circle{background:var(--pist);color:var(--verde);border-color:var(--pist)}
+    .paso-item.active .paso-circle{background:var(--verde);color:white;border-color:var(--verde)}
+    .paso-label{font-size:11px;color:var(--texto-g);font-weight:600;text-align:center}
+    .paso-item.active .paso-label{color:var(--verde)}
+
+    /* INPUTS */
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .form-grid.one{grid-template-columns:1fr}
+    .input-group{display:flex;flex-direction:column;gap:6px}
+    .input-label{font-size:13px;font-weight:600;color:var(--verde)}
+    .input-field{padding:10px 14px;border:1.5px solid var(--borde);border-radius:var(--r);font-size:14px;font-family:inherit;color:var(--negro);background:var(--blanco);outline:none;transition:border-color var(--t)}
+    .input-field:focus{border-color:var(--verde-c);box-shadow:0 0 0 3px rgba(9,74,75,.10)}
+    select.input-field{appearance:none}
+    textarea.input-field{resize:vertical;min-height:90px}
+    .card{background:var(--blanco);border-radius:var(--rc);box-shadow:0 2px 16px rgba(9,74,75,.08);padding:24px}
+    .form-nav{display:flex;justify-content:space-between;margin-top:24px;padding-top:20px;border-top:1px solid var(--borde)}
+
+    /* LOADING */
+    .loading{display:flex;align-items:center;justify-content:center;padding:48px;gap:12px;color:var(--texto-g)}
+    .spinner{width:28px;height:28px;border:3px solid var(--borde);border-top-color:var(--verde);border-radius:50%;animation:spin .8s linear infinite}
+
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+    @media(max-width:768px){
+      #shell{grid-template-columns:1fr}
+      #sidebar{display:none}
+      #main{padding:16px}
+      .form-grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+
+<header id="topbar">
+  <div style="display:flex;align-items:center;gap:16px">
+    <span class="back-link" onclick="window.location.href='index.html'">← Inicio</span>
+    <div class="brand-logos">
+      <img src="logo_comfe_y_servicio.jpeg" alt="Comfenalco"/>
+      <div class="brand-sep"></div>
+      <img src="logo_agencia.png" alt="Agencia"/>
+    </div>
+  </div>
+  <div class="topbar-right" id="topbar-auth"></div>
+</header>
+
+<div id="shell">
+  <!-- SIDEBAR -->
+  <nav id="sidebar">
+    <div class="user-card" id="user-card">
+      <div class="user-avatar-big" id="user-avatar">?</div>
+      <div class="user-nombre" id="user-nombre">Cargando...</div>
+      <div class="user-tag">Candidato</div>
+      <div class="completitud-bar"><div class="completitud-fill" id="comp-fill" style="width:0%"></div></div>
+      <div class="completitud-label" id="comp-label">HV 0% completa</div>
+    </div>
+    <div class="sec-label">Mi espacio</div>
+    <div class="nav-item active" data-page="vacantes"     onclick="App.nav('vacantes')"><span class="nav-icon">💼</span> Vacantes disponibles</div>
+    <div class="nav-item"        data-page="mi-hv"        onclick="App.nav('mi-hv')"><span class="nav-icon">📄</span> Mi hoja de vida</div>
+    <div class="nav-item"        data-page="postulaciones" onclick="App.nav('postulaciones')"><span class="nav-icon">📬</span> Mis postulaciones</div>
+    <div class="nav-item"        data-page="perfil"       onclick="App.nav('perfil')"><span class="nav-icon">⚙️</span> Mi perfil</div>
+  </nav>
+
+  <!-- MAIN -->
+  <main id="main">
+
+    <!-- ACCESO (usuario no logueado) -->
+    <div id="page-acceso" class="hidden">
+      <div class="acceso-card">
+        <div class="acceso-icon">👤</div>
+        <div class="acceso-title">Portal de Candidatos</div>
+        <p class="acceso-sub">Inicia sesión o crea una cuenta gratuita para acceder a todas las vacantes, crear tu hoja de vida y postularte.</p>
+        <div class="acceso-btns">
+          <button class="btn btn-outline btn-lg" onclick="window.Clerk?.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>
+          <button class="btn btn-primary btn-lg" onclick="window.Clerk?.openSignUp({afterSignUpUrl:window.location.href})">✏️ Crear cuenta gratis</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- VACANTES -->
+    <div id="page-vacantes" class="page hidden">
+      <div class="page-title">💼 Vacantes disponibles</div>
+      <p class="page-sub">Encuentra tu próxima oportunidad laboral en Antioquia</p>
+      <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap">
+        <input class="input-field" type="text" id="v-search" placeholder="🔍 Buscar cargo..." style="flex:1;min-width:180px"/>
+        <select class="input-field" id="v-municipio" style="min-width:180px"><option value="">📍 Todos los municipios</option></select>
+        <button class="btn btn-primary" onclick="App.buscarVacantes()">Buscar</button>
+      </div>
+      <div class="vacantes-grid" id="vacantes-lista">
+        <div class="loading" style="grid-column:1/-1"><div class="spinner"></div><span>Cargando...</span></div>
+      </div>
+    </div>
+
+    <!-- MI HV -->
+    <div id="page-mi-hv" class="page hidden">
+      <div class="page-title">📄 Mi hoja de vida</div>
+      <p class="page-sub">Completa tu perfil paso a paso para aumentar tus oportunidades</p>
+      <div class="pasos-bar" id="pasos-bar">
+        <div class="paso-item done"  data-paso="1"><div class="paso-circle">✓</div><div class="paso-label">Cuenta</div></div>
+        <div class="paso-item active" data-paso="2"><div class="paso-circle">2</div><div class="paso-label">Datos personales</div></div>
+        <div class="paso-item"       data-paso="3"><div class="paso-circle">3</div><div class="paso-label">Educación</div></div>
+        <div class="paso-item"       data-paso="4"><div class="paso-circle">4</div><div class="paso-label">Experiencia</div></div>
+        <div class="paso-item"       data-paso="5"><div class="paso-circle">5</div><div class="paso-label">Competencias</div></div>
+        <div class="paso-item"       data-paso="6"><div class="paso-circle">6</div><div class="paso-label">Finalizar</div></div>
+      </div>
+      <div class="card" id="paso-contenido">
+        <!-- Se llena dinámicamente -->
+        <div class="loading"><div class="spinner"></div><span>Cargando tu información...</span></div>
+      </div>
+    </div>
+
+    <!-- POSTULACIONES -->
+    <div id="page-postulaciones" class="page hidden">
+      <div class="page-title">📬 Mis postulaciones</div>
+      <p class="page-sub">Seguimiento de tus procesos de selección</p>
+      <div class="loading"><div class="spinner"></div><span>Cargando postulaciones...</span></div>
+    </div>
+
+    <!-- PERFIL -->
+    <div id="page-perfil" class="page hidden">
+      <div class="page-title">⚙️ Mi perfil</div>
+      <p class="page-sub">Configuración de tu cuenta</p>
+      <div class="card" style="max-width:480px">
+        <p style="color:var(--texto-g);margin-bottom:16px">Gestiona tu información de acceso desde el panel de usuario.</p>
+        <button class="btn btn-primary" onclick="window.Clerk?.openUserProfile()">Abrir configuración de cuenta</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script type="module">
+import DB from './config/db.js';
+
+const App = {
+  usuario: null,
+  paginaActual: 'vacantes',
+
+  async boot() {
+    await window.Clerk?.load();
+    window.Clerk?.addListener(({user}) => { this.usuario = user; this.render(); });
+    this.usuario = window.Clerk?.user ?? null;
+    await this.render();
+  },
+
+  async render() {
+    await this.renderTopbar();
+    if(!this.usuario) {
+      this.mostrarPagina('acceso');
+      document.getElementById('sidebar').style.display = 'none';
+      return;
+    }
+    document.getElementById('sidebar').style.display = 'flex';
+    this.renderUserCard();
+    await this.cargarMunicipios();
+    this.nav(this.paginaActual);
+  },
+
+  renderTopbar() {
+    const area = document.getElementById('topbar-auth');
+    const u = this.usuario;
+    if(u) {
+      const nombre    = `${u.firstName??''} ${u.lastName??''}`.trim()||'Usuario';
+      const iniciales = ((u.firstName?.[0]??'')+(u.lastName?.[0]??'')).toUpperCase()||'U';
+      area.innerHTML = `
+        <span style="color:rgba(255,255,255,.8);font-size:13px">${nombre}</span>
+        <button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:white;border:none"
+          onclick="window.Clerk.signOut().then(()=>location.reload())">Salir</button>`;
+    } else {
+      area.innerHTML = `
+        <button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:white;border:none"
+          onclick="window.Clerk?.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>
+        <button class="btn btn-primary btn-sm"
+          onclick="window.Clerk?.openSignUp({afterSignUpUrl:window.location.href})">Registrarme</button>`;
+    }
+  },
+
+  renderUserCard() {
+    const u = this.usuario;
+    if(!u) return;
+    const nombre    = `${u.firstName??''} ${u.lastName??''}`.trim()||'Usuario';
+    const iniciales = ((u.firstName?.[0]??'')+(u.lastName?.[0]??'')).toUpperCase()||'U';
+    const av = document.getElementById('user-avatar');
+    av.innerHTML = u.imageUrl ? `<img src="${u.imageUrl}"/>` : `<span>${iniciales}</span>`;
+    document.getElementById('user-nombre').textContent = nombre;
+  },
+
+  async cargarMunicipios() {
+    const {data} = await DB.municipios();
+    if(!data) return;
+    ['v-municipio'].forEach(id => {
+      const sel = document.getElementById(id);
+      if(!sel) return;
+      data.forEach(m => {
+        const o = document.createElement('option');
+        o.value = m.id; o.textContent = `${m.nombre} (${m.subregion})`;
+        sel.appendChild(o);
+      });
+    });
+  },
+
+  nav(pagina) {
+    this.paginaActual = pagina;
+    ['acceso','vacantes','mi-hv','postulaciones','perfil'].forEach(p => {
+      const el = document.getElementById(`page-${p}`);
+      if(el) el.classList.add('hidden');
+    });
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    const target = document.getElementById(`page-${pagina}`);
+    if(target) target.classList.remove('hidden');
+    const navEl = document.querySelector(`[data-page="${pagina}"]`);
+    if(navEl) navEl.classList.add('active');
+    if(pagina === 'vacantes') this.cargarVacantes();
+    if(pagina === 'mi-hv') this.initHV();
+  },
+
+  mostrarPagina(p) {
+    ['acceso','vacantes','mi-hv','postulaciones','perfil'].forEach(id => {
+      const el = document.getElementById(`page-${id}`);
+      if(el) el.classList.add('hidden');
+    });
+    const target = document.getElementById(`page-${p}`);
+    if(target) target.classList.remove('hidden');
+  },
+
+  async cargarVacantes(texto=null, municipioId=null) {
+    const g = document.getElementById('vacantes-lista');
+    if(!g) return;
+    g.innerHTML = '<div class="loading" style="grid-column:1/-1"><div class="spinner"></div><span>Buscando...</span></div>';
+    const {data} = await DB.buscarVacantes({texto, municipioId, limite:20});
+    const lista = data??[];
+    if(!lista.length){ g.innerHTML='<p style="color:var(--texto-g);padding:24px;grid-column:1/-1">No hay vacantes que coincidan con tu búsqueda.</p>'; return; }
+    g.innerHTML = lista.map(v=>`
+      <div class="vacante-card">
+        <div class="vacante-cargo">${v.cargo}</div>
+        <div class="vacante-empresa">🏢 ${v.empresa}</div>
+        <div class="vacante-meta">
+          <span>📍 ${v.municipio??'—'}</span>
+          <span>💵 ${v.salario_min?'$'+Number(v.salario_min).toLocaleString('es-CO'):'A convenir'}</span>
+          <span>📑 ${(v.tipo_contrato??'').replace(/_/g,' ')}</span>
+          <span>👥 ${v.total_postulados??0} postulados</span>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
+          <span class="badge-activa">${v.estado}</span>
+          <button class="btn btn-primary btn-sm" style="margin-left:auto">Postularme</button>
+        </div>
+      </div>`).join('');
+  },
+
+  async buscarVacantes() {
+    const texto = document.getElementById('v-search')?.value.trim()||null;
+    const mpio  = document.getElementById('v-municipio')?.value||null;
+    await this.cargarVacantes(texto, mpio?parseInt(mpio):null);
+  },
+
+  initHV() {
+    const contenido = document.getElementById('paso-contenido');
+    if(!contenido) return;
+    contenido.innerHTML = `
+      <h3 style="font-family:Nunito;font-weight:800;color:var(--verde);margin-bottom:20px">Paso 2 — Datos personales</h3>
+      <div class="form-grid">
+        <div class="input-group"><label class="input-label">Nombres *</label><input class="input-field" type="text" placeholder="Ej: Juan Carlos"/></div>
+        <div class="input-group"><label class="input-label">Apellidos *</label><input class="input-field" type="text" placeholder="Ej: Gómez Pérez"/></div>
+        <div class="input-group"><label class="input-label">Tipo de documento</label>
+          <select class="input-field"><option>Cédula de ciudadanía</option><option>Cédula de extranjería</option><option>Pasaporte</option><option>Tarjeta de identidad</option></select>
+        </div>
+        <div class="input-group"><label class="input-label">Número de documento *</label><input class="input-field" type="text" placeholder="Ej: 1.234.567.890"/></div>
+        <div class="input-group"><label class="input-label">Fecha de nacimiento</label><input class="input-field" type="date"/></div>
+        <div class="input-group"><label class="input-label">Género</label>
+          <select class="input-field"><option>Masculino</option><option>Femenino</option><option>No binario</option><option>Prefiero no decir</option></select>
+        </div>
+        <div class="input-group"><label class="input-label">Municipio de residencia</label>
+          <select class="input-field" id="hv-municipio"><option value="">Selecciona...</option></select>
+        </div>
+        <div class="input-group"><label class="input-label">Celular *</label><input class="input-field" type="tel" placeholder="Ej: 300 123 4567"/></div>
+        <div class="input-group"><label class="input-label">Área de interés</label>
+          <select class="input-field"><option>Administración</option><option>Logística</option><option>Sistemas</option><option>Salud</option><option>Educación</option><option>Manufactura</option><option>Comercio</option><option>Construcción</option><option>Agroindustria</option><option>Otro</option></select>
+        </div>
+        <div class="input-group"><label class="input-label">Pretensión salarial (COP)</label><input class="input-field" type="number" placeholder="Ej: 1500000"/></div>
+        <div class="input-group"><label class="input-label">Condición especial</label>
+          <select class="input-field"><option value="ninguna">Ninguna</option><option value="joven">Joven (18-28 años)</option><option value="victima_conflicto">Víctima del conflicto</option><option value="discapacidad">Persona con discapacidad</option><option value="migrante">Migrante</option><option value="adulto_mayor">Adulto mayor</option><option value="madre_cabeza">Madre cabeza de hogar</option></select>
+        </div>
+      </div>
+      <div class="input-group" style="margin-top:16px">
+        <label class="input-label">Perfil profesional</label>
+        <textarea class="input-field" placeholder="Describe tu experiencia, habilidades y objetivos profesionales en pocas palabras..."></textarea>
+      </div>
+      <div class="form-nav">
+        <button class="btn btn-ghost">← Anterior</button>
+        <button class="btn btn-primary">Guardar y continuar →</button>
+      </div>`;
+    // Cargar municipios en el select del HV
+    DB.municipios().then(({data})=>{
+      if(!data) return;
+      const sel = document.getElementById('hv-municipio');
+      if(!sel) return;
+      data.forEach(m=>{const o=document.createElement('option');o.value=m.id;o.textContent=`${m.nombre} (${m.subregion})`;sel.appendChild(o);});
+    });
+  }
+};
+
+window.App = App;
+document.addEventListener('DOMContentLoaded', ()=>App.boot());
+</script>
+</body>
+</html>
