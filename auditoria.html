@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Auditoría Interna — Comfenalco Antioquia</title>
+  <script async crossorigin="anonymous"
+    data-clerk-publishable-key="pk_test_bGlrZWQtYmlzb24tNTEuY2xlcmsuYWNjb3VudHMuZGV2JA"
+    src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@5/dist/clerk.browser.js"
+    type="text/javascript"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--verde:#094a4b;--pist:#a8c94e;--pist-h:#8fb53a;--blanco:#fff;--fondo:#f0f2f0;--borde:#d8e2d8;--texto-g:#4a5a4a;--suave:#e8efe8;--negro:#1a2a1a;--naranja:#e67e22;--azul:#2d4a6b;--rojo:#e74c3c;--amarillo:#f39c12;--r:8px;--rc:14px;--t:.22s ease}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;font-size:15px;color:var(--negro);background:var(--fondo);min-height:100vh}
+    button{cursor:pointer;font-family:inherit;border:none}
+    input,select,textarea{font-family:inherit}
+    .hidden{display:none!important}
+
+    /* TOPBAR */
+    #topbar{background:#1a1a2e;padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 2px 16px rgba(0,0,0,.3)}
+    .brand-logos{display:flex;align-items:center;background:#fff;border-radius:8px;padding:3px 12px;height:46px}
+    .brand-logos img:first-child{height:36px;max-width:170px;object-fit:contain}
+    .brand-sep{width:1px;height:28px;background:var(--borde);margin:0 10px}
+    .brand-logos img:last-child{height:28px;max-width:130px;object-fit:contain}
+    .audit-badge{background:rgba(231,76,60,.2);color:#e74c3c;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;border:1px solid rgba(231,76,60,.4);letter-spacing:.05em}
+    .back{color:rgba(255,255,255,.6);font-size:13px;cursor:pointer;padding:6px 10px;border-radius:6px;transition:background var(--t)}
+    .back:hover{background:rgba(255,255,255,.1);color:#fff}
+
+    /* BOTONES */
+    .btn{display:inline-flex;align-items:center;gap:7px;padding:10px 22px;border-radius:var(--r);font-weight:700;font-size:14px;border:none;transition:all var(--t);cursor:pointer;font-family:inherit}
+    .btn:active{transform:scale(.97)}
+    .btn-primary{background:var(--pist);color:var(--verde)}
+    .btn-primary:hover{background:var(--pist-h)}
+    .btn-rojo{background:var(--rojo);color:#fff}
+    .btn-rojo:hover{background:#c0392b}
+    .btn-ghost{background:var(--suave);color:var(--texto-g)}
+    .btn-ghost:hover{background:var(--borde)}
+    .btn-dark{background:#1a1a2e;color:#fff}
+    .btn-sm{padding:7px 14px;font-size:13px}
+    .btn-xs{padding:4px 10px;font-size:12px}
+
+    /* LAYOUT */
+    #shell{display:grid;grid-template-columns:260px 1fr;min-height:calc(100vh - 60px)}
+
+    /* SIDEBAR */
+    #sidebar{background:#1a1a2e;padding:20px 0;display:flex;flex-direction:column;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto}
+    .suser{padding:14px 20px 18px;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:8px}
+    .sav{width:36px;height:36px;border-radius:50%;background:#e74c3c;color:#fff;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;margin-bottom:6px}
+    .sav img{width:100%;height:100%;object-fit:cover}
+    .snombre{font-weight:700;font-size:13px;color:#fff}
+    .srol{font-size:11px;color:#e74c3c;margin-top:1px}
+    .slabel{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.3);padding:12px 20px 4px}
+    .nitem{display:flex;align-items:center;gap:11px;padding:10px 20px;font-size:13px;font-weight:600;color:rgba(255,255,255,.6);border-left:3px solid transparent;cursor:pointer;transition:background var(--t);border-radius:0 8px 8px 0;margin-right:12px;position:relative}
+    .nitem:hover{background:rgba(255,255,255,.06);color:#fff}
+    .nitem.active{background:rgba(231,76,60,.15);color:#e74c3c;border-left-color:#e74c3c}
+    .nico{font-size:17px;width:20px;text-align:center;flex-shrink:0}
+    .nbadge{margin-left:auto;background:#e74c3c;color:#fff;font-size:10px;font-weight:800;padding:1px 7px;border-radius:20px;min-width:20px;text-align:center}
+    .nbadge.warn{background:var(--amarillo)}
+    .nbadge.ok{background:#27ae60}
+    .sdiv{height:1px;background:rgba(255,255,255,.08);margin:10px 20px}
+    .sidebar-score{padding:14px 20px;margin:8px 12px;background:rgba(255,255,255,.05);border-radius:10px;border:1px solid rgba(255,255,255,.08)}
+    .score-num{font-family:'Nunito',sans-serif;font-size:32px;font-weight:900;color:#fff;line-height:1}
+    .score-label{font-size:11px;color:rgba(255,255,255,.5);margin-top:2px}
+    .score-bar{height:5px;background:rgba(255,255,255,.1);border-radius:3px;margin-top:8px;overflow:hidden}
+    .score-fill{height:100%;border-radius:3px;transition:width .6s}
+
+    /* MAIN */
+    #main{padding:28px;overflow-y:auto}
+    .ptitle{font-family:'Nunito',sans-serif;font-size:24px;font-weight:900;color:#1a1a2e;margin-bottom:4px}
+    .psub{font-size:14px;color:var(--texto-g);margin-bottom:24px}
+    .ph{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+
+    /* STATS */
+    .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:28px}
+    .scard{background:#fff;border-radius:var(--rc);box-shadow:0 2px 16px rgba(0,0,0,.07);padding:18px 20px;display:flex;flex-direction:column;gap:5px;border-left:4px solid var(--rojo)}
+    .scard.warn{border-left-color:var(--amarillo)}
+    .scard.ok{border-left-color:#27ae60}
+    .scard.info{border-left-color:var(--azul)}
+    .sico{font-size:24px}
+    .sval{font-family:'Nunito',sans-serif;font-size:30px;font-weight:900;color:#1a1a2e;line-height:1}
+    .slbl{font-size:12px;color:var(--texto-g);font-weight:600}
+
+    /* CARDS DE ALERTA */
+    .alertas-grupo{margin-bottom:28px}
+    .grupo-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid}
+    .grupo-header.critico{border-color:var(--rojo)}
+    .grupo-header.advertencia{border-color:var(--amarillo)}
+    .grupo-header.buena{border-color:#27ae60}
+    .grupo-titulo{font-family:'Nunito',sans-serif;font-size:18px;font-weight:900}
+    .grupo-titulo.critico{color:var(--rojo)}
+    .grupo-titulo.advertencia{color:var(--amarillo)}
+    .grupo-titulo.buena{color:#27ae60}
+    .grupo-cnt{font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px}
+    .grupo-cnt.critico{background:#fdecea;color:var(--rojo)}
+    .grupo-cnt.advertencia{background:#fff8e6;color:var(--amarillo)}
+    .grupo-cnt.buena{background:#eafaf1;color:#27ae60}
+
+    .alerta-card{background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.07);padding:16px 20px;margin-bottom:10px;display:flex;gap:14px;align-items:flex-start;border-left:4px solid;transition:box-shadow var(--t)}
+    .alerta-card:hover{box-shadow:0 4px 24px rgba(0,0,0,.12)}
+    .alerta-card.critico{border-left-color:var(--rojo)}
+    .alerta-card.advertencia{border-left-color:var(--amarillo)}
+    .alerta-card.buena{border-left-color:#27ae60}
+    .alerta-card.info{border-left-color:var(--azul)}
+    .alerta-ico{font-size:28px;flex-shrink:0;line-height:1;margin-top:2px}
+    .alerta-body{flex:1}
+    .alerta-titulo{font-weight:700;font-size:14px;color:#1a1a2e;margin-bottom:3px}
+    .alerta-desc{font-size:13px;color:var(--texto-g);line-height:1.5;margin-bottom:8px}
+    .alerta-meta{display:flex;gap:10px;flex-wrap:wrap;font-size:11px;align-items:center}
+    .alerta-tag{padding:2px 9px;border-radius:20px;font-weight:600;background:var(--suave);color:var(--texto-g)}
+    .alerta-tag.red{background:#fdecea;color:var(--rojo)}
+    .alerta-tag.yellow{background:#fff8e6;color:#856404}
+    .alerta-tag.green{background:#eafaf1;color:#155724}
+    .alerta-tag.blue{background:#e8f0fb;color:var(--azul)}
+    .alerta-accion{font-size:12px;font-weight:700;color:var(--rojo);background:#fdecea;padding:3px 10px;border-radius:6px;cursor:pointer;border:none;font-family:inherit;transition:background var(--t)}
+    .alerta-accion:hover{background:#fbd5d5}
+    .alerta-accion.ok{color:#155724;background:#eafaf1}
+    .alerta-accion.ok:hover{background:#d4edda}
+
+    /* PANEL DESEMPEÑO */
+    .desemp-card{background:#fff;border-radius:14px;box-shadow:0 2px 16px rgba(0,0,0,.08);padding:22px;margin-bottom:16px}
+    .desemp-header{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+    .desemp-av{width:44px;height:44px;border-radius:50%;background:#1a1a2e;color:#fff;font-weight:800;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .desemp-nombre{font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;color:#1a1a2e}
+    .desemp-rol{font-size:12px;color:var(--texto-g);margin-top:2px}
+    .desemp-region{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:#e8f0fb;color:var(--azul)}
+    .metricas-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+    .metrica{background:var(--suave);border-radius:10px;padding:12px 14px}
+    .metrica-val{font-family:'Nunito',sans-serif;font-size:22px;font-weight:900;line-height:1;margin-bottom:3px}
+    .metrica-label{font-size:11px;color:var(--texto-g);font-weight:600}
+    .metrica-barra{height:4px;background:var(--borde);border-radius:2px;margin-top:8px;overflow:hidden}
+    .metrica-fill{height:100%;border-radius:2px}
+    .m-verde{color:#27ae60}.m-amarillo{color:var(--amarillo)}.m-rojo{color:var(--rojo)}.m-azul{color:var(--azul)}
+
+    /* ACCESO COORDINADOR */
+    .acc-card{background:#fff;border-radius:20px;box-shadow:0 4px 24px rgba(0,0,0,.10);padding:60px 40px;text-align:center;max-width:480px;margin:60px auto}
+    .acc-icon{font-size:64px;margin-bottom:20px}
+    .acc-title{font-family:'Nunito',sans-serif;font-size:26px;font-weight:900;color:#1a1a2e;margin-bottom:10px}
+    .acc-sub{color:var(--texto-g);font-size:15px;margin-bottom:24px;line-height:1.6}
+    .pin-input{display:flex;gap:10px;justify-content:center;margin-bottom:20px}
+    .pin-digit{width:52px;height:56px;border:2px solid var(--borde);border-radius:10px;font-size:24px;font-weight:700;text-align:center;outline:none;transition:border-color var(--t)}
+    .pin-digit:focus{border-color:#1a1a2e}
+
+    /* FILTROS */
+    .filtros-bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;padding:14px 18px;background:#fff;border-radius:var(--rc);box-shadow:0 2px 12px rgba(0,0,0,.06)}
+    .finput{padding:8px 12px;border:1.5px solid var(--borde);border-radius:var(--r);font-size:13px;font-family:inherit;color:var(--negro);background:#fff;outline:none;transition:border-color var(--t)}
+    .finput:focus{border-color:#1a1a2e}
+    select.finput{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%231a1a2e' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+
+    /* MODAL */
+    .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:999;backdrop-filter:blur(4px);animation:fadeIn .18s ease;padding:20px}
+    .modal{background:#fff;border-radius:18px;box-shadow:0 20px 60px rgba(0,0,0,.3);width:min(560px,95vw);animation:slideUp .22s ease}
+    .modal-head{display:flex;align-items:center;justify-content:space-between;padding:20px 24px 16px;border-bottom:1px solid var(--borde)}
+    .modal-title{font-family:'Nunito',sans-serif;font-size:18px;font-weight:900;color:#1a1a2e}
+    .modal-close{background:var(--suave);border:none;border-radius:8px;width:32px;height:32px;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+    .modal-body{padding:24px}
+    .modal-foot{padding:16px 24px;border-top:1px solid var(--borde);display:flex;justify-content:flex-end;gap:10px}
+
+    /* TOAST */
+    #toasts{position:fixed;bottom:24px;right:24px;display:flex;flex-direction:column;gap:10px;z-index:9999}
+    .toast{background:#1a1a2e;color:#fff;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,.3);display:flex;align-items:center;gap:10px;animation:slideUp .22s ease;min-width:260px}
+    .toast.ok{border-left:4px solid var(--pist)}
+    .toast.err{border-left:4px solid var(--rojo)}
+    .toast.warn{border-left:4px solid var(--amarillo)}
+
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    @keyframes slideUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+    @media(max-width:900px){#shell{grid-template-columns:1fr}#sidebar{display:none}#main{padding:16px}}
+  </style>
+</head>
+<body>
+
+<header id="topbar">
+  <div style="display:flex;align-items:center;gap:14px">
+    <span class="back" onclick="window.location.href='interno.html'">← Panel interno</span>
+    <div class="brand-logos">
+      <img src="logo_comfe_y_servicio.jpeg" alt="Comfenalco"/>
+      <div class="brand-sep"></div>
+      <img src="logo_agencia.png" alt="Agencia"/>
+    </div>
+    <span class="audit-badge">🔍 AUDITORÍA INTERNA</span>
+  </div>
+  <div id="auth-area" style="display:flex;align-items:center;gap:10px"></div>
+</header>
+
+<div id="shell">
+
+  <!-- SIDEBAR -->
+  <nav id="sidebar">
+    <div class="suser">
+      <div class="sav" id="sav">🔍</div>
+      <div><div class="snombre" id="snombre">Cargando...</div><div class="srol" id="srol">Auditor / Coordinador</div></div>
+    </div>
+    <div class="sidebar-score">
+      <div class="score-num" id="score-num">—</div>
+      <div class="score-label">Índice de calidad general</div>
+      <div class="score-bar"><div class="score-fill" id="score-fill" style="width:0%;background:#e74c3c"></div></div>
+    </div>
+    <div class="slabel">Auditoría (Auditor)</div>
+    <div class="nitem active" onclick="nav('dashboard')"><span class="nico">📊</span> Dashboard</div>
+    <div class="nitem" onclick="nav('criticas')"><span class="nico">🔴</span> Alertas críticas <span class="nbadge" id="nb-crit">0</span></div>
+    <div class="nitem" onclick="nav('advertencias')"><span class="nico">🟡</span> Advertencias <span class="nbadge warn" id="nb-warn">0</span></div>
+    <div class="nitem" onclick="nav('duplicados')"><span class="nico">🔁</span> Duplicados <span class="nbadge" id="nb-dup">0</span></div>
+    <div class="nitem" onclick="nav('hvs')"><span class="nico">📄</span> HV incompletas <span class="nbadge warn" id="nb-hv">0</span></div>
+    <div class="nitem" onclick="nav('vacantes-audit')"><span class="nico">💼</span> Vacantes <span class="nbadge warn" id="nb-vac">0</span></div>
+    <div class="nitem" onclick="nav('ecards-audit')"><span class="nico">🎨</span> E-Cards</div>
+    <div class="nitem" onclick="nav('tiempos')"><span class="nico">⏱️</span> Control de tiempos</div>
+    <div class="sdiv"></div>
+    <div class="slabel">Desempeño (Coordinador)</div>
+    <div class="nitem" onclick="nav('acceso-coord')"><span class="nico">👤</span> Ver por colaborador</div>
+    <div class="nitem" onclick="nav('por-region')"><span class="nico">📍</span> Por región</div>
+    <div class="sdiv"></div>
+    <div class="slabel">Exportar</div>
+    <div class="nitem" onclick="exportarInformeExcel()"><span class="nico">📥</span> Exportar Excel</div>
+    <div class="nitem" onclick="exportarInformePDF()"><span class="nico">📄</span> Exportar PDF</div>
+  </nav>
+
+  <!-- MAIN -->
+  <main id="main">
+
+    <!-- ══ DASHBOARD ══ -->
+    <div id="pg-dashboard">
+      <div class="ph">
+        <div>
+          <div class="ptitle">🔍 Dashboard de Auditoría</div>
+          <p class="psub">Control de calidad y cumplimiento de procesos — Agencia de Empleo y Emprendimiento</p>
+        </div>
+        <div style="display:flex;gap:10px">
+          <button class="btn btn-ghost btn-sm" onclick="ejecutarAuditoria()">🔄 Actualizar auditoría</button>
+          <button class="btn btn-dark btn-sm" onclick="exportarInformePDF()">📄 Exportar informe</button>
+        </div>
+      </div>
+      <div class="stats-row" id="dash-stats"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px" id="dash-resumen"></div>
+    </div>
+
+    <!-- ══ ALERTAS CRÍTICAS ══ -->
+    <div id="pg-criticas" class="hidden">
+      <div class="ptitle">🔴 Alertas Críticas</div>
+      <p class="psub">Requieren atención inmediata — errores que afectan directamente la calidad del servicio</p>
+      <div id="lista-criticas"></div>
+    </div>
+
+    <!-- ══ ADVERTENCIAS ══ -->
+    <div id="pg-advertencias" class="hidden">
+      <div class="ptitle">🟡 Advertencias</div>
+      <p class="psub">Situaciones que deben revisarse en las próximas 24 horas</p>
+      <div id="lista-advertencias"></div>
+    </div>
+
+    <!-- ══ DUPLICADOS ══ -->
+    <div id="pg-duplicados" class="hidden">
+      <div class="ptitle">🔁 Control de Duplicados</div>
+      <p class="psub">Candidatos, vacantes y contratados duplicados detectados en el sistema</p>
+      <div id="lista-duplicados"></div>
+    </div>
+
+    <!-- ══ HV INCOMPLETAS ══ -->
+    <div id="pg-hvs" class="hidden">
+      <div class="ptitle">📄 Hojas de Vida Incompletas</div>
+      <p class="psub">Candidatos con HV al menos al 100% — sin esta información no se pueden postular adecuadamente</p>
+      <div class="filtros-bar">
+        <input class="finput" type="text" id="fhv-q" placeholder="🔍 Buscar candidato..." style="flex:1" oninput="filtrarHVs()"/>
+        <select class="finput" id="fhv-pct" onchange="filtrarHVs()">
+          <option value="">Todos los estados</option>
+          <option value="0">0-20% (crítico)</option>
+          <option value="1">20-50% (bajo)</option>
+          <option value="2">50-80% (medio)</option>
+          <option value="3">80-99% (casi completo)</option>
+        </select>
+      </div>
+      <div id="lista-hvs"></div>
+    </div>
+
+    <!-- ══ VACANTES AUDITORÍA ══ -->
+    <div id="pg-vacantes-audit" class="hidden">
+      <div class="ptitle">💼 Auditoría de Vacantes</div>
+      <p class="psub">Vacantes con problemas de configuración, vencidas, sin postulados o con datos incompletos</p>
+      <div id="lista-vacantes-audit"></div>
+    </div>
+
+    <!-- ══ E-CARDS ══ -->
+    <div id="pg-ecards-audit" class="hidden">
+      <div class="ptitle">🎨 Auditoría de E-Cards</div>
+      <p class="psub">Verificación de calidad y completitud de las tarjetas publicitarias</p>
+      <div id="lista-ecards-audit"></div>
+    </div>
+
+    <!-- ══ TIEMPOS ══ -->
+    <div id="pg-tiempos" class="hidden">
+      <div class="ptitle">⏱️ Control de Tiempos</div>
+      <p class="psub">Seguimiento de tiempos de respuesta según los SLA establecidos</p>
+      <div class="stats-row" id="tiempos-stats"></div>
+      <div id="lista-tiempos"></div>
+    </div>
+
+    <!-- ══ ACCESO COORDINADOR ══ -->
+    <div id="pg-acceso-coord" class="hidden">
+      <div class="acc-card">
+        <div class="acc-icon">🔐</div>
+        <div class="acc-title">Acceso Coordinador</div>
+        <p class="acc-sub">Esta sección es exclusiva para coordinadores regionales. Ingresa tu PIN de 4 dígitos para ver el desempeño de tu equipo.</p>
+        <div class="pin-input">
+          <input class="pin-digit" type="password" maxlength="1" id="pin1" oninput="nextPin(this,'pin2')"/>
+          <input class="pin-digit" type="password" maxlength="1" id="pin2" oninput="nextPin(this,'pin3')"/>
+          <input class="pin-digit" type="password" maxlength="1" id="pin3" oninput="nextPin(this,'pin4')"/>
+          <input class="pin-digit" type="password" maxlength="1" id="pin4" oninput="validarPin()"/>
+        </div>
+        <p style="font-size:12px;color:var(--texto-g);margin-bottom:16px">Selecciona tu región primero:</p>
+        <select class="finput" id="coord-region" style="margin-bottom:16px;width:100%;max-width:280px">
+          <option value="">Selecciona tu región...</option>
+          <option>Valle de Aburrá</option><option>Oriente</option><option>Norte</option>
+          <option>Occidente</option><option>Suroeste</option><option>Bajo Cauca</option>
+          <option>Nordeste</option><option>Magdalena Medio</option><option>Urabá</option>
+        </select>
+        <p id="pin-error" style="color:var(--rojo);font-size:13px;margin-top:4px;display:none">PIN incorrecto. Intenta de nuevo.</p>
+      </div>
+    </div>
+
+    <!-- ══ DESEMPEÑO POR COLABORADOR ══ -->
+    <div id="pg-desemp-coord" class="hidden">
+      <div class="ph">
+        <div>
+          <div class="ptitle">👥 Desempeño del equipo</div>
+          <p class="psub" id="coord-titulo">Región seleccionada</p>
+        </div>
+        <div style="display:flex;gap:10px">
+          <button class="btn btn-ghost btn-sm" onclick="nav('acceso-coord')">🔐 Cambiar región</button>
+          <button class="btn btn-dark btn-sm" onclick="exportarDesempenoExcel()">📥 Exportar</button>
+        </div>
+      </div>
+      <div id="lista-desemp"></div>
+    </div>
+
+    <!-- ══ POR REGIÓN ══ -->
+    <div id="pg-por-region" class="hidden">
+      <div class="ptitle">📍 Auditoría por región</div>
+      <p class="psub">Resumen de alertas y cumplimiento segmentado por subregión</p>
+      <div id="lista-region"></div>
+    </div>
+
+  </main>
+</div>
+
+<!-- MODAL DETALLE ALERTA -->
+<div id="modal-alerta" class="modal-bg hidden">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="ma-title">Detalle de alerta</div>
+      <button class="modal-close" onclick="cerrarModal('modal-alerta')">✕</button>
+    </div>
+    <div class="modal-body" id="ma-body"></div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-alerta')">Cerrar</button>
+      <button class="btn btn-dark btn-sm" onclick="marcarRevisada()">✅ Marcar como revisada</button>
+    </div>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// DATOS MOCK — en producción vendrían de Neon vía proxy
+// ═══════════════════════════════════════════════════
+var MOCK = {
+  vacantes: [
+    {id:1,cargo:'Auxiliar de Bodega',empresa:'Logística del Valle SAS',municipio:'Medellín',region:'Valle de Aburrá',estado:'activa',tipo:'normal',postulados:12,dias_pub:130,fecha_pub:'2024-12-01',salario:1300000,desc:'Apoyo en recepción de mercancía',responsable:'Ana Bermúdez',correo:'ana.bermudez@comfenalco.com',hv_enviadas:2,fecha_hv_enviadas:'2025-03-20',fecha_solicitud:'2024-12-01',fecha_aprobacion:'2024-12-03',ecard_generada:true,ecard_campos_vacios:0},
+    {id:2,cargo:'Desarrollador Web Jr.',empresa:'TechCo Colombia',municipio:'Envigado',region:'Valle de Aburrá',estado:'activa',tipo:'normal',postulados:5,dias_pub:37,fecha_pub:'2025-03-10',salario:2500000,desc:'',responsable:'Carlos Reyes',correo:'carlos.reyes@comfenalco.com',hv_enviadas:0,fecha_hv_enviadas:null,fecha_solicitud:'2025-03-10',fecha_aprobacion:'2025-03-12',ecard_generada:false,ecard_campos_vacios:0},
+    {id:3,cargo:'Operario de Producción',empresa:'Manufacturas Bello SA',municipio:'Bello',region:'Valle de Aburrá',estado:'activa',tipo:'normal',postulados:28,dias_pub:60,fecha_pub:'2025-02-15',salario:1160000,desc:'Manejo de maquinaria en línea de producción',responsable:'María López',correo:'maria.lopez@comfenalco.com',hv_enviadas:8,fecha_hv_enviadas:'2025-02-20',fecha_solicitud:'2025-02-15',fecha_aprobacion:'2025-02-15',ecard_generada:true,ecard_campos_vacios:0},
+    {id:4,cargo:'Operario de Campo',empresa:'Agrícola Urabá SA',municipio:'Apartadó',region:'Urabá',estado:'activa',tipo:'hidrocarburos',postulados:3,dias_pub:20,fecha_pub:'2025-04-01',salario:1200000,desc:'Trabajo en campo agrícola',responsable:'Pedro Montoya',correo:'pedro.montoya@comfenalco.com',hv_enviadas:0,fecha_hv_enviadas:null,fecha_solicitud:'2025-04-01',fecha_aprobacion:'2025-04-03',ecard_generada:true,ecard_campos_vacios:2,municipios_influencia:null,contrato_anh:null,ventana:null},
+    {id:5,cargo:'Auxiliar de Bodega',empresa:'TechCo Colombia',municipio:'Medellín',region:'Valle de Aburrá',estado:'activa',tipo:'normal',postulados:4,dias_pub:45,fecha_pub:'2025-03-01',salario:1300000,desc:'Apoyo en bodega',responsable:'Ana Bermúdez',correo:'ana.bermudez@comfenalco.com',hv_enviadas:1,fecha_hv_enviadas:'2025-03-15',fecha_solicitud:'2025-03-01',fecha_aprobacion:'2025-03-03',ecard_generada:false,ecard_campos_vacios:0},
+    {id:6,cargo:'Inspector de Calidad',empresa:'Agrícola Urabá SA',municipio:'Apartadó',region:'Urabá',estado:'cubierta',tipo:'normal',postulados:6,dias_pub:25,fecha_pub:'2025-03-22',salario:1500000,desc:'Control de calidad agroindustrial',responsable:'Pedro Montoya',correo:'pedro.montoya@comfenalco.com',hv_enviadas:3,fecha_hv_enviadas:'2025-03-28',fecha_solicitud:'2025-03-22',fecha_aprobacion:'2025-03-22',ecard_generada:true,ecard_campos_vacios:0,contratado_id:2}
+  ],
+  candidatos: [
+    {id:1,nombre:'Juan García',doc:'1023456789',region:'Valle de Aburrá',municipio:'Medellín',responsable:'Ana Bermúdez',correo_resp:'ana.bermudez@comfenalco.com',completitud:85,celular:'3001234567',correo:'juan@mail.com',postulaciones:2,fecha_reg:'2025-01-10'},
+    {id:2,nombre:'María Torres',doc:'1152345678',region:'Valle de Aburrá',municipio:'Bello',responsable:'Ana Bermúdez',correo_resp:'ana.bermudez@comfenalco.com',completitud:100,celular:'3112345678',correo:'maria@mail.com',postulaciones:1,fecha_reg:'2025-01-15'},
+    {id:3,nombre:'Carlos Mendoza',doc:'1098765432',region:'Oriente',municipio:'Rionegro',responsable:'Jorge Salazar',correo_resp:'jorge.salazar@comfenalco.com',completitud:40,celular:'',correo:'',postulaciones:0,fecha_reg:'2025-02-01'},
+    {id:4,nombre:'Luisa Fernández',doc:'1023456789',region:'Oriente',municipio:'La Ceja',responsable:'Jorge Salazar',correo_resp:'jorge.salazar@comfenalco.com',completitud:70,celular:'3209876543',correo:'luisa@mail.com',postulaciones:1,fecha_reg:'2025-02-10'},
+    {id:5,nombre:'Andrés Ríos',doc:'1187654321',region:'Urabá',municipio:'Apartadó',responsable:'Pedro Montoya',correo_resp:'pedro.montoya@comfenalco.com',completitud:25,celular:'3156789012',correo:'',postulaciones:0,fecha_reg:'2025-03-01'},
+    {id:6,nombre:'Sofía Castro',doc:'1034567890',region:'Norte',municipio:'Santa Rosa de Osos',responsable:'',correo_resp:'',completitud:60,celular:'3143456789',correo:'sofia@mail.com',postulaciones:3,fecha_reg:'2025-03-15'},
+    {id:7,nombre:'Roberto Díaz',doc:'1023456789',region:'Valle de Aburrá',municipio:'Itagüí',responsable:'Ana Bermúdez',correo_resp:'ana.bermudez@comfenalco.com',completitud:90,celular:'3167890123',correo:'roberto@mail.com',postulaciones:1,fecha_reg:'2025-04-01'}
+  ],
+  contratados: [
+    {id:1,candidato_id:2,candidato:'María Torres',doc:'1152345678',empresa:'Logística del Valle SAS',fecha:'2025-03-15',responsable:'Ana Bermúdez',region:'Valle de Aburrá'},
+    {id:2,candidato_id:2,candidato:'María Torres',doc:'1152345678',empresa:'Manufacturas Bello SA',fecha:'2025-03-18',responsable:'María López',region:'Valle de Aburrá'},
+    {id:3,candidato_id:5,candidato:'Andrés Ríos',doc:'1187654321',empresa:'Agrícola Urabá SA',fecha:'2025-04-05',responsable:'Pedro Montoya',region:'Urabá'}
+  ],
+  colaboradores: [
+    {nombre:'Ana Bermúdez',rol:'Asesor empresarial',region:'Valle de Aburrá',correo:'ana.bermudez@comfenalco.com',vacantes_gestionadas:8,hv_enviadas_mes:24,candidatos_reg:12,eventos:2,laboratorios:0,colocados:3,tiempo_resp_prom_hrs:18,sla_ok:true},
+    {nombre:'Carlos Reyes',rol:'Intermediador',region:'Valle de Aburrá',correo:'carlos.reyes@comfenalco.com',vacantes_gestionadas:4,hv_enviadas_mes:8,candidatos_reg:6,eventos:1,laboratorios:0,colocados:1,tiempo_resp_prom_hrs:42,sla_ok:false},
+    {nombre:'María López',rol:'Auxiliar de registro',region:'Valle de Aburrá',correo:'maria.lopez@comfenalco.com',vacantes_gestionadas:0,hv_enviadas_mes:0,candidatos_reg:18,eventos:3,laboratorios:0,colocados:0,tiempo_resp_prom_hrs:0,sla_ok:true},
+    {nombre:'Jorge Salazar',rol:'Orientador',region:'Oriente',correo:'jorge.salazar@comfenalco.com',vacantes_gestionadas:3,hv_enviadas_mes:6,candidatos_reg:9,eventos:2,laboratorios:5,colocados:2,tiempo_resp_prom_hrs:22,sla_ok:true},
+    {nombre:'Pedro Montoya',rol:'Asesor empresarial',region:'Urabá',correo:'pedro.montoya@comfenalco.com',vacantes_gestionadas:5,hv_enviadas_mes:10,candidatos_reg:7,eventos:1,laboratorios:3,colocados:1,tiempo_resp_prom_hrs:30,sla_ok:false},
+    {nombre:'Lucía Vargas',rol:'Analista de inclusión',region:'Norte',correo:'lucia.vargas@comfenalco.com',vacantes_gestionadas:2,hv_enviadas_mes:4,candidatos_reg:15,eventos:4,laboratorios:8,colocados:2,tiempo_resp_prom_hrs:15,sla_ok:true},
+    {nombre:'Diego Ospina',rol:'Analista de fomento',region:'Suroeste',correo:'diego.ospina@comfenalco.com',vacantes_gestionadas:6,hv_enviadas_mes:14,candidatos_reg:11,eventos:2,laboratorios:0,colocados:4,tiempo_resp_prom_hrs:20,sla_ok:true},
+    {nombre:'Valentina Cruz',rol:'Conductor-Auxiliar',region:'Oriente',correo:'valentina.cruz@comfenalco.com',vacantes_gestionadas:0,hv_enviadas_mes:0,candidatos_reg:0,eventos:6,laboratorios:2,colocados:0,tiempo_resp_prom_hrs:0,sla_ok:true}
+  ]
+};
+
+// PIN por región (en producción vendrían de BD cifrados)
+var PINES_COORD = {
+  'Valle de Aburrá':'1234','Oriente':'2345','Norte':'3456',
+  'Occidente':'4567','Suroeste':'5678','Bajo Cauca':'6789',
+  'Nordeste':'7890','Magdalena Medio':'8901','Urabá':'9012'
+};
+
+var ALERTAS = {criticas:[], advertencias:[], info:[]};
+var REVISADAS = {};
+var coordRegion = '';
+var PAGS = ['dashboard','criticas','advertencias','duplicados','hvs','vacantes-audit','ecards-audit','tiempos','acceso-coord','desemp-coord','por-region'];
+
+// ═══════════════════════════════════════════════════
+// UTILIDADES
+// ═══════════════════════════════════════════════════
+function toast(msg,tipo){var tc=document.getElementById('toasts'),t=document.createElement('div');t.className='toast '+(tipo||'ok');t.innerHTML=(tipo==='err'?'❌':tipo==='warn'?'⚠️':'✅')+' '+msg;tc.appendChild(t);setTimeout(function(){t.remove();},3500);}
+function cerrarModal(id){document.getElementById(id).classList.add('hidden');}
+function abrirModal(id){document.getElementById(id).classList.remove('hidden');}
+function diasHabiles(d){return Math.round(d*5/7);}
+function fmtFecha(s){if(!s)return '—';var d=new Date(s+'T12:00:00');return d.toLocaleDateString('es-CO',{day:'2-digit',month:'short',year:'numeric'});}
+function colorNivel(pct){return pct>=80?'#27ae60':pct>=50?'var(--amarillo)':'var(--rojo)';}
+
+// ═══════════════════════════════════════════════════
+// NAVEGACIÓN
+// ═══════════════════════════════════════════════════
+function nav(p){
+  PAGS.forEach(function(x){var el=document.getElementById('pg-'+x);if(el)el.classList.add('hidden');});
+  document.querySelectorAll('.nitem').forEach(function(n){n.classList.remove('active');});
+  var t=document.getElementById('pg-'+p);if(t)t.classList.remove('hidden');
+  var ni=document.querySelector('[onclick*="nav(\''+p+'\')"]');if(ni)ni.classList.add('active');
+  if(p==='dashboard')      renderDashboard();
+  if(p==='criticas')       renderAlertas('criticas');
+  if(p==='advertencias')   renderAlertas('advertencias');
+  if(p==='duplicados')     renderDuplicados();
+  if(p==='hvs')            renderHVs();
+  if(p==='vacantes-audit') renderVacantesAudit();
+  if(p==='ecards-audit')   renderECardsAudit();
+  if(p==='tiempos')        renderTiempos();
+  if(p==='por-region')     renderPorRegion();
+}
+
+// ═══════════════════════════════════════════════════
+// MOTOR DE AUDITORÍA
+// ═══════════════════════════════════════════════════
+function ejecutarAuditoria(){
+  ALERTAS={criticas:[],advertencias:[],info:[]};
+
+  // ── VACANTES ────────────────────────────────────
+  MOCK.vacantes.forEach(function(v){
+
+    // Vacante publicada más de 4 meses (120 días)
+    if(v.dias_pub>120 && v.estado==='activa'){
+      ALERTAS.criticas.push({id:'vac-old-'+v.id,ico:'📅',area:'Vacantes',titulo:'Vacante publicada hace más de 4 meses',desc:'La vacante "'+v.cargo+'" en '+v.empresa+' lleva '+v.dias_pub+' días publicada sin cubrirse. Revisar si sigue vigente.',accion:'Revisar vacante',responsable:v.responsable,correo:v.correo,region:v.region,fecha:v.fecha_pub,tipo:'critico'});
+    }
+
+    // Vacante hidrocarburos mal configurada
+    if(v.tipo==='hidrocarburos'){
+      var faltantes=[];
+      if(!v.municipios_influencia) faltantes.push('municipios de influencia');
+      if(!v.contrato_anh) faltantes.push('referencia contrato ANH');
+      if(!v.ventana) faltantes.push('días de ventana legal');
+      if(faltantes.length){
+        ALERTAS.criticas.push({id:'hidro-'+v.id,ico:'⚡',area:'Vacantes Hidrocarburos',titulo:'Vacante de hidrocarburos incompleta',desc:'La vacante "'+v.cargo+'" está marcada como hidrocarburos pero le faltan: '+faltantes.join(', ')+'. Esto incumple la Ley 1530/2012.',accion:'Completar configuración',responsable:v.responsable,correo:v.correo,region:v.region,fecha:v.fecha_pub,tipo:'critico'});
+      }
+    }
+
+    // Vacante sin descripción de perfil
+    if(!v.desc || v.desc.length<30){
+      ALERTAS.advertencias.push({id:'vac-nodesc-'+v.id,ico:'📝',area:'Vacantes',titulo:'Vacante sin descripción del perfil',desc:'La vacante "'+v.cargo+'" en '+v.empresa+' no tiene descripción del cargo o es muy corta. Una buena descripción mejora la calidad de los postulados.',accion:'Agregar descripción',responsable:v.responsable,correo:v.correo,region:v.region,fecha:v.fecha_pub,tipo:'advertencia'});
+    }
+
+    // Demora más de 24h en aprobar vacante
+    if(v.fecha_solicitud && v.fecha_aprobacion){
+      var dif=Math.round((new Date(v.fecha_aprobacion)-new Date(v.fecha_solicitud))/(1000*60*60));
+      if(dif>24){
+        ALERTAS.advertencias.push({id:'vac-tard-'+v.id,ico:'⏱️',area:'Tiempos',titulo:'Vacante tardó más de 24h en aprobarse',desc:'La vacante "'+v.cargo+'" tardó '+dif+' horas en ser aprobada/publicada desde la solicitud de la empresa. El SLA es de 24 horas.',accion:'Revisar proceso',responsable:v.responsable,correo:v.correo,region:v.region,fecha:v.fecha_solicitud,tipo:'advertencia'});
+      }
+    }
+
+    // Demora más de 5 días hábiles en enviar HV a la empresa
+    if(v.postulados>0 && !v.hv_enviadas && v.dias_pub>7){
+      ALERTAS.criticas.push({id:'vac-nohv-'+v.id,ico:'📬',area:'Intermediación',titulo:'Sin envío de HV a la empresa',desc:'La vacante "'+v.cargo+'" en '+v.empresa+' tiene '+v.postulados+' postulados pero no se han enviado hojas de vida. Llevan '+v.dias_pub+' días publicados. El SLA es de 5 días hábiles.',accion:'Enviar HV urgente',responsable:v.responsable,correo:v.correo,region:v.region,fecha:v.fecha_pub,tipo:'critico'});
+    }
+
+    if(v.hv_enviadas>0 && v.fecha_hv_enviadas){
+      var diasHv=Math.round((new Date(v.fecha_hv_enviadas)-new Date(v.fecha_solicitud))/(1000*60*60*24));
+      if(diasHabiles(diasHv)>5){
+        ALERTAS.advertencias.push({id:'vac-hvtard-'+v.id,ico:'📬',area:'Tiempos',titulo:'HV enviadas fuera del SLA (5 días hábiles)',desc:'Para la vacante "'+v.cargo+'" en '+v.empresa+', las HV se enviaron '+diasHabiles(diasHv)+' días hábiles después de recibir postulados. El límite es 5 días hábiles.',accion:'Revisar proceso',responsable:v.responsable,correo:v.correo,region:v.region,fecha:v.fecha_hv_enviadas,tipo:'advertencia'});
+      }
+    }
+
+    // Vacante vencida aún activa
+    if(v.fecha_cierre && new Date(v.fecha_cierre)<new Date() && v.estado==='activa'){
+      ALERTAS.advertencias.push({id:'vac-venc-'+v.id,ico:'🗓️',area:'Vacantes',titulo:'Vacante vencida aún activa',desc:'La vacante "'+v.cargo+'" superó su fecha de cierre pero sigue en estado activa. Debe cerrarse o renovarse.',accion:'Cerrar o renovar',responsable:v.responsable,correo:v.correo,region:v.region,fecha:v.fecha_pub,tipo:'advertencia'});
+    }
+
+    // E-Card con campos vacíos
+    if(v.ecard_generada && v.ecard_campos_vacios>0){
+      ALERTAS.advertencias.push({id:'ecard-vac-'+v.id,ico:'🎨',area:'E-Cards',titulo:'E-Card con campos vacíos',desc:'La E-Card de "'+v.cargo+'" tiene '+v.ecard_campos_vacios+' campos sin completar. Esto afecta la imagen institucional.',accion:'Revisar E-Card',responsable:v.responsable,correo:v.correo,region:v.region,fecha:v.fecha_pub,tipo:'advertencia'});
+    }
+
+    // Vacante sin E-Card generada
+    if(!v.ecard_generada && v.estado==='activa'){
+      ALERTAS.info.push({id:'ecard-nogen-'+v.id,ico:'🎨',area:'E-Cards',titulo:'Vacante sin E-Card generada',desc:'La vacante "'+v.cargo+'" en '+v.empresa+' no tiene E-Card publicitaria generada. Se recomienda crear una para difusión en redes.',accion:'Generar E-Card',responsable:v.responsable,correo:v.correo,region:v.region,fecha:v.fecha_pub,tipo:'info'});
+    }
+
+    // Empresa sin correo de selección registrado
+    if(!v.correo && v.postulados>0){
+      ALERTAS.criticas.push({id:'emp-nocorreo-'+v.id,ico:'📧',area:'Empresas',titulo:'Empresa sin correo de selección',desc:'La vacante "'+v.cargo+'" tiene postulados pero la empresa '+v.empresa+' no tiene correo de selección registrado. No se pueden enviar HV.',accion:'Registrar correo',responsable:v.responsable,correo:'—',region:v.region,fecha:v.fecha_pub,tipo:'critico'});
+    }
+  });
+
+  // ── VACANTES DUPLICADAS ──────────────────────────
+  var vacGrupos={};
+  MOCK.vacantes.forEach(function(v){
+    var key=(v.cargo+'-'+v.empresa+'-'+v.municipio).toLowerCase();
+    if(!vacGrupos[key]) vacGrupos[key]=[];
+    vacGrupos[key].push(v);
+  });
+  Object.values(vacGrupos).forEach(function(grupo){
+    if(grupo.length>1){
+      ALERTAS.criticas.push({id:'vac-dup-'+grupo[0].id,ico:'🔁',area:'Duplicados',titulo:'Vacantes posiblemente duplicadas',desc:'Se encontraron '+grupo.length+' vacantes con el mismo cargo "'+grupo[0].cargo+'", empresa y municipio. Posible publicación duplicada. IDs: '+grupo.map(function(v){return v.id;}).join(', '),accion:'Revisar y eliminar duplicado',responsable:grupo[0].responsable,correo:grupo[0].correo,region:grupo[0].region,fecha:grupo[0].fecha_pub,tipo:'critico'});
+    }
+  });
+
+  // ── CANDIDATOS ────────────────────────────────────
+  MOCK.candidatos.forEach(function(c){
+
+    // Sin responsable o sin correo de responsable
+    if(!c.responsable || !c.correo_resp){
+      ALERTAS.criticas.push({id:'cand-noresp-'+c.id,ico:'👤',area:'Candidatos',titulo:'Candidato sin responsable asignado',desc:'El candidato "'+c.nombre+'" ('+c.doc+') en '+c.region+' no tiene responsable o correo de responsable registrado. No hay trazabilidad del proceso.',accion:'Asignar responsable',responsable:'Sin asignar',correo:'—',region:c.region,fecha:c.fecha_reg,tipo:'critico'});
+    }
+
+    // Sin celular ni correo
+    if(!c.celular && !c.correo){
+      ALERTAS.criticas.push({id:'cand-nocontacto-'+c.id,ico:'📞',area:'Candidatos',titulo:'Candidato sin datos de contacto',desc:'El candidato "'+c.nombre+'" ('+c.doc+') no tiene celular ni correo electrónico. Es imposible contactarlo para ofertas.',accion:'Completar datos de contacto',responsable:c.responsable||'Sin asignar',correo:c.correo_resp||'—',region:c.region,fecha:c.fecha_reg,tipo:'critico'});
+    }
+
+    // HV incompleta con postulaciones activas
+    if(c.completitud<100 && c.postulaciones>0){
+      ALERTAS.advertencias.push({id:'hv-inc-'+c.id,ico:'📄',area:'Hojas de Vida',titulo:'HV incompleta con postulaciones activas',desc:'El candidato "'+c.nombre+'" tiene su HV al '+c.completitud+'% de completitud pero tiene '+c.postulaciones+' postulación(es) activa(s). Esto reduce sus probabilidades de ser seleccionado.',accion:'Completar HV',responsable:c.responsable||'Sin asignar',correo:c.correo_resp||'—',region:c.region,fecha:c.fecha_reg,tipo:'advertencia'});
+    }
+  });
+
+  // ── CANDIDATOS DUPLICADOS ────────────────────────
+  var docGrupos={};
+  MOCK.candidatos.forEach(function(c){
+    if(!docGrupos[c.doc]) docGrupos[c.doc]=[];
+    docGrupos[c.doc].push(c);
+  });
+  Object.values(docGrupos).forEach(function(grupo){
+    if(grupo.length>1){
+      ALERTAS.criticas.push({id:'cand-dup-'+grupo[0].id,ico:'🔁',area:'Duplicados',titulo:'Candidato registrado más de una vez',desc:'El documento '+grupo[0].doc+' aparece '+grupo.length+' veces en el sistema ('+grupo.map(function(c){return c.nombre+' / '+c.region;}).join(' — ')+'). Probable registro duplicado.',accion:'Unificar registros',responsable:grupo[0].responsable||'Sin asignar',correo:grupo[0].correo_resp||'—',region:grupo[0].region,fecha:grupo[0].fecha_reg,tipo:'critico'});
+    }
+  });
+
+  // ── CONTRATADOS DUPLICADOS ────────────────────────
+  var contGrupos={};
+  MOCK.contratados.forEach(function(c){
+    if(!contGrupos[c.doc]) contGrupos[c.doc]=[];
+    contGrupos[c.doc].push(c);
+  });
+  Object.values(contGrupos).forEach(function(grupo){
+    if(grupo.length>1){
+      // Verificar si las fechas están dentro de 5 días
+      var fechas=grupo.map(function(c){return new Date(c.fecha);}).sort();
+      var difDias=Math.round((fechas[fechas.length-1]-fechas[0])/(1000*60*60*24));
+      if(difDias<=5){
+        ALERTAS.criticas.push({id:'cont-dup-'+grupo[0].candidato_id,ico:'🚨',area:'Duplicados',titulo:'¡COLOCADO DUPLICADO! Misma persona en dos empresas',desc:'"'+grupo[0].candidato+'" ('+grupo[0].doc+') aparece como contratado en '+grupo.map(function(c){return c.empresa;}).join(' y ')+' con '+difDias+' días de diferencia. Posible registro fraudulento o error. Responsables: '+grupo.map(function(c){return c.responsable;}).join(', '),accion:'REVISAR URGENTE',responsable:grupo.map(function(c){return c.responsable;}).join(', '),correo:'—',region:grupo[0].region,fecha:grupo[0].fecha,tipo:'critico'});
+      }
+    }
+  });
+
+  // ── COLABORADORES ────────────────────────────────
+  MOCK.colaboradores.forEach(function(col){
+    if(!col.sla_ok){
+      ALERTAS.advertencias.push({id:'colab-sla-'+col.nombre.replace(/ /g,'-'),ico:'⏱️',area:'Desempeño',titulo:'Colaborador incumpliendo SLA de tiempos',desc:col.nombre+' ('+col.rol+', '+col.region+') tiene un tiempo promedio de respuesta de '+col.tiempo_resp_prom_hrs+' horas. El SLA máximo es 24 horas.',accion:'Revisar gestión',responsable:col.nombre,correo:col.correo,region:col.region,fecha:new Date().toISOString().split('T')[0],tipo:'advertencia'});
+    }
+    if(col.hv_enviadas_mes===0 && (col.rol==='Intermediador'||col.rol==='Asesor empresarial') && col.vacantes_gestionadas>0){
+      ALERTAS.advertencias.push({id:'colab-nohv-'+col.nombre.replace(/ /g,'-'),ico:'📬',area:'Desempeño',titulo:'Intermediador sin envío de HV en el mes',desc:col.nombre+' ('+col.rol+') tiene '+col.vacantes_gestionadas+' vacantes gestionadas pero 0 HV enviadas a empresas en el período.',accion:'Revisar proceso',responsable:col.nombre,correo:col.correo,region:col.region,fecha:new Date().toISOString().split('T')[0],tipo:'advertencia'});
+    }
+  });
+
+  // Actualizar badges
+  actualizarBadges();
+  actualizarScore();
+  toast('Auditoría completada — '+ALERTAS.criticas.length+' críticas, '+ALERTAS.advertencias.length+' advertencias');
+}
+
+function actualizarBadges(){
+  var el=function(id){return document.getElementById(id);};
+  if(el('nb-crit')) el('nb-crit').textContent=ALERTAS.criticas.length;
+  if(el('nb-warn')) el('nb-warn').textContent=ALERTAS.advertencias.length;
+  // Duplicados
+  var dups=ALERTAS.criticas.filter(function(a){return a.area==='Duplicados';}).length;
+  if(el('nb-dup')) el('nb-dup').textContent=dups;
+  // HV
+  var hvs=MOCK.candidatos.filter(function(c){return c.completitud<100;}).length;
+  if(el('nb-hv')) el('nb-hv').textContent=hvs;
+  // Vacantes
+  var vacProb=ALERTAS.criticas.filter(function(a){return a.area==='Vacantes'||a.area==='Vacantes Hidrocarburos';}).length+
+    ALERTAS.advertencias.filter(function(a){return a.area==='Vacantes';}).length;
+  if(el('nb-vac')) el('nb-vac').textContent=vacProb;
+}
+
+function actualizarScore(){
+  var total=ALERTAS.criticas.length+ALERTAS.advertencias.length;
+  var maxProblemas=30; // umbral de referencia
+  var pct=Math.max(0,Math.round((1-Math.min(total,maxProblemas)/maxProblemas)*100));
+  var el=document.getElementById('score-num');
+  var fill=document.getElementById('score-fill');
+  if(el) el.textContent=pct+'%';
+  if(fill){
+    fill.style.width=pct+'%';
+    fill.style.background=pct>=80?'#27ae60':pct>=60?'var(--amarillo)':'var(--rojo)';
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════════════
+function renderDashboard(){
+  var stats=[
+    {cls:'',ico:'🔴',val:ALERTAS.criticas.length,lbl:'Alertas críticas'},
+    {cls:'warn',ico:'🟡',val:ALERTAS.advertencias.length,lbl:'Advertencias'},
+    {cls:'info',ico:'🔁',val:ALERTAS.criticas.filter(function(a){return a.area==='Duplicados';}).length,lbl:'Duplicados detectados'},
+    {cls:'ok',ico:'✅',val:ALERTAS.info.length,lbl:'Buenas prácticas pendientes'},
+    {cls:'warn',ico:'📄',val:MOCK.candidatos.filter(function(c){return c.completitud<100;}).length,lbl:'HV incompletas'},
+    {cls:'ok',ico:'📊',val:MOCK.vacantes.filter(function(v){return v.estado==='activa';}).length,lbl:'Vacantes activas'}
+  ];
+  var el=document.getElementById('dash-stats');
+  if(el) el.innerHTML=stats.map(function(s){
+    return '<div class="scard '+s.cls+'"><div class="sico">'+s.ico+'</div><div class="sval">'+s.val+'</div><div class="slbl">'+s.lbl+'</div></div>';
+  }).join('');
+
+  // Resumen por área
+  var areas={};
+  ALERTAS.criticas.concat(ALERTAS.advertencias).forEach(function(a){
+    if(!areas[a.area]) areas[a.area]={crit:0,warn:0};
+    if(a.tipo==='critico') areas[a.area].crit++;
+    else areas[a.area].warn++;
+  });
+
+  var resumen=document.getElementById('dash-resumen');
+  if(!resumen) return;
+
+  var areaHtml=Object.entries(areas).map(function(e){
+    return '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--borde);font-size:13px;align-items:center">'+
+      '<span style="font-weight:600">'+e[0]+'</span>'+
+      '<div style="display:flex;gap:8px">'+
+        (e[1].crit?'<span style="background:#fdecea;color:var(--rojo);padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700">'+e[1].crit+' críticas</span>':'')+
+        (e[1].warn?'<span style="background:#fff8e6;color:var(--amarillo);padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700">'+e[1].warn+' advertencias</span>':'')+
+      '</div></div>';
+  }).join('');
+
+  // Top alertas urgentes
+  var top5=ALERTAS.criticas.slice(0,5);
+  var top5Html=top5.map(function(a){
+    return '<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--borde)">'+
+      '<span style="font-size:22px">'+a.ico+'</span>'+
+      '<div style="flex:1"><div style="font-weight:600;font-size:13px">'+a.titulo+'</div>'+
+      '<div style="font-size:12px;color:var(--texto-g)">'+a.responsable+' · '+a.region+'</div></div>'+
+      '<span style="font-size:11px;font-weight:700;color:var(--rojo);background:#fdecea;padding:3px 8px;border-radius:20px">URGENTE</span>'+
+    '</div>';
+  }).join('');
+
+  resumen.innerHTML=
+    '<div style="background:#fff;border-radius:14px;box-shadow:0 2px 16px rgba(0,0,0,.07);padding:20px">'+
+      '<div style="font-family:Nunito;font-weight:800;font-size:16px;color:#1a1a2e;margin-bottom:14px">📊 Alertas por área</div>'+
+      (areaHtml||'<p style="color:var(--texto-g);font-size:13px">Sin alertas detectadas ✅</p>')+
+    '</div>'+
+    '<div style="background:#fff;border-radius:14px;box-shadow:0 2px 16px rgba(0,0,0,.07);padding:20px">'+
+      '<div style="font-family:Nunito;font-weight:800;font-size:16px;color:#1a1a2e;margin-bottom:14px">🚨 Top 5 alertas más urgentes</div>'+
+      (top5Html||'<p style="color:var(--texto-g);font-size:13px">Sin alertas críticas ✅</p>')+
+    '</div>';
+}
+
+// ═══════════════════════════════════════════════════
+// RENDER ALERTAS
+// ═══════════════════════════════════════════════════
+function renderAlertas(tipo){
+  var lista = tipo==='criticas' ? ALERTAS.criticas : ALERTAS.advertencias;
+  var contId = tipo==='criticas' ? 'lista-criticas' : 'lista-advertencias';
+  var el = document.getElementById(contId);
+  if(!el) return;
+  if(!lista.length){
+    el.innerHTML='<div style="background:#fff;border-radius:14px;padding:40px;text-align:center;color:#27ae60;font-size:15px;font-weight:700;box-shadow:0 2px 12px rgba(0,0,0,.06)">✅ No hay '+(tipo==='criticas'?'alertas críticas':'advertencias')+' activas</div>';
+    return;
+  }
+  el.innerHTML=lista.map(function(a){
+    var revisada=REVISADAS[a.id];
+    return '<div class="alerta-card '+a.tipo+'" id="alert-'+a.id+'" style="'+(revisada?'opacity:.5':'')+'">'+
+      '<div class="alerta-ico">'+a.ico+'</div>'+
+      '<div class="alerta-body">'+
+        '<div class="alerta-titulo">'+a.titulo+(revisada?' <span style="font-size:11px;color:#27ae60;font-weight:600">✓ Revisada</span>':'')+'</div>'+
+        '<div class="alerta-desc">'+a.desc+'</div>'+
+        '<div class="alerta-meta">'+
+          '<span class="alerta-tag blue">👤 '+a.responsable+'</span>'+
+          '<span class="alerta-tag blue">📧 '+a.correo+'</span>'+
+          '<span class="alerta-tag">📍 '+a.region+'</span>'+
+          '<span class="alerta-tag">📅 '+fmtFecha(a.fecha)+'</span>'+
+          '<span class="alerta-tag '+(a.tipo==='critico'?'red':'yellow')+'">'+a.area+'</span>'+
+          '<button class="alerta-accion'+(revisada?' ok':'') +'" onclick="toggleRevisada(\''+a.id+'\')">'+
+            (revisada?'✓ Revisada':'Marcar revisada')+'</button>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+function toggleRevisada(id){
+  REVISADAS[id]=!REVISADAS[id];
+  var card=document.getElementById('alert-'+id);
+  if(card) card.style.opacity=REVISADAS[id]?'.5':'1';
+  var btn=card?card.querySelector('.alerta-accion'):null;
+  if(btn){btn.textContent=REVISADAS[id]?'✓ Revisada':'Marcar revisada';btn.classList.toggle('ok',REVISADAS[id]);}
+  toast(REVISADAS[id]?'Alerta marcada como revisada':'Alerta reabierta');
+}
+
+function marcarRevisada(){cerrarModal('modal-alerta');toast('Alerta marcada como revisada');}
+
+// ═══════════════════════════════════════════════════
+// DUPLICADOS
+// ═══════════════════════════════════════════════════
+function renderDuplicados(){
+  var el=document.getElementById('lista-duplicados');
+  if(!el) return;
+  var dups=ALERTAS.criticas.filter(function(a){return a.area==='Duplicados';});
+  if(!dups.length){el.innerHTML='<div style="background:#fff;border-radius:14px;padding:40px;text-align:center;color:#27ae60;font-size:15px;font-weight:700;box-shadow:0 2px 12px rgba(0,0,0,.06)">✅ No se detectaron duplicados</div>';return;}
+
+  el.innerHTML='<div style="background:#fff3cd;border-left:4px solid var(--amarillo);border-radius:10px;padding:14px 18px;margin-bottom:16px;font-size:13px"><strong>⚠️ Atención:</strong> Los duplicados detectados requieren verificación manual. Un candidato duplicado puede indicar registro doble accidental. Un colocado duplicado puede indicar error grave o irregularidad.</div>'+
+    dups.map(function(a){
+      return '<div class="alerta-card critico">'+
+        '<div class="alerta-ico">'+a.ico+'</div>'+
+        '<div class="alerta-body">'+
+          '<div class="alerta-titulo">'+a.titulo+'</div>'+
+          '<div class="alerta-desc">'+a.desc+'</div>'+
+          '<div class="alerta-meta">'+
+            '<span class="alerta-tag blue">👤 '+a.responsable+'</span>'+
+            '<span class="alerta-tag">📍 '+a.region+'</span>'+
+            '<span class="alerta-tag red">'+a.area+'</span>'+
+            '<button class="alerta-accion" onclick="toggleRevisada(\''+a.id+'\')">Marcar revisada</button>'+
+          '</div>'+
+        '</div>'+
+      '</div>';
+    }).join('');
+}
+
+// ═══════════════════════════════════════════════════
+// HV INCOMPLETAS
+// ═══════════════════════════════════════════════════
+function renderHVs(lista){
+  lista=lista||MOCK.candidatos.filter(function(c){return c.completitud<100;});
+  var el=document.getElementById('lista-hvs');
+  if(!el) return;
+  if(!lista.length){el.innerHTML='<p style="color:var(--texto-g);padding:20px">Todas las HV están al 100% ✅</p>';return;}
+  el.innerHTML=lista.map(function(c){
+    var color=colorNivel(c.completitud);
+    return '<div style="background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.07);padding:16px 20px;margin-bottom:10px;display:flex;align-items:center;gap:16px;border-left:4px solid '+color+'">'+
+      '<div style="font-size:32px">👤</div>'+
+      '<div style="flex:1">'+
+        '<div style="font-weight:700;font-size:14px">'+c.nombre+'</div>'+
+        '<div style="font-size:12px;color:var(--texto-g);margin:3px 0">'+c.doc+' · '+c.region+' · '+c.municipio+'</div>'+
+        '<div style="height:6px;background:var(--borde);border-radius:3px;width:200px;margin-top:6px;overflow:hidden">'+
+          '<div style="height:100%;width:'+c.completitud+'%;background:'+color+';border-radius:3px"></div>'+
+        '</div>'+
+        '<div style="font-size:11px;color:'+color+';font-weight:700;margin-top:3px">'+c.completitud+'% completado</div>'+
+      '</div>'+
+      '<div style="text-align:right;font-size:12px;color:var(--texto-g)">'+
+        '<div>📞 '+(c.celular||'<span style="color:var(--rojo)">Sin celular</span>')+'</div>'+
+        '<div style="margin-top:4px">📧 '+(c.correo||'<span style="color:var(--rojo)">Sin correo</span>')+'</div>'+
+        '<div style="margin-top:4px;font-weight:600;color:var(--azul)">👤 '+(c.responsable||'<span style="color:var(--rojo)">Sin responsable</span>')+'</div>'+
+        '<div style="margin-top:4px;font-size:11px;color:var(--texto-g)">'+c.postulaciones+' postulación(es)</div>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+function filtrarHVs(){
+  var q=document.getElementById('fhv-q').value.toLowerCase();
+  var pct=document.getElementById('fhv-pct').value;
+  var lista=MOCK.candidatos.filter(function(c){
+    if(c.completitud>=100) return false;
+    var okQ=!q||c.nombre.toLowerCase().indexOf(q)>-1||c.doc.indexOf(q)>-1;
+    var okP=!pct;
+    if(pct==='0') okP=c.completitud<=20;
+    else if(pct==='1') okP=c.completitud>20&&c.completitud<=50;
+    else if(pct==='2') okP=c.completitud>50&&c.completitud<=80;
+    else if(pct==='3') okP=c.completitud>80&&c.completitud<100;
+    return okQ&&okP;
+  });
+  renderHVs(lista);
+}
+
+// ═══════════════════════════════════════════════════
+// VACANTES AUDITORÍA
+// ═══════════════════════════════════════════════════
+function renderVacantesAudit(){
+  var el=document.getElementById('lista-vacantes-audit');
+  if(!el) return;
+  var vacProb=ALERTAS.criticas.concat(ALERTAS.advertencias).filter(function(a){
+    return a.area==='Vacantes'||a.area==='Vacantes Hidrocarburos'||a.area==='Tiempos'||a.area==='Intermediación';
+  });
+  if(!vacProb.length){el.innerHTML='<div style="background:#fff;border-radius:14px;padding:40px;text-align:center;color:#27ae60;font-size:15px;font-weight:700;box-shadow:0 2px 12px rgba(0,0,0,.06)">✅ No se detectaron problemas en vacantes</div>';return;}
+  el.innerHTML=vacProb.map(function(a){
+    return '<div class="alerta-card '+a.tipo+'">'+
+      '<div class="alerta-ico">'+a.ico+'</div>'+
+      '<div class="alerta-body">'+
+        '<div class="alerta-titulo">'+a.titulo+'</div>'+
+        '<div class="alerta-desc">'+a.desc+'</div>'+
+        '<div class="alerta-meta">'+
+          '<span class="alerta-tag blue">👤 '+a.responsable+'</span>'+
+          '<span class="alerta-tag blue">📧 '+a.correo+'</span>'+
+          '<span class="alerta-tag">📍 '+a.region+'</span>'+
+          '<span class="alerta-tag '+(a.tipo==='critico'?'red':'yellow')+'">'+a.area+'</span>'+
+          '<button class="alerta-accion" onclick="toggleRevisada(\''+a.id+'\')">Marcar revisada</button>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════
+// E-CARDS AUDITORÍA
+// ═══════════════════════════════════════════════════
+function renderECardsAudit(){
+  var el=document.getElementById('lista-ecards-audit');
+  if(!el) return;
+  var sinEcard=MOCK.vacantes.filter(function(v){return !v.ecard_generada&&v.estado==='activa';});
+  var ecardProb=MOCK.vacantes.filter(function(v){return v.ecard_generada&&v.ecard_campos_vacios>0;});
+  var html='';
+  if(ecardProb.length){
+    html+='<div style="font-family:Nunito;font-weight:800;font-size:16px;color:#1a1a2e;margin-bottom:12px">🔴 E-Cards con campos incompletos</div>';
+    html+=ecardProb.map(function(v){
+      return '<div class="alerta-card advertencia">'+
+        '<div class="alerta-ico">🎨</div>'+
+        '<div class="alerta-body">'+
+          '<div class="alerta-titulo">"'+v.cargo+'" — '+v.empresa+'</div>'+
+          '<div class="alerta-desc">'+v.ecard_campos_vacios+' campo(s) sin completar en la E-Card. Revisar teléfono, salario, fecha de cierre o NBC.</div>'+
+          '<div class="alerta-meta">'+
+            '<span class="alerta-tag blue">👤 '+v.responsable+'</span>'+
+            '<span class="alerta-tag blue">📧 '+v.correo+'</span>'+
+            '<span class="alerta-tag">📍 '+v.region+'</span>'+
+          '</div>'+
+        '</div></div>';
+    }).join('');
+  }
+  if(sinEcard.length){
+    html+='<div style="font-family:Nunito;font-weight:800;font-size:16px;color:#1a1a2e;margin:20px 0 12px">🟡 Vacantes activas sin E-Card</div>';
+    html+=sinEcard.map(function(v){
+      return '<div class="alerta-card info" style="border-left-color:var(--azul)">'+
+        '<div class="alerta-ico">🎨</div>'+
+        '<div class="alerta-body">'+
+          '<div class="alerta-titulo">"'+v.cargo+'" — '+v.empresa+'</div>'+
+          '<div class="alerta-desc">Esta vacante activa no tiene E-Card generada. Se recomienda crear una para difusión en redes sociales y WhatsApp.</div>'+
+          '<div class="alerta-meta">'+
+            '<span class="alerta-tag blue">👤 '+v.responsable+'</span>'+
+            '<span class="alerta-tag">📍 '+v.region+'</span>'+
+          '</div>'+
+        '</div></div>';
+    }).join('');
+  }
+  if(!html) html='<div style="background:#fff;border-radius:14px;padding:40px;text-align:center;color:#27ae60;font-size:15px;font-weight:700;box-shadow:0 2px 12px rgba(0,0,0,.06)">✅ Todas las E-Cards están en orden</div>';
+  el.innerHTML=html;
+}
+
+// ═══════════════════════════════════════════════════
+// TIEMPOS
+// ═══════════════════════════════════════════════════
+function renderTiempos(){
+  var slaOk=MOCK.colaboradores.filter(function(c){return c.sla_ok;}).length;
+  var slaFail=MOCK.colaboradores.filter(function(c){return !c.sla_ok;}).length;
+  var vacTard=ALERTAS.advertencias.filter(function(a){return a.area==='Tiempos';}).length;
+
+  var el=document.getElementById('tiempos-stats');
+  if(el) el.innerHTML=[
+    {cls:'ok',ico:'✅',val:slaOk,lbl:'Colaboradores en SLA'},
+    {cls:'',ico:'🔴',val:slaFail,lbl:'Colaboradores fuera de SLA'},
+    {cls:'warn',ico:'⏱️',val:vacTard,lbl:'Procesos con demora'},
+    {cls:'info',ico:'📬',val:MOCK.vacantes.filter(function(v){return v.postulados>0&&!v.hv_enviadas;}).length,lbl:'Empresas sin respuesta HV'}
+  ].map(function(s){return '<div class="scard '+s.cls+'"><div class="sico">'+s.ico+'</div><div class="sval">'+s.val+'</div><div class="slbl">'+s.lbl+'</div></div>';}).join('');
+
+  var lt=document.getElementById('lista-tiempos');
+  if(!lt) return;
+
+  var slaHtml='<div style="font-family:Nunito;font-weight:800;font-size:16px;color:#1a1a2e;margin-bottom:14px">SLA de tiempos de respuesta por colaborador</div>'+
+    '<div style="background:#fff;border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,.07);overflow:hidden">'+
+    '<table style="width:100%;border-collapse:collapse;font-size:13px">'+
+    '<thead><tr style="background:#1a1a2e;color:#fff">'+
+      '<th style="padding:10px 14px;text-align:left">Colaborador</th>'+
+      '<th style="padding:10px 14px;text-align:left">Rol</th>'+
+      '<th style="padding:10px 14px;text-align:left">Región</th>'+
+      '<th style="padding:10px 14px;text-align:center">T. Prom. respuesta</th>'+
+      '<th style="padding:10px 14px;text-align:center">SLA (24h)</th>'+
+      '<th style="padding:10px 14px;text-align:center">HV enviadas</th>'+
+    '</tr></thead><tbody>'+
+    MOCK.colaboradores.map(function(c,i){
+      var bg=i%2===0?'#fff':'#f8f8f8';
+      var slaColor=c.sla_ok?'#27ae60':'var(--rojo)';
+      var tResp=c.tiempo_resp_prom_hrs>0?c.tiempo_resp_prom_hrs+'h':'—';
+      return '<tr style="background:'+bg+'">'+
+        '<td style="padding:10px 14px"><strong>'+c.nombre+'</strong></td>'+
+        '<td style="padding:10px 14px;color:var(--texto-g)">'+c.rol+'</td>'+
+        '<td style="padding:10px 14px;color:var(--texto-g)">'+c.region+'</td>'+
+        '<td style="padding:10px 14px;text-align:center;font-weight:700;color:'+slaColor+'">'+tResp+'</td>'+
+        '<td style="padding:10px 14px;text-align:center"><span style="background:'+(c.sla_ok?'#eafaf1':'#fdecea')+';color:'+slaColor+';padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700">'+( c.sla_ok?'✅ OK':'❌ FALLA')+'</span></td>'+
+        '<td style="padding:10px 14px;text-align:center">'+c.hv_enviadas_mes+'</td>'+
+      '</tr>';
+    }).join('')+
+    '</tbody></table></div>';
+  lt.innerHTML=slaHtml;
+}
+
+// ═══════════════════════════════════════════════════
+// ACCESO COORDINADOR — PIN
+// ═══════════════════════════════════════════════════
+function nextPin(current, nextId){
+  if(current.value.length===1){
+    var next=document.getElementById(nextId);
+    if(next) next.focus();
+  }
+}
+
+function validarPin(){
+  var pin=['pin1','pin2','pin3','pin4'].map(function(id){return document.getElementById(id).value;}).join('');
+  if(pin.length<4) return;
+  var region=document.getElementById('coord-region').value;
+  if(!region){toast('Selecciona tu región primero','warn');return;}
+  var pinCorrecto=PINES_COORD[region];
+  if(pin===pinCorrecto){
+    coordRegion=region;
+    ['pin1','pin2','pin3','pin4'].forEach(function(id){document.getElementById(id).value='';});
+    document.getElementById('pin-error').style.display='none';
+    nav('desemp-coord');
+    renderDesempeno(region);
+  } else {
+    document.getElementById('pin-error').style.display='block';
+    ['pin1','pin2','pin3','pin4'].forEach(function(id){document.getElementById(id).value='';});
+    document.getElementById('pin1').focus();
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// DESEMPEÑO POR COLABORADOR
+// ═══════════════════════════════════════════════════
+function renderDesempeno(region){
+  var titulo=document.getElementById('coord-titulo');
+  if(titulo) titulo.textContent='Equipo — '+region+' · Solo visible para el coordinador de esta región';
+
+  var colab=MOCK.colaboradores.filter(function(c){return c.region===region;});
+  var el=document.getElementById('lista-desemp');
+  if(!el) return;
+  if(!colab.length){el.innerHTML='<p style="color:var(--texto-g)">No hay colaboradores registrados en esta región.</p>';return;}
+
+  el.innerHTML=colab.map(function(c){
+    var kpis=getKpisPorRol(c);
+    return '<div class="desemp-card">'+
+      '<div class="desemp-header">'+
+        '<div class="desemp-av">'+c.nombre.charAt(0)+'</div>'+
+        '<div style="flex:1">'+
+          '<div class="desemp-nombre">'+c.nombre+'</div>'+
+          '<div class="desemp-rol">'+c.rol+'</div>'+
+          '<div style="font-size:12px;color:var(--texto-g);margin-top:2px">📧 '+c.correo+'</div>'+
+        '</div>'+
+        '<div class="desemp-region">📍 '+c.region+'</div>'+
+        '<div style="text-align:center;background:'+(c.sla_ok?'#eafaf1':'#fdecea')+';padding:8px 14px;border-radius:10px">'+
+          '<div style="font-family:Nunito;font-size:18px;font-weight:900;color:'+(c.sla_ok?'#27ae60':'var(--rojo)')+'">'+( c.sla_ok?'✅':'⚠️')+'</div>'+
+          '<div style="font-size:10px;font-weight:700;color:var(--texto-g)">SLA</div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="metricas-grid">'+kpis.map(function(k){
+        var pct=k.max?Math.min(Math.round((k.val/k.max)*100),100):0;
+        var color=pct>=80?'#27ae60':pct>=40?'var(--amarillo)':'var(--rojo)';
+        return '<div class="metrica">'+
+          '<div class="metrica-val" style="color:'+color+'">'+k.val+'</div>'+
+          '<div class="metrica-label">'+k.label+'</div>'+
+          '<div class="metrica-barra"><div class="metrica-fill" style="width:'+pct+'%;background:'+color+'"></div></div>'+
+          '<div style="font-size:10px;color:var(--texto-g);margin-top:3px">Meta: '+k.meta+'</div>'+
+        '</div>';
+      }).join('')+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+function getKpisPorRol(c){
+  var base=[
+    {label:'Candidatos registrados',val:c.candidatos_reg,max:20,meta:'20/mes'},
+    {label:'Eventos realizados',val:c.eventos,max:4,meta:'4/mes'}
+  ];
+  if(c.rol==='Asesor empresarial'||c.rol==='Intermediador'){
+    base=base.concat([
+      {label:'Vacantes gestionadas',val:c.vacantes_gestionadas,max:10,meta:'10/mes'},
+      {label:'HV enviadas a empresas',val:c.hv_enviadas_mes,max:20,meta:'20/mes'},
+      {label:'Personas colocadas',val:c.colocados,max:5,meta:'5/mes'}
+    ]);
+  }
+  if(c.rol==='Orientador'){
+    base=base.concat([
+      {label:'Laboratorios realizados',val:c.laboratorios,max:10,meta:'10/mes'},
+      {label:'Personas colocadas',val:c.colocados,max:5,meta:'5/mes'}
+    ]);
+  }
+  if(c.rol==='Analista de inclusión'){
+    base=base.concat([
+      {label:'Laboratorios realizados',val:c.laboratorios,max:10,meta:'10/mes'},
+      {label:'Población especial atendida',val:c.candidatos_reg,max:15,meta:'15/mes'}
+    ]);
+  }
+  if(c.rol==='Analista de fomento'){
+    base=base.concat([
+      {label:'Vacantes gestionadas',val:c.vacantes_gestionadas,max:10,meta:'10/mes'},
+      {label:'Colocados fomento',val:c.colocados,max:5,meta:'5/mes'}
+    ]);
+  }
+  return base;
+}
+
+// ═══════════════════════════════════════════════════
+// POR REGIÓN
+// ═══════════════════════════════════════════════════
+function renderPorRegion(){
+  var el=document.getElementById('lista-region');
+  if(!el) return;
+  var regiones={};
+  ALERTAS.criticas.concat(ALERTAS.advertencias).forEach(function(a){
+    if(!regiones[a.region]) regiones[a.region]={crit:0,warn:0};
+    if(a.tipo==='critico') regiones[a.region].crit++;
+    else regiones[a.region].warn++;
+  });
+
+  el.innerHTML='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px">'+
+    Object.entries(regiones).sort(function(a,b){return (b[1].crit+b[1].warn)-(a[1].crit+a[1].warn);}).map(function(e){
+      var total=e[1].crit+e[1].warn;
+      var score=Math.max(0,Math.round((1-Math.min(total,10)/10)*100));
+      var color=colorNivel(score);
+      return '<div style="background:#fff;border-radius:14px;box-shadow:0 2px 16px rgba(0,0,0,.08);padding:20px;border-top:4px solid '+color+'">'+
+        '<div style="font-family:Nunito;font-weight:800;font-size:16px;color:#1a1a2e;margin-bottom:10px">📍 '+e[0]+'</div>'+
+        '<div style="display:flex;gap:10px;margin-bottom:12px">'+
+          (e[1].crit?'<span style="background:#fdecea;color:var(--rojo);padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700">'+e[1].crit+' críticas</span>':'')+
+          (e[1].warn?'<span style="background:#fff8e6;color:var(--amarillo);padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700">'+e[1].warn+' advertencias</span>':'')+
+        '</div>'+
+        '<div style="font-size:13px;color:var(--texto-g);margin-bottom:8px">Índice de calidad: <strong style="color:'+color+'">'+score+'%</strong></div>'+
+        '<div style="height:6px;background:var(--borde);border-radius:3px;overflow:hidden"><div style="height:100%;width:'+score+'%;background:'+color+';border-radius:3px"></div></div>'+
+      '</div>';
+    }).join('')+
+  '</div>';
+}
+
+// ═══════════════════════════════════════════════════
+// EXPORTAR
+// ═══════════════════════════════════════════════════
+function exportarInformeExcel(){
+  var wb=XLSX.utils.book_new();
+  // Hoja alertas críticas
+  var rowsC=[['Tipo','Área','Título','Descripción','Responsable','Correo','Región','Fecha']];
+  ALERTAS.criticas.forEach(function(a){rowsC.push(['CRÍTICA',a.area,a.titulo,a.desc,a.responsable,a.correo,a.region,a.fecha]);});
+  ALERTAS.advertencias.forEach(function(a){rowsC.push(['ADVERTENCIA',a.area,a.titulo,a.desc,a.responsable,a.correo,a.region,a.fecha]);});
+  var ws1=XLSX.utils.aoa_to_sheet(rowsC);
+  ws1['!cols']=[{wch:12},{wch:20},{wch:40},{wch:60},{wch:20},{wch:25},{wch:18},{wch:12}];
+  XLSX.utils.book_append_sheet(wb,ws1,'Alertas');
+  // Hoja HV incompletas
+  var rowsH=[['Nombre','Documento','Región','Municipio','Completitud %','Celular','Correo','Responsable','Postulaciones']];
+  MOCK.candidatos.filter(function(c){return c.completitud<100;}).forEach(function(c){
+    rowsH.push([c.nombre,c.doc,c.region,c.municipio,c.completitud,c.celular,c.correo,c.responsable,c.postulaciones]);
+  });
+  var ws2=XLSX.utils.aoa_to_sheet(rowsH);
+  XLSX.utils.book_append_sheet(wb,ws2,'HV Incompletas');
+  XLSX.writeFile(wb,'informe_auditoria_comfenalco.xlsx');
+  toast('Informe de auditoría exportado en Excel');
+}
+
+function exportarDesempenoExcel(){
+  if(!coordRegion){toast('Sin región seleccionada','warn');return;}
+  var colab=MOCK.colaboradores.filter(function(c){return c.region===coordRegion;});
+  var wb=XLSX.utils.book_new();
+  var rows=[['Nombre','Rol','Región','Correo','Candidatos reg.','HV enviadas','Vacantes gestión','Eventos','Laboratorios','Colocados','T. resp. (hrs)','SLA OK']];
+  colab.forEach(function(c){rows.push([c.nombre,c.rol,c.region,c.correo,c.candidatos_reg,c.hv_enviadas_mes,c.vacantes_gestionadas,c.eventos,c.laboratorios,c.colocados,c.tiempo_resp_prom_hrs,c.sla_ok?'SÍ':'NO']);});
+  var ws=XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols']=rows[0].map(function(){return {wch:18};});
+  XLSX.utils.book_append_sheet(wb,ws,'Desempeño');
+  XLSX.writeFile(wb,'desempeno_'+coordRegion.replace(/ /g,'_')+'.xlsx');
+  toast('Exportado desempeño de '+coordRegion);
+}
+
+function exportarInformePDF(){
+  if(typeof window.jspdf==='undefined'){toast('Cargando librería...','warn');setTimeout(exportarInformePDF,1000);return;}
+  var jsPDF=window.jspdf.jsPDF;
+  var doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  var W=210,mg=18,y=mg;
+
+  doc.setFillColor(26,26,46);doc.rect(0,0,W,30,'F');
+  doc.setTextColor(255,255,255);doc.setFontSize(16);doc.setFont('helvetica','bold');
+  doc.text('INFORME DE AUDITORÍA INTERNA',mg,13);
+  doc.setFontSize(10);doc.setFont('helvetica','normal');
+  doc.text('Agencia de Empleo y Emprendimiento — Comfenalco Antioquia',mg,20);
+  doc.setFontSize(9);doc.text('Fecha: '+new Date().toLocaleDateString('es-CO'),mg,27);
+  y=38;
+
+  // Resumen
+  doc.setFillColor(240,240,245);doc.rect(mg,y,W-mg*2,20,'F');
+  var kpis2=[
+    {l:'Alertas críticas',v:ALERTAS.criticas.length,c:[231,76,60]},
+    {l:'Advertencias',v:ALERTAS.advertencias.length,c:[243,156,18]},
+    {l:'HV incompletas',v:MOCK.candidatos.filter(function(c){return c.completitud<100;}).length,c:[45,74,107]},
+    {l:'Duplicados',v:ALERTAS.criticas.filter(function(a){return a.area==='Duplicados';}).length,c:[231,76,60]}
+  ];
+  var kw=(W-mg*2-6)/4;
+  kpis2.forEach(function(k,i){
+    var x=mg+i*(kw+2);
+    doc.setFillColor(k.c[0],k.c[1],k.c[2]);doc.rect(x,y,kw,20,'F');
+    doc.setTextColor(255,255,255);doc.setFontSize(16);doc.setFont('helvetica','bold');
+    doc.text(String(k.v),x+kw/2,y+11,{align:'center'});
+    doc.setFontSize(7);doc.setFont('helvetica','normal');
+    doc.text(k.l,x+kw/2,y+17,{align:'center',maxWidth:kw-2});
+  });
+  y+=28;
+
+  // Alertas críticas
+  doc.setFillColor(231,76,60);doc.rect(mg,y,W-mg*2,7,'F');
+  doc.setTextColor(255,255,255);doc.setFontSize(10);doc.setFont('helvetica','bold');
+  doc.text('ALERTAS CRÍTICAS ('+ALERTAS.criticas.length+')',mg+4,y+5);y+=9;
+
+  ALERTAS.criticas.slice(0,15).forEach(function(a,i){
+    if(y>270){doc.addPage();y=mg;}
+    var bg=i%2===0?[255,255,255]:[248,240,240];
+    doc.setFillColor(bg[0],bg[1],bg[2]);doc.rect(mg,y,W-mg*2,14,'F');
+    doc.setFillColor(231,76,60);doc.rect(mg,y,3,14,'F');
+    doc.setTextColor(26,26,46);doc.setFontSize(8);doc.setFont('helvetica','bold');
+    doc.text(a.titulo,mg+5,y+5,{maxWidth:W-mg*2-60});
+    doc.setFont('helvetica','normal');doc.setTextColor(80,80,80);doc.setFontSize(7);
+    doc.text(a.desc,mg+5,y+9.5,{maxWidth:W-mg*2-60});
+    doc.setFont('helvetica','bold');doc.setTextColor(26,26,46);doc.setFontSize(7);
+    doc.text(a.responsable,W-mg-50,y+5,{maxWidth:50});
+    doc.setFont('helvetica','normal');doc.setTextColor(100,100,100);
+    doc.text(a.region,W-mg-50,y+9.5);
+    y+=15;
+  });
+  y+=6;
+
+  // Advertencias
+  if(y>240){doc.addPage();y=mg;}
+  doc.setFillColor(243,156,18);doc.rect(mg,y,W-mg*2,7,'F');
+  doc.setTextColor(255,255,255);doc.setFontSize(10);doc.setFont('helvetica','bold');
+  doc.text('ADVERTENCIAS ('+ALERTAS.advertencias.length+')',mg+4,y+5);y+=9;
+
+  ALERTAS.advertencias.slice(0,10).forEach(function(a,i){
+    if(y>270){doc.addPage();y=mg;}
+    var bg2=i%2===0?[255,255,255]:[255,252,240];
+    doc.setFillColor(bg2[0],bg2[1],bg2[2]);doc.rect(mg,y,W-mg*2,14,'F');
+    doc.setFillColor(243,156,18);doc.rect(mg,y,3,14,'F');
+    doc.setTextColor(26,26,46);doc.setFontSize(8);doc.setFont('helvetica','bold');
+    doc.text(a.titulo,mg+5,y+5,{maxWidth:W-mg*2-60});
+    doc.setFont('helvetica','normal');doc.setTextColor(80,80,80);doc.setFontSize(7);
+    doc.text(a.desc,mg+5,y+9.5,{maxWidth:W-mg*2-60});
+    doc.setFont('helvetica','bold');doc.setTextColor(26,26,46);doc.setFontSize(7);
+    doc.text(a.responsable,W-mg-50,y+5,{maxWidth:50});
+    doc.setFont('helvetica','normal');doc.setTextColor(100,100,100);
+    doc.text(a.region,W-mg-50,y+9.5);
+    y+=15;
+  });
+
+  // Pie
+  var tp=doc.internal.getNumberOfPages();
+  for(var pi=1;pi<=tp;pi++){
+    doc.setPage(pi);
+    doc.setFillColor(26,26,46);doc.rect(0,287,W,10,'F');
+    doc.setTextColor(255,255,255);doc.setFontSize(7);doc.setFont('helvetica','normal');
+    doc.text('Comfenalco Antioquia — Auditoría Interna — CONFIDENCIAL',mg,293);
+    doc.text('Pág. '+pi+'/'+tp,W-mg-10,293);
+  }
+
+  doc.save('auditoria_interna_'+new Date().toISOString().split('T')[0]+'.pdf');
+  toast('Informe PDF generado y descargado');
+}
+
+// ═══════════════════════════════════════════════════
+// AUTH
+// ═══════════════════════════════════════════════════
+function renderAuth(user){
+  var area=document.getElementById('auth-area');
+  if(user){
+    var nombre=((user.firstName||'')+' '+(user.lastName||'')).trim()||'Usuario';
+    var ini=((user.firstName||'')[0]||'').toUpperCase()+((user.lastName||'')[0]||'').toUpperCase()||'U';
+    document.getElementById('snombre').textContent=nombre;
+    var av=document.getElementById('sav');
+    av.innerHTML=user.imageUrl?'<img src="'+user.imageUrl+'"/>':ini;
+    area.innerHTML='<span style="color:rgba(255,255,255,.7);font-size:13px">'+nombre+'</span>'+
+      '<button class="btn btn-sm" style="background:rgba(255,255,255,.1);color:#fff" onclick="window.Clerk.signOut().then(function(){window.location.href=\'interno.html\'})">Salir</button>';
+  } else {
+    area.innerHTML='<button class="btn btn-sm" style="background:rgba(255,255,255,.1);color:#fff" onclick="window.Clerk.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>';
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════
+window.addEventListener('load',function(){
+  ejecutarAuditoria();
+  renderDashboard();
+  if(window.Clerk){
+    window.Clerk.load().then(function(){
+      renderAuth(window.Clerk.user);
+      window.Clerk.addListener(function(e){renderAuth(e.user);});
+    });
+  }
+});
+</script>
+</body>
+</html>
