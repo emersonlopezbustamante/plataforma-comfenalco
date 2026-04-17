@@ -9,6 +9,7 @@
     src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@5/dist/clerk.browser.js"
     type="text/javascript"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
   <style>
     :root{--verde:#094a4b;--pist:#a8c94e;--pist-h:#8fb53a;--blanco:#fff;--fondo:#f4f6f4;--borde:#d8e2d8;--texto-g:#4a5a4a;--suave:#e8efe8;--negro:#1a2a1a;--naranja:#e67e22;--azul:#2d4a6b;--rojo:#e74c3c;--r:8px;--rc:14px;--t:.22s ease;
@@ -152,6 +153,14 @@
     .loading{display:flex;align-items:center;justify-content:center;padding:48px;gap:12px;color:var(--texto-g)}
     .spinner{width:28px;height:28px;border:3px solid var(--borde);border-top-color:var(--verde);border-radius:50%;animation:spin .8s linear infinite}
 
+    /* BANCO DE RECOMENDACIONES Y COMPORTAMIENTOS */
+    .rec-banco{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+    .rec-chip{display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--borde);background:#fff;color:var(--texto-g);transition:all var(--t)}
+    .rec-chip:hover{border-color:var(--pist);background:rgba(168,201,78,.08);color:var(--verde)}
+    .rec-chip.seleccionada{border-color:var(--pist);background:rgba(168,201,78,.15);color:var(--verde)}
+    .comp-chip{display:inline-flex;align-items:center;gap:4px;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--borde);background:#fff;color:var(--texto-g);transition:all var(--t)}
+    .comp-chip:hover{border-color:var(--azul);background:rgba(45,74,107,.08);color:var(--azul)}
+    .comp-chip.seleccionada{border-color:var(--azul);background:rgba(45,74,107,.12);color:var(--azul)}
     @keyframes spin{to{transform:rotate(360deg)}}
     @keyframes fadeIn{from{opacity:0}to{opacity:1}}
     @keyframes slideUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
@@ -205,9 +214,10 @@
           <div class="ptitle">🔬 Laboratorios de Empleo</div>
           <p class="psub">Gestión de sesiones, evaluaciones y seguimiento por región</p>
         </div>
-        <div style="display:flex;gap:10px">
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
           <button class="btn btn-primary" onclick="nav('nueva-evaluacion')">+ Nueva evaluación</button>
           <button class="btn btn-verde btn-sm" onclick="importarExcel()">📂 Importar Excel</button>
+          <button class="btn btn-sm" style="background:var(--azul);color:#fff" onclick="abrirInformeGlobal()">📊 Informe global PDF</button>
           <input type="file" id="excel-input" accept=".xlsx,.xls,.xlsm" style="display:none" onchange="procesarExcelImport(this)"/>
         </div>
       </div>
@@ -239,7 +249,8 @@
       <div class="twrap">
         <div class="ttbar">
           <span class="ttitle" id="ses-count">0 sesiones</span>
-          <button class="btn btn-ghost btn-sm" onclick="exportarSesiones()">📥 Exportar</button>
+          <button class="btn btn-ghost btn-sm" onclick="exportarSesiones()">📥 Excel</button>
+          <button class="btn btn-sm" style="background:var(--azul);color:#fff" onclick="abrirInformeGlobal()">📄 PDF global</button>
         </div>
         <table>
           <thead><tr>
@@ -307,11 +318,33 @@
 
       <!-- PASO 3: Observaciones -->
       <div class="card">
-        <div class="ctitle">📝 Observaciones y recomendaciones</div>
-        <div class="fgrid one">
-          <div class="fgroup"><label class="flabel">Observaciones generales</label>
-            <textarea class="fval" id="e-obs" rows="3" placeholder="Comportamiento durante las pruebas, aspectos a destacar..."></textarea>
-          </div>
+        <div class="ctitle">👁️ Comportamientos observados</div>
+        <p style="font-size:13px;color:var(--texto-g);margin-bottom:12px">Selecciona los comportamientos observados durante la evaluación (puedes seleccionar varios) o escribe los tuyos:</p>
+        <div class="rec-banco" id="comp-banco"></div>
+        <div class="fgroup" style="margin-top:12px">
+          <label class="flabel">Comportamientos adicionales (texto libre)</label>
+          <textarea class="fval" id="e-comp-libre" rows="2" placeholder="Describe otros comportamientos observados..."></textarea>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="ctitle">💡 Recomendaciones</div>
+        <p style="font-size:13px;color:var(--texto-g);margin-bottom:12px">Selecciona las recomendaciones según los resultados (el sistema también las sugerirá automáticamente al guardar):</p>
+        <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap">
+          <button class="btn btn-ghost btn-xs" onclick="sugerirRecomendaciones()">🤖 Sugerir automáticamente</button>
+          <button class="btn btn-ghost btn-xs" onclick="limpiarRecs()">✕ Limpiar selección</button>
+        </div>
+        <div class="rec-banco" id="rec-banco"></div>
+        <div class="fgroup" style="margin-top:12px">
+          <label class="flabel">Recomendaciones adicionales (texto libre)</label>
+          <textarea class="fval" id="e-rec-libre" rows="2" placeholder="Agrega recomendaciones personalizadas..."></textarea>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="ctitle">📝 Observaciones generales</div>
+        <div class="fgroup">
+          <textarea class="fval" id="e-obs" rows="3" placeholder="Notas internas del orientador, contexto general de la evaluación..."></textarea>
         </div>
       </div>
 
@@ -371,8 +404,44 @@
     <div class="modal-body" id="mr-body"></div>
     <div class="modal-foot">
       <button class="btn btn-ghost" onclick="cerrarModal('modal-resultado')">Cerrar</button>
-      <button class="btn btn-verde btn-sm" onclick="exportarResultadoExcel()">📥 Exportar Excel</button>
-      <button class="btn btn-primary" onclick="guardarEvaluacion();cerrarModal('modal-resultado')">💾 Guardar</button>
+      <button class="btn btn-verde btn-sm" onclick="exportarResultadoExcel()">📥 Excel</button>
+      <button class="btn btn-sm" style="background:var(--azul);color:#fff" onclick="generarPDFIndividual(sesionActual)">📄 PDF individual</button>
+      <button class="btn btn-primary" onclick="confirmarGuardar()">💾 Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL INFORME GLOBAL -->
+<div id="modal-global" class="modal-bg hidden">
+  <div class="modal" style="width:min(700px,95vw)">
+    <div class="modal-head">
+      <div class="modal-title">📊 Informe Global — Laboratorios de Empleo</div>
+      <button class="modal-close" onclick="cerrarModal('modal-global')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="fgrid">
+        <div class="fgroup">
+          <label class="flabel">Filtrar por mes</label>
+          <select class="fval" id="ig-periodo" onchange="previsualizarGlobal()">
+            <option value="">Todos los períodos</option>
+          </select>
+        </div>
+        <div class="fgroup">
+          <label class="flabel">Filtrar por región</label>
+          <select class="fval" id="ig-region" onchange="previsualizarGlobal()">
+            <option value="">Todas las regiones</option>
+            <option>Valle de Aburrá</option><option>Oriente</option><option>Norte</option>
+            <option>Occidente</option><option>Suroeste</option><option>Bajo Cauca</option>
+            <option>Nordeste</option><option>Magdalena Medio</option><option>Urabá</option>
+          </select>
+        </div>
+      </div>
+      <div id="ig-preview" style="margin-top:16px"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-global')">Cerrar</button>
+      <button class="btn btn-verde btn-sm" onclick="exportarSesiones()">📥 Excel completo</button>
+      <button class="btn btn-primary" onclick="generarPDFGlobal()">📄 Generar PDF global</button>
     </div>
   </div>
 </div>
@@ -637,6 +706,7 @@ function renderSesiones(lista){
       '<td>'+nivelBadge(ng)+'</td>'+
       '<td><div style="display:flex;gap:4px">'+
         '<button class="btn btn-ghost btn-xs" onclick="verSesion('+s.id+')">Ver</button>'+
+        '<button class="btn btn-sm btn-xs" style="background:var(--azul);color:#fff" onclick="exportarSesionPDF('+s.id+')">📄</button>'+
         '<button class="btn btn-primary btn-xs" onclick="exportarSesionExcel('+s.id+')">📥</button>'+
       '</div></td>'+
     '</tr>';
@@ -894,7 +964,10 @@ function renderParticipantes(){
       '<td style="color:var(--texto-g)">'+s.cargo+'</td>'+
       '<td style="color:var(--texto-g)">'+s.empresa+'</td>'+
       '<td>'+nivelBadge(nivelGlobal(s))+'</td>'+
-      '<td><button class="btn btn-ghost btn-xs" onclick="verSesion('+s.id+')">Ver resultado</button></td>'+
+      '<td style="display:flex;gap:4px">'+
+        '<button class="btn btn-ghost btn-xs" onclick="verSesion('+s.id+')">Ver</button>'+
+        '<button class="btn btn-xs" style="background:var(--azul);color:#fff" onclick="exportarSesionPDF('+s.id+')">📄 PDF</button>'+
+      '</td>'+
     '</tr>';
   }).join('');
 }
@@ -972,6 +1045,12 @@ function exportarSesionExcel(id){
 
 function exportarSesionExcelActual(){if(sesionActual) exportarSesionExcel(sesionActual.id);}
 function exportarResultadoExcel(){if(sesionActual) exportarSesionExcel(sesionActual.id);}
+function exportarSesionPDF(id){
+  var s=SESIONES.find(function(x){return x.id===id;});
+  if(!s){toast('Sesión no encontrada','err');return;}
+  sesionActual=s;
+  generarPDFIndividual(s);
+}
 
 function exportarSesiones(){
   if(!SESIONES.length){toast('Sin datos para exportar','warn');return;}
@@ -1045,6 +1124,676 @@ function procesarExcelImport(input){
 }
 
 // ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
+// BANCO DE COMPORTAMIENTOS Y RECOMENDACIONES
+// ═══════════════════════════════════════════════════
+var COMPORTAMIENTOS = [
+  'Muestra disposición y actitud positiva frente a las pruebas',
+  'Se observa motivado/a durante toda la evaluación',
+  'Sigue instrucciones de manera adecuada',
+  'Requirió repetición de instrucciones para comprender la tarea',
+  'Presenta nerviosismo o ansiedad durante las pruebas',
+  'Muestra concentración sostenida durante las actividades',
+  'Se distrae con facilidad ante estímulos externos',
+  'Trabaja de forma ordenada y metódica',
+  'Realiza los movimientos de forma apresurada sin revisar calidad',
+  'Prioriza velocidad sobre precisión',
+  'Prioriza precisión sobre velocidad',
+  'Demuestra habilidad para adaptarse a cambios en la tarea',
+  'Muestra dificultad para adaptarse a nuevas instrucciones',
+  'Maneja adecuadamente la presión del tiempo',
+  'Se frustra ante la dificultad o el error',
+  'Recupera la concentración rápidamente tras un error',
+  'Presenta buena coordinación mano-ojo de manera natural',
+  'Demuestra economía de movimientos durante las pruebas',
+  'Solicita confirmación constante del orientador',
+  'Trabaja de forma autónoma sin requerir apoyo continuo',
+  'Muestra fatiga física durante las pruebas de resistencia',
+  'Mantiene energía constante a lo largo de la sesión',
+  'Presenta lateralidad definida y coordinada',
+  'Se evidencia práctica previa en actividades similares'
+];
+
+var RECOMENDACIONES_BANCO = {
+  alto: [
+    'La persona cuenta con estabilidad, equilibrio y su procesamiento visual es rápido y eficaz.',
+    'El participante centra voluntariamente la atención sobre un objetivo; su concentración es un activo clave.',
+    'La persona cuenta con un nivel de desarrollo bimanual alto, facilitando labores que requieran motricidad fina y gruesa.',
+    'Demuestra destreza cognitiva alta con capacidad de aprendizaje y adaptación rápida.',
+    'Ha desarrollado visión adelantada que le permite anticipar movimientos y rendir eficientemente.',
+    'La persona presenta alto nivel de motricidad fina evidenciado en movimientos precisos y coordinados.',
+    'Posee habilidad para realizar movimientos repetitivos de manera ágil y continua.',
+    'Ha desarrollado coordinación mano-ojo que integra información visual para guiar movimientos de las manos.'
+  ],
+  medio: [
+    'Realizar ejercicios de terapia visual para mejorar la coordinación visomotora.',
+    'Realizar ejercicios de seguimiento y fijación para fortalecer la visión adelantada.',
+    'Realizar actividades bimanuales para llevar la destreza a un nivel alto.',
+    'Se recomienda contar con estrategias para mejorar el nivel de escucha y atención ante instrucciones.',
+    'Realizar ejercicios de precisión y desarrollo digital para mejorar motricidad fina.',
+    'El participante muestra pérdida de atención ante algunos distractores; practicar técnicas de concentración.',
+    'Realizar actividades de colorear, unir puntos o trazos para mejorar coordinación mano-ojo.',
+    'Realizar ejercicios de equilibrio dinámico, juegos de precisión y coordinación.'
+  ],
+  bajo: [
+    'Realizar ejercicios de terapia visual con rotador para mejorar visión periférica.',
+    'Realizar ejercicios de terapia visual para mejorar coordinación visomotora, postura y locomoción.',
+    'El participante pierde con facilidad la concentración; se recomienda: juegos de mesa, Sudoku, crucigramas, ajedrez.',
+    'Realizar actividades de equilibrio dinámico, coordinación y flexibilidad para motricidad gruesa.',
+    'Realizar ejercicios de precisión: rasgar, enhebrar, lanzar, patear para mejorar motricidad fina.',
+    'Al participante se le dificulta la agilidad; se recomienda: lectura, gimnasia mental, memoria visual y auditiva.',
+    'Entrenar coordinación ojos-manos: ejercicios de sincronización, visualización y estimulación mano-ojo.',
+    'Se evidencia dificultad cognitiva; se recomienda: rompecabezas, crucigramas, sopa de letras, razonamiento lógico.'
+  ],
+  general: [
+    'Realizar ejercicios de coordinación (baloncesto, pelota) para mejorar la capacidad de coordinar músculos.',
+    'Practicar técnicas de meditación para desarrollar capacidad de enfoque sostenido.',
+    'Eliminar distracciones en el entorno de trabajo para mejorar la concentración.',
+    'Jugar videojuegos que requieren precisión y rapidez en los movimientos de los dedos.',
+    'Incorporar ejercicios de calentamiento y estiramiento antes de actividades de precisión.',
+    'Practicar actividades que requieran enfoque visual: leer, usar computador a distancia adecuada.',
+    'Practicar ejercicios matemáticos y juegos de estrategia para habilidad numérica y cognitiva.',
+    'Realizar actividades físicas que impliquen el uso de todo el cuerpo: fútbol, danza, gimnasia.'
+  ]
+};
+
+var recSeleccionadas = [];
+var compSeleccionados = [];
+
+function initBancoRecs(){
+  var cb = document.getElementById('comp-banco');
+  var rb = document.getElementById('rec-banco');
+  if(!cb||!rb) return;
+
+  cb.innerHTML = COMPORTAMIENTOS.map(function(c,i){
+    return '<span class="comp-chip" onclick="toggleComp('+i+',this)" data-idx="'+i+'">'+c+'</span>';
+  }).join('');
+
+  var todasRecs = RECOMENDACIONES_BANCO.alto
+    .concat(RECOMENDACIONES_BANCO.medio)
+    .concat(RECOMENDACIONES_BANCO.bajo)
+    .concat(RECOMENDACIONES_BANCO.general);
+
+  rb.innerHTML = todasRecs.map(function(r,i){
+    return '<span class="rec-chip" onclick="toggleRec('+i+',this,\''+r.replace(/'/g,"\\'")+'\')" data-text="'+r.replace(/"/g,'&quot;')+'">'+r+'</span>';
+  }).join('');
+
+  recSeleccionadas=[];
+  compSeleccionados=[];
+}
+
+function toggleComp(idx, el){
+  el.classList.toggle('seleccionada');
+  var texto = COMPORTAMIENTOS[idx];
+  var i = compSeleccionados.indexOf(texto);
+  if(i===-1) compSeleccionados.push(texto);
+  else compSeleccionados.splice(i,1);
+}
+
+function toggleRec(idx, el, texto){
+  el.classList.toggle('seleccionada');
+  var i = recSeleccionadas.indexOf(texto);
+  if(i===-1) recSeleccionadas.push(texto);
+  else recSeleccionadas.splice(i,1);
+}
+
+function limpiarRecs(){
+  recSeleccionadas=[];
+  document.querySelectorAll('.rec-chip').forEach(function(c){c.classList.remove('seleccionada');});
+}
+
+function sugerirRecomendaciones(){
+  // Calcular nivel global de las pruebas marcadas en el form actual
+  var niveles=[];
+  PRUEBAS.forEach(function(p){
+    var ch=document.getElementById('pcheck-'+p.id);
+    if(!ch||!ch.checked) return;
+    var vals={};
+    p.campos.forEach(function(c){var el=document.getElementById('pr-'+p.id+'-'+c.id);if(el)vals[c.id]=el.value;});
+    niveles.push(p.calcNivel(vals));
+  });
+  if(!niveles.length){toast('Selecciona y califica al menos una prueba primero','warn');return;}
+  var prom=niveles.reduce(function(a,v){return a+v;},0)/niveles.length;
+
+  // Limpiar selección
+  limpiarRecs();
+  var sugeridas=[];
+  if(prom>=3) sugeridas=RECOMENDACIONES_BANCO.alto.slice(0,3);
+  else if(prom>=2) sugeridas=RECOMENDACIONES_BANCO.medio.slice(0,3);
+  else sugeridas=RECOMENDACIONES_BANCO.bajo.slice(0,3);
+  sugeridas=sugeridas.concat(RECOMENDACIONES_BANCO.general.slice(0,2));
+
+  // Marcar las sugeridas
+  document.querySelectorAll('.rec-chip').forEach(function(chip){
+    var txt=chip.getAttribute('data-text');
+    if(sugeridas.indexOf(txt)>-1){
+      chip.classList.add('seleccionada');
+      if(recSeleccionadas.indexOf(txt)===-1) recSeleccionadas.push(txt);
+    }
+  });
+  toast(sugeridas.length+' recomendaciones sugeridas automáticamente según el perfil');
+}
+
+// ═══════════════════════════════════════════════════
+// GUARDAR — extendido con recs y comportamientos
+// ═══════════════════════════════════════════════════
+function confirmarGuardar(){
+  if(sesionActual){
+    // Guardar recs y comps en la sesión actual al guardar desde previsualización
+    sesionActual.recomendaciones = recSeleccionadas.slice();
+    sesionActual.recLibre = (document.getElementById('e-rec-libre')||{}).value||'';
+    sesionActual.comportamientos = compSeleccionados.slice();
+    sesionActual.compLibre = (document.getElementById('e-comp-libre')||{}).value||'';
+    cerrarModal('modal-resultado');
+    toast('Evaluación guardada');
+  } else {
+    guardarEvaluacion();
+    cerrarModal('modal-resultado');
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// GENERADOR PDF INDIVIDUAL — usa jsPDF
+// ═══════════════════════════════════════════════════
+function generarPDFIndividual(s){
+  if(!s){toast('Sin datos de sesión','err');return;}
+  if(typeof window.jspdf==='undefined'){toast('Cargando librería PDF...','warn');setTimeout(function(){generarPDFIndividual(s);},1000);return;}
+
+  var jsPDF=window.jspdf.jsPDF;
+  var doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  var W=210, mg=18, y=mg, lineH=6;
+
+  function checkPage(needed){if(y+needed>285){doc.addPage();y=mg;}}
+  function titulo(txt,sz,bold){doc.setFontSize(sz||12);doc.setFont('helvetica',bold||'normal');doc.setTextColor(9,74,75);}
+  function normal(txt,sz){doc.setFontSize(sz||10);doc.setFont('helvetica','normal');doc.setTextColor(30,30,30);}
+  function gris(txt,sz){doc.setFontSize(sz||9);doc.setFont('helvetica','normal');doc.setTextColor(100,100,100);}
+  function verde(r,g,b){doc.setTextColor(r||9,g||74,b||75);}
+
+  // === HEADER ===
+  doc.setFillColor(9,74,75);
+  doc.rect(0,0,W,28,'F');
+  doc.setTextColor(255,255,255);
+  doc.setFontSize(16);doc.setFont('helvetica','bold');
+  doc.text('LABORATORIOS DE EMPLEO',mg,12);
+  doc.setFontSize(10);doc.setFont('helvetica','normal');
+  doc.text('Agencia de Empleo y Emprendimiento — Comfenalco Antioquia',mg,19);
+  doc.setFontSize(9);
+  doc.text('INFORME DE EVALUACIÓN INDIVIDUAL',mg,25);
+  y=36;
+
+  // === DATOS PARTICIPANTE ===
+  doc.setFillColor(232,244,232);
+  doc.rect(mg,y,W-mg*2,32,'F');
+  titulo('DATOS DEL PARTICIPANTE',11,'bold');
+  doc.text('DATOS DEL PARTICIPANTE',mg+4,y+6);
+  normal('',9);
+  doc.setTextColor(30,30,30);
+  doc.setFontSize(9);
+  var nombre=s.nombre.trim();
+  doc.setFont('helvetica','bold');doc.text(nombre,mg+4,y+13);
+  doc.setFont('helvetica','normal');
+  doc.text(s.tipoDoc+': '+s.documento,mg+4,y+19);
+  doc.text('Sexo: '+(s.sexo==='F'?'Femenino':s.sexo==='M'?'Masculino':'Otro')+'   F.Nacimiento: '+(s.fnac||'—'),mg+4,y+25);
+  // columna derecha
+  doc.text('Fecha evaluación: '+fmtFecha(s.fecha),W/2,y+13);
+  doc.text('Orientador: '+s.orientador,W/2,y+19);
+  doc.text('Sede: '+s.sede,W/2,y+25);
+  doc.text('Región: '+s.region+' — '+s.municipio,W/2,y+31);
+  y+=38;
+
+  // Cargo y empresa
+  doc.setFillColor(248,248,248);
+  doc.rect(mg,y,W-mg*2,12,'F');
+  doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(9,74,75);
+  doc.text('Cargo aspirado: ',mg+4,y+5);
+  doc.setFont('helvetica','normal');doc.setTextColor(30,30,30);
+  doc.text(s.cargo,mg+38,y+5);
+  doc.setFont('helvetica','bold');doc.setTextColor(9,74,75);
+  doc.text('Empresa: ',mg+4,y+10);
+  doc.setFont('helvetica','normal');doc.setTextColor(30,30,30);
+  doc.text(s.empresa,mg+22,y+10);
+  y+=18;
+
+  // === NIVEL GLOBAL ===
+  var ng=nivelGlobal(s);
+  var nColors=[[231,76,60],[230,126,34],[241,196,15],[46,204,113],[39,174,96]];
+  var nc=nColors[ng];
+  doc.setFillColor(nc[0],nc[1],nc[2]);
+  doc.rect(mg,y,W-mg*2,16,'F');
+  doc.setTextColor(255,255,255);
+  doc.setFontSize(13);doc.setFont('helvetica','bold');
+  doc.text('PERFIL GLOBAL: '+NIVEL_LABELS[ng].toUpperCase()+'  ('+ng+'/4)',mg+4,y+10);
+  doc.setFontSize(9);doc.setFont('helvetica','normal');
+  doc.text(s.pruebas.length+' pruebas aplicadas',W-mg-50,y+10);
+  y+=22;
+
+  // === TABLA DE PRUEBAS ===
+  checkPage(20);
+  doc.setFillColor(9,74,75);doc.rect(mg,y,W-mg*2,7,'F');
+  doc.setTextColor(255,255,255);doc.setFontSize(10);doc.setFont('helvetica','bold');
+  doc.text('RESULTADOS POR PRUEBA',mg+4,y+5);
+  y+=9;
+
+  var colW=[70,35,40];
+  // Header tabla
+  doc.setFillColor(232,244,232);doc.rect(mg,y,W-mg*2,6,'F');
+  doc.setTextColor(9,74,75);doc.setFontSize(8);doc.setFont('helvetica','bold');
+  doc.text('Prueba',mg+2,y+4);
+  doc.text('Nivel',mg+colW[0]+2,y+4);
+  doc.text('Destrezas evaluadas',mg+colW[0]+colW[1]+2,y+4);
+  y+=7;
+
+  s.pruebas.forEach(function(p,i){
+    checkPage(12);
+    var bgAlt=i%2===0?[255,255,255]:[248,252,248];
+    doc.setFillColor(bgAlt[0],bgAlt[1],bgAlt[2]);
+    doc.rect(mg,y,W-mg*2,8,'F');
+    var pc=nColors[p.nivel];
+    doc.setFillColor(pc[0],pc[1],pc[2]);doc.rect(mg+colW[0],y,colW[1],8,'F');
+    doc.setTextColor(30,30,30);doc.setFontSize(8);doc.setFont('helvetica','bold');
+    doc.text(p.nombre,mg+2,y+5);
+    doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');
+    doc.text(NIVEL_LABELS[p.nivel],mg+colW[0]+2,y+5);
+    doc.setTextColor(80,80,80);doc.setFont('helvetica','normal');doc.setFontSize(7);
+    var destText=(p.destrezas||'').split('·').slice(0,4).join(' · ');
+    doc.text(destText,mg+colW[0]+colW[1]+2,y+5,{maxWidth:W-mg*2-colW[0]-colW[1]-4});
+    y+=9;
+  });
+  y+=6;
+
+  // === PERFIL DE DESTREZAS ===
+  checkPage(20);
+  doc.setFillColor(9,74,75);doc.rect(mg,y,W-mg*2,7,'F');
+  doc.setTextColor(255,255,255);doc.setFontSize(10);doc.setFont('helvetica','bold');
+  doc.text('PERFIL DE DESTREZAS',mg+4,y+5);
+  y+=11;
+
+  var destrezaMap={};
+  s.pruebas.forEach(function(p){
+    (p.destrezas||'').split('·').forEach(function(d){
+      d=d.trim();if(!d||d.length<3) return;
+      if(!destrezaMap[d]) destrezaMap[d]=[];
+      destrezaMap[d].push(p.nivel);
+    });
+  });
+
+  var destKeys=Object.keys(destrezaMap);
+  var colDest=2, itemW=(W-mg*2-4)/colDest, col=0;
+  var startY=y;
+
+  destKeys.forEach(function(d){
+    var promD=Math.round(destrezaMap[d].reduce(function(a,v){return a+v;},0)/destrezaMap[d].length);
+    var pc2=nColors[promD];
+    var xBase=mg+(col*(itemW+4));
+    checkPage(16);
+    doc.setFontSize(8);doc.setFont('helvetica','bold');doc.setTextColor(9,74,75);
+    doc.text(d.substring(0,35),xBase,y+4);
+    // barra
+    doc.setFillColor(220,230,220);doc.rect(xBase,y+5,itemW-2,4,'F');
+    var barW=(promD/4)*(itemW-2);
+    doc.setFillColor(pc2[0],pc2[1],pc2[2]);doc.rect(xBase,y+5,barW,4,'F');
+    doc.setFontSize(7);doc.setFont('helvetica','normal');doc.setTextColor(80,80,80);
+    doc.text(NIVEL_LABELS[promD],xBase+barW+2,y+8);
+    col++;
+    if(col>=colDest){col=0;y+=14;}
+  });
+  if(col>0) y+=14;
+  y+=6;
+
+  // === COMPORTAMIENTOS OBSERVADOS ===
+  var comps=(s.comportamientos||[]).concat(s.compLibre?[s.compLibre]:[]);
+  if(comps.length){
+    checkPage(16);
+    doc.setFillColor(9,74,75);doc.rect(mg,y,W-mg*2,7,'F');
+    doc.setTextColor(255,255,255);doc.setFontSize(10);doc.setFont('helvetica','bold');
+    doc.text('COMPORTAMIENTOS OBSERVADOS',mg+4,y+5);
+    y+=11;
+    comps.forEach(function(c){
+      checkPage(8);
+      doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(30,30,30);
+      doc.text('• '+c,mg+2,y,{maxWidth:W-mg*2-4});
+      y+=6;
+    });
+    y+=4;
+  }
+
+  // === RECOMENDACIONES ===
+  var recs=(s.recomendaciones||[]).concat(s.recLibre?[s.recLibre]:[]);
+  if(!recs.length){
+    // Generar automáticas si no hay seleccionadas
+    var ng2=nivelGlobal(s);
+    if(ng2>=3) recs=RECOMENDACIONES_BANCO.alto.slice(0,2);
+    else if(ng2>=2) recs=RECOMENDACIONES_BANCO.medio.slice(0,2);
+    else recs=RECOMENDACIONES_BANCO.bajo.slice(0,2);
+    recs=recs.concat(RECOMENDACIONES_BANCO.general.slice(0,1));
+  }
+  checkPage(20);
+  doc.setFillColor(9,74,75);doc.rect(mg,y,W-mg*2,7,'F');
+  doc.setTextColor(255,255,255);doc.setFontSize(10);doc.setFont('helvetica','bold');
+  doc.text('RECOMENDACIONES',mg+4,y+5);
+  y+=11;
+  recs.forEach(function(r,i){
+    checkPage(12);
+    doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(9,74,75);
+    doc.text((i+1)+'. ',mg+2,y);
+    doc.setFont('helvetica','normal');doc.setTextColor(30,30,30);
+    var lines=doc.splitTextToSize(r,W-mg*2-10);
+    doc.text(lines,mg+8,y);
+    y+=lines.length*5+3;
+  });
+
+  // === OBSERVACIONES ===
+  if(s.obs){
+    checkPage(20);
+    y+=4;
+    doc.setFillColor(232,244,232);doc.rect(mg,y,W-mg*2,6,'F');
+    doc.setTextColor(9,74,75);doc.setFontSize(9);doc.setFont('helvetica','bold');
+    doc.text('OBSERVACIONES DEL ORIENTADOR',mg+4,y+4);
+    y+=9;
+    doc.setFont('helvetica','normal');doc.setTextColor(30,30,30);doc.setFontSize(9);
+    var obsLines=doc.splitTextToSize(s.obs,W-mg*2-4);
+    doc.text(obsLines,mg+2,y);
+    y+=obsLines.length*5+4;
+  }
+
+  // === PIE DE PÁGINA ===
+  var totalPages=doc.internal.getNumberOfPages();
+  for(var pi=1;pi<=totalPages;pi++){
+    doc.setPage(pi);
+    doc.setFillColor(9,74,75);doc.rect(0,287,W,10,'F');
+    doc.setTextColor(255,255,255);doc.setFontSize(7);doc.setFont('helvetica','normal');
+    doc.text('Comfenalco Antioquia — Agencia de Empleo y Emprendimiento — Servicio Público de Empleo',mg,293);
+    doc.text('Página '+pi+' de '+totalPages,W-mg-15,293);
+  }
+
+  var nombre_archivo='evaluacion_'+s.documento+'_'+s.fecha+'.pdf';
+  doc.save(nombre_archivo);
+  toast('PDF individual generado: '+nombre_archivo);
+}
+
+// ═══════════════════════════════════════════════════
+// INFORME GLOBAL PDF
+// ═══════════════════════════════════════════════════
+function abrirInformeGlobal(){
+  if(!SESIONES.length){toast('No hay evaluaciones registradas aún','warn');return;}
+  // Llenar períodos disponibles
+  var periodos={};
+  SESIONES.forEach(function(s){if(s.fecha) periodos[s.fecha.substring(0,7)]=true;});
+  var sel=document.getElementById('ig-periodo');
+  sel.innerHTML='<option value="">Todos los períodos</option>';
+  Object.keys(periodos).sort().forEach(function(p){
+    var o=document.createElement('option');o.value=p;o.textContent=p;sel.appendChild(o);
+  });
+  previsualizarGlobal();
+  abrirModal('modal-global');
+}
+
+function getSesionesGlobal(){
+  var per=document.getElementById('ig-periodo').value;
+  var reg=document.getElementById('ig-region').value;
+  return SESIONES.filter(function(s){
+    var okP=!per||s.fecha.startsWith(per);
+    var okR=!reg||s.region===reg;
+    return okP&&okR;
+  });
+}
+
+function previsualizarGlobal(){
+  var lista=getSesionesGlobal();
+  var el=document.getElementById('ig-preview');
+  if(!el) return;
+  if(!lista.length){el.innerHTML='<p style="color:var(--texto-g);padding:12px">No hay datos para los filtros seleccionados.</p>';return;}
+
+  var regiones={};
+  var pruebas={};
+  var perfiles={};
+  var niveles=[0,0,0,0,0];
+  lista.forEach(function(s){
+    regiones[s.region]=(regiones[s.region]||0)+1;
+    perfiles[s.perfil]=(perfiles[s.perfil]||0)+1;
+    niveles[nivelGlobal(s)]++;
+    s.pruebas.forEach(function(p){pruebas[p.nombre]=(pruebas[p.nombre]||0)+1;});
+  });
+
+  var topPruebas=Object.entries(pruebas).sort(function(a,b){return b[1]-a[1];}).slice(0,8);
+
+  el.innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">'+
+    '<div style="background:var(--suave);border-radius:10px;padding:14px">'+
+      '<div style="font-family:Nunito;font-weight:800;color:var(--verde);margin-bottom:8px;font-size:14px">Participantes por región</div>'+
+      Object.entries(regiones).map(function(e){
+        return '<div style="display:flex;justify-content:space-between;font-size:13px;padding:3px 0"><span>'+e[0]+'</span><strong>'+e[1]+'</strong></div>';
+      }).join('')+
+    '</div>'+
+    '<div style="background:var(--suave);border-radius:10px;padding:14px">'+
+      '<div style="font-family:Nunito;font-weight:800;color:var(--verde);margin-bottom:8px;font-size:14px">Distribución de perfiles globales</div>'+
+      ['Muy Bajo','Bajo','Medio','Alto','Muy Alto'].map(function(l,i){
+        return '<div style="display:flex;justify-content:space-between;font-size:13px;padding:3px 0"><span>'+l+'</span><strong>'+niveles[i]+'</strong></div>';
+      }).join('')+
+    '</div>'+
+    '<div style="background:var(--suave);border-radius:10px;padding:14px;grid-column:1/-1">'+
+      '<div style="font-family:Nunito;font-weight:800;color:var(--verde);margin-bottom:8px;font-size:14px">Pruebas más aplicadas (top 8)</div>'+
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">'+
+      topPruebas.map(function(e){
+        return '<div style="display:flex;justify-content:space-between;font-size:12px;padding:2px 0"><span>'+e[0]+'</span><strong>'+e[1]+'</strong></div>';
+      }).join('')+'</div>'+
+    '</div>'+
+    '<div style="grid-column:1/-1;text-align:center;padding:8px;background:rgba(9,74,75,.06);border-radius:8px;font-size:13px">'+
+      '<strong>'+lista.length+'</strong> evaluaciones en el período seleccionado'+
+    '</div>'+
+  '</div>';
+}
+
+function generarPDFGlobal(){
+  var lista=getSesionesGlobal();
+  if(!lista.length){toast('Sin datos para el período seleccionado','warn');return;}
+  if(typeof window.jspdf==='undefined'){toast('Cargando librería PDF...','warn');setTimeout(generarPDFGlobal,1000);return;}
+
+  var jsPDF=window.jspdf.jsPDF;
+  var doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  var W=210, mg=18, y=mg;
+  var per=document.getElementById('ig-periodo').value||'Todos los períodos';
+  var reg=document.getElementById('ig-region').value||'Todas las regiones';
+
+  // HEADER
+  doc.setFillColor(9,74,75);doc.rect(0,0,W,32,'F');
+  doc.setTextColor(255,255,255);doc.setFontSize(18);doc.setFont('helvetica','bold');
+  doc.text('INFORME GLOBAL',mg,13);
+  doc.setFontSize(12);
+  doc.text('Laboratorios de Empleo — Comfenalco Antioquia',mg,21);
+  doc.setFontSize(9);doc.setFont('helvetica','normal');
+  doc.text('Período: '+per+'   |   Región: '+reg+'   |   Total evaluaciones: '+lista.length,mg,28);
+  y=40;
+
+  // RESUMEN EJECUTIVO
+  var regiones={}, subregiones={}, pruebas={}, perfilesC={};
+  var niveles=[0,0,0,0,0];
+  var totalPruebas=0;
+  lista.forEach(function(s){
+    regiones[s.region]=(regiones[s.region]||0)+1;
+    subregiones[s.municipio]=(subregiones[s.municipio]||0)+1;
+    perfilesC[s.perfil]=(perfilesC[s.perfil]||0)+1;
+    niveles[nivelGlobal(s)]++;
+    s.pruebas.forEach(function(p){pruebas[p.nombre]=(pruebas[p.nombre]||0)+1;totalPruebas++;});
+  });
+  var altos=niveles[3]+niveles[4];
+  var pctAlto=lista.length?Math.round(altos/lista.length*100):0;
+
+  // Tarjetas KPI
+  var kpis=[
+    {l:'Total evaluaciones',v:lista.length},
+    {l:'Perfil Alto / Muy Alto',v:altos+' ('+pctAlto+'%)'},
+    {l:'Total pruebas aplicadas',v:totalPruebas},
+    {l:'Regiones atendidas',v:Object.keys(regiones).length}
+  ];
+  var kpiW=(W-mg*2-6)/4;
+  kpis.forEach(function(k,i){
+    var x=mg+i*(kpiW+2);
+    doc.setFillColor(232,244,232);doc.rect(x,y,kpiW,18,'F');
+    doc.setTextColor(9,74,75);doc.setFontSize(14);doc.setFont('helvetica','bold');
+    doc.text(String(k.v),x+kpiW/2,y+10,{align:'center'});
+    doc.setFontSize(7);doc.setFont('helvetica','normal');doc.setTextColor(80,80,80);
+    doc.text(k.l,x+kpiW/2,y+15,{align:'center',maxWidth:kpiW-2});
+  });
+  y+=24;
+
+  // PARTICIPANTES POR REGIÓN
+  doc.setFillColor(9,74,75);doc.rect(mg,y,W-mg*2,7,'F');
+  doc.setTextColor(255,255,255);doc.setFontSize(10);doc.setFont('helvetica','bold');
+  doc.text('PARTICIPANTES POR REGIÓN Y SUBREGIÓN',mg+4,y+5);
+  y+=9;
+
+  var regArr=Object.entries(regiones).sort(function(a,b){return b[1]-a[1];});
+  var col2=0, rItemW=(W-mg*2-4)/2;
+  regArr.forEach(function(e){
+    var xB=mg+(col2*(rItemW+4));
+    doc.setFillColor(248,252,248);doc.rect(xB,y,rItemW,8,'F');
+    doc.setFillColor(9,74,75);
+    var bw=Math.max(4,(e[1]/lista.length)*(rItemW-30));
+    doc.rect(xB,y,bw,8,'F');
+    doc.setTextColor(255,255,255);doc.setFontSize(8);doc.setFont('helvetica','bold');
+    doc.text(e[1]+'',xB+2,y+5);
+    doc.setTextColor(30,30,30);doc.setFont('helvetica','normal');
+    doc.text(e[0],xB+bw+3,y+5);
+    col2++;if(col2>=2){col2=0;y+=10;}
+  });
+  if(col2>0) y+=10;
+  y+=6;
+
+  // DISTRIBUCIÓN PERFILES GLOBALES
+  doc.setFillColor(9,74,75);doc.rect(mg,y,W-mg*2,7,'F');
+  doc.setTextColor(255,255,255);doc.setFontSize(10);doc.setFont('helvetica','bold');
+  doc.text('DISTRIBUCIÓN PERFILES GLOBALES',mg+4,y+5);
+  y+=9;
+
+  var nColors2=[[231,76,60],[230,126,34],[241,196,15],[46,204,113],[39,174,96]];
+  var nivelW=(W-mg*2-4)/5;
+  niveles.forEach(function(cnt,i){
+    var xB=mg+i*(nivelW+1);
+    var nc=nColors2[i];
+    doc.setFillColor(nc[0],nc[1],nc[2]);doc.rect(xB,y,nivelW,10,'F');
+    doc.setTextColor(255,255,255);doc.setFontSize(11);doc.setFont('helvetica','bold');
+    doc.text(String(cnt),xB+nivelW/2,y+6,{align:'center'});
+    doc.setFontSize(7);doc.setFont('helvetica','normal');
+    doc.text(NIVEL_LABELS[i],xB+nivelW/2,y+9,{align:'center'});
+  });
+  y+=16;
+
+  // PRUEBAS MÁS APLICADAS
+  doc.setFillColor(9,74,75);doc.rect(mg,y,W-mg*2,7,'F');
+  doc.setTextColor(255,255,255);doc.setFontSize(10);doc.setFont('helvetica','bold');
+  doc.text('PRUEBAS MÁS APLICADAS',mg+4,y+5);
+  y+=9;
+
+  var topP=Object.entries(pruebas).sort(function(a,b){return b[1]-a[1];}).slice(0,12);
+  var colP=0, pItemW=(W-mg*2-4)/2;
+  topP.forEach(function(e,i){
+    var xB=mg+(colP*(pItemW+4));
+    var alt=i%4<2?[248,252,248]:[255,255,255];
+    doc.setFillColor(alt[0],alt[1],alt[2]);doc.rect(xB,y,pItemW,7,'F');
+    doc.setTextColor(30,30,30);doc.setFontSize(8);doc.setFont('helvetica','normal');
+    doc.text((i+1)+'. '+e[0],xB+2,y+4.5,{maxWidth:pItemW-18});
+    doc.setFont('helvetica','bold');doc.setTextColor(9,74,75);
+    doc.text(String(e[1]),xB+pItemW-4,y+4.5,{align:'right'});
+    colP++;if(colP>=2){colP=0;y+=8;}
+  });
+  if(colP>0) y+=8;
+  y+=6;
+
+  // DETALLE POR MUNICIPIO
+  var subArr=Object.entries(subregiones).sort(function(a,b){return b[1]-a[1];}).slice(0,10);
+  if(subArr.length>1){
+    doc.setFillColor(9,74,75);doc.rect(mg,y,W-mg*2,7,'F');
+    doc.setTextColor(255,255,255);doc.setFontSize(10);doc.setFont('helvetica','bold');
+    doc.text('PARTICIPANTES POR MUNICIPIO (TOP 10)',mg+4,y+5);
+    y+=9;
+    subArr.forEach(function(e,i){
+      var alt=i%2===0?[248,252,248]:[255,255,255];
+      doc.setFillColor(alt[0],alt[1],alt[2]);doc.rect(mg,y,W-mg*2,6,'F');
+      doc.setTextColor(30,30,30);doc.setFontSize(8);doc.setFont('helvetica','normal');
+      doc.text(e[0],mg+4,y+4);
+      doc.setFont('helvetica','bold');doc.setTextColor(9,74,75);
+      doc.text(String(e[1]),W-mg-4,y+4,{align:'right'});
+      y+=7;
+    });
+    y+=6;
+  }
+
+  // LISTADO EVALUACIONES
+  if(doc.internal.getNumberOfPages()===1) doc.addPage();
+  else{doc.addPage();y=mg;}
+  y=mg;
+  doc.setFillColor(9,74,75);doc.rect(mg,y,W-mg*2,7,'F');
+  doc.setTextColor(255,255,255);doc.setFontSize(10);doc.setFont('helvetica','bold');
+  doc.text('LISTADO COMPLETO DE EVALUACIONES',mg+4,y+5);
+  y+=9;
+
+  // Header tabla
+  doc.setFillColor(232,244,232);doc.rect(mg,y,W-mg*2,6,'F');
+  doc.setTextColor(9,74,75);doc.setFontSize(7.5);doc.setFont('helvetica','bold');
+  doc.text('Nombre',mg+2,y+4);doc.text('Doc.',mg+55,y+4);doc.text('Fecha',mg+80,y+4);
+  doc.text('Región',mg+102,y+4);doc.text('Cargo',mg+128,y+4);doc.text('Perfil',mg+155,y+4);doc.text('Nivel',mg+165,y+4);
+  y+=7;
+
+  lista.forEach(function(s,i){
+    if(y>278){doc.addPage();y=mg;}
+    var bg=i%2===0?[255,255,255]:[248,252,248];
+    doc.setFillColor(bg[0],bg[1],bg[2]);doc.rect(mg,y,W-mg*2,6,'F');
+    var nc2=nColors2[nivelGlobal(s)];
+    doc.setFillColor(nc2[0],nc2[1],nc2[2]);doc.rect(mg+163,y,21,6,'F');
+    doc.setTextColor(30,30,30);doc.setFontSize(7);doc.setFont('helvetica','normal');
+    doc.text(s.nombre.trim().substring(0,28),mg+2,y+4);
+    doc.text(s.documento.substring(0,12),mg+55,y+4);
+    doc.text(s.fecha,mg+80,y+4);
+    doc.text((s.region||'').substring(0,14),mg+102,y+4);
+    doc.text((s.cargo||'').substring(0,16),mg+128,y+4);
+    doc.text((s.perfil||'').substring(0,8),mg+155,y+4);
+    doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');
+    doc.text(NIVEL_LABELS[nivelGlobal(s)].substring(0,8),mg+164,y+4);
+    y+=7;
+  });
+
+  // PIE
+  var tp2=doc.internal.getNumberOfPages();
+  for(var pi2=1;pi2<=tp2;pi2++){
+    doc.setPage(pi2);
+    doc.setFillColor(9,74,75);doc.rect(0,287,W,10,'F');
+    doc.setTextColor(255,255,255);doc.setFontSize(7);doc.setFont('helvetica','normal');
+    doc.text('Comfenalco Antioquia — Agencia de Empleo y Emprendimiento — Servicio Público de Empleo',mg,293);
+    doc.text('Página '+pi2+' de '+tp2,W-mg-15,293);
+  }
+
+  var fname='informe_global_laboratorios_'+per.replace(/\s/g,'_')+'.pdf';
+  doc.save(fname);
+  cerrarModal('modal-global');
+  toast('PDF global generado: '+fname);
+}
+
+// Extender initFormEval para inicializar banco
+var _initFormEvalOrig = initFormEval;
+initFormEval = function(){
+  _initFormEvalOrig();
+  setTimeout(initBancoRecs, 100);
+};
+
+// Extender guardarEvaluacion para capturar recs y comportamientos
+var _guardarOrig = guardarEvaluacion;
+guardarEvaluacion = function(){
+  // Capturar antes de limpiar el form
+  var recsGuardar = recSeleccionadas.slice();
+  var recLibreGuardar = (document.getElementById('e-rec-libre')||{}).value||'';
+  var compGuardar = compSeleccionados.slice();
+  var compLibreGuardar = (document.getElementById('e-comp-libre')||{}).value||'';
+  _guardarOrig();
+  // Agregar a la última sesión guardada
+  if(SESIONES.length){
+    var ultima=SESIONES[SESIONES.length-1];
+    ultima.recomendaciones=recsGuardar;
+    ultima.recLibre=recLibreGuardar;
+    ultima.comportamientos=compGuardar;
+    ultima.compLibre=compLibreGuardar;
+  }
+};
+
 // AUTH
 // ═══════════════════════════════════════════════════
 function renderAuth(user){
