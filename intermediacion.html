@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Intermediación Laboral — Comfenalco Antioquia</title>
+  <script async crossorigin="anonymous"
+    data-clerk-publishable-key="pk_test_bGlrZWQtYmlzb24tNTEuY2xlcmsuYWNjb3VudHMuZGV2JA"
+    src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@5/dist/clerk.browser.js"
+    type="text/javascript"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root{
+      --verde:#094a4b;--pist:#a8c94e;--pist-h:#8fb53a;
+      --fondo:#f4f6f4;--borde:#d8e2d8;--texto-g:#4a5a4a;
+      --suave:#e8efe8;--negro:#1a2a1a;--naranja:#e67e22;
+      --azul:#2d4a6b;--rojo:#e74c3c;--r:8px;--rc:14px;--t:.22s ease
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;font-size:15px;color:var(--negro);background:var(--fondo);min-height:100vh}
+    button{cursor:pointer;font-family:inherit;border:none}
+    input,select,textarea{font-family:inherit}
+    .hidden{display:none!important}
+
+    /* TOPBAR */
+    #topbar{background:var(--verde);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(9,74,75,.2)}
+    .brand-logos{display:flex;align-items:center;background:#fff;border-radius:8px;padding:3px 12px;height:46px}
+    .brand-logos img:first-child{height:36px;max-width:170px;object-fit:contain}
+    .brand-sep{width:1px;height:28px;background:var(--borde);margin:0 10px}
+    .brand-logos img:last-child{height:28px;max-width:130px;object-fit:contain}
+    .tbadge{background:rgba(168,201,78,.2);color:var(--pist);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px}
+    .back{color:rgba(255,255,255,.7);font-size:13px;cursor:pointer;padding:6px 10px;border-radius:6px;transition:background var(--t)}
+    .back:hover{background:rgba(255,255,255,.1);color:#fff}
+
+    /* BOTONES */
+    .btn{display:inline-flex;align-items:center;gap:7px;padding:10px 22px;border-radius:var(--r);font-weight:700;font-size:14px;border:none;transition:all var(--t);cursor:pointer;font-family:inherit}
+    .btn:active{transform:scale(.97)}
+    .btn-primary{background:var(--pist);color:var(--verde)}
+    .btn-primary:hover{background:var(--pist-h);box-shadow:0 4px 12px rgba(168,201,78,.4)}
+    .btn-verde{background:var(--verde);color:#fff}
+    .btn-verde:hover{background:#0d6b6c}
+    .btn-azul{background:var(--azul);color:#fff}
+    .btn-azul:hover{background:#1e3550}
+    .btn-ghost{background:var(--suave);color:var(--texto-g)}
+    .btn-ghost:hover{background:var(--borde)}
+    .btn-outline{background:transparent;color:var(--verde);border:2px solid var(--verde)}
+    .btn-outline:hover{background:var(--verde);color:#fff}
+    .btn-sm{padding:7px 14px;font-size:13px}
+    .btn-xs{padding:4px 10px;font-size:12px}
+    .btn-lg{padding:14px 32px;font-size:16px;border-radius:10px}
+
+    /* LAYOUT */
+    #shell{display:grid;grid-template-columns:250px 1fr;min-height:calc(100vh - 60px)}
+
+    /* SIDEBAR */
+    #sidebar{background:var(--verde);padding:20px 0;display:flex;flex-direction:column;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto}
+    .suser{padding:14px 20px 18px;border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:8px;display:flex;align-items:center;gap:12px}
+    .sav{width:38px;height:38px;border-radius:50%;background:var(--pist);color:var(--verde);font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
+    .sav img{width:100%;height:100%;object-fit:cover}
+    .snombre{font-weight:700;font-size:13px;color:#fff}
+    .srol{font-size:11px;color:var(--pist);margin-top:2px}
+    .slabel{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);padding:12px 20px 4px}
+    .nitem{display:flex;align-items:center;gap:10px;padding:10px 20px;font-size:13px;font-weight:600;color:rgba(255,255,255,.7);border-left:3px solid transparent;cursor:pointer;transition:background var(--t);border-radius:0 8px 8px 0;margin-right:12px}
+    .nitem:hover{background:rgba(255,255,255,.08);color:#fff}
+    .nitem.active{background:rgba(168,201,78,.15);color:var(--pist);border-left-color:var(--pist)}
+    .nico{font-size:17px;width:20px;text-align:center;flex-shrink:0}
+    .nbadge{margin-left:auto;background:var(--pist);color:var(--verde);font-size:10px;font-weight:800;padding:1px 6px;border-radius:20px}
+    .sdiv{height:1px;background:rgba(255,255,255,.1);margin:10px 20px}
+
+    /* MAIN */
+    #main{padding:28px;overflow-y:auto}
+    .ptitle{font-family:'Nunito',sans-serif;font-size:24px;font-weight:900;color:var(--verde);margin-bottom:4px}
+    .psub{font-size:14px;color:var(--texto-g);margin-bottom:24px}
+    .ph{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+
+    /* STATS */
+    .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:24px}
+    .scard{background:#fff;border-radius:var(--rc);box-shadow:0 2px 16px rgba(9,74,75,.08);padding:16px 18px;display:flex;flex-direction:column;gap:5px;border-left:4px solid var(--pist)}
+    .sico{font-size:22px}
+    .sval{font-family:'Nunito',sans-serif;font-size:28px;font-weight:900;color:var(--verde);line-height:1}
+    .slbl{font-size:12px;color:var(--texto-g);font-weight:600}
+
+    /* CARDS */
+    .card{background:#fff;border-radius:var(--rc);box-shadow:0 2px 16px rgba(9,74,75,.08);padding:22px;margin-bottom:18px}
+    .ctitle{font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;color:var(--verde);margin-bottom:14px}
+
+    /* PROCESO CARD — KANBAN */
+    .kanban{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-bottom:24px}
+    .col-kanban{background:#fff;border-radius:14px;box-shadow:0 2px 14px rgba(9,74,75,.08);overflow:hidden}
+    .col-header{padding:12px 16px;font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;display:flex;align-items:center;gap:8px}
+    .col-header.c1{background:#e8f0fb;color:var(--azul)}
+    .col-header.c2{background:#fff8e6;color:#856404}
+    .col-header.c3{background:#d4edda;color:#155724}
+    .col-header.c4{background:#fdecea;color:var(--rojo)}
+    .col-body{padding:10px}
+    .proceso-mini{background:var(--suave);border-radius:8px;padding:10px 12px;margin-bottom:8px;cursor:pointer;transition:box-shadow var(--t)}
+    .proceso-mini:hover{box-shadow:0 4px 12px rgba(9,74,75,.12)}
+    .pm-cargo{font-weight:700;font-size:13px;color:var(--verde)}
+    .pm-emp{font-size:11px;color:var(--texto-g);margin-top:2px}
+    .pm-meta{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+    .pm-tag{font-size:10px;padding:2px 7px;border-radius:20px;font-weight:600}
+
+    /* PROCESO DETALLE */
+    .proceso-header{background:linear-gradient(135deg,var(--verde),#0d6b6c);color:#fff;border-radius:14px;padding:22px 26px;margin-bottom:20px;position:relative;overflow:hidden}
+    .proceso-header::before{content:'';position:absolute;top:-40px;right:-40px;width:140px;height:140px;border-radius:50%;background:rgba(168,201,78,.12)}
+    .proceso-cargo{font-family:'Nunito',sans-serif;font-size:20px;font-weight:900;margin-bottom:4px}
+    .proceso-empresa{font-size:14px;opacity:.85}
+    .proceso-etapas{display:flex;gap:0;overflow-x:auto;margin-bottom:24px;padding-bottom:4px}
+    .etapa{display:flex;align-items:center;gap:0;flex-shrink:0}
+    .etapa-btn{padding:8px 18px;font-size:12px;font-weight:700;background:var(--suave);color:var(--texto-g);border:none;cursor:pointer;transition:all var(--t);white-space:nowrap}
+    .etapa-btn.active{background:var(--verde);color:#fff}
+    .etapa-btn.done{background:var(--pist);color:var(--verde)}
+    .etapa:first-child .etapa-btn{border-radius:8px 0 0 8px}
+    .etapa:last-child .etapa-btn{border-radius:0 8px 8px 0}
+    .etapa-sep{font-size:16px;color:var(--borde)}
+
+    /* MATCHING */
+    .match-card{background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(9,74,75,.08);padding:14px 18px;margin-bottom:10px;display:flex;gap:12px;align-items:flex-start;border:2px solid transparent;transition:all var(--t);cursor:default}
+    .match-card.sel{border-color:var(--pist);background:rgba(168,201,78,.04)}
+    .match-pct{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:13px;color:#fff;flex-shrink:0}
+    .match-bar{height:4px;background:var(--borde);border-radius:2px;margin-top:6px;overflow:hidden}
+    .match-fill{height:100%;border-radius:2px}
+
+    /* TABLA */
+    .twrap{background:#fff;border-radius:var(--rc);box-shadow:0 2px 16px rgba(9,74,75,.08);overflow:hidden;margin-bottom:20px}
+    .ttbar{padding:12px 18px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--borde);flex-wrap:wrap}
+    .ttitle{font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;color:var(--verde);margin-right:auto}
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    th{padding:9px 12px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;color:var(--verde);background:var(--suave);white-space:nowrap}
+    td{padding:10px 12px;border-bottom:1px solid var(--borde);vertical-align:middle}
+    tbody tr:last-child td{border-bottom:none}
+    tbody tr:hover{background:rgba(9,74,75,.02)}
+
+    /* FILTROS */
+    .filtros{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;padding:12px 16px;background:#fff;border-radius:var(--rc);box-shadow:0 2px 10px rgba(9,74,75,.06)}
+    .finput{padding:8px 12px;border:1.5px solid var(--borde);border-radius:var(--r);font-size:13px;font-family:inherit;color:var(--negro);background:#fff;outline:none;transition:border-color var(--t)}
+    .finput:focus{border-color:var(--verde)}
+    select.finput{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23094a4b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+
+    /* FORM */
+    .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .fgrid.one{grid-template-columns:1fr}
+    .fgroup{display:flex;flex-direction:column;gap:5px}
+    .flabel{font-size:12px;font-weight:700;color:var(--verde);text-transform:uppercase;letter-spacing:.04em}
+    .req{color:var(--rojo);margin-left:2px}
+    .fval{padding:9px 13px;border:1.5px solid var(--borde);border-radius:var(--r);font-size:14px;font-family:inherit;color:var(--negro);background:#fff;outline:none;transition:border-color var(--t)}
+    .fval:focus{border-color:var(--verde);box-shadow:0 0 0 3px rgba(9,74,75,.08)}
+    select.fval{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23094a4b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+    textarea.fval{resize:vertical;min-height:80px;line-height:1.5}
+    .fsep{font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;color:var(--verde);margin:14px 0 10px;padding-bottom:4px;border-bottom:2px solid var(--pist);grid-column:1/-1}
+
+    /* MODAL */
+    .modal-bg{position:fixed;inset:0;background:rgba(9,74,75,.5);display:flex;align-items:flex-start;justify-content:center;z-index:999;backdrop-filter:blur(3px);animation:fadeIn .18s ease;padding:20px;overflow-y:auto}
+    .modal{background:#fff;border-radius:18px;box-shadow:0 20px 60px rgba(9,74,75,.25);width:min(820px,95vw);animation:slideUp .22s ease;margin:auto}
+    .modal-head{display:flex;align-items:center;justify-content:space-between;padding:18px 24px 14px;border-bottom:1px solid var(--borde);position:sticky;top:0;background:#fff;z-index:1;border-radius:18px 18px 0 0}
+    .modal-title{font-family:'Nunito',sans-serif;font-size:18px;font-weight:900;color:var(--verde)}
+    .modal-close{background:var(--suave);border:none;border-radius:8px;width:32px;height:32px;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+    .modal-close:hover{background:var(--borde)}
+    .modal-body{padding:24px}
+    .modal-foot{padding:14px 24px;border-top:1px solid var(--borde);display:flex;justify-content:flex-end;gap:10px}
+
+    /* BADGE ESTADOS */
+    .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+    .b-activo{background:#d4edda;color:#155724}
+    .b-matching{background:#e8f0fb;color:var(--azul)}
+    .b-enviadas{background:#fff8e6;color:#856404}
+    .b-proceso{background:#fff3cd;color:#856404}
+    .b-colocado{background:#d4edda;color:#155724}
+    .b-cerrado{background:#fdecea;color:var(--rojo)}
+
+    /* HISTORIAL */
+    .timeline{border-left:2px solid var(--borde);padding-left:20px;margin-left:10px}
+    .tl-item{position:relative;padding-bottom:16px}
+    .tl-item::before{content:'';position:absolute;left:-27px;top:4px;width:12px;height:12px;border-radius:50%;background:var(--pist);border:2px solid #fff;box-shadow:0 0 0 2px var(--pist)}
+    .tl-fecha{font-size:11px;color:var(--texto-g);margin-bottom:2px}
+    .tl-accion{font-size:13px;font-weight:600;color:var(--negro)}
+    .tl-detalle{font-size:12px;color:var(--texto-g);margin-top:2px}
+
+    /* TOAST */
+    #toasts{position:fixed;bottom:24px;right:24px;display:flex;flex-direction:column;gap:10px;z-index:9999}
+    .toast{background:var(--verde);color:#fff;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:600;box-shadow:0 4px 20px rgba(9,74,75,.3);display:flex;align-items:center;gap:10px;animation:slideUp .22s ease;min-width:260px}
+    .toast.ok{border-left:4px solid var(--pist)}
+    .toast.err{border-left:4px solid var(--rojo);background:#c0392b}
+    .toast.warn{border-left:4px solid var(--naranja)}
+
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    @keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    @media(max-width:900px){#shell{grid-template-columns:1fr}#sidebar{display:none}#main{padding:16px}.fgrid{grid-template-columns:1fr}.kanban{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<header id="topbar">
+  <div style="display:flex;align-items:center;gap:14px">
+    <span class="back" onclick="window.location.href='interno.html'">← Panel interno</span>
+    <div class="brand-logos">
+      <img src="logo_comfe_y_servicio.jpeg" alt="Comfenalco"/>
+      <div class="brand-sep"></div>
+      <img src="logo_agencia.png" alt="Agencia"/>
+    </div>
+    <span class="tbadge">🔗 INTERMEDIACIÓN LABORAL</span>
+  </div>
+  <div id="auth-area" style="display:flex;align-items:center;gap:10px"></div>
+</header>
+
+<div id="shell">
+  <nav id="sidebar">
+    <div class="suser">
+      <div class="sav" id="sav">?</div>
+      <div><div class="snombre" id="snombre">Cargando...</div><div class="srol" id="srol">Intermediador</div></div>
+    </div>
+    <div class="slabel">Módulos</div>
+    <div class="nitem active" onclick="nav('dashboard')"><span class="nico">📊</span> Dashboard</div>
+    <div class="nitem" onclick="nav('procesos')"><span class="nico">🔗</span> Procesos activos <span class="nbadge" id="nb-proc">0</span></div>
+    <div class="nitem" onclick="nav('matching')"><span class="nico">🎯</span> Matching HV↔Vacante</div>
+    <div class="nitem" onclick="nav('banco')"><span class="nico">🗄️</span> Banco de HV</div>
+    <div class="nitem" onclick="nav('vacantes')"><span class="nico">💼</span> Vacantes disponibles</div>
+    <div class="nitem" onclick="nav('envios')"><span class="nico">📧</span> Envíos a empresas <span class="nbadge" id="nb-env">0</span></div>
+    <div class="nitem" onclick="nav('colocados')"><span class="nico">✅</span> Colocados <span class="nbadge" id="nb-col">0</span></div>
+    <div class="sdiv"></div>
+    <div class="slabel">Reportes</div>
+    <div class="nitem" onclick="exportarInforme()"><span class="nico">📥</span> Exportar Excel</div>
+    <div class="nitem" onclick="exportarPDF()"><span class="nico">📄</span> Exportar PDF</div>
+  </nav>
+
+  <main id="main">
+
+    <!-- DASHBOARD -->
+    <div id="pg-dashboard">
+      <div class="ph">
+        <div><div class="ptitle">🔗 Intermediación Laboral</div><p class="psub">Gestión de procesos de selección · matching · envío de HV · seguimiento</p></div>
+        <button class="btn btn-primary" onclick="abrirNuevoProceso()">+ Nuevo proceso</button>
+      </div>
+      <div class="stats-row" id="dash-stats"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+        <div class="card">
+          <div class="ctitle">📋 Procesos por etapa</div>
+          <div id="dash-etapas"></div>
+        </div>
+        <div class="card">
+          <div class="ctitle">🕐 Próximos vencimientos SLA</div>
+          <div id="dash-sla"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROCESOS ACTIVOS — KANBAN -->
+    <div id="pg-procesos" class="hidden">
+      <div class="ph">
+        <div><div class="ptitle">🔗 Procesos activos</div><p class="psub">Kanban de seguimiento por etapa</p></div>
+        <div style="display:flex;gap:10px">
+          <button class="btn btn-ghost btn-sm" onclick="nav('matching')">🎯 Ir a Matching</button>
+          <button class="btn btn-primary" onclick="abrirNuevoProceso()">+ Nuevo proceso</button>
+        </div>
+      </div>
+      <div class="kanban" id="kanban-board"></div>
+    </div>
+
+    <!-- MATCHING -->
+    <div id="pg-matching" class="hidden">
+      <div class="ptitle">🎯 Matching HV ↔ Vacante</div>
+      <p class="psub">Selecciona la vacante y el sistema muestra los candidatos más compatibles del banco</p>
+      <div style="display:grid;grid-template-columns:300px 1fr;gap:20px;align-items:start">
+
+        <!-- Panel izquierdo -->
+        <div>
+          <div class="card" style="padding:16px">
+            <div class="ctitle" style="font-size:14px;margin-bottom:10px">1️⃣ Elige la vacante</div>
+            <select class="fval" id="m-vacante" onchange="hacerMatching()" style="width:100%">
+              <option value="">Selecciona una vacante...</option>
+            </select>
+            <div id="m-vac-info" style="margin-top:10px;font-size:12px"></div>
+          </div>
+
+          <div class="card" style="padding:16px">
+            <div class="ctitle" style="font-size:14px;margin-bottom:10px">2️⃣ Filtros</div>
+            <div class="fgroup" style="margin-bottom:10px">
+              <label class="flabel">Región prioritaria</label>
+              <select class="fval" id="m-region" onchange="hacerMatching()">
+                <option value="">Cualquier región</option>
+                <option>Valle de Aburrá</option><option>Oriente</option>
+                <option>Norte</option><option>Urabá</option><option>Suroeste</option>
+                <option>Bajo Cauca</option><option>Nordeste</option>
+              </select>
+            </div>
+            <div class="fgroup" style="margin-bottom:10px">
+              <label class="flabel">HV mínima completa</label>
+              <select class="fval" id="m-hv-min" onchange="hacerMatching()">
+                <option value="0">Sin mínimo</option>
+                <option value="60">60%+</option>
+                <option value="80">80%+</option>
+                <option value="100">100%</option>
+              </select>
+            </div>
+            <div class="fgroup">
+              <label class="flabel">Condición especial</label>
+              <select class="fval" id="m-condicion" onchange="hacerMatching()">
+                <option value="">Cualquiera</option>
+                <option value="joven">Joven</option>
+                <option value="discapacidad">Discapacidad</option>
+                <option value="victima">Víctima conflicto</option>
+                <option value="madre_cabeza">Madre cabeza de hogar</option>
+                <option value="migrante">Migrante</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="card" style="padding:16px" id="sel-panel">
+            <div class="ctitle" style="font-size:14px;margin-bottom:8px">3️⃣ Seleccionados <span id="sel-cnt" style="background:var(--pist);color:var(--verde);padding:1px 7px;border-radius:20px;font-size:12px">0</span></div>
+            <div id="sel-lista" style="font-size:12px;color:var(--texto-g);min-height:40px;margin-bottom:12px">Marca candidatos en la lista →</div>
+            <button class="btn btn-primary" style="width:100%;margin-bottom:8px" onclick="abrirEnvioEmpresa()">📧 Enviar HV a empresa</button>
+            <button class="btn btn-ghost" style="width:100%;font-size:13px" onclick="crearProcesoDesdeMatching()">🔗 Crear proceso</button>
+          </div>
+        </div>
+
+        <!-- Resultados -->
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+            <div style="font-family:'Nunito';font-weight:800;font-size:16px;color:var(--verde)" id="m-titulo">Selecciona una vacante</div>
+            <div id="m-total" style="font-size:13px;color:var(--texto-g)"></div>
+          </div>
+          <div id="m-resultados"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BANCO HV -->
+    <div id="pg-banco" class="hidden">
+      <div class="ptitle">🗄️ Banco de Hojas de Vida</div>
+      <p class="psub">Consulta y descarga HV del banco de candidatos registrados</p>
+      <div class="filtros">
+        <input class="finput" type="text" id="bq" placeholder="🔍 Nombre, documento..." style="flex:1;min-width:160px" oninput="filtrarBanco()"/>
+        <select class="finput" id="b-area" onchange="filtrarBanco()">
+          <option value="">Todas las áreas</option>
+          <option>Logística</option><option>Sistemas</option><option>Administración</option>
+          <option>Salud</option><option>Manufactura</option><option>Agroindustria</option>
+          <option>Construcción</option>
+        </select>
+        <select class="finput" id="b-region" onchange="filtrarBanco()">
+          <option value="">Todas las regiones</option>
+          <option>Valle de Aburrá</option><option>Oriente</option><option>Norte</option><option>Urabá</option>
+        </select>
+        <select class="finput" id="b-pct" onchange="filtrarBanco()">
+          <option value="0">Cualquier completitud</option>
+          <option value="80">HV 80%+</option>
+          <option value="100">HV 100%</option>
+        </select>
+      </div>
+      <div class="twrap">
+        <div class="ttbar"><span class="ttitle" id="banco-count">0 candidatos</span></div>
+        <table>
+          <thead><tr>
+            <th>Candidato</th><th>Área</th><th>Región</th><th>Edu.</th>
+            <th>Exp.</th><th>Pretensión</th><th>HV %</th><th>Contacto</th><th>Acciones</th>
+          </tr></thead>
+          <tbody id="banco-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- VACANTES -->
+    <div id="pg-vacantes" class="hidden">
+      <div class="ptitle">💼 Vacantes disponibles</div>
+      <p class="psub">Vacantes activas para gestionar intermediación</p>
+      <div class="filtros">
+        <input class="finput" type="text" id="vq" placeholder="🔍 Cargo o empresa..." style="flex:1" oninput="filtrarVac()"/>
+        <select class="finput" id="v-region" onchange="filtrarVac()">
+          <option value="">Todas las regiones</option>
+          <option>Valle de Aburrá</option><option>Oriente</option><option>Norte</option><option>Urabá</option>
+        </select>
+      </div>
+      <div class="twrap">
+        <div class="ttbar"><span class="ttitle" id="vac-count">0 vacantes</span></div>
+        <table>
+          <thead><tr>
+            <th>Cargo</th><th>Empresa</th><th>Región</th><th>Salario</th>
+            <th>Postulados</th><th>Días pub.</th><th>HV enviadas</th><th>Acciones</th>
+          </tr></thead>
+          <tbody id="vac-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ENVÍOS -->
+    <div id="pg-envios" class="hidden">
+      <div class="ptitle">📧 Historial de envíos a empresas</div>
+      <p class="psub">Registro de HV enviadas con fecha, responsable y estado</p>
+      <div class="twrap">
+        <div class="ttbar"><span class="ttitle" id="env-count">0 envíos</span></div>
+        <table>
+          <thead><tr>
+            <th>Fecha</th><th>Vacante</th><th>Empresa</th><th>HV enviadas</th>
+            <th>Correo destino</th><th>Intermediador</th><th>Estado</th><th>Acción</th>
+          </tr></thead>
+          <tbody id="env-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- COLOCADOS -->
+    <div id="pg-colocados" class="hidden">
+      <div class="ptitle">✅ Registro de colocados</div>
+      <p class="psub">Personas efectivamente empleadas gracias a la intermediación de Comfenalco</p>
+      <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="abrirRegistrarColocado()">+ Registrar colocado</button>
+        <button class="btn btn-ghost btn-sm" onclick="exportarColocados()">📥 Exportar Excel</button>
+      </div>
+      <div class="stats-row" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px">
+        <div class="scard"><div class="sico">✅</div><div class="sval" id="col-total">0</div><div class="slbl">Total colocados</div></div>
+        <div class="scard" style="border-left-color:#27ae60"><div class="sico">👥</div><div class="sval" id="col-mes">0</div><div class="slbl">Este mes</div></div>
+        <div class="scard" style="border-left-color:var(--naranja)"><div class="sico">♿</div><div class="sval" id="col-incl">0</div><div class="slbl">Población especial</div></div>
+        <div class="scard" style="border-left-color:var(--azul)"><div class="sico">📍</div><div class="sval" id="col-reg">0</div><div class="slbl">Regiones</div></div>
+      </div>
+      <div class="twrap">
+        <div class="ttbar"><span class="ttitle" id="col-count">0 colocados</span></div>
+        <table>
+          <thead><tr>
+            <th>Candidato</th><th>Documento</th><th>Empresa</th><th>Cargo</th>
+            <th>Región</th><th>Salario</th><th>Fecha inicio</th><th>Intermediador</th><th>Condición</th>
+          </tr></thead>
+          <tbody id="col-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- MODAL NUEVO PROCESO -->
+<div id="modal-proceso" class="modal-bg hidden">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="mp-title">Nuevo proceso de intermediación</div>
+      <button class="modal-close" onclick="cerrarModal('modal-proceso')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="fgrid">
+        <div class="fgroup" style="grid-column:1/-1">
+          <label class="flabel">Vacante <span class="req">*</span></label>
+          <select class="fval" id="np-vacante">
+            <option value="">Selecciona la vacante...</option>
+          </select>
+        </div>
+        <div class="fgroup">
+          <label class="flabel">Intermediador responsable <span class="req">*</span></label>
+          <input class="fval" id="np-intermediador" placeholder="Nombre del intermediador"/>
+        </div>
+        <div class="fgroup">
+          <label class="flabel">Correo intermediador</label>
+          <input class="fval" type="email" id="np-correo-int" placeholder="correo@comfenalco.com"/>
+        </div>
+        <div class="fgroup">
+          <label class="flabel">Fecha límite SLA (5 días hábiles)</label>
+          <input class="fval" type="date" id="np-fecha-sla"/>
+        </div>
+        <div class="fgroup">
+          <label class="flabel">Prioridad</label>
+          <select class="fval" id="np-prioridad">
+            <option value="normal">Normal</option>
+            <option value="alta">Alta</option>
+            <option value="urgente">Urgente</option>
+          </select>
+        </div>
+        <div class="fgroup" style="grid-column:1/-1">
+          <label class="flabel">Observaciones iniciales</label>
+          <textarea class="fval" id="np-obs" rows="2" placeholder="Contexto del proceso, requisitos especiales..."></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-proceso')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarProceso()">💾 Crear proceso</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DETALLE PROCESO -->
+<div id="modal-detalle" class="modal-bg hidden">
+  <div class="modal" style="width:min(900px,95vw)">
+    <div class="modal-head">
+      <div class="modal-title" id="md-title">Proceso de intermediación</div>
+      <button class="modal-close" onclick="cerrarModal('modal-detalle')">✕</button>
+    </div>
+    <div class="modal-body" id="md-body"></div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-detalle')">Cerrar</button>
+      <button class="btn btn-verde btn-sm" onclick="avanzarEtapa()">→ Avanzar etapa</button>
+      <button class="btn btn-primary" onclick="abrirEnvioEmpresa()">📧 Enviar HV</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ENVÍO A EMPRESA -->
+<div id="modal-envio" class="modal-bg hidden">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">📧 Enviar HV a empresa</div>
+      <button class="modal-close" onclick="cerrarModal('modal-envio')">✕</button>
+    </div>
+    <div class="modal-body" id="me-body"></div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-envio')">Cancelar</button>
+      <button class="btn btn-primary btn-lg" onclick="confirmarEnvio()">📧 Enviar ahora</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL REGISTRAR COLOCADO -->
+<div id="modal-colocado" class="modal-bg hidden">
+  <div class="modal" style="width:min(600px,95vw)">
+    <div class="modal-head">
+      <div class="modal-title">✅ Registrar persona colocada</div>
+      <button class="modal-close" onclick="cerrarModal('modal-colocado')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="fgrid">
+        <div class="fgroup"><label class="flabel">Candidato <span class="req">*</span></label>
+          <select class="fval" id="rc-cand"><option value="">Selecciona candidato...</option></select>
+        </div>
+        <div class="fgroup"><label class="flabel">Vacante / empresa <span class="req">*</span></label>
+          <select class="fval" id="rc-vac"><option value="">Selecciona vacante...</option></select>
+        </div>
+        <div class="fgroup"><label class="flabel">Cargo contratado</label>
+          <input class="fval" id="rc-cargo" placeholder="Cargo con el que fue contratado"/>
+        </div>
+        <div class="fgroup"><label class="flabel">Salario acordado (COP)</label>
+          <input class="fval" type="number" id="rc-sal" placeholder="1300000"/>
+        </div>
+        <div class="fgroup"><label class="flabel">Fecha inicio contrato</label>
+          <input class="fval" type="date" id="rc-fecha"/>
+        </div>
+        <div class="fgroup"><label class="flabel">Tipo de contrato</label>
+          <select class="fval" id="rc-contrato">
+            <option>Término fijo</option><option>Indefinido</option><option>Obra labor</option><option>Prestación de servicios</option>
+          </select>
+        </div>
+        <div class="fgroup" style="grid-column:1/-1"><label class="flabel">Intermediador que gestionó el proceso</label>
+          <input class="fval" id="rc-inter" placeholder="Nombre del intermediador"/>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-colocado')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarColocado()">✅ Registrar colocación</button>
+    </div>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// DATOS
+// ═══════════════════════════════════════════════════
+var EDU_N={Primaria:0,Secundaria:1,Técnico:2,Tecnólogo:3,Profesional:4,Especialización:5};
+
+var VACANTES=[
+  {id:1,cargo:'Auxiliar de Bodega',empresa:'Logística del Valle SAS',correo_emp:'seleccion@logisticavalle.com',region:'Valle de Aburrá',municipio:'Medellín',salario:1300000,contrato:'Término fijo',edu:'Secundaria',edu_n:1,exp_meses:6,area:'Logística',postulados:12,dias_pub:46,hv_enviadas:0,estado:'activa'},
+  {id:2,cargo:'Desarrollador Web Jr.',empresa:'TechCo Colombia',correo_emp:'rrhh@techco.com.co',region:'Valle de Aburrá',municipio:'Envigado',salario:2500000,contrato:'Indefinido',edu:'Tecnólogo',edu_n:3,exp_meses:12,area:'Sistemas',postulados:5,dias_pub:37,hv_enviadas:3,estado:'activa'},
+  {id:3,cargo:'Operario de Producción',empresa:'Manufacturas Bello SA',correo_emp:'seleccion@manufacturasbello.com',region:'Valle de Aburrá',municipio:'Bello',salario:1160000,contrato:'Término fijo',edu:'Secundaria',edu_n:1,exp_meses:0,area:'Manufactura',postulados:28,dias_pub:60,hv_enviadas:5,estado:'activa'},
+  {id:4,cargo:'Asesor Comercial',empresa:'Seguros Andinos Ltda',correo_emp:'talento@segurosandinos.com',region:'Valle de Aburrá',municipio:'Itagüí',salario:1800000,contrato:'Indefinido',edu:'Técnico',edu_n:2,exp_meses:6,area:'Administración',postulados:9,dias_pub:42,hv_enviadas:2,estado:'activa'},
+  {id:5,cargo:'Auxiliar de Enfermería',empresa:'Hospital Regional Norte',correo_emp:'rrhh@hospitalregional.com',region:'Norte',municipio:'Santa Rosa de Osos',salario:1400000,contrato:'Término fijo',edu:'Técnico',edu_n:2,exp_meses:6,area:'Salud',postulados:14,dias_pub:39,hv_enviadas:4,estado:'activa'},
+  {id:6,cargo:'Inspector de Calidad',empresa:'Agrícola Urabá SA',correo_emp:'seleccion@agricolauraba.com',region:'Urabá',municipio:'Apartadó',salario:1500000,contrato:'Obra labor',edu:'Técnico',edu_n:2,exp_meses:12,area:'Agroindustria',postulados:6,dias_pub:25,hv_enviadas:1,estado:'activa'}
+];
+
+var BANCO_HV=[
+  {id:1,nombre:'Juan García Lopera',doc:'1023456789',celular:'3001234567',correo:'juan@mail.com',municipio:'Medellín',region:'Valle de Aburrá',area:'Logística',edu:'Técnico',edu_n:2,exp_meses:12,completitud:85,perfil:'Operario con experiencia en bodega y logística.',condicion:'ninguna',pretension:1400000},
+  {id:2,nombre:'María Torres Ríos',doc:'1152345678',celular:'3112345678',correo:'maria@mail.com',municipio:'Bello',region:'Valle de Aburrá',area:'Administración',edu:'Tecnólogo',edu_n:3,exp_meses:24,completitud:100,perfil:'Administradora con experiencia en atención al cliente.',condicion:'madre_cabeza',pretension:1800000},
+  {id:3,nombre:'Carlos Mendoza Pérez',doc:'1098765432',celular:'3209876543',correo:'carlos@mail.com',municipio:'Rionegro',region:'Oriente',area:'Sistemas',edu:'Tecnólogo',edu_n:3,exp_meses:18,completitud:90,perfil:'Desarrollador React y Node.js, bases de datos SQL.',condicion:'joven',pretension:2500000},
+  {id:4,nombre:'Luisa Fernández Castro',doc:'1034567890',celular:'3143456789',correo:'luisa@mail.com',municipio:'Medellín',region:'Valle de Aburrá',area:'Salud',edu:'Técnico',edu_n:2,exp_meses:8,completitud:75,perfil:'Auxiliar de enfermería con experiencia en hospitalización.',condicion:'ninguna',pretension:1400000},
+  {id:5,nombre:'Andrés Ríos Montoya',doc:'1187654321',celular:'3156789012',correo:'andres@mail.com',municipio:'Apartadó',region:'Urabá',area:'Agroindustria',edu:'Secundaria',edu_n:1,exp_meses:36,completitud:80,perfil:'Trabajador agrícola con experiencia en cultivos y control.',condicion:'ninguna',pretension:1300000},
+  {id:6,nombre:'Sofía Castro Vargas',doc:'1067890123',celular:'3178901234',correo:'sofia@mail.com',municipio:'Itagüí',region:'Valle de Aburrá',area:'Administración',edu:'Profesional',edu_n:4,exp_meses:30,completitud:95,perfil:'Administradora con experiencia en ventas y servicio.',condicion:'ninguna',pretension:2000000},
+  {id:7,nombre:'Roberto Díaz Serna',doc:'1023890456',celular:'3167890123',correo:'roberto@mail.com',municipio:'Bello',region:'Valle de Aburrá',area:'Manufactura',edu:'Secundaria',edu_n:1,exp_meses:60,completitud:70,perfil:'Operario con amplia experiencia en maquinaria industrial.',condicion:'ninguna',pretension:1200000}
+];
+
+var PROCESOS=[];
+var ENVIOS=[];
+var COLOCADOS=[];
+var seleccionados=[];
+var procesoActual=null;
+var vacMatchActual=null;
+var nombreUsuario='Intermediador';
+
+var ETAPAS=['Matching','HV enviadas','En proceso empresa','Entrevista','Colocado','Cerrado sin colocación'];
+var ETAPA_CLASE=['c1','c2','c3','c3','b-colocado','b-cerrado'];
+
+// ═══════════════════════════════════════════════════
+// UTILIDADES
+// ═══════════════════════════════════════════════════
+function toast(m,t){var tc=document.getElementById('toasts'),el=document.createElement('div');el.className='toast '+(t||'ok');el.innerHTML=(t==='err'?'❌':t==='warn'?'⚠️':'✅')+' '+m;tc.appendChild(el);setTimeout(function(){el.remove();},3500);}
+function cerrarModal(id){document.getElementById(id).classList.add('hidden');}
+function abrirModal(id){document.getElementById(id).classList.remove('hidden');}
+function fmtCOP(n){return n?'$'+Number(n).toLocaleString('es-CO'):'A convenir';}
+function fmtFecha(s){if(!s)return '—';var d=new Date(s+'T12:00:00');return d.toLocaleDateString('es-CO',{day:'2-digit',month:'short',year:'numeric'});}
+function diasHab(n){return Math.round(n*5/7);}
+function colorPct(p){return p>=75?'#27ae60':p>=50?'var(--naranja)':'var(--rojo)';}
+
+var PAGS=['dashboard','procesos','matching','banco','vacantes','envios','colocados'];
+function nav(p){
+  PAGS.forEach(function(x){var el=document.getElementById('pg-'+x);if(el)el.classList.add('hidden');});
+  document.querySelectorAll('.nitem').forEach(function(n){n.classList.remove('active');});
+  var t=document.getElementById('pg-'+p);if(t)t.classList.remove('hidden');
+  var ni=document.querySelector('[onclick*="nav(\''+p+'\')"]');if(ni)ni.classList.add('active');
+  if(p==='dashboard')  renderDash();
+  if(p==='procesos')   renderKanban();
+  if(p==='matching')   initMatching();
+  if(p==='banco')      renderBanco(BANCO_HV);
+  if(p==='vacantes')   renderVacantes(VACANTES);
+  if(p==='envios')     renderEnvios();
+  if(p==='colocados')  renderColocados();
+}
+
+// ═══════════════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════════════
+function renderDash(){
+  var activos=PROCESOS.filter(function(p){return p.etapa<4;}).length;
+  var colocados=COLOCADOS.length;
+  var envios=ENVIOS.length;
+  var slaAlert=PROCESOS.filter(function(p){
+    if(!p.fecha_sla||p.etapa>=4) return false;
+    return new Date(p.fecha_sla)<new Date(Date.now()+2*24*60*60*1000);
+  }).length;
+
+  var st=document.getElementById('dash-stats');
+  if(st) st.innerHTML=[
+    {ico:'🔗',val:activos,lbl:'Procesos activos',c:''},
+    {ico:'📧',val:envios,lbl:'Envíos realizados',c:'info'},
+    {ico:'✅',val:colocados,lbl:'Personas colocadas',c:'ok'},
+    {ico:'⚠️',val:slaAlert,lbl:'Por vencer SLA',c:'warn'}
+  ].map(function(s){
+    return '<div class="scard '+(s.c==='ok'?'':'')+'"><div class="sico">'+s.ico+'</div><div class="sval" style="color:'+(s.c==='ok'?'#27ae60':s.c==='warn'?'var(--naranja)':'var(--verde)')+'">'+s.val+'</div><div class="slbl">'+s.lbl+'</div></div>';
+  }).join('');
+
+  // Etapas
+  var et=document.getElementById('dash-etapas');
+  if(et){
+    var etCount=ETAPAS.map(function(e,i){return {e:e,n:PROCESOS.filter(function(p){return p.etapa===i;}).length};});
+    et.innerHTML=etCount.map(function(e){
+      return '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--borde);font-size:13px;align-items:center">'+
+        '<span>'+e.e+'</span><span style="background:var(--suave);padding:2px 10px;border-radius:20px;font-weight:700;font-size:12px">'+e.n+'</span>'+
+      '</div>';
+    }).join('')||'<p style="color:var(--texto-g);font-size:13px">Sin procesos registrados. Crea el primero →</p>';
+  }
+
+  // SLA
+  var slaEl=document.getElementById('dash-sla');
+  if(slaEl){
+    var prxSla=PROCESOS.filter(function(p){return p.fecha_sla&&p.etapa<4;}).sort(function(a,b){return new Date(a.fecha_sla)-new Date(b.fecha_sla);}).slice(0,5);
+    slaEl.innerHTML=prxSla.map(function(p){
+      var d=Math.ceil((new Date(p.fecha_sla)-new Date())/(1000*60*60*24));
+      var color=d<=1?'var(--rojo)':d<=3?'var(--naranja)':'#27ae60';
+      return '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--borde);font-size:13px;align-items:center">'+
+        '<div><div style="font-weight:600">'+p.cargo+'</div><div style="font-size:11px;color:var(--texto-g)">'+p.empresa+'</div></div>'+
+        '<span style="color:'+color+';font-weight:700;font-size:12px">'+(d>0?d+' días':'Vencido')+'</span>'+
+      '</div>';
+    }).join('')||'<p style="color:var(--texto-g);font-size:13px">Sin vencimientos próximos ✅</p>';
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// PROCESOS — KANBAN
+// ═══════════════════════════════════════════════════
+function renderKanban(){
+  var board=document.getElementById('kanban-board');
+  if(!board) return;
+  board.innerHTML=ETAPAS.slice(0,5).map(function(e,i){
+    var procs=PROCESOS.filter(function(p){return p.etapa===i;});
+    var clases=['c1','c2','c3','c3','c1'];
+    return '<div class="col-kanban">'+
+      '<div class="col-header '+clases[i]+'">'+e+' <span style="margin-left:auto;background:rgba(0,0,0,.1);padding:1px 8px;border-radius:20px;font-size:11px">'+procs.length+'</span></div>'+
+      '<div class="col-body">'+
+        (procs.length?procs.map(function(p){
+          var urg=p.prioridad==='urgente';
+          return '<div class="proceso-mini" onclick="abrirDetalle('+p.id+')" style="'+(urg?'border-left:3px solid var(--rojo)':'')+'">'+
+            '<div class="pm-cargo">'+p.cargo+'</div>'+
+            '<div class="pm-emp">🏢 '+p.empresa+'</div>'+
+            '<div class="pm-meta">'+
+              '<span class="pm-tag" style="background:var(--suave)">👤 '+p.intermediador.split(' ')[0]+'</span>'+
+              (p.fecha_sla?'<span class="pm-tag" style="background:#fdecea;color:var(--rojo)">📅 SLA '+fmtFecha(p.fecha_sla)+'</span>':'')+
+              (urg?'<span class="pm-tag" style="background:#fdecea;color:var(--rojo)">🔴 Urgente</span>':'')+
+            '</div>'+
+          '</div>';
+        }).join(''):'<p style="font-size:12px;color:var(--texto-g);padding:8px;text-align:center">Sin procesos</p>')+
+      '</div>'+
+    '</div>';
+  }).join('');
+  document.getElementById('nb-proc').textContent=PROCESOS.filter(function(p){return p.etapa<4;}).length;
+}
+
+// ═══════════════════════════════════════════════════
+// NUEVO PROCESO
+// ═══════════════════════════════════════════════════
+function abrirNuevoProceso(){
+  var sel=document.getElementById('np-vacante');
+  sel.innerHTML='<option value="">Selecciona la vacante...</option>'+
+    VACANTES.map(function(v){return '<option value="'+v.id+'">'+v.cargo+' — '+v.empresa+'</option>';}).join('');
+  // Fecha SLA por defecto +7 días (5 hábiles)
+  var sla=new Date(); sla.setDate(sla.getDate()+7);
+  document.getElementById('np-fecha-sla').value=sla.toISOString().split('T')[0];
+  document.getElementById('np-intermediador').value=nombreUsuario;
+  abrirModal('modal-proceso');
+}
+
+function guardarProceso(){
+  var vId=parseInt(document.getElementById('np-vacante').value);
+  var inter=document.getElementById('np-intermediador').value.trim();
+  if(!vId||!inter){toast('Selecciona la vacante y el intermediador','err');return;}
+  var v=VACANTES.find(function(x){return x.id===vId;});
+  var nuevo={
+    id:PROCESOS.length+1,
+    vacante_id:vId,cargo:v.cargo,empresa:v.empresa,
+    correo_emp:v.correo_emp,region:v.region,area:v.area,
+    edu:v.edu,edu_n:v.edu_n,exp_meses:v.exp_meses,salario:v.salario,
+    intermediador:inter,
+    correo_int:document.getElementById('np-correo-int').value,
+    fecha_sla:document.getElementById('np-fecha-sla').value,
+    prioridad:document.getElementById('np-prioridad').value,
+    obs:document.getElementById('np-obs').value,
+    etapa:0,hvs_seleccionadas:[],
+    historial:[{fecha:new Date().toISOString().split('T')[0],accion:'Proceso creado',detalle:'Intermediador: '+inter}]
+  };
+  PROCESOS.push(nuevo);
+  cerrarModal('modal-proceso');
+  renderKanban();
+  renderDash();
+  toast('Proceso creado para "'+v.cargo+'"');
+}
+
+// ═══════════════════════════════════════════════════
+// DETALLE PROCESO
+// ═══════════════════════════════════════════════════
+function abrirDetalle(id){
+  var p=PROCESOS.find(function(x){return x.id===id;});
+  if(!p){return;}
+  procesoActual=p;
+  document.getElementById('md-title').textContent=p.cargo+' — '+p.empresa;
+
+  var etapasHtml=ETAPAS.map(function(e,i){
+    var cls=i<p.etapa?'done':i===p.etapa?'active':'';
+    return '<div class="etapa"><button class="etapa-btn '+cls+'" onclick="cambiarEtapa('+id+','+i+')">'+e+'</button>'+(i<ETAPAS.length-1?'<span class="etapa-sep">›</span>':'')+'</div>';
+  }).join('');
+
+  // Candidatos en proceso
+  var candsHtml='';
+  if(p.hvs_seleccionadas&&p.hvs_seleccionadas.length){
+    candsHtml='<div style="margin-bottom:16px"><div class="ctitle">👥 Candidatos en proceso</div>'+
+      p.hvs_seleccionadas.map(function(cId){
+        var c=BANCO_HV.find(function(x){return x.id===cId;});
+        if(!c) return '';
+        return '<div style="background:var(--suave);border-radius:8px;padding:10px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px">'+
+          '<div style="width:36px;height:36px;border-radius:50%;background:var(--verde);color:#fff;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center">'+c.nombre.charAt(0)+'</div>'+
+          '<div style="flex:1"><div style="font-weight:700;font-size:13px">'+c.nombre+'</div>'+
+            '<div style="font-size:12px;color:var(--texto-g)">'+c.edu+' · '+c.exp_meses+' meses · '+c.celular+'</div>'+
+          '</div>'+
+          '<span style="font-size:11px;font-weight:700;color:var(--verde)">HV '+c.completitud+'%</span>'+
+        '</div>';
+      }).join('')+
+    '</div>';
+  } else {
+    candsHtml='<div style="background:#fff8e6;border-radius:8px;padding:12px;margin-bottom:16px;font-size:13px;color:#856404">⚠️ Sin candidatos seleccionados aún. Usa el <strong>Matching</strong> para encontrar los más compatibles.</div>';
+  }
+
+  // Historial
+  var histHtml='<div style="margin-top:16px"><div class="ctitle">📋 Historial</div><div class="timeline">'+
+    p.historial.map(function(h){
+      return '<div class="tl-item"><div class="tl-fecha">'+fmtFecha(h.fecha)+'</div>'+
+        '<div class="tl-accion">'+h.accion+'</div>'+
+        (h.detalle?'<div class="tl-detalle">'+h.detalle+'</div>':'')+
+      '</div>';
+    }).join('')+'</div></div>';
+
+  document.getElementById('md-body').innerHTML=
+    '<div class="proceso-header" style="margin-bottom:16px">'+
+      '<div class="proceso-cargo">'+p.cargo+'</div>'+
+      '<div class="proceso-empresa">🏢 '+p.empresa+' · 📍 '+p.region+'</div>'+
+      '<div style="display:flex;gap:12px;margin-top:8px;font-size:13px;opacity:.85">'+
+        '<span>💵 '+fmtCOP(p.salario)+'</span>'+
+        '<span>👤 '+p.intermediador+'</span>'+
+        (p.fecha_sla?'<span>📅 SLA: '+fmtFecha(p.fecha_sla)+'</span>':'')+
+      '</div>'+
+    '</div>'+
+    '<div class="proceso-etapas">'+etapasHtml+'</div>'+
+    candsHtml+histHtml;
+
+  abrirModal('modal-detalle');
+}
+
+function cambiarEtapa(id,etapa){
+  var p=PROCESOS.find(function(x){return x.id===id;});
+  if(!p) return;
+  p.etapa=etapa;
+  p.historial.push({fecha:new Date().toISOString().split('T')[0],accion:'Etapa actualizada: '+ETAPAS[etapa],detalle:'Por: '+p.intermediador});
+  abrirDetalle(id);
+  renderKanban();
+  toast('Etapa actualizada a: '+ETAPAS[etapa]);
+}
+
+function avanzarEtapa(){
+  if(!procesoActual) return;
+  var sig=Math.min(procesoActual.etapa+1,ETAPAS.length-1);
+  cambiarEtapa(procesoActual.id,sig);
+}
+
+// ═══════════════════════════════════════════════════
+// MATCHING
+// ═══════════════════════════════════════════════════
+function initMatching(){
+  var sel=document.getElementById('m-vacante');
+  if(!sel) return;
+  sel.innerHTML='<option value="">Selecciona una vacante...</option>'+
+    VACANTES.map(function(v){return '<option value="'+v.id+'">'+v.cargo+' — '+v.empresa+' ('+v.region+')</option>';}).join('');
+  seleccionados=[];
+  actualizarSelPanel();
+}
+
+function calcMatch(c,v){
+  var s=0;
+  if(c.area===v.area) s+=40;
+  if(c.edu_n>=(v.edu_n||0)) s+=20; else if(c.edu_n===(v.edu_n||0)-1) s+=10;
+  if(c.exp_meses>=(v.exp_meses||0)) s+=20; else s+=Math.round((c.exp_meses/Math.max(v.exp_meses||1,1))*20);
+  if(c.region===v.region) s+=10;
+  s+=Math.round((c.completitud/100)*10);
+  return Math.min(s,100);
+}
+
+function hacerMatching(){
+  var vId=parseInt(document.getElementById('m-vacante').value);
+  var region=document.getElementById('m-region').value;
+  var hvMin=parseInt(document.getElementById('m-hv-min').value)||0;
+  var cond=document.getElementById('m-condicion').value;
+  var res=document.getElementById('m-resultados');
+  var tit=document.getElementById('m-titulo');
+  var tot=document.getElementById('m-total');
+
+  if(!vId){if(res)res.innerHTML='';if(tit)tit.textContent='Selecciona una vacante';return;}
+  vacMatchActual=vId;
+  var v=VACANTES.find(function(x){return x.id===vId;});
+
+  // Detalle vacante
+  var info=document.getElementById('m-vac-info');
+  if(info) info.innerHTML='<div style="background:var(--suave);border-radius:8px;padding:10px;font-size:12px;line-height:1.8">'+
+    '<div><strong>Área:</strong> '+v.area+'</div>'+
+    '<div><strong>Edu. mínima:</strong> '+v.edu+'</div>'+
+    '<div><strong>Exp. mínima:</strong> '+v.exp_meses+' meses</div>'+
+    '<div><strong>Salario:</strong> '+fmtCOP(v.salario)+'</div>'+
+    '<div><strong>Correo empresa:</strong> '+v.correo_emp+'</div>'+
+  '</div>';
+
+  if(tit) tit.textContent='Candidatos compatibles: '+v.cargo+' — '+v.empresa;
+
+  var candidatos=BANCO_HV.filter(function(c){
+    var okR=!region||c.region===region;
+    var okHv=c.completitud>=hvMin;
+    var okC=!cond||c.condicion===cond;
+    return okR&&okHv&&okC;
+  });
+
+  var resultados=candidatos.map(function(c){return {c:c,pct:calcMatch(c,v)};})
+    .sort(function(a,b){return b.pct-a.pct;});
+
+  if(tot) tot.textContent=resultados.length+' candidatos encontrados';
+  if(!res) return;
+
+  if(!resultados.length){
+    res.innerHTML='<div style="padding:32px;text-align:center;color:var(--texto-g)">Sin candidatos disponibles con los filtros aplicados.</div>';
+    return;
+  }
+
+  res.innerHTML=resultados.map(function(r){
+    var c=r.c, p=r.pct;
+    var color=colorPct(p);
+    var sel=seleccionados.indexOf(c.id)>-1;
+    return '<div class="match-card '+(sel?'sel':'')+'" id="mc-'+c.id+'">'+
+      '<input type="checkbox" '+(sel?'checked':'')+' style="width:18px;height:18px;accent-color:var(--verde);cursor:pointer;flex-shrink:0;margin-top:4px" onchange="toggleSel('+c.id+',this)"/>'+
+      '<div class="match-pct" style="background:'+color+'">'+p+'%</div>'+
+      '<div style="flex:1;min-width:0">'+
+        '<div style="font-weight:700;font-size:14px">'+c.nombre+'</div>'+
+        '<div style="font-size:12px;color:var(--texto-g);margin:3px 0">'+c.doc+' · '+c.municipio+' · '+c.region+'</div>'+
+        '<div style="display:flex;gap:8px;font-size:12px;flex-wrap:wrap;color:var(--texto-g)">'+
+          '<span>🎓 '+c.edu+'</span>'+
+          '<span>⏱️ '+c.exp_meses+' meses</span>'+
+          '<span>💵 '+fmtCOP(c.pretension)+'</span>'+
+          '<span style="color:'+(c.completitud>=80?'#27ae60':'var(--naranja)')+'">HV '+c.completitud+'%</span>'+
+          (c.condicion!=='ninguna'?'<span style="background:#d4edda;color:#155724;padding:1px 6px;border-radius:20px;font-weight:700">'+c.condicion+'</span>':'')+
+        '</div>'+
+        '<div style="font-size:11px;color:var(--texto-g);margin-top:4px">'+c.perfil.substring(0,90)+'...</div>'+
+        '<div class="match-bar" style="margin-top:6px"><div class="match-fill" style="width:'+p+'%;background:'+color+'"></div></div>'+
+        // Desglose del match
+        '<div style="display:flex;gap:6px;margin-top:5px;flex-wrap:wrap">'+
+          desglosarMatch(c,v).map(function(d){
+            return '<span style="font-size:10px;background:'+(d.ok?'#eafaf1':'#fdecea')+';color:'+(d.ok?'#155724':'var(--rojo)')+';padding:1px 6px;border-radius:20px">'+d.label+'</span>';
+          }).join('')+
+        '</div>'+
+      '</div>'+
+      '<div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">'+
+        '<button class="btn btn-ghost btn-xs" onclick="verHV('+c.id+')">Ver HV</button>'+
+        '<button class="btn btn-azul btn-xs" onclick="descargarHVPDF('+c.id+')">📄 PDF</button>'+
+        '<button class="btn btn-ghost btn-xs" onclick="llamar(\''+c.celular+'\')">📞 Llamar</button>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+function desglosarMatch(c,v){
+  return [
+    {label:'Área '+(c.area===v.area?'✓':'✗'),ok:c.area===v.area},
+    {label:'Edu '+(c.edu_n>=(v.edu_n||0)?'✓':'✗'),ok:c.edu_n>=(v.edu_n||0)},
+    {label:'Exp '+(c.exp_meses>=(v.exp_meses||0)?'✓':'✗'),ok:c.exp_meses>=(v.exp_meses||0)},
+    {label:'Región '+(c.region===v.region?'✓':'✗'),ok:c.region===v.region}
+  ];
+}
+
+function toggleSel(id,cb){
+  var idx=seleccionados.indexOf(id);
+  if(cb.checked&&idx===-1) seleccionados.push(id);
+  else if(!cb.checked&&idx>-1) seleccionados.splice(idx,1);
+  var card=document.getElementById('mc-'+id);
+  if(card) card.classList.toggle('sel',cb.checked);
+  actualizarSelPanel();
+}
+
+function actualizarSelPanel(){
+  var cnt=document.getElementById('sel-cnt');
+  var lista=document.getElementById('sel-lista');
+  if(cnt) cnt.textContent=seleccionados.length;
+  if(!lista) return;
+  if(!seleccionados.length){lista.innerHTML='<span style="color:var(--texto-g)">Marca candidatos →</span>';return;}
+  lista.innerHTML=seleccionados.map(function(id){
+    var c=BANCO_HV.find(function(x){return x.id===id;});
+    return c?'<div style="padding:3px 0;font-size:12px;display:flex;align-items:center;gap:6px">'+
+      '<span style="color:var(--pist)">✓</span><strong>'+c.nombre+'</strong>'+
+      '<span style="font-size:10px;color:var(--texto-g)">'+c.celular+'</span>'+
+    '</div>':'';
+  }).join('');
+}
+
+function crearProcesoDesdeMatching(){
+  if(!vacMatchActual){toast('Selecciona una vacante primero','warn');return;}
+  var vId=vacMatchActual;
+  var v=VACANTES.find(function(x){return x.id===vId;});
+  var sla=new Date(); sla.setDate(sla.getDate()+7);
+  var nuevo={
+    id:PROCESOS.length+1,
+    vacante_id:vId,cargo:v.cargo,empresa:v.empresa,
+    correo_emp:v.correo_emp,region:v.region,area:v.area,
+    edu:v.edu,edu_n:v.edu_n,exp_meses:v.exp_meses,salario:v.salario,
+    intermediador:nombreUsuario,correo_int:'',
+    fecha_sla:sla.toISOString().split('T')[0],
+    prioridad:'normal',obs:'',
+    etapa:0,
+    hvs_seleccionadas:seleccionados.slice(),
+    historial:[
+      {fecha:new Date().toISOString().split('T')[0],accion:'Proceso creado desde matching',detalle:seleccionados.length+' candidatos preseleccionados'}
+    ]
+  };
+  PROCESOS.push(nuevo);
+  renderKanban();
+  toast('Proceso creado con '+seleccionados.length+' candidatos preseleccionados');
+  nav('procesos');
+}
+
+// ═══════════════════════════════════════════════════
+// VER HV Y DESCARGAR PDF
+// ═══════════════════════════════════════════════════
+function verHV(id){
+  var c=BANCO_HV.find(function(x){return x.id===id;});
+  if(!c) return;
+  toast('HV de '+c.nombre+' — '+c.celular+' — '+c.correo);
+}
+
+function descargarHVPDF(id){
+  var c=BANCO_HV.find(function(x){return x.id===id;});
+  if(!c){toast('Candidato no encontrado','err');return;}
+  if(typeof window.jspdf==='undefined'){toast('Cargando PDF...','warn');setTimeout(function(){descargarHVPDF(id);},1000);return;}
+  var jsPDF=window.jspdf.jsPDF;
+  var doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  var W=210,mg=20,y=mg;
+
+  doc.setFillColor(9,74,75);doc.rect(0,0,W,30,'F');
+  doc.setTextColor(255,255,255);doc.setFontSize(16);doc.setFont('helvetica','bold');
+  doc.text('HOJA DE VIDA',mg,12);
+  doc.setFontSize(9);doc.setFont('helvetica','normal');
+  doc.text('Agencia de Empleo y Emprendimiento — Comfenalco Antioquia',mg,20);
+  doc.text('Servicio Público de Empleo',mg,27);
+  y=38;
+
+  doc.setFillColor(232,244,232);doc.rect(mg,y,W-mg*2,22,'F');
+  doc.setTextColor(9,74,75);doc.setFontSize(14);doc.setFont('helvetica','bold');
+  doc.text(c.nombre,mg+4,y+8);
+  doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(60,60,60);
+  doc.text('Documento: '+c.doc+'   |   Área: '+c.area+'   |   '+c.municipio+', '+c.region,mg+4,y+14);
+  doc.text('Celular: '+c.celular+'   |   Correo: '+c.correo+'   |   Pretensión: '+fmtCOP(c.pretension),mg+4,y+20);
+  y+=28;
+
+  function sec(t){doc.setFillColor(9,74,75);doc.rect(mg,y,W-mg*2,7,'F');doc.setTextColor(255,255,255);doc.setFontSize(9);doc.setFont('helvetica','bold');doc.text(t,mg+3,y+5);y+=9;}
+  function row(l,v){doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(9,74,75);doc.text(l+':',mg+3,y);doc.setFont('helvetica','normal');doc.setTextColor(30,30,30);doc.text(String(v||'—'),mg+40,y,{maxWidth:W-mg*2-42});y+=6;}
+
+  sec('PERFIL PROFESIONAL');
+  doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(30,30,30);
+  var pl=doc.splitTextToSize(c.perfil,W-mg*2-4);doc.text(pl,mg+3,y);y+=pl.length*5+4;
+
+  sec('DATOS ACADÉMICOS Y EXPERIENCIA');
+  row('Nivel educativo',c.edu);
+  row('Experiencia total',c.exp_meses+' meses');
+  row('Condición especial',c.condicion);
+  row('Completitud HV',c.completitud+'%');
+  y+=4;
+
+  doc.setFillColor(9,74,75);doc.rect(0,287,W,10,'F');
+  doc.setTextColor(255,255,255);doc.setFontSize(7);doc.setFont('helvetica','normal');
+  doc.text('Comfenalco Antioquia — Agencia de Empleo y Emprendimiento',mg,293);
+  doc.text(new Date().toLocaleDateString('es-CO'),W-mg-15,293);
+
+  doc.save('HV_'+c.nombre.replace(/\s+/g,'_')+'.pdf');
+  toast('PDF descargado: '+c.nombre);
+}
+
+function llamar(cel){
+  toast('📞 Llamando a: '+cel);
+}
+
+// ═══════════════════════════════════════════════════
+// ENVÍO A EMPRESA
+// ═══════════════════════════════════════════════════
+function abrirEnvioEmpresa(){
+  if(!seleccionados.length){toast('Selecciona al menos un candidato en el Matching','warn');return;}
+  if(!vacMatchActual){toast('Selecciona una vacante primero','warn');return;}
+  var v=VACANTES.find(function(x){return x.id===vacMatchActual;});
+  var cands=seleccionados.map(function(id){return BANCO_HV.find(function(x){return x.id===id;});}).filter(Boolean);
+
+  document.getElementById('me-body').innerHTML=
+    '<div style="background:var(--suave);border-radius:10px;padding:14px;margin-bottom:16px">'+
+      '<div style="font-family:Nunito;font-weight:800;font-size:15px;color:var(--verde);margin-bottom:4px">'+v.cargo+' — '+v.empresa+'</div>'+
+      '<div style="font-size:13px;color:var(--texto-g)">📧 Destino: <strong>'+v.correo_emp+'</strong></div>'+
+      '<div style="font-size:13px;color:var(--texto-g);margin-top:2px">👥 HV a enviar: <strong>'+cands.length+'</strong></div>'+
+    '</div>'+
+    '<div style="margin-bottom:14px"><div style="font-size:12px;font-weight:700;color:var(--verde);text-transform:uppercase;margin-bottom:8px">Candidatos seleccionados</div>'+
+      cands.map(function(c){
+        var p=calcMatch(c,v);
+        return '<div style="display:flex;align-items:center;gap:10px;padding:8px;background:#fff;border-radius:8px;margin-bottom:6px;border:1px solid var(--borde)">'+
+          '<div style="width:32px;height:32px;border-radius:50%;background:'+colorPct(p)+';color:#fff;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center">'+p+'%</div>'+
+          '<div style="flex:1"><div style="font-weight:700;font-size:13px">'+c.nombre+'</div><div style="font-size:11px;color:var(--texto-g)">'+c.edu+' · '+c.exp_meses+' meses · HV '+c.completitud+'%</div></div>'+
+          '<button class="btn btn-azul btn-xs" onclick="descargarHVPDF('+c.id+')">📄</button>'+
+        '</div>';
+      }).join('')+
+    '</div>'+
+    '<div class="fgroup"><label class="flabel">Mensaje para la empresa</label>'+
+      '<textarea class="fval" id="me-msg" rows="5" style="font-size:13px">Estimado equipo de '+v.empresa+',\n\nAdjunto encontrarán las hojas de vida de los candidatos preseleccionados para la vacante de "'+v.cargo+"\".\n\nEstos perfiles han sido evaluados y cumplen con los requisitos del cargo. Quedamos atentos a sus comentarios para continuar con el proceso.\n\nSaludos cordiales,\n"+nombreUsuario+'\nAgencia de Empleo y Emprendimiento\nComfenalco Antioquia\nTel: 604 444 91 84</textarea>'+
+    '</div>';
+
+  abrirModal('modal-envio');
+}
+
+function confirmarEnvio(){
+  var v=VACANTES.find(function(x){return x.id===vacMatchActual;});
+  var cands=seleccionados.map(function(id){return BANCO_HV.find(function(x){return x.id===id;});}).filter(Boolean);
+  var msg=document.getElementById('me-msg').value;
+
+  // Registrar envío
+  var envio={
+    id:ENVIOS.length+1,
+    fecha:new Date().toISOString().split('T')[0],
+    vacante:v.cargo,empresa:v.empresa,correo_emp:v.correo_emp,
+    n_hvs:cands.length,
+    candidatos:cands.map(function(c){return c.nombre;}).join(', '),
+    intermediador:nombreUsuario,
+    mensaje:msg,estado:'Enviado'
+  };
+  ENVIOS.push(envio);
+  v.hv_enviadas=(v.hv_enviadas||0)+cands.length;
+
+  // Actualizar proceso si existe
+  var proc=PROCESOS.find(function(p){return p.vacante_id===vacMatchActual&&p.etapa<2;});
+  if(proc){
+    proc.etapa=1;
+    proc.hvs_seleccionadas=seleccionados.slice();
+    proc.historial.push({fecha:envio.fecha,accion:'HV enviadas a empresa',detalle:cands.length+' HV enviadas a '+v.correo_emp});
+  }
+
+  cerrarModal('modal-envio');
+  document.getElementById('nb-env').textContent=ENVIOS.length;
+  seleccionados=[];
+  actualizarSelPanel();
+  toast('📧 '+cands.length+' HV enviadas exitosamente a '+v.correo_emp);
+
+  setTimeout(function(){toast('✅ La empresa ha sido notificada');},1200);
+}
+
+// ═══════════════════════════════════════════════════
+// BANCO HV
+// ═══════════════════════════════════════════════════
+function renderBanco(lista){
+  var tb=document.getElementById('banco-tbody');
+  var ct=document.getElementById('banco-count');
+  if(ct) ct.textContent=lista.length+' candidato'+(lista.length!==1?'s':'');
+  if(!tb) return;
+  if(!lista.length){tb.innerHTML='<tr><td colspan="9" style="padding:24px;text-align:center;color:var(--texto-g)">Sin resultados</td></tr>';return;}
+  tb.innerHTML=lista.map(function(c){
+    var color=c.completitud>=80?'#27ae60':c.completitud>=50?'var(--naranja)':'var(--rojo)';
+    return '<tr>'+
+      '<td><strong>'+c.nombre+'</strong><br/><span style="font-size:11px;color:var(--texto-g)">'+c.doc+'</span></td>'+
+      '<td><span style="background:var(--suave);padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600">'+c.area+'</span></td>'+
+      '<td style="color:var(--texto-g)">'+c.region+'</td>'+
+      '<td style="color:var(--texto-g)">'+c.edu+'</td>'+
+      '<td style="color:var(--texto-g)">'+c.exp_meses+' meses</td>'+
+      '<td style="color:var(--texto-g)">'+fmtCOP(c.pretension)+'</td>'+
+      '<td><span style="font-weight:700;color:'+color+'">'+c.completitud+'%</span></td>'+
+      '<td style="font-size:12px;color:var(--texto-g)">'+c.celular+'<br/>'+c.correo+'</td>'+
+      '<td><div style="display:flex;gap:4px">'+
+        '<button class="btn btn-ghost btn-xs" onclick="verHV('+c.id+')">Ver</button>'+
+        '<button class="btn btn-azul btn-xs" onclick="descargarHVPDF('+c.id+')">📄</button>'+
+        '<button class="btn btn-ghost btn-xs" onclick="llamar(\''+c.celular+'\')">📞</button>'+
+      '</div></td>'+
+    '</tr>';
+  }).join('');
+}
+
+function filtrarBanco(){
+  var q=document.getElementById('bq').value.toLowerCase();
+  var a=document.getElementById('b-area').value;
+  var r=document.getElementById('b-region').value;
+  var p=parseInt(document.getElementById('b-pct').value)||0;
+  renderBanco(BANCO_HV.filter(function(c){
+    var okQ=!q||c.nombre.toLowerCase().indexOf(q)>-1||c.doc.indexOf(q)>-1;
+    return okQ&&(!a||c.area===a)&&(!r||c.region===r)&&c.completitud>=p;
+  }));
+}
+
+// ═══════════════════════════════════════════════════
+// VACANTES
+// ═══════════════════════════════════════════════════
+function renderVacantes(lista){
+  var tb=document.getElementById('vac-tbody');
+  var ct=document.getElementById('vac-count');
+  if(ct) ct.textContent=lista.length+' vacante'+(lista.length!==1?'s':'');
+  if(!tb) return;
+  tb.innerHTML=lista.map(function(v){
+    var diasColor=v.dias_pub>90?'var(--rojo)':v.dias_pub>60?'var(--naranja)':'#27ae60';
+    return '<tr>'+
+      '<td><strong>'+v.cargo+'</strong></td>'+
+      '<td style="color:var(--texto-g)">'+v.empresa+'</td>'+
+      '<td style="color:var(--texto-g)">'+v.region+'</td>'+
+      '<td style="color:var(--texto-g)">'+fmtCOP(v.salario)+'</td>'+
+      '<td style="text-align:center"><strong>'+v.postulados+'</strong></td>'+
+      '<td style="text-align:center;color:'+diasColor+';font-weight:700">'+v.dias_pub+' días</td>'+
+      '<td style="text-align:center"><strong>'+(v.hv_enviadas||0)+'</strong></td>'+
+      '<td><div style="display:flex;gap:4px">'+
+        '<button class="btn btn-primary btn-xs" onclick="irMatchingVacante('+v.id+')">🎯 Matching</button>'+
+        '<button class="btn btn-verde btn-xs" onclick="irEnvioVacante('+v.id+')">📧 Enviar</button>'+
+      '</div></td>'+
+    '</tr>';
+  }).join('');
+}
+
+function filtrarVac(){
+  var q=document.getElementById('vq').value.toLowerCase();
+  var r=document.getElementById('v-region').value;
+  renderVacantes(VACANTES.filter(function(v){
+    return (!q||v.cargo.toLowerCase().indexOf(q)>-1||v.empresa.toLowerCase().indexOf(q)>-1)&&(!r||v.region===r);
+  }));
+}
+
+function irMatchingVacante(id){
+  vacMatchActual=id;
+  nav('matching');
+  setTimeout(function(){
+    var sel=document.getElementById('m-vacante');
+    if(sel){sel.value=id;hacerMatching();}
+  },100);
+}
+
+function irEnvioVacante(id){
+  vacMatchActual=id;
+  nav('matching');
+  setTimeout(function(){
+    var sel=document.getElementById('m-vacante');
+    if(sel){sel.value=id;hacerMatching();}
+    toast('Selecciona candidatos y luego haz clic en "Enviar HV a empresa"','warn');
+  },100);
+}
+
+// ═══════════════════════════════════════════════════
+// ENVÍOS
+// ═══════════════════════════════════════════════════
+function renderEnvios(){
+  var tb=document.getElementById('env-tbody');
+  var ct=document.getElementById('env-count');
+  if(ct) ct.textContent=ENVIOS.length+' envío'+(ENVIOS.length!==1?'s':'');
+  if(!tb) return;
+  if(!ENVIOS.length){tb.innerHTML='<tr><td colspan="8" style="padding:24px;text-align:center;color:var(--texto-g)">Sin envíos registrados</td></tr>';return;}
+  tb.innerHTML=ENVIOS.map(function(e){
+    return '<tr>'+
+      '<td style="color:var(--texto-g)">'+fmtFecha(e.fecha)+'</td>'+
+      '<td><strong>'+e.vacante+'</strong></td>'+
+      '<td style="color:var(--texto-g)">'+e.empresa+'</td>'+
+      '<td style="text-align:center"><strong>'+e.n_hvs+'</strong></td>'+
+      '<td style="color:var(--texto-g);font-size:12px">'+e.correo_emp+'</td>'+
+      '<td style="color:var(--texto-g)">'+e.intermediador+'</td>'+
+      '<td><span class="badge b-activo">'+e.estado+'</span></td>'+
+      '<td><button class="btn btn-ghost btn-xs" onclick="reenviar('+e.id+')">Reenviar</button></td>'+
+    '</tr>';
+  }).join('');
+}
+
+function reenviar(id){toast('Reenviando correo #'+id+'...');setTimeout(function(){toast('Correo reenviado exitosamente');},1000);}
+
+// ═══════════════════════════════════════════════════
+// COLOCADOS
+// ═══════════════════════════════════════════════════
+function renderColocados(){
+  var tb=document.getElementById('col-tbody');
+  var ct=document.getElementById('col-count');
+  var mes=new Date().toISOString().substring(0,7);
+  var colMes=COLOCADOS.filter(function(c){return c.fecha&&c.fecha.startsWith(mes);}).length;
+  var colIncl=COLOCADOS.filter(function(c){return c.condicion&&c.condicion!=='ninguna';}).length;
+  var regs=new Set(COLOCADOS.map(function(c){return c.region;})).size;
+  if(document.getElementById('col-total')) document.getElementById('col-total').textContent=COLOCADOS.length;
+  if(document.getElementById('col-mes')) document.getElementById('col-mes').textContent=colMes;
+  if(document.getElementById('col-incl')) document.getElementById('col-incl').textContent=colIncl;
+  if(document.getElementById('col-reg')) document.getElementById('col-reg').textContent=regs;
+  if(ct) ct.textContent=COLOCADOS.length+' colocado'+(COLOCADOS.length!==1?'s':'');
+  document.getElementById('nb-col').textContent=COLOCADOS.length;
+  if(!tb) return;
+  if(!COLOCADOS.length){tb.innerHTML='<tr><td colspan="9" style="padding:24px;text-align:center;color:var(--texto-g)">Sin colocaciones registradas</td></tr>';return;}
+  tb.innerHTML=COLOCADOS.map(function(c){
+    return '<tr>'+
+      '<td><strong>'+c.nombre+'</strong></td>'+
+      '<td style="color:var(--texto-g)">'+c.doc+'</td>'+
+      '<td style="color:var(--texto-g)">'+c.empresa+'</td>'+
+      '<td style="color:var(--texto-g)">'+c.cargo+'</td>'+
+      '<td style="color:var(--texto-g)">'+c.region+'</td>'+
+      '<td style="color:var(--texto-g)">'+fmtCOP(c.salario)+'</td>'+
+      '<td style="color:var(--texto-g)">'+fmtFecha(c.fecha)+'</td>'+
+      '<td style="color:var(--texto-g)">'+c.intermediador+'</td>'+
+      '<td>'+(c.condicion&&c.condicion!=='ninguna'?'<span style="background:#d4edda;color:#155724;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700">'+c.condicion+'</span>':'—')+'</td>'+
+    '</tr>';
+  }).join('');
+}
+
+function abrirRegistrarColocado(){
+  var sc=document.getElementById('rc-cand');
+  var sv=document.getElementById('rc-vac');
+  sc.innerHTML='<option value="">Selecciona candidato...</option>'+BANCO_HV.map(function(c){return '<option value="'+c.id+'">'+c.nombre+' ('+c.doc+')</option>';}).join('');
+  sv.innerHTML='<option value="">Selecciona vacante...</option>'+VACANTES.map(function(v){return '<option value="'+v.id+'">'+v.cargo+' — '+v.empresa+'</option>';}).join('');
+  document.getElementById('rc-fecha').value=new Date().toISOString().split('T')[0];
+  document.getElementById('rc-inter').value=nombreUsuario;
+  abrirModal('modal-colocado');
+}
+
+function guardarColocado(){
+  var cId=parseInt(document.getElementById('rc-cand').value);
+  var vId=parseInt(document.getElementById('rc-vac').value);
+  if(!cId||!vId){toast('Selecciona candidato y vacante','err');return;}
+  var c=BANCO_HV.find(function(x){return x.id===cId;});
+  var v=VACANTES.find(function(x){return x.id===vId;});
+  var nuevo={
+    id:COLOCADOS.length+1,
+    candidato_id:cId,nombre:c.nombre,doc:c.doc,
+    empresa:v.empresa,vacante_id:vId,
+    cargo:document.getElementById('rc-cargo').value||v.cargo,
+    salario:parseInt(document.getElementById('rc-sal').value)||v.salario,
+    fecha:document.getElementById('rc-fecha').value,
+    contrato:document.getElementById('rc-contrato').value,
+    intermediador:document.getElementById('rc-inter').value||nombreUsuario,
+    region:v.region,condicion:c.condicion
+  };
+  COLOCADOS.push(nuevo);
+  // Actualizar proceso si existe
+  var proc=PROCESOS.find(function(p){return p.vacante_id===vId;});
+  if(proc){proc.etapa=4;proc.historial.push({fecha:nuevo.fecha,accion:'Persona colocada: '+c.nombre,detalle:'Empresa: '+v.empresa});}
+  cerrarModal('modal-colocado');
+  renderColocados();
+  renderKanban();
+  toast('✅ '+c.nombre+' registrado como colocado en '+v.empresa);
+}
+
+// ═══════════════════════════════════════════════════
+// EXPORTAR
+// ═══════════════════════════════════════════════════
+function exportarColocados(){
+  var wb=XLSX.utils.book_new();
+  var rows=[['Nombre','Documento','Empresa','Cargo','Región','Salario','Fecha inicio','Intermediador','Condición especial']];
+  COLOCADOS.forEach(function(c){rows.push([c.nombre,c.doc,c.empresa,c.cargo,c.region,c.salario,c.fecha,c.intermediador,c.condicion]);});
+  var ws=XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols']=rows[0].map(function(){return {wch:20};});
+  XLSX.utils.book_append_sheet(wb,ws,'Colocados');
+  XLSX.writeFile(wb,'colocados_comfenalco.xlsx');
+  toast('Excel de colocados descargado');
+}
+
+function exportarInforme(){
+  var wb=XLSX.utils.book_new();
+  // Procesos
+  var rp=[['ID','Cargo','Empresa','Región','Intermediador','Etapa','Prioridad','Fecha SLA','HV seleccionadas']];
+  PROCESOS.forEach(function(p){rp.push([p.id,p.cargo,p.empresa,p.region,p.intermediador,ETAPAS[p.etapa],p.prioridad,p.fecha_sla,(p.hvs_seleccionadas||[]).length]);});
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(rp),'Procesos');
+  // Envíos
+  var re=[['Fecha','Vacante','Empresa','HV enviadas','Correo','Intermediador']];
+  ENVIOS.forEach(function(e){re.push([e.fecha,e.vacante,e.empresa,e.n_hvs,e.correo_emp,e.intermediador]);});
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(re),'Envíos');
+  // Colocados
+  var rc=[['Nombre','Doc','Empresa','Cargo','Región','Salario','Fecha']];
+  COLOCADOS.forEach(function(c){rc.push([c.nombre,c.doc,c.empresa,c.cargo,c.region,c.salario,c.fecha]);});
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(rc),'Colocados');
+  XLSX.writeFile(wb,'intermediacion_comfenalco.xlsx');
+  toast('Informe Excel descargado');
+}
+
+function exportarPDF(){
+  toast('Generando PDF de intermediación...');
+  setTimeout(function(){toast('PDF generado — próximamente completo');},1000);
+}
+
+// ═══════════════════════════════════════════════════
+// AUTH
+// ═══════════════════════════════════════════════════
+function renderAuth(user){
+  var area=document.getElementById('auth-area');
+  if(user){
+    var nombre=((user.firstName||'')+' '+(user.lastName||'')).trim()||'Usuario';
+    var ini=((user.firstName||'')[0]||'').toUpperCase()+((user.lastName||'')[0]||'').toUpperCase()||'U';
+    nombreUsuario=nombre;
+    document.getElementById('snombre').textContent=nombre;
+    document.getElementById('srol').textContent=((user.publicMetadata&&user.publicMetadata.rol)||'Intermediador').replace(/_/g,' ');
+    var av=document.getElementById('sav');
+    av.innerHTML=user.imageUrl?'<img src="'+user.imageUrl+'"/>':ini;
+    area.innerHTML='<span style="color:rgba(255,255,255,.8);font-size:13px">'+nombre+'</span>'+
+      '<button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.signOut().then(function(){window.location.href=\'interno.html\'})">Salir</button>';
+    nav('dashboard');
+  } else {
+    area.innerHTML='<button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>';
+    nav('dashboard');
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════
+window.addEventListener('load',function(){
+  renderDash();
+  if(window.Clerk){
+    window.Clerk.load().then(function(){
+      renderAuth(window.Clerk.user);
+      window.Clerk.addListener(function(e){renderAuth(e.user);});
+    });
+  }
+});
+</script>
+</body>
+</html>
