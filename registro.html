@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Registro de Candidatos — Comfenalco Antioquia</title>
+  <script async crossorigin="anonymous"
+    data-clerk-publishable-key="pk_test_bGlrZWQtYmlzb24tNTEuY2xlcmsuYWNjb3VudHMuZGV2JA"
+    src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@5/dist/clerk.browser.js"
+    type="text/javascript"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--verde:#094a4b;--pist:#a8c94e;--pist-h:#8fb53a;--fondo:#f4f6f4;--borde:#d8e2d8;--texto-g:#4a5a4a;--suave:#e8efe8;--negro:#1a2a1a;--naranja:#e67e22;--azul:#2d4a6b;--rojo:#e74c3c;--r:8px;--rc:14px;--t:.22s ease}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;font-size:15px;color:var(--negro);background:var(--fondo);min-height:100vh}
+    button{cursor:pointer;font-family:inherit;border:none}
+    input,select,textarea{font-family:inherit}
+    .hidden{display:none!important}
+
+    #topbar{background:var(--verde);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(9,74,75,.2)}
+    .brand-logos{display:flex;align-items:center;background:#fff;border-radius:8px;padding:3px 12px;height:46px}
+    .brand-logos img:first-child{height:36px;max-width:170px;object-fit:contain}
+    .brand-sep{width:1px;height:28px;background:var(--borde);margin:0 10px}
+    .brand-logos img:last-child{height:28px;max-width:130px;object-fit:contain}
+    .tbadge{background:rgba(168,201,78,.2);color:var(--pist);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px}
+    .back{color:rgba(255,255,255,.7);font-size:13px;cursor:pointer;padding:6px 10px;border-radius:6px;transition:background var(--t)}
+    .back:hover{background:rgba(255,255,255,.1);color:#fff}
+
+    .btn{display:inline-flex;align-items:center;gap:7px;padding:10px 22px;border-radius:var(--r);font-weight:700;font-size:14px;border:none;transition:all var(--t);cursor:pointer;font-family:inherit}
+    .btn:active{transform:scale(.97)}
+    .btn-primary{background:var(--pist);color:var(--verde)}
+    .btn-primary:hover{background:var(--pist-h)}
+    .btn-verde{background:var(--verde);color:#fff}
+    .btn-verde:hover{background:#0d6b6c}
+    .btn-azul{background:var(--azul);color:#fff}
+    .btn-azul:hover{background:#1e3550}
+    .btn-ghost{background:var(--suave);color:var(--texto-g)}
+    .btn-ghost:hover{background:var(--borde)}
+    .btn-outline{background:transparent;color:var(--verde);border:2px solid var(--verde)}
+    .btn-outline:hover{background:var(--verde);color:#fff}
+    .btn-rojo{background:var(--rojo);color:#fff}
+    .btn-sm{padding:7px 14px;font-size:13px}
+    .btn-xs{padding:4px 10px;font-size:12px}
+    .btn-lg{padding:14px 32px;font-size:16px;border-radius:10px}
+
+    #shell{display:grid;grid-template-columns:240px 1fr;min-height:calc(100vh - 60px)}
+
+    #sidebar{background:var(--verde);padding:20px 0;display:flex;flex-direction:column;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto}
+    .suser{padding:14px 20px 18px;border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:8px;display:flex;align-items:center;gap:12px}
+    .sav{width:38px;height:38px;border-radius:50%;background:var(--pist);color:var(--verde);font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
+    .sav img{width:100%;height:100%;object-fit:cover}
+    .snombre{font-weight:700;font-size:13px;color:#fff}
+    .srol{font-size:11px;color:var(--pist);margin-top:2px}
+    .slabel{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);padding:12px 20px 4px}
+    .nitem{display:flex;align-items:center;gap:10px;padding:10px 20px;font-size:13px;font-weight:600;color:rgba(255,255,255,.7);border-left:3px solid transparent;cursor:pointer;transition:background var(--t);border-radius:0 8px 8px 0;margin-right:12px}
+    .nitem:hover{background:rgba(255,255,255,.08);color:#fff}
+    .nitem.active{background:rgba(168,201,78,.15);color:var(--pist);border-left-color:var(--pist)}
+    .nico{font-size:17px;width:20px;text-align:center;flex-shrink:0}
+    .nbadge{margin-left:auto;background:var(--pist);color:var(--verde);font-size:10px;font-weight:800;padding:1px 6px;border-radius:20px}
+    .sdiv{height:1px;background:rgba(255,255,255,.1);margin:10px 20px}
+
+    #main{padding:28px;overflow-y:auto}
+    .ptitle{font-family:'Nunito',sans-serif;font-size:22px;font-weight:900;color:var(--verde);margin-bottom:4px}
+    .psub{font-size:14px;color:var(--texto-g);margin-bottom:20px}
+    .ph{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+
+    /* PASOS */
+    .pasos-wrap{background:#fff;border-radius:var(--rc);box-shadow:0 2px 16px rgba(9,74,75,.08);padding:20px 24px;margin-bottom:20px}
+    .pasos{display:flex;align-items:center;gap:0;overflow-x:auto}
+    .paso{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;position:relative;min-width:72px;cursor:pointer}
+    .paso::after{content:'';position:absolute;top:15px;left:50%;width:100%;height:2px;background:var(--borde)}
+    .paso:last-child::after{display:none}
+    .paso.done::after{background:var(--pist)}
+    .paso.active::after{background:var(--pist)}
+    .pc{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;z-index:1;background:var(--suave);color:var(--texto-g);border:2px solid var(--borde);transition:all var(--t)}
+    .paso.done .pc{background:var(--pist);color:var(--verde);border-color:var(--pist)}
+    .paso.active .pc{background:var(--verde);color:#fff;border-color:var(--verde)}
+    .pl{font-size:10px;color:var(--texto-g);font-weight:600;text-align:center;line-height:1.2}
+    .paso.active .pl,.paso.done .pl{color:var(--verde)}
+    .pct-wrap{margin-top:14px;padding-top:14px;border-top:1px solid var(--borde)}
+    .pct-label{display:flex;justify-content:space-between;font-size:12px;color:var(--texto-g);margin-bottom:5px}
+    .pct-bar{height:8px;background:var(--borde);border-radius:4px;overflow:hidden}
+    .pct-fill{height:100%;background:var(--pist);border-radius:4px;transition:width .5s}
+
+    /* FORM */
+    .card{background:#fff;border-radius:var(--rc);box-shadow:0 2px 16px rgba(9,74,75,.08);padding:24px;margin-bottom:18px}
+    .ctitle{font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;color:var(--verde);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+    .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .fgrid.one{grid-template-columns:1fr}
+    .fgrid.three{grid-template-columns:1fr 1fr 1fr}
+    .fgroup{display:flex;flex-direction:column;gap:5px}
+    .flabel{font-size:12px;font-weight:700;color:var(--verde);text-transform:uppercase;letter-spacing:.04em}
+    .req{color:var(--rojo);margin-left:2px}
+    .fval{padding:9px 13px;border:1.5px solid var(--borde);border-radius:var(--r);font-size:14px;font-family:inherit;color:var(--negro);background:#fff;outline:none;transition:border-color var(--t)}
+    .fval:focus{border-color:var(--verde);box-shadow:0 0 0 3px rgba(9,74,75,.08)}
+    .fval.error{border-color:var(--rojo)}
+    select.fval{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23094a4b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+    textarea.fval{resize:vertical;min-height:80px;line-height:1.5}
+    .fsep{font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;color:var(--verde);margin:14px 0 10px;padding-bottom:4px;border-bottom:2px solid var(--pist);grid-column:1/-1}
+    .ferror{font-size:11px;color:var(--rojo);margin-top:2px}
+    .fnav{display:flex;justify-content:space-between;align-items:center;margin-top:20px;padding-top:16px;border-top:1px solid var(--borde)}
+
+    /* CHIPS */
+    .chips-grid{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
+    .chip{padding:5px 13px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--borde);background:#fff;color:var(--texto-g);transition:all var(--t)}
+    .chip:hover{border-color:var(--pist);background:rgba(168,201,78,.08)}
+    .chip.on{border-color:var(--pist);background:var(--pist);color:var(--verde)}
+
+    /* ITEMS DINÁMICOS (educación, exp, referencias) */
+    .item-lista{margin-bottom:12px}
+    .item-card{background:var(--suave);border-radius:10px;padding:14px;margin-bottom:8px;position:relative}
+    .item-del{position:absolute;top:10px;right:10px;background:var(--rojo);color:#fff;border:none;border-radius:6px;padding:2px 8px;font-size:12px;cursor:pointer}
+
+    /* BANCO */
+    .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin-bottom:20px}
+    .scard{background:#fff;border-radius:var(--rc);box-shadow:0 2px 16px rgba(9,74,75,.08);padding:16px 18px;border-left:4px solid var(--pist)}
+    .sval{font-family:'Nunito',sans-serif;font-size:28px;font-weight:900;color:var(--verde);line-height:1}
+    .slbl{font-size:12px;color:var(--texto-g);font-weight:600;margin-top:4px}
+    .twrap{background:#fff;border-radius:var(--rc);box-shadow:0 2px 16px rgba(9,74,75,.08);overflow:hidden}
+    .ttbar{padding:12px 18px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--borde);flex-wrap:wrap}
+    .ttitle{font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;color:var(--verde);margin-right:auto}
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    th{padding:9px 12px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;color:var(--verde);background:var(--suave);white-space:nowrap}
+    td{padding:10px 12px;border-bottom:1px solid var(--borde);vertical-align:middle}
+    tbody tr:last-child td{border-bottom:none}
+    tbody tr:hover{background:rgba(9,74,75,.02)}
+    .filtros{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;padding:12px 16px;background:#fff;border-radius:var(--rc);box-shadow:0 2px 10px rgba(9,74,75,.06)}
+    .finput{padding:8px 12px;border:1.5px solid var(--borde);border-radius:var(--r);font-size:13px;font-family:inherit;color:var(--negro);background:#fff;outline:none}
+    .finput:focus{border-color:var(--verde)}
+    select.finput{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23094a4b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+
+    /* HV PREVIEW */
+    .hv-preview{background:linear-gradient(135deg,var(--verde),#0d6b6c);color:#fff;border-radius:14px;padding:22px 26px;margin-bottom:16px}
+    .hv-nombre{font-family:'Nunito',sans-serif;font-size:20px;font-weight:900;margin-bottom:4px}
+    .hv-sub{font-size:13px;opacity:.85}
+    .hv-section{background:var(--suave);border-radius:10px;padding:14px;margin-bottom:10px}
+    .hv-slabel{font-size:11px;font-weight:700;color:var(--verde);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+    .hv-row{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;border-bottom:1px solid rgba(9,74,75,.1)}
+    .hv-row:last-child{border-bottom:none}
+
+    /* MODAL */
+    .modal-bg{position:fixed;inset:0;background:rgba(9,74,75,.5);display:flex;align-items:flex-start;justify-content:center;z-index:999;backdrop-filter:blur(3px);padding:20px;overflow-y:auto}
+    .modal{background:#fff;border-radius:18px;box-shadow:0 20px 60px rgba(9,74,75,.25);width:min(780px,95vw);animation:slideUp .22s ease;margin:auto}
+    .modal-head{display:flex;align-items:center;justify-content:space-between;padding:18px 24px 14px;border-bottom:1px solid var(--borde);position:sticky;top:0;background:#fff;z-index:1;border-radius:18px 18px 0 0}
+    .modal-title{font-family:'Nunito',sans-serif;font-size:18px;font-weight:900;color:var(--verde)}
+    .modal-close{background:var(--suave);border:none;border-radius:8px;width:32px;height:32px;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+    .modal-body{padding:24px}
+    .modal-foot{padding:14px 24px;border-top:1px solid var(--borde);display:flex;justify-content:flex-end;gap:10px}
+
+    #toasts{position:fixed;bottom:24px;right:24px;display:flex;flex-direction:column;gap:10px;z-index:9999}
+    .toast{background:var(--verde);color:#fff;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:600;box-shadow:0 4px 20px rgba(9,74,75,.3);display:flex;align-items:center;gap:10px;animation:slideUp .22s ease;min-width:260px}
+    .toast.ok{border-left:4px solid var(--pist)}
+    .toast.err{border-left:4px solid var(--rojo);background:#c0392b}
+    .toast.warn{border-left:4px solid var(--naranja)}
+
+    @keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    @media(max-width:900px){#shell{grid-template-columns:1fr}#sidebar{display:none}#main{padding:16px}.fgrid,.fgrid.three{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<header id="topbar">
+  <div style="display:flex;align-items:center;gap:14px">
+    <span class="back" onclick="window.location.href='interno.html'">← Panel interno</span>
+    <div class="brand-logos">
+      <img src="logo_comfe_y_servicio.jpeg" alt="Comfenalco"/>
+      <div class="brand-sep"></div>
+      <img src="logo_agencia.png" alt="Agencia"/>
+    </div>
+    <span class="tbadge">👤 REGISTRO DE CANDIDATOS</span>
+  </div>
+  <div id="auth-area" style="display:flex;align-items:center;gap:10px"></div>
+</header>
+
+<div id="shell">
+  <nav id="sidebar">
+    <div class="suser">
+      <div class="sav" id="sav">?</div>
+      <div><div class="snombre" id="snombre">Cargando...</div><div class="srol" id="srol">Auxiliar de registro</div></div>
+    </div>
+    <div class="slabel">Módulos</div>
+    <div class="nitem active" onclick="nav('nueva-hv')"><span class="nico">➕</span> Registrar candidato</div>
+    <div class="nitem" onclick="nav('banco')"><span class="nico">🗄️</span> Banco de HV <span class="nbadge" id="nb-banco">0</span></div>
+    <div class="nitem" onclick="nav('incompletas')"><span class="nico">⚠️</span> HV incompletas <span class="nbadge" id="nb-inc">0</span></div>
+    <div class="sdiv"></div>
+    <div class="slabel">Exportar</div>
+    <div class="nitem" onclick="exportarBanco()"><span class="nico">📥</span> Exportar Excel</div>
+  </nav>
+
+  <main id="main">
+
+    <!-- NUEVA HV -->
+    <div id="pg-nueva-hv">
+      <div class="ph">
+        <div>
+          <div class="ptitle">➕ Registrar candidato</div>
+          <p class="psub">Completa la hoja de vida paso a paso. Los campos marcados con <span style="color:var(--rojo)">*</span> son obligatorios.</p>
+        </div>
+        <div style="display:flex;gap:10px">
+          <button class="btn btn-ghost btn-sm" onclick="limpiarFormulario()">🗑️ Limpiar</button>
+          <button class="btn btn-ghost btn-sm" onclick="buscarPorDoc()">🔍 Buscar por doc.</button>
+        </div>
+      </div>
+
+      <!-- BARRA DE PASOS -->
+      <div class="pasos-wrap">
+        <div class="pasos" id="pasos-nav"></div>
+        <div class="pct-wrap">
+          <div class="pct-label">
+            <span>Completitud de la HV</span>
+            <span id="pct-txt" style="font-weight:700;color:var(--verde)">0%</span>
+          </div>
+          <div class="pct-bar"><div class="pct-fill" id="pct-fill" style="width:0%"></div></div>
+        </div>
+      </div>
+
+      <!-- CONTENIDO DEL PASO -->
+      <div id="paso-body"></div>
+    </div>
+
+    <!-- BANCO DE HV -->
+    <div id="pg-banco" class="hidden">
+      <div class="ph">
+        <div><div class="ptitle">🗄️ Banco de hojas de vida</div><p class="psub">Todos los candidatos registrados</p></div>
+        <button class="btn btn-primary" onclick="nav('nueva-hv')">+ Nuevo registro</button>
+      </div>
+      <div class="stats-row">
+        <div class="scard"><div class="sval" id="st-total">0</div><div class="slbl">Total candidatos</div></div>
+        <div class="scard" style="border-left-color:#27ae60"><div class="sval" id="st-100">0</div><div class="slbl">HV 100% completa</div></div>
+        <div class="scard" style="border-left-color:var(--naranja)"><div class="sval" id="st-inc">0</div><div class="slbl">Incompletas</div></div>
+        <div class="scard" style="border-left-color:var(--azul)"><div class="sval" id="st-hoy">0</div><div class="slbl">Registradas hoy</div></div>
+      </div>
+      <div class="filtros">
+        <input class="finput" type="text" id="bq" placeholder="🔍 Nombre, documento..." style="flex:1;min-width:160px" oninput="filtrarBanco()"/>
+        <select class="finput" id="b-area" onchange="filtrarBanco()">
+          <option value="">Todas las áreas</option>
+          <option>Logística</option><option>Sistemas</option><option>Administración</option>
+          <option>Salud</option><option>Manufactura</option><option>Construcción</option>
+          <option>Agroindustria</option><option>Educación</option><option>Comercio</option>
+        </select>
+        <select class="finput" id="b-region" onchange="filtrarBanco()">
+          <option value="">Todas las regiones</option>
+          <option>Valle de Aburrá</option><option>Oriente</option><option>Norte</option>
+          <option>Occidente</option><option>Suroeste</option><option>Bajo Cauca</option>
+          <option>Nordeste</option><option>Urabá</option>
+        </select>
+        <select class="finput" id="b-pct" onchange="filtrarBanco()">
+          <option value="0">Cualquier completitud</option>
+          <option value="100">Solo 100%</option>
+          <option value="80">80%+</option>
+          <option value="50">50%+</option>
+        </select>
+      </div>
+      <div class="twrap">
+        <div class="ttbar">
+          <span class="ttitle" id="banco-count">0 candidatos</span>
+          <button class="btn btn-ghost btn-sm" onclick="exportarBanco()">📥 Excel</button>
+        </div>
+        <table>
+          <thead><tr>
+            <th>Candidato</th><th>Documento</th><th>Área</th><th>Región / Municipio</th>
+            <th>Edu.</th><th>Exp.</th><th>Celular</th><th>HV %</th>
+            <th>Registrado por</th><th>Acciones</th>
+          </tr></thead>
+          <tbody id="banco-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- HV INCOMPLETAS -->
+    <div id="pg-incompletas" class="hidden">
+      <div class="ptitle">⚠️ HV incompletas</div>
+      <p class="psub">Candidatos con información pendiente de completar</p>
+      <div id="lista-incompletas"></div>
+    </div>
+
+  </main>
+</div>
+
+<!-- MODAL VER / EDITAR HV -->
+<div id="modal-hv" class="modal-bg hidden" style="display:none">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="mhv-title">Hoja de vida</div>
+      <button class="modal-close" onclick="cerrarModal('modal-hv')">✕</button>
+    </div>
+    <div class="modal-body" id="mhv-body"></div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-hv')">Cerrar</button>
+      <button class="btn btn-azul btn-sm" onclick="descargarPDFActual()">📄 Descargar PDF</button>
+      <button class="btn btn-primary btn-sm" onclick="editarHVActual()">✏️ Editar HV</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL BUSCAR DOC -->
+<div id="modal-buscar" class="modal-bg hidden" style="display:none">
+  <div class="modal" style="width:min(480px,95vw)">
+    <div class="modal-head">
+      <div class="modal-title">🔍 Buscar candidato por documento</div>
+      <button class="modal-close" onclick="cerrarModal('modal-buscar')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="fgroup">
+        <label class="flabel">Número de documento</label>
+        <input class="fval" id="buscar-doc-input" type="text" placeholder="Ej: 1023456789" style="font-size:16px"/>
+      </div>
+      <div id="buscar-resultado" style="margin-top:14px"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-buscar')">Cancelar</button>
+      <button class="btn btn-primary" onclick="ejecutarBusqueda()">Buscar</button>
+    </div>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// DATOS
+// ═══════════════════════════════════════════════════
+var MUNICIPIOS_LIST=[
+  'Medellín','Bello','Itagüí','Envigado','Sabaneta','La Estrella','Copacabana','Girardota','Caldas','Barbosa',
+  'Rionegro','El Carmen de Viboral','La Ceja','Marinilla','Guarne','El Retiro',
+  'Santa Rosa de Osos','Yarumal','Donmatías','Angostura',
+  'Santa Fe de Antioquia','Sopetrán','San Jerónimo','Olaya',
+  'Andes','Jericó','Fredonia','Salgar','Jardín','Ciudad Bolívar',
+  'Caucasia','El Bagre','Nechí','Tarazá','Cáceres',
+  'Segovia','Remedios','Yolombó','Amalfi','Cisneros',
+  'Puerto Berrío','Puerto Nare','Puerto Triunfo',
+  'Apartadó','Turbo','Carepa','Chigorodó','Necoclí','San Juan de Urabá'
+];
+
+var BANCO = [];
+var hvActual = {};
+var hvModalActual = null;
+var pasoActual = 1;
+var usuarioActual = 'Auxiliar de registro';
+
+var PASOS = [
+  {n:1, label:'Datos\npersonales', icon:'👤'},
+  {n:2, label:'Ubicación\ny contacto', icon:'📍'},
+  {n:3, label:'Educación', icon:'🎓'},
+  {n:4, label:'Experiencia', icon:'💼'},
+  {n:5, label:'Competencias', icon:'⭐'},
+  {n:6, label:'Referencias', icon:'📋'},
+  {n:7, label:'Finalizar', icon:'✅'}
+];
+
+var COMPETENCIAS_LIST=[
+  'Trabajo en equipo','Comunicación efectiva','Orientación al logro','Atención al detalle',
+  'Manejo de herramientas manuales','Manejo de computador','Microsoft Office',
+  'Excel intermedio/avanzado','Inglés básico','Inglés intermedio',
+  'Conducción de vehículo','Manejo de montacargas','Manejo de inventarios',
+  'Atención al cliente','Liderazgo','Resolución de problemas',
+  'Adaptabilidad','Trabajo bajo presión','Manejo de caja','Cocina industrial'
+];
+
+// ═══════════════════════════════════════════════════
+// UTILIDADES
+// ═══════════════════════════════════════════════════
+function toast(m,t){var tc=document.getElementById('toasts'),el=document.createElement('div');el.className='toast '+(t||'ok');el.innerHTML=(t==='err'?'❌':t==='warn'?'⚠️':'✅')+' '+m;tc.appendChild(el);setTimeout(function(){el.remove();},3500);}
+function cerrarModal(id){var el=document.getElementById(id);if(el){el.classList.add('hidden');el.style.display='none';}}
+function abrirModal(id){var el=document.getElementById(id);if(el){el.classList.remove('hidden');el.style.display='flex';}}
+function fmtCOP(n){return n?'$'+Number(n).toLocaleString('es-CO'):'A convenir';}
+function fmtFecha(s){if(!s)return '—';var d=new Date(s+'T12:00:00');return d.toLocaleDateString('es-CO',{day:'2-digit',month:'short',year:'numeric'});}
+function hoy(){return new Date().toISOString().split('T')[0];}
+
+var PAGS=['nueva-hv','banco','incompletas'];
+function nav(p){
+  PAGS.forEach(function(x){var el=document.getElementById('pg-'+x);if(el)el.classList.add('hidden');});
+  document.querySelectorAll('.nitem').forEach(function(n){n.classList.remove('active');});
+  var t=document.getElementById('pg-'+p);if(t)t.classList.remove('hidden');
+  var ni=document.querySelector('[onclick*="nav(\''+p+'\')"]');if(ni)ni.classList.add('active');
+  if(p==='banco')       renderBanco(BANCO);
+  if(p==='incompletas') renderIncompletas();
+  if(p==='nueva-hv'){pasoActual=1;hvActual={};renderPaso();}
+}
+
+// ═══════════════════════════════════════════════════
+// COMPLETITUD
+// ═══════════════════════════════════════════════════
+function calcPct(h){
+  var campos=[
+    h.nombre1,h.apell1,h.doc,h.celular,h.municipio,h.region,
+    h.correo,h.fnac,h.genero,h.condicion,h.area_interes,
+    h.edu&&h.edu.length>0?'si':null,
+    h.exp&&h.exp.length>0?'si':null,
+    h.competencias&&h.competencias.length>0?'si':null,
+    h.perfil
+  ];
+  return Math.round(campos.filter(Boolean).length/campos.length*100);
+}
+
+function actualizarPct(){
+  var p=calcPct(hvActual);
+  var fill=document.getElementById('pct-fill');
+  var txt=document.getElementById('pct-txt');
+  if(fill) fill.style.width=p+'%';
+  if(txt){txt.textContent=p+'%';txt.style.color=p>=80?'#27ae60':p>=50?'var(--naranja)':'var(--rojo)';}
+}
+
+// ═══════════════════════════════════════════════════
+// PASOS NAV
+// ═══════════════════════════════════════════════════
+function renderPasosNav(){
+  var cont=document.getElementById('pasos-nav');
+  if(!cont) return;
+  cont.innerHTML=PASOS.map(function(p){
+    var cls=p.n<pasoActual?'paso done':p.n===pasoActual?'paso active':'paso';
+    return '<div class="'+cls+'" onclick="irPaso('+p.n+')">'+
+      '<div class="pc">'+(p.n<pasoActual?'✓':p.n)+'</div>'+
+      '<div class="pl">'+p.label+'</div>'+
+    '</div>';
+  }).join('');
+}
+
+function irPaso(n){if(n<=pasoActual){pasoActual=n;renderPaso();}}
+
+// ═══════════════════════════════════════════════════
+// RENDER PASO
+// ═══════════════════════════════════════════════════
+function renderPaso(){
+  renderPasosNav();
+  actualizarPct();
+  var cont=document.getElementById('paso-body');
+  if(!cont) return;
+  if(pasoActual===1) cont.innerHTML=paso1();
+  else if(pasoActual===2) cont.innerHTML=paso2();
+  else if(pasoActual===3) cont.innerHTML=paso3();
+  else if(pasoActual===4) cont.innerHTML=paso4();
+  else if(pasoActual===5) cont.innerHTML=paso5();
+  else if(pasoActual===6) cont.innerHTML=paso6();
+  else cont.innerHTML=paso7();
+}
+
+// ───── PASO 1: Datos personales ─────
+function paso1(){
+  var h=hvActual;
+  return '<div class="card"><div class="ctitle">👤 Paso 1 — Datos personales</div>'+
+    '<div class="fgrid">'+
+      campo('Primer nombre','h-n1',h.nombre1,'text','Ej: Juan Carlos',true)+
+      campo('Segundo nombre','h-n2',h.nombre2,'text','Ej: Andrés')+
+      campo('Primer apellido','h-a1',h.apell1,'text','Ej: García',true)+
+      campo('Segundo apellido','h-a2',h.apell2,'text','Ej: López')+
+      '<div class="fgroup"><label class="flabel">Tipo de documento <span class="req">*</span></label>'+
+        '<select class="fval" id="h-tdoc">'+
+          ['CC-Cédula de ciudadanía','CE-Cédula de extranjería','TI-Tarjeta de identidad','PA-Pasaporte','PEP-Permiso especial permanencia'].map(function(o){
+            var parts=o.split('-');return '<option value="'+parts[0]+'" '+(h.tdoc===parts[0]?'selected':'')+'>'+o+'</option>';
+          }).join('')+
+        '</select></div>'+
+      campo('Número de documento','h-doc',h.doc,'text','1.234.567.890',true)+
+      campo('Fecha de nacimiento','h-fnac',h.fnac,'date','',true)+
+      '<div class="fgroup"><label class="flabel">Género <span class="req">*</span></label>'+
+        '<select class="fval" id="h-gen">'+
+          ['Masculino','Femenino','No binario','Prefiero no decir'].map(function(o){return '<option '+(h.genero===o?'selected':'')+'>'+o+'</option>';}).join('')+
+        '</select></div>'+
+      '<div class="fgroup"><label class="flabel">Condición especial</label>'+
+        '<select class="fval" id="h-cond">'+
+          [['ninguna','Ninguna'],['joven','Joven (18-28 años)'],['victima','Víctima del conflicto'],
+           ['discapacidad','Persona con discapacidad'],['migrante','Migrante / venezolano'],
+           ['adulto_mayor','Adulto mayor (50+)'],['madre_cabeza','Madre cabeza de hogar'],
+           ['habitante_calle','Habitante de calle en proceso de resocialización']].map(function(o){
+            return '<option value="'+o[0]+'" '+(h.condicion===o[0]?'selected':'')+'>'+o[1]+'</option>';
+          }).join('')+
+        '</select></div>'+
+      '<div class="fgroup"><label class="flabel">Pretensión salarial (COP)</label>'+
+        '<input class="fval" id="h-sal" type="number" value="'+(h.pretension||'')+'" placeholder="1300000"/></div>'+
+    '</div>'+
+    '<div class="fgroup" style="margin-top:14px"><label class="flabel">Perfil profesional <span class="req">*</span></label>'+
+      '<textarea class="fval" id="h-perfil" rows="3" placeholder="Describe la experiencia, habilidades y objetivos del candidato...">'+(h.perfil||'')+'</textarea></div>'+
+    nav_btns(false,'guardarPaso1()')+
+  '</div>';}
+
+function guardarPaso1(){
+  var n1=v('h-n1'),a1=v('h-a1'),doc=v('h-doc'),fnac=v('h-fnac'),perfil=v('h-perfil');
+  if(!n1||!a1||!doc||!fnac||!perfil){toast('Completa los campos obligatorios (*)','err');return;}
+  hvActual.nombre1=n1;hvActual.nombre2=v('h-n2');
+  hvActual.apell1=a1;hvActual.apell2=v('h-a2');
+  hvActual.tdoc=v('h-tdoc');hvActual.doc=doc;
+  hvActual.fnac=fnac;hvActual.genero=v('h-gen');
+  hvActual.condicion=v('h-cond');hvActual.pretension=v('h-sal');
+  hvActual.perfil=perfil;
+  // Calcular edad
+  var edad=Math.floor((new Date()-new Date(fnac))/(365.25*24*3600*1000));
+  hvActual.edad=edad;
+  siguiente();
+}
+
+// ───── PASO 2: Ubicación y contacto ─────
+function paso2(){
+  var h=hvActual;
+  return '<div class="card"><div class="ctitle">📍 Paso 2 — Ubicación y contacto</div>'+
+    '<div class="fgrid">'+
+      '<div class="fgroup"><label class="flabel">Departamento</label>'+
+        '<input class="fval" id="h-dpto" value="'+(h.dpto||'Antioquia')+'" placeholder="Antioquia"/></div>'+
+      '<div class="fgroup"><label class="flabel">Municipio de residencia <span class="req">*</span></label>'+
+        '<select class="fval" id="h-mpio">'+
+          '<option value="">Selecciona...</option>'+
+          MUNICIPIOS_LIST.map(function(m){return '<option '+(h.municipio===m?'selected':'')+'>'+m+'</option>';}).join('')+
+        '</select></div>'+
+      '<div class="fgroup"><label class="flabel">Subregión <span class="req">*</span></label>'+
+        '<select class="fval" id="h-region">'+
+          ['Valle de Aburrá','Oriente','Norte','Occidente','Suroeste','Bajo Cauca','Nordeste','Magdalena Medio','Urabá'].map(function(r){return '<option '+(h.region===r?'selected':'')+'>'+r+'</option>';}).join('')+
+        '</select></div>'+
+      '<div class="fgroup"><label class="flabel">Barrio / Vereda</label>'+
+        '<input class="fval" id="h-barrio" value="'+(h.barrio||'')+'" placeholder="Ej: El Poblado, Vereda La Pradera"/></div>'+
+      campo('Celular principal <span class="req">*</span>','h-cel',h.celular,'tel','300 123 4567')+
+      campo('Celular alternativo','h-cel2',h.celular2,'tel','311 234 5678')+
+      campo('Correo electrónico <span class="req">*</span>','h-correo',h.correo,'email','correo@ejemplo.com')+
+      '<div class="fgroup"><label class="flabel">Área de interés <span class="req">*</span></label>'+
+        '<select class="fval" id="h-area">'+
+          ['Logística','Sistemas','Administración','Salud','Manufactura','Construcción','Agroindustria','Educación','Comercio','Servicios generales','Gastronomía','Otro'].map(function(a){return '<option '+(h.area_interes===a?'selected':'')+'>'+a+'</option>';}).join('')+
+        '</select></div>'+
+      '<div class="fgroup"><label class="flabel">Disponibilidad horaria</label>'+
+        '<select class="fval" id="h-disp">'+
+          ['Tiempo completo','Medio tiempo','Fines de semana','Nocturna','Flexible','Teletrabajo'].map(function(d){return '<option '+(h.disponibilidad===d?'selected':'')+'>'+d+'</option>';}).join('')+
+        '</select></div>'+
+    '</div>'+
+    nav_btns(true,'guardarPaso2()')+
+  '</div>';}
+
+function guardarPaso2(){
+  var mpio=v('h-mpio'),cel=v('h-cel'),correo=v('h-correo');
+  if(!mpio||!cel||!correo){toast('Municipio, celular y correo son obligatorios','err');return;}
+  hvActual.dpto=v('h-dpto');hvActual.municipio=mpio;hvActual.region=v('h-region');
+  hvActual.barrio=v('h-barrio');hvActual.celular=cel;hvActual.celular2=v('h-cel2');
+  hvActual.correo=correo;hvActual.area_interes=v('h-area');hvActual.disponibilidad=v('h-disp');
+  siguiente();
+}
+
+// ───── PASO 3: Educación ─────
+function paso3(){
+  if(!hvActual.edu) hvActual.edu=[];
+  return '<div class="card"><div class="ctitle" style="justify-content:space-between">'+
+    '<span>🎓 Paso 3 — Educación</span>'+
+    '<button class="btn btn-primary btn-sm" onclick="agregarEdu()">+ Agregar título</button>'+
+  '</div>'+
+  '<div id="edu-lista">'+renderEduItems()+'</div>'+
+  (hvActual.edu.length===0?'<div style="padding:20px;text-align:center;color:var(--texto-g);font-size:13px">Agrega al menos un nivel educativo</div>':'')+
+  '<div style="margin-top:14px;border-top:1px solid var(--borde);padding-top:14px">'+
+    '<div class="fgroup"><label class="flabel">Cursos / certificaciones adicionales</label>'+
+      '<textarea class="fval" id="h-cursos" rows="2" placeholder="Ej: Curso de Excel, Certificado de manejo de montacargas...">'+(hvActual.cursos||'')+'</textarea></div>'+
+  '</div>'+
+  nav_btns(true,'guardarPaso3()')+
+  '</div>';}
+
+function renderEduItems(){
+  if(!hvActual.edu||!hvActual.edu.length) return '';
+  return hvActual.edu.map(function(e,i){
+    return '<div class="item-card">'+
+      '<button class="item-del" onclick="delEdu('+i+')">✕</button>'+
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px">'+
+        '<div><strong>'+e.nivel+'</strong> — '+e.estado+'</div>'+
+        '<div style="color:var(--texto-g)">'+e.institucion+'</div>'+
+        '<div style="color:var(--texto-g)">'+e.titulo+'</div>'+
+        '<div style="color:var(--texto-g)">Grado: '+(e.anio||'—')+'</div>'+
+      '</div></div>';
+  }).join('');}
+
+function agregarEdu(){
+  var nivel=prompt('Nivel educativo (Primaria/Secundaria/Técnico/Tecnólogo/Profesional/Especialización/Maestría/Doctorado):','Técnico');
+  if(!nivel) return;
+  var inst=prompt('Institución educativa:','SENA');
+  var titulo=prompt('Título obtenido:','');
+  var anio=prompt('Año de grado (o en curso):',new Date().getFullYear());
+  var estado=prompt('Estado (Completo/En curso/Incompleto):','Completo');
+  if(!hvActual.edu) hvActual.edu=[];
+  hvActual.edu.push({nivel:nivel,institucion:inst||'—',titulo:titulo||'—',anio:anio||'—',estado:estado||'Completo'});
+  document.getElementById('edu-lista').innerHTML=renderEduItems();
+}
+
+function delEdu(i){hvActual.edu.splice(i,1);document.getElementById('edu-lista').innerHTML=renderEduItems();}
+
+function guardarPaso3(){
+  hvActual.cursos=v('h-cursos');
+  // Calcular nivel educativo principal
+  var orden=['Doctorado','Maestría','Especialización','Profesional','Tecnólogo','Técnico','Secundaria','Primaria'];
+  if(hvActual.edu&&hvActual.edu.length){
+    for(var i=0;i<orden.length;i++){
+      var found=hvActual.edu.find(function(e){return e.nivel===orden[i]&&e.estado==='Completo';});
+      if(found){hvActual.edu_nivel=orden[i];hvActual.edu_n=7-i;break;}
+    }
+    if(!hvActual.edu_nivel) hvActual.edu_nivel=hvActual.edu[0].nivel;
+  }
+  siguiente();
+}
+
+// ───── PASO 4: Experiencia ─────
+function paso4(){
+  if(!hvActual.exp) hvActual.exp=[];
+  return '<div class="card"><div class="ctitle" style="justify-content:space-between">'+
+    '<span>💼 Paso 4 — Experiencia laboral</span>'+
+    '<button class="btn btn-primary btn-sm" onclick="agregarExp()">+ Agregar experiencia</button>'+
+  '</div>'+
+  '<div id="exp-lista">'+renderExpItems()+'</div>'+
+  (hvActual.exp.length===0?'<div style="padding:20px;text-align:center;color:var(--texto-g);font-size:13px">Sin experiencia previa — el candidato puede continuar sin agregar</div>':'')+
+  '<div style="margin-top:14px;border-top:1px solid var(--borde);padding-top:14px">'+
+    '<div class="fgroup"><label class="flabel">Total meses de experiencia acumulada</label>'+
+      '<input class="fval" id="h-exp-total" type="number" min="0" value="'+(hvActual.exp_meses||0)+'" placeholder="0"/></div>'+
+  '</div>'+
+  nav_btns(true,'guardarPaso4()')+
+  '</div>';}
+
+function renderExpItems(){
+  if(!hvActual.exp||!hvActual.exp.length) return '';
+  return hvActual.exp.map(function(e,i){
+    return '<div class="item-card">'+
+      '<button class="item-del" onclick="delExp('+i+')">✕</button>'+
+      '<div style="font-weight:700;font-size:14px;margin-bottom:6px">'+e.cargo+' — '+e.empresa+'</div>'+
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:12px;color:var(--texto-g)">'+
+        '<div>📅 '+e.desde+' → '+(e.hasta||'Presente')+'</div>'+
+        '<div>⏱️ '+e.meses+' meses</div>'+
+        '<div style="grid-column:1/-1">📝 '+e.funciones.substring(0,80)+(e.funciones.length>80?'...':'')+'</div>'+
+      '</div></div>';
+  }).join('');}
+
+function agregarExp(){
+  var emp=prompt('Empresa / Organización:','');
+  if(!emp) return;
+  var cargo=prompt('Cargo desempeñado:','');
+  var desde=prompt('Fecha inicio (MM/AAAA):','');
+  var hasta=prompt('Fecha fin (MM/AAAA o "Actual"):','');
+  var meses=parseInt(prompt('Meses trabajados:','6'))||6;
+  var funciones=prompt('Funciones principales:','');
+  if(!hvActual.exp) hvActual.exp=[];
+  hvActual.exp.push({empresa:emp,cargo:cargo||'—',desde:desde||'—',hasta:hasta||'Actual',meses:meses,funciones:funciones||'—'});
+  document.getElementById('exp-lista').innerHTML=renderExpItems();
+}
+
+function delExp(i){hvActual.exp.splice(i,1);document.getElementById('exp-lista').innerHTML=renderExpItems();}
+
+function guardarPaso4(){
+  hvActual.exp_meses=parseInt(document.getElementById('h-exp-total').value)||0;
+  // Sumar meses de todas las experiencias como mínimo
+  if(hvActual.exp&&hvActual.exp.length){
+    var total=hvActual.exp.reduce(function(a,e){return a+(e.meses||0);},0);
+    if(total>hvActual.exp_meses) hvActual.exp_meses=total;
+  }
+  siguiente();
+}
+
+// ───── PASO 5: Competencias ─────
+function paso5(){
+  if(!hvActual.competencias) hvActual.competencias=[];
+  return '<div class="card"><div class="ctitle">⭐ Paso 5 — Competencias e idiomas</div>'+
+    '<div class="fgroup" style="margin-bottom:16px">'+
+      '<label class="flabel">Selecciona las competencias del candidato</label>'+
+      '<div class="chips-grid" id="comp-chips">'+
+        COMPETENCIAS_LIST.map(function(c){
+          var on=(hvActual.competencias||[]).indexOf(c)>-1;
+          return '<span class="chip '+(on?'on':'')+'" onclick="toggleComp(this,\''+c+'\')">'+c+'</span>';
+        }).join('')+
+      '</div>'+
+    '</div>'+
+    '<div class="fgrid">'+
+      '<div class="fgroup"><label class="flabel">Idiomas</label>'+
+        '<input class="fval" id="h-idiomas" value="'+(hvActual.idiomas||'')+'" placeholder="Ej: Inglés A2, Portugués básico"/></div>'+
+      '<div class="fgroup"><label class="flabel">Nivel de inglés</label>'+
+        '<select class="fval" id="h-ingles">'+
+          ['No aplica','A1 - Básico','A2 - Elemental','B1 - Intermedio','B2 - Intermedio alto','C1 - Avanzado','C2 - Dominio'].map(function(o){return '<option '+(hvActual.nivel_ingles===o?'selected':'')+'>'+o+'</option>';}).join('')+
+        '</select></div>'+
+    '</div>'+
+    '<div class="fgroup" style="margin-top:14px"><label class="flabel">Otras habilidades / software / maquinaria</label>'+
+      '<textarea class="fval" id="h-habilidades" rows="2" placeholder="Ej: AutoCAD, PLC, manejo de camión de 3 ejes, cocina italiana...">'+(hvActual.habilidades||'')+'</textarea></div>'+
+    nav_btns(true,'guardarPaso5()')+
+  '</div>';}
+
+function toggleComp(el,c){
+  el.classList.toggle('on');
+  if(!hvActual.competencias) hvActual.competencias=[];
+  var i=hvActual.competencias.indexOf(c);
+  if(i>-1) hvActual.competencias.splice(i,1);
+  else hvActual.competencias.push(c);
+}
+
+function guardarPaso5(){
+  hvActual.idiomas=v('h-idiomas');
+  hvActual.nivel_ingles=v('h-ingles');
+  hvActual.habilidades=v('h-habilidades');
+  siguiente();
+}
+
+// ───── PASO 6: Referencias ─────
+function paso6(){
+  if(!hvActual.referencias) hvActual.referencias=[];
+  return '<div class="card"><div class="ctitle" style="justify-content:space-between">'+
+    '<span>📋 Paso 6 — Referencias personales y laborales</span>'+
+    '<button class="btn btn-primary btn-sm" onclick="agregarRef()">+ Agregar referencia</button>'+
+  '</div>'+
+  '<div id="ref-lista">'+renderRefItems()+'</div>'+
+  (hvActual.referencias.length===0?'<div style="padding:16px;text-align:center;color:var(--texto-g);font-size:13px">Agrega al menos una referencia (opcional pero recomendado)</div>':'')+
+  nav_btns(true,'guardarPaso6()')+
+  '</div>';}
+
+function renderRefItems(){
+  if(!hvActual.referencias||!hvActual.referencias.length) return '';
+  return hvActual.referencias.map(function(r,i){
+    return '<div class="item-card">'+
+      '<button class="item-del" onclick="delRef('+i+')">✕</button>'+
+      '<div style="font-weight:700;font-size:13px">'+r.nombre+' — <span style="color:var(--texto-g);font-weight:400">'+r.cargo+'</span></div>'+
+      '<div style="font-size:12px;color:var(--texto-g);margin-top:4px">📞 '+r.telefono+'  |  '+r.tipo+'</div>'+
+    '</div>';
+  }).join('');}
+
+function agregarRef(){
+  var nombre=prompt('Nombre completo de la referencia:','');
+  if(!nombre) return;
+  var cargo=prompt('Cargo / relación:','');
+  var tel=prompt('Teléfono:','');
+  var tipo=prompt('Tipo (Personal/Laboral):','Laboral');
+  if(!hvActual.referencias) hvActual.referencias=[];
+  hvActual.referencias.push({nombre:nombre,cargo:cargo||'—',telefono:tel||'—',tipo:tipo||'Laboral'});
+  document.getElementById('ref-lista').innerHTML=renderRefItems();
+}
+
+function delRef(i){hvActual.referencias.splice(i,1);document.getElementById('ref-lista').innerHTML=renderRefItems();}
+
+function guardarPaso6(){siguiente();}
+
+// ───── PASO 7: Finalizar ─────
+function paso7(){
+  var h=hvActual;
+  var pct=calcPct(h);
+  var color=pct>=80?'#27ae60':pct>=50?'var(--naranja)':'var(--rojo)';
+  return '<div class="card">'+
+    '<div class="hv-preview">'+
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">'+
+        '<div>'+
+          '<div class="hv-nombre">'+(h.nombre1||'')+' '+(h.nombre2||'')+' '+(h.apell1||'')+' '+(h.apell2||'')+'</div>'+
+          '<div class="hv-sub">'+(h.tdoc||'CC')+': '+(h.doc||'—')+'  ·  '+(h.edad||'—')+' años</div>'+
+          '<div class="hv-sub" style="margin-top:4px">📍 '+(h.municipio||'—')+', '+(h.region||'—')+'</div>'+
+          '<div class="hv-sub">📞 '+(h.celular||'—')+'  ·  📧 '+(h.correo||'—')+'</div>'+
+        '</div>'+
+        '<div style="text-align:center;background:rgba(255,255,255,.15);border-radius:12px;padding:12px 18px">'+
+          '<div style="font-family:Nunito;font-size:26px;font-weight:900;color:var(--pist)">'+pct+'%</div>'+
+          '<div style="font-size:11px;opacity:.8">completitud</div>'+
+        '</div>'+
+      '</div>'+
+    '</div>'+
+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">'+
+      '<div class="hv-section"><div class="hv-slabel">Educación</div>'+
+        '<div class="hv-row"><span>Nivel</span><strong>'+(h.edu_nivel||'—')+'</strong></div>'+
+        (h.edu&&h.edu.length?h.edu.slice(0,2).map(function(e){return '<div class="hv-row"><span>'+e.nivel+'</span><span>'+e.institucion+'</span></div>';}).join(''):'')+
+      '</div>'+
+      '<div class="hv-section"><div class="hv-slabel">Experiencia</div>'+
+        '<div class="hv-row"><span>Total</span><strong>'+(h.exp_meses||0)+' meses</strong></div>'+
+        (h.exp&&h.exp.length?'<div class="hv-row"><span>Último cargo</span><span>'+h.exp[0].cargo+'</span></div>':'<div class="hv-row"><span>Sin exp. previa</span><span>—</span></div>')+
+      '</div>'+
+      '<div class="hv-section"><div class="hv-slabel">Interés y disponibilidad</div>'+
+        '<div class="hv-row"><span>Área</span><strong>'+(h.area_interes||'—')+'</strong></div>'+
+        '<div class="hv-row"><span>Disponibilidad</span><span>'+(h.disponibilidad||'—')+'</span></div>'+
+        '<div class="hv-row"><span>Pretensión</span><strong>'+fmtCOP(h.pretension)+'</strong></div>'+
+      '</div>'+
+      '<div class="hv-section"><div class="hv-slabel">Condición</div>'+
+        '<div class="hv-row"><span>Especial</span><strong>'+(h.condicion||'ninguna')+'</strong></div>'+
+        '<div class="hv-row"><span>Idiomas</span><span>'+(h.idiomas||'—')+'</span></div>'+
+        '<div class="hv-row"><span>Competencias</span><strong>'+(h.competencias?h.competencias.length+' seleccionadas':'0')+'</strong></div>'+
+      '</div>'+
+    '</div>'+
+
+    (h.perfil?'<div class="hv-section"><div class="hv-slabel">Perfil profesional</div><p style="font-size:13px;line-height:1.6">'+h.perfil+'</p></div>':'')+''+
+    (h.competencias&&h.competencias.length?'<div class="hv-section" style="margin-top:10px"><div class="hv-slabel">Competencias</div><div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:4px">'+h.competencias.map(function(c){return '<span style="background:var(--pist);color:var(--verde);padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700">'+c+'</span>';}).join('')+'</div></div>':'')+
+
+    '<div style="display:flex;gap:12px;margin-top:20px;flex-wrap:wrap">'+
+      '<button class="btn btn-primary btn-lg" onclick="guardarHV()">💾 Guardar en el banco</button>'+
+      '<button class="btn btn-azul btn-sm" onclick="generarPDFHV(hvActual)">📄 Descargar PDF</button>'+
+      '<button class="btn btn-ghost btn-sm" onclick="pasoActual=1;renderPaso()">← Volver a editar</button>'+
+    '</div>'+
+  '</div>';}
+
+// ═══════════════════════════════════════════════════
+// GUARDAR HV
+// ═══════════════════════════════════════════════════
+function guardarHV(){
+  var h=hvActual;
+  if(!h.nombre1||!h.apell1||!h.doc){toast('Faltan datos básicos del candidato','err');return;}
+  // Verificar duplicado
+  var existe=BANCO.find(function(c){return c.doc===h.doc;});
+  if(existe){toast('Ya existe un candidato con este documento. Edita el registro existente.','warn');return;}
+  var pct=calcPct(h);
+  var nuevo=Object.assign({},h,{
+    id:BANCO.length+1,
+    completitud:pct,
+    fecha_reg:hoy(),
+    registrado_por:usuarioActual
+  });
+  BANCO.push(nuevo);
+  actualizarBadges();
+  toast('✅ Candidato registrado exitosamente ('+(h.nombre1)+' '+h.apell1+')');
+  // Ofrecer PDF
+  setTimeout(function(){
+    if(confirm('¿Deseas descargar la HV en PDF?')) generarPDFHV(nuevo);
+  },600);
+  limpiarFormulario();
+}
+
+function limpiarFormulario(){
+  hvActual={};pasoActual=1;renderPaso();
+}
+
+// ═══════════════════════════════════════════════════
+// PDF
+// ═══════════════════════════════════════════════════
+function generarPDFHV(h){
+  if(!h||!h.nombre1){toast('Sin datos para generar PDF','err');return;}
+  if(typeof window.jspdf==='undefined'){toast('Cargando PDF...','warn');setTimeout(function(){generarPDFHV(h);},1000);return;}
+  var jsPDF=window.jspdf.jsPDF;
+  var doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  var W=210,mg=20,y=mg;
+
+  // Header
+  doc.setFillColor(9,74,75);doc.rect(0,0,W,32,'F');
+  doc.setTextColor(255,255,255);
+  doc.setFontSize(18);doc.setFont('helvetica','bold');doc.text('HOJA DE VIDA',mg,12);
+  doc.setFontSize(10);doc.setFont('helvetica','normal');doc.text('Agencia de Empleo y Emprendimiento — Comfenalco Antioquia',mg,20);
+  doc.setFontSize(8);doc.text('Servicio Público de Empleo  ·  Registrada por: '+(h.registrado_por||'—')+'  ·  '+fmtFecha(h.fecha_reg||hoy()),mg,28);
+  y=40;
+
+  // Datos personales
+  doc.setFillColor(232,244,232);doc.rect(mg,y,W-mg*2,28,'F');
+  doc.setTextColor(9,74,75);doc.setFontSize(15);doc.setFont('helvetica','bold');
+  doc.text(([h.nombre1,h.nombre2,h.apell1,h.apell2].filter(Boolean).join(' ')),mg+4,y+8);
+  doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(60,60,60);
+  doc.text((h.tdoc||'CC')+': '+h.doc+'   |   Edad: '+(h.edad||'—')+' años   |   Género: '+(h.genero||'—'),mg+4,y+14);
+  doc.text('📍 '+h.municipio+', '+h.region+'   |   Barrio: '+(h.barrio||'—'),mg+4,y+20);
+  doc.text('📞 '+(h.celular||'—')+(h.celular2?'  /  '+h.celular2:'')+'   |   📧 '+(h.correo||'—'),mg+4,y+26);
+  y+=34;
+
+  // Condición especial
+  if(h.condicion&&h.condicion!=='ninguna'){
+    doc.setFillColor(212,237,218);doc.rect(mg,y,W-mg*2,8,'F');
+    doc.setTextColor(21,87,36);doc.setFontSize(9);doc.setFont('helvetica','bold');
+    doc.text('Condición especial: '+h.condicion.replace(/_/g,' ').toUpperCase(),mg+4,y+5.5);
+    y+=12;
+  }
+
+  function sec(t){doc.setFillColor(9,74,75);doc.rect(mg,y,W-mg*2,7,'F');doc.setTextColor(255,255,255);doc.setFontSize(9);doc.setFont('helvetica','bold');doc.text(t,mg+3,y+5);y+=9;}
+  function fila(l,val,bold){doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(9,74,75);doc.text(l+':',mg+3,y);doc.setFont('helvetica',bold?'bold':'normal');doc.setTextColor(30,30,30);doc.text(String(val||'—'),mg+44,y,{maxWidth:W-mg*2-46});y+=6;}
+  function check(y2){if(y2>272){doc.addPage();y=mg;}}
+
+  // Perfil
+  if(h.perfil){
+    sec('PERFIL PROFESIONAL');
+    doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(30,30,30);
+    var pl=doc.splitTextToSize(h.perfil,W-mg*2-4);doc.text(pl,mg+3,y);y+=pl.length*5+4;
+  }
+
+  // Educación
+  check(y+20);sec('EDUCACIÓN');
+  if(h.edu&&h.edu.length){
+    h.edu.forEach(function(e){
+      check(y+14);
+      doc.setFillColor(248,252,248);doc.rect(mg,y,W-mg*2,12,'F');
+      doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(9,74,75);
+      doc.text(e.nivel+' — '+e.estado,mg+3,y+5);
+      doc.setFont('helvetica','normal');doc.setTextColor(60,60,60);
+      doc.text(e.institucion+'  |  '+e.titulo+'  |  Año: '+e.anio,mg+3,y+10);
+      y+=14;
+    });
+  } else {fila('Nivel','—');}
+  if(h.cursos){var cl=doc.splitTextToSize('Cursos: '+h.cursos,W-mg*2-4);doc.setFontSize(8);doc.setFont('helvetica','italic');doc.setTextColor(80,80,80);doc.text(cl,mg+3,y);y+=cl.length*5+3;}
+  y+=2;
+
+  // Experiencia
+  check(y+20);sec('EXPERIENCIA LABORAL');
+  if(h.exp&&h.exp.length){
+    h.exp.forEach(function(e){
+      check(y+20);
+      doc.setFillColor(248,252,248);doc.rect(mg,y,W-mg*2,18,'F');
+      doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(9,74,75);
+      doc.text(e.cargo,mg+3,y+5);
+      doc.setFont('helvetica','normal');doc.setTextColor(60,60,60);
+      doc.text(e.empresa+'  |  '+e.desde+' → '+(e.hasta||'Actual')+'  |  '+e.meses+' meses',mg+3,y+10);
+      var fl=doc.splitTextToSize(e.funciones,W-mg*2-6);doc.setFontSize(8);doc.text(fl,mg+3,y+15);
+      y+=15+fl.length*4+3;
+    });
+    fila('Total experiencia',h.exp_meses+' meses acumulados',true);
+  } else {
+    doc.setFontSize(9);doc.setFont('helvetica','italic');doc.setTextColor(100,100,100);
+    doc.text('Sin experiencia laboral previa',mg+3,y);y+=8;
+  }
+  y+=2;
+
+  // Competencias
+  if(h.competencias&&h.competencias.length){
+    check(y+16);sec('COMPETENCIAS');
+    var ct=h.competencias.join('  ·  ');
+    var ctl=doc.splitTextToSize(ct,W-mg*2-4);
+    doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(30,30,30);
+    doc.text(ctl,mg+3,y);y+=ctl.length*5+4;
+  }
+
+  // Idiomas
+  if(h.idiomas||h.nivel_ingles){
+    check(y+12);sec('IDIOMAS Y HABILIDADES');
+    if(h.idiomas){fila('Idiomas',h.idiomas);}
+    if(h.nivel_ingles&&h.nivel_ingles!=='No aplica'){fila('Nivel de inglés',h.nivel_ingles);}
+    if(h.habilidades){var hl=doc.splitTextToSize('Otras habilidades: '+h.habilidades,W-mg*2-4);doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(30,30,30);doc.text(hl,mg+3,y);y+=hl.length*5+4;}
+  }
+
+  // Referencias
+  if(h.referencias&&h.referencias.length){
+    check(y+20);sec('REFERENCIAS');
+    h.referencias.forEach(function(r){
+      fila(r.tipo,r.nombre+' — '+r.cargo+'  |  '+r.telefono);
+    });
+    y+=2;
+  }
+
+  // Datos de interés
+  check(y+16);
+  doc.setFillColor(232,244,232);doc.rect(mg,y,W-mg*2,14,'F');
+  doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(9,74,75);
+  doc.text('Área de interés: '+(h.area_interes||'—')+'   |   Disponibilidad: '+(h.disponibilidad||'—')+'   |   Pretensión: '+fmtCOP(h.pretension),mg+4,y+6);
+  doc.text('Completitud de HV: '+calcPct(h)+'%   |   Registrado por: '+(h.registrado_por||'—'),mg+4,y+12);
+  y+=18;
+
+  // Pie
+  var tp=doc.internal.getNumberOfPages();
+  for(var pi=1;pi<=tp;pi++){
+    doc.setPage(pi);
+    doc.setFillColor(9,74,75);doc.rect(0,287,W,10,'F');
+    doc.setTextColor(255,255,255);doc.setFontSize(7);doc.setFont('helvetica','normal');
+    doc.text('Comfenalco Antioquia — Agencia de Empleo y Emprendimiento — Servicio Público de Empleo',mg,293);
+    doc.text('Pág. '+pi+'/'+tp+'  ·  '+fmtFecha(h.fecha_reg||hoy()),W-mg-25,293);
+  }
+
+  var nombre_pdf='HV_'+([h.nombre1,h.apell1].filter(Boolean).join('_'))+'.pdf';
+  doc.save(nombre_pdf.replace(/\s+/g,'_'));
+  toast('PDF descargado: '+nombre_pdf);
+}
+
+function descargarPDFActual(){if(hvModalActual) generarPDFHV(hvModalActual);}
+
+// ═══════════════════════════════════════════════════
+// BANCO
+// ═══════════════════════════════════════════════════
+function actualizarBadges(){
+  var inc=BANCO.filter(function(c){return c.completitud<100;}).length;
+  var nb=document.getElementById('nb-banco');if(nb) nb.textContent=BANCO.length;
+  var ni=document.getElementById('nb-inc');if(ni) ni.textContent=inc;
+  var hoyStr=hoy();
+  if(document.getElementById('st-total')) document.getElementById('st-total').textContent=BANCO.length;
+  if(document.getElementById('st-100')) document.getElementById('st-100').textContent=BANCO.filter(function(c){return c.completitud===100;}).length;
+  if(document.getElementById('st-inc')) document.getElementById('st-inc').textContent=inc;
+  if(document.getElementById('st-hoy')) document.getElementById('st-hoy').textContent=BANCO.filter(function(c){return c.fecha_reg===hoyStr;}).length;
+}
+
+function renderBanco(lista){
+  var tb=document.getElementById('banco-tbody');
+  var ct=document.getElementById('banco-count');
+  if(ct) ct.textContent=lista.length+' candidato'+(lista.length!==1?'s':'');
+  if(!tb) return;
+  if(!lista.length){tb.innerHTML='<tr><td colspan="10" style="padding:28px;text-align:center;color:var(--texto-g)">Sin candidatos registrados. Registra el primero con el botón "+ Nuevo registro".</td></tr>';return;}
+  tb.innerHTML=lista.map(function(c){
+    var color=c.completitud>=80?'#27ae60':c.completitud>=50?'var(--naranja)':'var(--rojo)';
+    return '<tr>'+
+      '<td><strong>'+([c.nombre1,c.nombre2,c.apell1,c.apell2].filter(Boolean).join(' '))+'</strong><br/>'+
+        '<span style="font-size:10px;color:var(--texto-g)">Reg. '+fmtFecha(c.fecha_reg)+'</span></td>'+
+      '<td style="color:var(--texto-g);font-size:12px">'+(c.tdoc||'CC')+' '+c.doc+'</td>'+
+      '<td><span style="background:var(--suave);padding:2px 7px;border-radius:20px;font-size:11px;font-weight:600">'+(c.area_interes||'—')+'</span></td>'+
+      '<td style="color:var(--texto-g);font-size:12px">'+(c.region||'—')+'<br/><span style="font-size:11px">'+(c.municipio||'—')+'</span></td>'+
+      '<td style="color:var(--texto-g)">'+(c.edu_nivel||'—')+'</td>'+
+      '<td style="color:var(--texto-g)">'+(c.exp_meses||0)+' meses</td>'+
+      '<td style="color:var(--texto-g);font-size:12px">'+(c.celular||'—')+'</td>'+
+      '<td><div style="display:flex;align-items:center;gap:6px">'+
+        '<div style="height:5px;width:40px;background:var(--borde);border-radius:2px;overflow:hidden">'+
+          '<div style="height:100%;width:'+c.completitud+'%;background:'+color+'"></div></div>'+
+        '<span style="font-weight:700;font-size:12px;color:'+color+'">'+c.completitud+'%</span>'+
+      '</div></td>'+
+      '<td style="color:var(--texto-g);font-size:12px">'+(c.registrado_por||'—')+'</td>'+
+      '<td><div style="display:flex;gap:4px;flex-wrap:wrap">'+
+        '<button class="btn btn-ghost btn-xs" onclick="verHV('+c.id+')">Ver</button>'+
+        '<button class="btn btn-azul btn-xs" onclick="generarPDFHV(BANCO.find(function(x){return x.id==='+c.id+';}))">📄</button>'+
+        '<button class="btn btn-ghost btn-xs" onclick="editarHV('+c.id+')">✏️</button>'+
+      '</div></td>'+
+    '</tr>';
+  }).join('');
+  actualizarBadges();
+}
+
+function filtrarBanco(){
+  var q=document.getElementById('bq').value.toLowerCase();
+  var a=document.getElementById('b-area').value;
+  var r=document.getElementById('b-region').value;
+  var p=parseInt(document.getElementById('b-pct').value)||0;
+  renderBanco(BANCO.filter(function(c){
+    var n=([c.nombre1,c.nombre2,c.apell1,c.apell2].filter(Boolean).join(' ')).toLowerCase();
+    var okQ=!q||n.indexOf(q)>-1||c.doc.indexOf(q)>-1;
+    return okQ&&(!a||c.area_interes===a)&&(!r||c.region===r)&&(c.completitud||0)>=p;
+  }));
+}
+
+function verHV(id){
+  var c=BANCO.find(function(x){return x.id===id;});
+  if(!c) return;
+  hvModalActual=c;
+  document.getElementById('mhv-title').textContent=([c.nombre1,c.apell1].filter(Boolean).join(' '))+' — HV '+c.completitud+'%';
+  var pct=c.completitud;
+  var color=pct>=80?'#27ae60':pct>=50?'var(--naranja)':'var(--rojo)';
+  document.getElementById('mhv-body').innerHTML=
+    '<div class="hv-preview">'+
+      '<div class="hv-nombre">'+([c.nombre1,c.nombre2,c.apell1,c.apell2].filter(Boolean).join(' '))+'</div>'+
+      '<div class="hv-sub">'+(c.tdoc||'CC')+': '+c.doc+'  ·  '+(c.edad||'—')+' años  ·  '+(c.genero||'—')+'</div>'+
+      '<div class="hv-sub">📍 '+(c.municipio||'—')+', '+(c.region||'—')+'</div>'+
+      '<div class="hv-sub">📞 '+(c.celular||'—')+'  ·  📧 '+(c.correo||'—')+'</div>'+
+      '<div style="margin-top:10px;display:flex;align-items:center;gap:10px">'+
+        '<div style="flex:1;height:6px;background:rgba(255,255,255,.3);border-radius:3px;overflow:hidden">'+
+          '<div style="height:100%;width:'+pct+'%;background:var(--pist)"></div></div>'+
+        '<span style="font-weight:800">'+pct+'% completa</span>'+
+      '</div>'+
+    '</div>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'+
+      '<div class="hv-section"><div class="hv-slabel">Educación</div>'+
+        '<div class="hv-row"><span>Nivel</span><strong>'+(c.edu_nivel||'—')+'</strong></div>'+
+      '</div>'+
+      '<div class="hv-section"><div class="hv-slabel">Experiencia</div>'+
+        '<div class="hv-row"><span>Total</span><strong>'+(c.exp_meses||0)+' meses</strong></div>'+
+      '</div>'+
+      '<div class="hv-section"><div class="hv-slabel">Interés</div>'+
+        '<div class="hv-row"><span>Área</span><strong>'+(c.area_interes||'—')+'</strong></div>'+
+        '<div class="hv-row"><span>Disponibilidad</span><span>'+(c.disponibilidad||'—')+'</span></div>'+
+        '<div class="hv-row"><span>Pretensión</span><strong>'+fmtCOP(c.pretension)+'</strong></div>'+
+      '</div>'+
+      '<div class="hv-section"><div class="hv-slabel">Condición</div>'+
+        '<div class="hv-row"><span>Especial</span><strong>'+(c.condicion||'ninguna')+'</strong></div>'+
+        '<div class="hv-row"><span>Ingles</span><span>'+(c.nivel_ingles||'—')+'</span></div>'+
+      '</div>'+
+    '</div>'+
+    (c.perfil?'<div class="hv-section" style="margin-top:10px"><div class="hv-slabel">Perfil</div><p style="font-size:13px;line-height:1.6">'+c.perfil+'</p></div>':'')+
+    (c.competencias&&c.competencias.length?'<div class="hv-section" style="margin-top:10px"><div class="hv-slabel">Competencias</div><div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px">'+c.competencias.map(function(comp){return '<span style="background:var(--pist);color:var(--verde);padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700">'+comp+'</span>';}).join('')+'</div></div>':'')+
+    '<div style="margin-top:10px;font-size:12px;color:var(--texto-g);border-top:1px solid var(--borde);padding-top:8px">'+
+      'Registrado por: <strong>'+(c.registrado_por||'—')+'</strong>  ·  Fecha: '+fmtFecha(c.fecha_reg)+
+    '</div>';
+  abrirModal('modal-hv');
+}
+
+function editarHV(id){
+  var c=BANCO.find(function(x){return x.id===id;});
+  if(!c) return;
+  hvActual=Object.assign({},c);
+  nav('nueva-hv');
+  // Eliminar del banco para re-guardar editado
+  BANCO=BANCO.filter(function(x){return x.id!==id;});
+  toast('Editando HV de '+c.nombre1+'. Guarda al finalizar.','warn');
+}
+
+function editarHVActual(){
+  if(!hvModalActual) return;
+  cerrarModal('modal-hv');
+  editarHV(hvModalActual.id);
+}
+
+// ═══════════════════════════════════════════════════
+// HV INCOMPLETAS
+// ═══════════════════════════════════════════════════
+function renderIncompletas(){
+  var lista=BANCO.filter(function(c){return c.completitud<100;}).sort(function(a,b){return a.completitud-b.completitud;});
+  var el=document.getElementById('lista-incompletas');
+  if(!el) return;
+  if(!lista.length){el.innerHTML='<div style="background:#fff;border-radius:14px;padding:40px;text-align:center;color:#27ae60;font-size:15px;font-weight:700;box-shadow:0 2px 12px rgba(0,0,0,.06)">✅ Todas las HV están completas al 100%</div>';return;}
+  el.innerHTML=lista.map(function(c){
+    var color=c.completitud>=80?'#27ae60':c.completitud>=50?'var(--naranja)':'var(--rojo)';
+    var faltantes=[];
+    if(!c.correo) faltantes.push('correo');
+    if(!c.edu||!c.edu.length) faltantes.push('educación');
+    if(!c.exp||!c.exp.length) faltantes.push('experiencia');
+    if(!c.competencias||!c.competencias.length) faltantes.push('competencias');
+    if(!c.perfil) faltantes.push('perfil');
+    return '<div style="background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.07);padding:16px 20px;margin-bottom:10px;display:flex;align-items:center;gap:14px;border-left:4px solid '+color+'">'+
+      '<div style="font-size:32px">👤</div>'+
+      '<div style="flex:1">'+
+        '<div style="font-weight:700;font-size:14px">'+([c.nombre1,c.apell1].filter(Boolean).join(' '))+'</div>'+
+        '<div style="font-size:12px;color:var(--texto-g);margin:3px 0">'+c.doc+' · '+(c.municipio||'—')+' · '+(c.celular||'—')+'</div>'+
+        (faltantes.length?'<div style="font-size:11px;color:'+color+';font-weight:600;margin-top:4px">Pendiente: '+faltantes.join(', ')+'</div>':'')+
+      '</div>'+
+      '<div style="text-align:right">'+
+        '<div style="font-family:Nunito;font-size:22px;font-weight:900;color:'+color+'">'+c.completitud+'%</div>'+
+        '<div style="display:flex;gap:6px;margin-top:6px">'+
+          '<button class="btn btn-primary btn-xs" onclick="editarHV('+c.id+')">✏️ Completar</button>'+
+          '<button class="btn btn-azul btn-xs" onclick="generarPDFHV(BANCO.find(function(x){return x.id==='+c.id+';}))">📄</button>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════
+// BUSCAR POR DOCUMENTO
+// ═══════════════════════════════════════════════════
+function buscarPorDoc(){abrirModal('modal-buscar');}
+
+function ejecutarBusqueda(){
+  var doc=document.getElementById('buscar-doc-input').value.trim().replace(/\./g,'');
+  var el=document.getElementById('buscar-resultado');
+  var c=BANCO.find(function(x){return x.doc.replace(/\./g,'')===doc;});
+  if(!c){
+    el.innerHTML='<div style="background:#fff8e6;border-radius:8px;padding:14px;font-size:13px;color:#856404">No se encontró ningún candidato con el documento <strong>'+doc+'</strong>. Puedes registrarlo como nuevo.</div>';
+    return;
+  }
+  el.innerHTML='<div style="background:#d4edda;border-radius:8px;padding:14px;margin-bottom:10px">'+
+    '<div style="font-weight:700;color:#155724;margin-bottom:4px">✅ Candidato encontrado</div>'+
+    '<div style="font-size:13px;color:#155724">'+([c.nombre1,c.nombre2,c.apell1,c.apell2].filter(Boolean).join(' '))+'</div>'+
+    '<div style="font-size:12px;color:#155724;margin-top:2px">'+c.municipio+' · '+(c.edu_nivel||'—')+' · HV '+c.completitud+'%</div>'+
+  '</div>'+
+  '<div style="display:flex;gap:8px">'+
+    '<button class="btn btn-primary btn-sm" onclick="verHV('+c.id+');cerrarModal(\'modal-buscar\')">Ver HV completa</button>'+
+    '<button class="btn btn-azul btn-sm" onclick="generarPDFHV(BANCO.find(function(x){return x.id==='+c.id+';}))" >📄 Descargar PDF</button>'+
+    '<button class="btn btn-ghost btn-sm" onclick="editarHV('+c.id+');cerrarModal(\'modal-buscar\')">✏️ Editar</button>'+
+  '</div>';
+}
+
+// ═══════════════════════════════════════════════════
+// EXPORTAR
+// ═══════════════════════════════════════════════════
+function exportarBanco(){
+  if(!BANCO.length){toast('Sin candidatos para exportar','warn');return;}
+  var wb=XLSX.utils.book_new();
+  var rows=[['Nombre completo','Documento','Municipio','Región','Celular','Correo','Área','Edu. nivel','Exp. meses','Condición','Completitud %','Registrado por','Fecha reg.']];
+  BANCO.forEach(function(c){
+    rows.push([
+      [c.nombre1,c.nombre2,c.apell1,c.apell2].filter(Boolean).join(' '),
+      c.doc,c.municipio,c.region,c.celular,c.correo,
+      c.area_interes,c.edu_nivel,c.exp_meses,c.condicion,
+      c.completitud,c.registrado_por,c.fecha_reg
+    ]);
+  });
+  var ws=XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols']=rows[0].map(function(){return {wch:18};});
+  XLSX.utils.book_append_sheet(wb,ws,'Candidatos');
+  XLSX.writeFile(wb,'banco_hv_comfenalco.xlsx');
+  toast('Excel descargado con '+BANCO.length+' candidatos');
+}
+
+// ═══════════════════════════════════════════════════
+// HELPERS FORM
+// ═══════════════════════════════════════════════════
+function campo(label,id,val,tipo,placeholder,req){
+  return '<div class="fgroup"><label class="flabel">'+label+(req?'<span class="req"> *</span>':'')+'</label>'+
+    '<input class="fval" id="'+id+'" type="'+(tipo||'text')+'" value="'+(val||'')+'" placeholder="'+(placeholder||'')+'"/></div>';
+}
+function v(id){var el=document.getElementById(id);return el?el.value.trim():'';}
+function siguiente(){pasoActual++;renderPaso();}
+function nav_btns(conAnterior,guardarFn){
+  return '<div class="fnav">'+
+    (conAnterior?'<button class="btn btn-ghost" onclick="pasoActual--;renderPaso()">← Anterior</button>':'<div></div>')+
+    '<button class="btn btn-primary" onclick="'+guardarFn+'">Guardar y continuar →</button>'+
+  '</div>';
+}
+
+// ═══════════════════════════════════════════════════
+// AUTH
+// ═══════════════════════════════════════════════════
+function renderAuth(user){
+  var area=document.getElementById('auth-area');
+  if(user){
+    var nombre=((user.firstName||'')+' '+(user.lastName||'')).trim()||'Usuario';
+    var ini=((user.firstName||'')[0]||'').toUpperCase()+((user.lastName||'')[0]||'').toUpperCase()||'U';
+    usuarioActual=nombre;
+    document.getElementById('snombre').textContent=nombre;
+    document.getElementById('srol').textContent=((user.publicMetadata&&user.publicMetadata.rol)||'Auxiliar de registro').replace(/_/g,' ');
+    var av=document.getElementById('sav');
+    av.innerHTML=user.imageUrl?'<img src="'+user.imageUrl+'"/>':ini;
+    area.innerHTML='<span style="color:rgba(255,255,255,.8);font-size:13px">'+nombre+'</span>'+
+      '<button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.signOut().then(function(){window.location.href=\'interno.html\'})">Salir</button>';
+  } else {
+    area.innerHTML='<button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>';
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════
+window.addEventListener('load',function(){
+  pasoActual=1;hvActual={};
+  renderPaso();
+  actualizarBadges();
+  if(window.Clerk){
+    window.Clerk.load().then(function(){
+      renderAuth(window.Clerk.user);
+      window.Clerk.addListener(function(e){renderAuth(e.user);});
+    });
+  }
+});
+</script>
+</body>
+</html>
