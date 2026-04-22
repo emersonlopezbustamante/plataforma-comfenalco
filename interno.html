@@ -4,6 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Panel Interno — Comfenalco Antioquia</title>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script async crossorigin="anonymous"
     data-clerk-publishable-key="pk_test_bGlrZWQtYmlzb24tNTEuY2xlcmsuYWNjb3VudHMuZGV2JA"
     src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@5/dist/clerk.browser.js"
@@ -172,7 +173,30 @@
     @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 
     @media(max-width:900px){#shell{grid-template-columns:1fr}#sidebar{display:none}#main{padding:16px}.fgrid{grid-template-columns:1fr}.det-grid{grid-template-columns:1fr}}
-  </style>
+  
+  /* CARGUE MASIVO */
+  .drop-zone{border:2.5px dashed var(--borde);border-radius:14px;padding:36px 24px;text-align:center;cursor:pointer;transition:all var(--t);background:#fff}
+  .drop-zone:hover,.drop-zone.over{border-color:var(--pist);background:rgba(168,201,78,.06)}
+  .drop-zone-ico{font-size:42px;margin-bottom:10px}
+  .drop-zone-txt{font-size:14px;color:var(--texto-g)}
+  .drop-zone-sub{font-size:12px;color:var(--borde-dark,#b0c0b0);margin-top:4px}
+  .preview-wrap{background:#fff;border-radius:var(--rc);box-shadow:0 2px 16px rgba(9,74,75,.08);overflow:hidden;margin-top:16px}
+  .preview-bar{padding:10px 16px;background:var(--verde);color:#fff;display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700}
+  .preview-stats{display:flex;gap:14px;padding:10px 16px;background:var(--suave);border-bottom:1px solid var(--borde);font-size:12px;flex-wrap:wrap}
+  .pstat{display:flex;align-items:center;gap:5px;font-weight:700}
+  .pstat.ok{color:#27ae60}.pstat.err{color:var(--rojo)}.pstat.warn{color:var(--naranja)}.pstat.dup{color:var(--azul)}
+  .preview-table-wrap{max-height:340px;overflow-y:auto}
+  .row-ok{background:#fff}.row-err{background:#fff5f5}.row-dup{background:#f0f4ff}.row-warn{background:#fffbf0}
+  .row-badge{font-size:10px;padding:1px 7px;border-radius:20px;font-weight:700;white-space:nowrap}
+  .rb-ok{background:#d4edda;color:#155724}
+  .rb-err{background:#fdecea;color:var(--rojo)}
+  .rb-dup{background:#e8f0fb;color:var(--azul)}
+  .rb-warn{background:#fff8e6;color:#856404}
+  .tab-btn{padding:8px 18px;font-size:13px;font-weight:700;border:none;background:var(--suave);color:var(--texto-g);cursor:pointer;border-radius:8px 8px 0 0;transition:background var(--t)}
+  .tab-btn.active{background:var(--verde);color:#fff}
+  .import-progress{height:6px;background:var(--borde);border-radius:3px;overflow:hidden;margin:8px 0}
+  .import-progress-fill{height:100%;background:var(--pist);border-radius:3px;transition:width .3s}
+</style>
 </head>
 <body>
 
@@ -207,6 +231,7 @@
     <div class="nitem" onclick="window.location.href='intermediacion.html'"><span class="nico">🔗</span> Intermediación</div>
     <div class="nitem" onclick="nav('banco-hv')"><span class="nico">🗄️</span> Banco de HV</div>
     <div class="sdiv"></div>
+    <div class="nitem" onclick="nav('cargue')"><span class="nico">📤</span> Cargue masivo</div>
     <div class="nitem" onclick="window.location.href='auditoria.html'"><span class="nico">🔍</span> Auditoría interna</div>
     <div class="nitem" onclick="window.location.href='eventos.html'"><span class="nico">🗓️</span> Eventos y jornadas</div>
     <div class="nitem" onclick="window.location.href='laboratorio.html'"><span class="nico">🔬</span> Laboratorios de empleo</div>
@@ -403,6 +428,134 @@
       <div class="ptitle">📈 Reportes e indicadores</div>
       <div class="card"><p style="color:var(--texto-g)">Módulo en desarrollo — próximamente disponible.</p></div>
     </div>
+
+  <!-- ══ CARGUE MASIVO ══ -->
+  <div id="pg-cargue" class="hidden">
+    <div class="ph">
+      <div>
+        <div class="ptitle">📤 Cargue masivo</div>
+        <p class="psub">Importa bases de datos externas de candidatos y empresas desde Excel o CSV</p>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost btn-sm" onclick="descargarPlantilla('candidatos')">⬇️ Plantilla candidatos</button>
+        <button class="btn btn-ghost btn-sm" onclick="descargarPlantilla('empresas')">⬇️ Plantilla empresas</button>
+      </div>
+    </div>
+    <div style="display:flex;gap:4px;margin-bottom:0;border-bottom:2px solid var(--borde)">
+      <button class="tab-btn active" id="tab-cand" onclick="switchTab('candidatos')">👤 Candidatos</button>
+      <button class="tab-btn" id="tab-emp" onclick="switchTab('empresas')">🏢 Empresas</button>
+    </div>
+    <!-- CANDIDATOS -->
+    <div id="tab-pane-candidatos" style="padding-top:20px">
+      <div class="card" style="padding:16px;margin-bottom:14px">
+        <div class="ctitle" style="font-size:14px;margin-bottom:10px">Columnas requeridas y opcionales</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          <span style="background:#d4edda;color:#155724;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700">Primer nombre *</span>
+          <span style="background:#d4edda;color:#155724;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700">Primer apellido *</span>
+          <span style="background:#d4edda;color:#155724;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700">Documento *</span>
+          <span style="background:#d4edda;color:#155724;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700">Celular *</span>
+          <span style="background:var(--suave);color:var(--texto-g);padding:3px 10px;border-radius:20px;font-size:11px">Segundo nombre</span>
+          <span style="background:var(--suave);color:var(--texto-g);padding:3px 10px;border-radius:20px;font-size:11px">Segundo apellido</span>
+          <span style="background:var(--suave);color:var(--texto-g);padding:3px 10px;border-radius:20px;font-size:11px">Tipo documento</span>
+          <span style="background:var(--suave);color:var(--texto-g);padding:3px 10px;border-radius:20px;font-size:11px">Correo</span>
+          <span style="background:var(--suave);color:var(--texto-g);padding:3px 10px;border-radius:20px;font-size:11px">Municipio</span>
+          <span style="background:var(--suave);color:var(--texto-g);padding:3px 10px;border-radius:20px;font-size:11px">Región</span>
+          <span style="background:var(--suave);color:var(--texto-g);padding:3px 10px;border-radius:20px;font-size:11px">Área interés</span>
+          <span style="background:var(--suave);color:var(--texto-g);padding:3px 10px;border-radius:20px;font-size:11px">Educación</span>
+          <span style="background:var(--suave);color:var(--texto-g);padding:3px 10px;border-radius:20px;font-size:11px">Meses experiencia</span>
+          <span style="background:var(--suave);color:var(--texto-g);padding:3px 10px;border-radius:20px;font-size:11px">Condición especial</span>
+          <span style="background:var(--suave);color:var(--texto-g);padding:3px 10px;border-radius:20px;font-size:11px">Pretensión salarial</span>
+          <span style="background:var(--suave);color:var(--texto-g);padding:3px 10px;border-radius:20px;font-size:11px">Perfil</span>
+        </div>
+        <p style="font-size:11px;color:var(--texto-g);margin-top:8px">* Obligatorios — el sistema detecta columnas automáticamente por nombre. El orden no importa. Acepta .xlsx .xls .csv</p>
+      </div>
+      <div class="drop-zone" id="dz-cand"
+        ondragover="dzOver(event,'dz-cand')" ondragleave="dzLeave('dz-cand')" ondrop="dzDrop(event,'candidatos')"
+        onclick="document.getElementById('fi-cand').click()">
+        <div class="drop-zone-ico">📂</div>
+        <div class="drop-zone-txt"><strong>Arrastra tu archivo aquí</strong> o haz clic para seleccionar</div>
+        <div class="drop-zone-sub">Excel (.xlsx, .xls) o CSV — hasta 10.000 filas</div>
+        <input type="file" id="fi-cand" accept=".xlsx,.xls,.csv" style="display:none" onchange="procesarArchivo(this,'candidatos')"/>
+      </div>
+      <div id="preview-cand" class="hidden" style="margin-top:14px">
+        <div class="preview-wrap">
+          <div class="preview-bar">📋 Vista previa del archivo <span id="nombre-archivo-cand" style="opacity:.7;font-weight:400;font-size:12px"></span></div>
+          <div class="preview-stats" id="stats-cand"></div>
+          <div style="display:flex;gap:6px;padding:10px 16px;background:#fff;border-bottom:1px solid var(--borde);flex-wrap:wrap">
+            <button class="btn btn-ghost btn-xs active" id="fp-cand-todos" onclick="filtrarPreview('cand','todos')">Todos</button>
+            <button class="btn btn-ghost btn-xs" id="fp-cand-ok" onclick="filtrarPreview('cand','ok')">✅ Válidos</button>
+            <button class="btn btn-ghost btn-xs" id="fp-cand-err" onclick="filtrarPreview('cand','err')">❌ Errores</button>
+            <button class="btn btn-ghost btn-xs" id="fp-cand-dup" onclick="filtrarPreview('cand','dup')">🔁 Duplicados</button>
+            <button class="btn btn-ghost btn-xs" id="fp-cand-warn" onclick="filtrarPreview('cand','warn')">⚠️ Advertencias</button>
+            <div style="margin-left:auto;display:flex;gap:6px">
+              <button class="btn btn-ghost btn-sm" onclick="exportarErrores('candidatos')">📥 Reporte errores</button>
+              <button class="btn btn-primary btn-sm" onclick="importarValidos('candidatos')">✅ Importar válidos</button>
+            </div>
+          </div>
+          <div class="preview-table-wrap">
+            <table style="font-size:12px"><thead><tr id="thead-cand"></tr></thead><tbody id="tbody-cand"></tbody></table>
+          </div>
+          <div id="prog-cand" style="display:none;padding:10px 16px">
+            <div style="font-size:12px;color:var(--texto-g);margin-bottom:4px" id="prog-cand-txt">Importando...</div>
+            <div class="import-progress"><div class="import-progress-fill" id="prog-cand-fill" style="width:0%"></div></div>
+          </div>
+          <div id="result-cand" style="padding:12px 16px;font-size:13px;display:none"></div>
+        </div>
+      </div>
+    </div>
+    <!-- EMPRESAS -->
+    <div id="tab-pane-empresas" style="padding-top:20px;display:none">
+      <div class="card" style="padding:16px;margin-bottom:14px">
+        <div class="ctitle" style="font-size:14px;margin-bottom:10px">Columnas requeridas y opcionales</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          <span style="background:#d4edda;color:#155724;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700">Razón social *</span>
+          <span style="background:#d4edda;color:#155724;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700">Sector *</span>
+          <span style="background:#d4edda;color:#155724;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700">Región *</span>
+          <span style="background:var(--suave);color:var(--texto-g);padding:3px 10px;border-radius:20px;font-size:11px">NIT</span>
+          <span style="background:var(--suave);color:var(--texto-g);padding:3px 10px;border-radius:20px;font-size:11px">Municipio</span>
+          <span style="background:var(--suave);color:var(--texto-g);padding:3px 10px;border-radius:20px;font-size:11px">Dirección</span>
+          <span style="background:var(--suave);color:var(--texto-g);padding:3px 10px;border-radius:20px;font-size:11px">Teléfono</span>
+          <span style="background:var(--suave);color:var(--texto-g);padding:3px 10px;border-radius:20px;font-size:11px">Correo selección</span>
+          <span style="background:var(--suave);color:var(--texto-g);padding:3px 10px;border-radius:20px;font-size:11px">Contacto RRHH</span>
+          <span style="background:var(--suave);color:var(--texto-g);padding:3px 10px;border-radius:20px;font-size:11px">Tamaño empresa</span>
+          <span style="background:var(--suave);color:var(--texto-g);padding:3px 10px;border-radius:20px;font-size:11px">Tipo empresa</span>
+        </div>
+        <p style="font-size:11px;color:var(--texto-g);margin-top:8px">* Obligatorios. Detección automática por nombre de columna. Acepta .xlsx .xls .csv</p>
+      </div>
+      <div class="drop-zone" id="dz-emp"
+        ondragover="dzOver(event,'dz-emp')" ondragleave="dzLeave('dz-emp')" ondrop="dzDrop(event,'empresas')"
+        onclick="document.getElementById('fi-emp').click()">
+        <div class="drop-zone-ico">📂</div>
+        <div class="drop-zone-txt"><strong>Arrastra tu archivo aquí</strong> o haz clic para seleccionar</div>
+        <div class="drop-zone-sub">Excel (.xlsx, .xls) o CSV — hasta 5.000 filas</div>
+        <input type="file" id="fi-emp" accept=".xlsx,.xls,.csv" style="display:none" onchange="procesarArchivo(this,'empresas')"/>
+      </div>
+      <div id="preview-emp" class="hidden" style="margin-top:14px">
+        <div class="preview-wrap">
+          <div class="preview-bar">📋 Vista previa del archivo <span id="nombre-archivo-emp" style="opacity:.7;font-weight:400;font-size:12px"></span></div>
+          <div class="preview-stats" id="stats-emp"></div>
+          <div style="display:flex;gap:6px;padding:10px 16px;background:#fff;border-bottom:1px solid var(--borde);flex-wrap:wrap">
+            <button class="btn btn-ghost btn-xs" id="fp-emp-todos" onclick="filtrarPreview('emp','todos')">Todos</button>
+            <button class="btn btn-ghost btn-xs" id="fp-emp-ok" onclick="filtrarPreview('emp','ok')">✅ Válidos</button>
+            <button class="btn btn-ghost btn-xs" id="fp-emp-err" onclick="filtrarPreview('emp','err')">❌ Errores</button>
+            <button class="btn btn-ghost btn-xs" id="fp-emp-dup" onclick="filtrarPreview('emp','dup')">🔁 Duplicados</button>
+            <div style="margin-left:auto;display:flex;gap:6px">
+              <button class="btn btn-ghost btn-sm" onclick="exportarErrores('empresas')">📥 Reporte errores</button>
+              <button class="btn btn-primary btn-sm" onclick="importarValidos('empresas')">✅ Importar válidas</button>
+            </div>
+          </div>
+          <div class="preview-table-wrap">
+            <table style="font-size:12px"><thead><tr id="thead-emp"></tr></thead><tbody id="tbody-emp"></tbody></table>
+          </div>
+          <div id="prog-emp" style="display:none;padding:10px 16px">
+            <div style="font-size:12px;color:var(--texto-g);margin-bottom:4px" id="prog-emp-txt">Importando...</div>
+            <div class="import-progress"><div class="import-progress-fill" id="prog-emp-fill" style="width:0%"></div></div>
+          </div>
+          <div id="result-emp" style="padding:12px 16px;font-size:13px;display:none"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   </main>
 </div>
@@ -690,7 +843,7 @@ var VACANTES=[
 var vacantesActuales = VACANTES.slice();
 var empresasActuales = EMPRESAS.slice();
 var tipoModalVacante = 'normal';
-var PAGS = ['acceso','dashboard','candidatos','empresas','vacantes','intermediacion','banco-hv','pruebas','diagnosticos','reportes'];
+var PAGS = ['acceso','dashboard','candidatos','empresas','vacantes','cargue','intermediacion','banco-hv','pruebas','diagnosticos','reportes'];
 
 // ═══════════════════════════════════════════════════════
 // UTILIDADES
@@ -726,6 +879,7 @@ function nav(p){
   if(p==='dashboard')  cargarDash();
   if(p==='empresas')   renderEmpresas(empresasActuales);
   if(p==='vacantes')   renderVacantes(vacantesActuales);
+  if(p==='cargue')     iniciarCargue();
 }
 
 // ═══════════════════════════════════════════════════════
@@ -1220,6 +1374,439 @@ window.addEventListener('load', function(){
     });
   }
 });
+// ════════════════════════════════════════════════════
+// CARGUE MASIVO — CANDIDATOS Y EMPRESAS
+// ════════════════════════════════════════════════════
+
+// Mapas de columnas — nombres alternativos aceptados
+var MAP_CAND = {
+  nombre1:     ['primer nombre','nombre1','nombres','nombre','first name','p_nombre','pnombre'],
+  nombre2:     ['segundo nombre','nombre2','segundo_nombre'],
+  apell1:      ['primer apellido','apell1','apellidos','apellido','last name','p_apellido'],
+  apell2:      ['segundo apellido','apell2','segundo_apellido'],
+  tdoc:        ['tipo documento','tipo_doc','tipo de documento','tipo_documento'],
+  doc:         ['documento','cedula','cédula','numero documento','número documento','nro_doc','identificacion','identificación','cc'],
+  celular:     ['celular','telefono','teléfono','movil','móvil','tel','phone','celular_1'],
+  correo:      ['correo','email','e-mail','correo electronico','correo electrónico'],
+  fnac:        ['fecha nacimiento','fecha_nacimiento','nacimiento','fecha de nacimiento','fec_nac'],
+  municipio:   ['municipio','ciudad','localidad','city'],
+  region:      ['region','región','subregion','subregión','subregion'],
+  area_interes:['area interes','área interés','area_interes','area de interes','área de interés','cargo_deseado'],
+  edu:         ['educacion','educación','nivel educativo','nivel_edu','nivel','education'],
+  exp_meses:   ['meses experiencia','experiencia','meses_exp','exp_meses','meses de experiencia','experiencia meses'],
+  condicion:   ['condicion','condición','condicion especial','condición especial','poblacion','población'],
+  pretension:  ['pretension','pretensión','salario esperado','expectativa salarial','pretension_salarial'],
+  perfil:      ['perfil','descripcion','descripción','resumen','profile']
+};
+
+var MAP_EMP = {
+  nombre:      ['razon social','razón social','empresa','nombre empresa','company','nombre_empresa','razon_social'],
+  nit:         ['nit','rut','numero identificacion','número identificación','nit_empresa'],
+  sector:      ['sector','industria','actividad','actividad economica','actividad económica'],
+  municipio:   ['municipio','ciudad','localidad'],
+  region:      ['region','región','subregion','zona'],
+  direccion:   ['direccion','dirección','address','sede'],
+  telefono:    ['telefono','teléfono','tel','phone','contacto_tel'],
+  correo_sel:  ['correo seleccion','correo selección','email seleccion','correo_seleccion','email rrhh','correo rrhh','seleccion'],
+  contacto:    ['contacto rrhh','contacto','nombre contacto','responsable rrhh','contacto_rrhh'],
+  tamano:      ['tamaño','tamano','size','empleados','num empleados'],
+  tipo:        ['tipo empresa','tipo_empresa','tipo de empresa','naturaleza']
+};
+
+var datosImportados = { candidatos: [], empresas: [] };
+var filtroActivo = { cand: 'todos', emp: 'todos' };
+
+function iniciarCargue(){ /* reset visual */ }
+
+function switchTab(tab){
+  document.getElementById('tab-pane-candidatos').style.display = tab==='candidatos'?'block':'none';
+  document.getElementById('tab-pane-empresas').style.display   = tab==='empresas'?'block':'none';
+  document.getElementById('tab-cand').classList.toggle('active', tab==='candidatos');
+  document.getElementById('tab-emp').classList.toggle('active',  tab==='empresas');
+}
+
+// Drag & drop
+function dzOver(e,id){ e.preventDefault(); document.getElementById(id).classList.add('over'); }
+function dzLeave(id){ document.getElementById(id).classList.remove('over'); }
+function dzDrop(e,tipo){ e.preventDefault(); dzLeave(tipo==='candidatos'?'dz-cand':'dz-emp'); var f=e.dataTransfer.files[0]; if(f) leerArchivo(f,tipo); }
+
+function procesarArchivo(input,tipo){
+  var f = input.files[0];
+  if(f) leerArchivo(f,tipo);
+  input.value='';
+}
+
+function leerArchivo(file,tipo){
+  var prefix = tipo==='candidatos'?'cand':'emp';
+  var spanNombre = document.getElementById('nombre-archivo-'+prefix);
+  if(spanNombre) spanNombre.textContent = '— '+file.name+' ('+Math.round(file.size/1024)+' KB)';
+
+  var reader = new FileReader();
+  reader.onload = function(e){
+    try {
+      var wb, rows;
+      var name = file.name.toLowerCase();
+      if(name.endsWith('.csv')){
+        // Parsear CSV
+        var txt = e.target.result;
+        var lines = txt.split("\n").filter(function(l){ return l.trim(); });
+        var sep = lines[0].indexOf(';')>-1?';':',';
+        rows = lines.map(function(l){
+          return l.split(sep).map(function(v){ return v.replace(/^"|"$/g,'').trim(); });
+        });
+        var headers = rows[0];
+        rows = rows.slice(1).map(function(r){
+          var obj={};
+          headers.forEach(function(h,i){ obj[h]=r[i]||''; });
+          return obj;
+        });
+      } else {
+        wb = XLSX.read(e.target.result, {type:'array'});
+        var ws = wb.Sheets[wb.SheetNames[0]];
+        rows = XLSX.utils.sheet_to_json(ws, {defval:''});
+      }
+      if(!rows||!rows.length){ toast('El archivo está vacío o no tiene datos','err'); return; }
+      validarYMostrar(rows, tipo);
+    } catch(err){
+      toast('Error leyendo el archivo: '+err.message,'err');
+    }
+  };
+  if(file.name.toLowerCase().endsWith('.csv')){
+    reader.readAsText(file,'UTF-8');
+  } else {
+    reader.readAsArrayBuffer(file);
+  }
+}
+
+// Mapear columnas automáticamente
+function mapearColumna(headers, alternativas){
+  var hl = headers.map(function(h){ return (h||'').toString().toLowerCase().trim(); });
+  for(var i=0;i<alternativas.length;i++){
+    var idx = hl.indexOf(alternativas[i].toLowerCase());
+    if(idx>-1) return headers[idx];
+  }
+  return null;
+}
+
+function validarYMostrar(rows, tipo){
+  var mapa = tipo==='candidatos' ? MAP_CAND : MAP_EMP;
+  var headers = Object.keys(rows[0]);
+  var prefix  = tipo==='candidatos' ? 'cand' : 'emp';
+
+  // Resolver qué columna del archivo corresponde a cada campo
+  var colMap = {};
+  Object.keys(mapa).forEach(function(campo){
+    colMap[campo] = mapearColumna(headers, mapa[campo]);
+  });
+
+  // Validar obligatorios
+  var oblig = tipo==='candidatos'
+    ? ['nombre1','apell1','doc','celular']
+    : ['nombre','sector','region'];
+
+  var faltanOblig = oblig.filter(function(f){ return !colMap[f]; });
+  if(faltanOblig.length){
+    toast('Faltan columnas obligatorias: '+faltanOblig.join(', ')+'  — revisa los nombres de las columnas','err');
+    return;
+  }
+
+  // Construir docs existentes para detectar duplicados
+  var existentes = new Set();
+  if(tipo==='candidatos'){
+    candidatosActuales.forEach(function(c){ if(c.doc) existentes.add(String(c.doc).trim()); });
+  } else {
+    empresasActuales.forEach(function(e){ if(e.nit) existentes.add(String(e.nit).trim()); if(e.nombre) existentes.add(String(e.nombre).toLowerCase().trim()); });
+  }
+
+  // Procesar filas
+  var procesadas = [];
+  var docsEnArchivo = new Set();
+
+  rows.forEach(function(row, idx){
+    var reg = { _fila: idx+2, _estado: 'ok', _errores: [], _warnings: [] };
+
+    // Mapear campos
+    Object.keys(colMap).forEach(function(campo){
+      var col = colMap[campo];
+      reg[campo] = col ? String(row[col]||'').trim() : '';
+    });
+
+    // Validaciones candidatos
+    if(tipo==='candidatos'){
+      if(!reg.nombre1) reg._errores.push('Sin primer nombre');
+      if(!reg.apell1)  reg._errores.push('Sin primer apellido');
+      if(!reg.doc)     reg._errores.push('Sin documento');
+      else if(reg.doc.length<6) reg._errores.push('Documento muy corto (mín 6 dígitos)');
+      if(!reg.celular) reg._errores.push('Sin celular');
+      else if(!/^[0-9+\s\-]{7,15}$/.test(reg.celular)) reg._warnings.push('Celular con formato inusual');
+      if(reg.correo && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(reg.correo)) reg._warnings.push('Correo con formato inválido');
+      // Duplicado en archivo
+      if(reg.doc && docsEnArchivo.has(reg.doc)){ reg._estado='dup'; reg._errores.push('Documento duplicado en el archivo'); }
+      else if(reg.doc) docsEnArchivo.add(reg.doc);
+      // Duplicado en banco
+      if(reg._estado!=='dup' && reg.doc && existentes.has(reg.doc)){ reg._estado='dup'; reg._warnings.push('Ya existe en el banco'); }
+    }
+
+    // Validaciones empresas
+    if(tipo==='empresas'){
+      if(!reg.nombre)  reg._errores.push('Sin razón social');
+      if(!reg.sector)  reg._errores.push('Sin sector');
+      if(!reg.region)  reg._errores.push('Sin región');
+      if(reg.nit && docsEnArchivo.has(reg.nit)){ reg._estado='dup'; reg._errores.push('NIT duplicado en el archivo'); }
+      else if(reg.nit) docsEnArchivo.add(reg.nit);
+      if(reg._estado!=='dup' && reg.nit && existentes.has(reg.nit)){ reg._estado='dup'; reg._warnings.push('NIT ya registrado'); }
+      var nombreLower = (reg.nombre||'').toLowerCase().trim();
+      if(reg._estado!=='dup' && nombreLower && existentes.has(nombreLower)){ reg._estado='dup'; reg._warnings.push('Empresa ya registrada'); }
+    }
+
+    // Estado final
+    if(reg._estado!=='dup'){
+      if(reg._errores.length)   reg._estado = 'err';
+      else if(reg._warnings.length) reg._estado = 'warn';
+      else reg._estado = 'ok';
+    }
+    procesadas.push(reg);
+  });
+
+  datosImportados[tipo] = procesadas;
+
+  // Mostrar stats
+  var nOk   = procesadas.filter(function(r){ return r._estado==='ok'; }).length;
+  var nErr  = procesadas.filter(function(r){ return r._estado==='err'; }).length;
+  var nDup  = procesadas.filter(function(r){ return r._estado==='dup'; }).length;
+  var nWarn = procesadas.filter(function(r){ return r._estado==='warn'; }).length;
+
+  var statsEl = document.getElementById('stats-'+prefix);
+  statsEl.innerHTML =
+    '<span class="pstat ok">✅ '+nOk+' válidos</span>'+
+    '<span class="pstat err">❌ '+nErr+' con errores</span>'+
+    '<span class="pstat dup">🔁 '+nDup+' duplicados</span>'+
+    '<span class="pstat warn">⚠️ '+nWarn+' advertencias</span>'+
+    '<span class="pstat" style="color:var(--texto-g)">Total: '+procesadas.length+' filas</span>';
+
+  // Mostrar tabla con columnas clave
+  var camposVis = tipo==='candidatos'
+    ? ['nombre1','apell1','doc','celular','correo','municipio','region','edu']
+    : ['nombre','nit','sector','municipio','region','correo_sel','contacto'];
+
+  var thead = document.getElementById('thead-'+prefix);
+  thead.innerHTML = '<th style="padding:8px 10px;background:var(--suave)">Fila</th>'+
+    camposVis.map(function(c){ return '<th style="padding:8px 10px;background:var(--suave)">'+c.replace(/_/g,' ')+'</th>'; }).join('')+
+    '<th style="padding:8px 10px;background:var(--suave)">Estado</th>'+
+    '<th style="padding:8px 10px;background:var(--suave)">Detalle</th>';
+
+  renderTablaPreview(prefix, tipo, 'todos');
+
+  document.getElementById('preview-'+prefix).classList.remove('hidden');
+  filtroActivo[prefix] = 'todos';
+}
+
+function renderTablaPreview(prefix, tipo, filtro){
+  var datos = datosImportados[tipo==='cand'?(tipo):tipo];
+  // Resolver tipo desde prefix si es necesario
+  var tipoR = prefix==='cand'?'candidatos':'empresas';
+  var datos2 = datosImportados[tipoR];
+
+  var filtrados = filtro==='todos' ? datos2 : datos2.filter(function(r){ return r._estado===filtro; });
+
+  var camposVis = tipoR==='candidatos'
+    ? ['nombre1','apell1','doc','celular','correo','municipio','region','edu']
+    : ['nombre','nit','sector','municipio','region','correo_sel','contacto'];
+
+  var tbody = document.getElementById('tbody-'+prefix);
+  if(!filtrados.length){
+    tbody.innerHTML='<tr><td colspan="'+(camposVis.length+3)+'" style="padding:20px;text-align:center;color:var(--texto-g)">Sin registros en esta categoría</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = filtrados.slice(0,500).map(function(r){
+    var bg = r._estado==='ok'?'#fff':r._estado==='err'?'#fff5f5':r._estado==='dup'?'#f0f4ff':'#fffbf0';
+    var badge = r._estado==='ok'?'<span class="row-badge rb-ok">✅ OK</span>':
+                r._estado==='err'?'<span class="row-badge rb-err">❌ Error</span>':
+                r._estado==='dup'?'<span class="row-badge rb-dup">🔁 Dup.</span>':
+                '<span class="row-badge rb-warn">⚠️ Advert.</span>';
+    var detalle = r._errores.concat(r._warnings).join(' · ')||'—';
+    return '<tr style="background:'+bg+'">'+
+      '<td style="padding:7px 10px;color:var(--texto-g);text-align:center">'+r._fila+'</td>'+
+      camposVis.map(function(c){ return '<td style="padding:7px 10px;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+(r[c]||'')+'">'+((r[c]||'—').substring(0,30))+'</td>'; }).join('')+
+      '<td style="padding:7px 10px">'+badge+'</td>'+
+      '<td style="padding:7px 10px;font-size:11px;color:var(--texto-g);max-width:200px">'+detalle+'</td>'+
+    '</tr>';
+  }).join('');
+}
+
+function filtrarPreview(prefix, filtro){
+  filtroActivo[prefix] = filtro;
+  var tipo = prefix==='cand'?'candidatos':'empresas';
+  renderTablaPreview(prefix, tipo, filtro);
+}
+
+function importarValidos(tipo){
+  var prefix = tipo==='candidatos'?'cand':'emp';
+  var validos = datosImportados[tipo].filter(function(r){ return r._estado==='ok'||r._estado==='warn'; });
+  if(!validos.length){ toast('No hay registros válidos para importar','warn'); return; }
+
+  var progWrap = document.getElementById('prog-'+prefix);
+  var progFill = document.getElementById('prog-'+prefix+'-fill');
+  var progTxt  = document.getElementById('prog-'+prefix+'-txt');
+  progWrap.style.display='block';
+
+  var i=0;
+  var importados=0;
+  var errores=0;
+
+  function procesarLote(){
+    var lote = validos.slice(i, i+50);
+    lote.forEach(function(r){
+      try {
+        if(tipo==='candidatos'){
+          var nuevo = {
+            id: candidatosActuales.length+1,
+            nombre1:r.nombre1||'', nombre2:r.nombre2||'',
+            apell1:r.apell1||'',   apell2:r.apell2||'',
+            tdoc:r.tdoc||'CC',     doc:r.doc||'',
+            celular:r.celular||'', correo:r.correo||'',
+            municipio:r.municipio||'', region:r.region||'',
+            area_interes:r.area_interes||'', edu_nivel:r.edu||'',
+            exp_meses:parseInt(r.exp_meses)||0,
+            condicion:r.condicion||'ninguna',
+            pretension:parseInt(r.pretension)||0,
+            perfil:r.perfil||'',
+            completitud: calcularCompletitudRapida(r),
+            fecha_reg: new Date().toISOString().split('T')[0],
+            registrado_por: nombreUsuario,
+            fuente: 'cargue_masivo'
+          };
+          candidatosActuales.push(nuevo);
+        } else {
+          var nuevaEmp = {
+            id: empresasActuales.length+1,
+            nombre:r.nombre||'', nit:r.nit||'',
+            sector:r.sector||'', municipio:r.municipio||'',
+            region:r.region||'', direccion:r.direccion||'',
+            telefono:r.telefono||'', correo_sel:r.correo_sel||'',
+            contacto:r.contacto||'', tamano:r.tamano||'',
+            tipo:r.tipo||'', estado:'pendiente',
+            fecha_reg: new Date().toISOString().split('T')[0],
+            fuente:'cargue_masivo'
+          };
+          empresasActuales.push(nuevaEmp);
+        }
+        importados++;
+      } catch(e){ errores++; }
+    });
+    i+=50;
+    var pct = Math.min(Math.round((i/validos.length)*100),100);
+    progFill.style.width = pct+'%';
+    if(progTxt) progTxt.textContent = 'Importando... '+pct+'% ('+Math.min(i,validos.length)+'/'+validos.length+')';
+    if(i<validos.length){ setTimeout(procesarLote,10); }
+    else {
+      progWrap.style.display='none';
+      var resEl = document.getElementById('result-'+prefix);
+      resEl.style.display='block';
+      resEl.innerHTML = '<div style="background:#d4edda;border-radius:8px;padding:12px 16px;color:#155724;font-weight:700">'+
+        '✅ Importación completada — '+importados+' registros añadidos al banco'+(errores?' · '+errores+' errores omitidos':'')+
+        '</div>';
+      // Actualizar contadores
+      var bv = document.getElementById('bv');
+      if(bv && tipo==='vacantes') bv.textContent = vacantesActuales.length;
+      toast('Importación completada: '+importados+' '+tipo+' añadidos');
+    }
+  }
+  setTimeout(procesarLote, 50);
+}
+
+function calcularCompletitudRapida(r){
+  var campos = [r.nombre1,r.apell1,r.doc,r.celular,r.correo,r.municipio,r.region,r.edu,r.area_interes,r.perfil];
+  return Math.round(campos.filter(function(v){ return v&&v.trim(); }).length/campos.length*100);
+}
+
+function exportarErrores(tipo){
+  var datos = datosImportados[tipo];
+  if(!datos||!datos.length){ toast('No hay datos para exportar','warn'); return; }
+
+  var errores = datos.filter(function(r){ return r._estado==='err'||r._estado==='dup'; });
+  if(!errores.length){ toast('No hay errores ni duplicados para exportar','warn'); return; }
+
+  var wb = XLSX.utils.book_new();
+  var headers = tipo==='candidatos'
+    ? ['Fila','Estado','Errores','Primer nombre','Primer apellido','Documento','Celular','Correo','Municipio','Región']
+    : ['Fila','Estado','Errores','Razón social','NIT','Sector','Municipio','Región','Correo selección'];
+
+  var rows = [headers];
+  errores.forEach(function(r){
+    if(tipo==='candidatos'){
+      rows.push([r._fila,r._estado,r._errores.concat(r._warnings).join('; '),r.nombre1,r.apell1,r.doc,r.celular,r.correo,r.municipio,r.region]);
+    } else {
+      rows.push([r._fila,r._estado,r._errores.concat(r._warnings).join('; '),r.nombre,r.nit,r.sector,r.municipio,r.region,r.correo_sel]);
+    }
+  });
+
+  var ws = XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols'] = headers.map(function(){ return {wch:22}; });
+  XLSX.utils.book_append_sheet(wb, ws, 'Errores y duplicados');
+  XLSX.writeFile(wb, 'errores_cargue_'+tipo+'_'+new Date().toISOString().split('T')[0]+'.xlsx');
+  toast('Reporte de errores descargado ('+errores.length+' registros)');
+}
+
+function descargarPlantilla(tipo){
+  var wb = XLSX.utils.book_new();
+  var headers, ejemplo, instrucciones;
+
+  if(tipo==='candidatos'){
+    headers = ['Primer nombre','Segundo nombre','Primer apellido','Segundo apellido','Tipo documento','Documento','Celular','Correo','Fecha nacimiento','Municipio','Región','Área interés','Educación','Meses experiencia','Condición especial','Pretensión salarial','Perfil'];
+    ejemplo = ['Juan Carlos','','García','Montoya','CC','1023456789','3001234567','juan@mail.com','1990-05-15','Medellín','Valle de Aburrá','Logística','Técnico','12','ninguna','1400000','Operario con experiencia en bodega'];
+    instrucciones = [
+      ['INSTRUCCIONES PARA EL CARGUE MASIVO DE CANDIDATOS'],
+      [''],
+      ['COLUMNAS OBLIGATORIAS (*)','Primer nombre, Primer apellido, Documento, Celular'],
+      ['COLUMNAS OPCIONALES','Todas las demás'],
+      [''],
+      ['VALORES VÁLIDOS - Tipo documento','CC, CE, TI, PA, PEP'],
+      ['VALORES VÁLIDOS - Región','Valle de Aburrá, Oriente, Norte, Occidente, Suroeste, Bajo Cauca, Nordeste, Magdalena Medio, Urabá'],
+      ['VALORES VÁLIDOS - Educación','Primaria, Secundaria, Técnico, Tecnólogo, Profesional, Especialización, Maestría'],
+      ['VALORES VÁLIDOS - Condición especial','ninguna, joven, victima, discapacidad, migrante, adulto_mayor, madre_cabeza'],
+      ['VALORES VÁLIDOS - Área interés','Logística, Sistemas, Administración, Salud, Manufactura, Construcción, Agroindustria, Educación, Comercio'],
+      [''],
+      ['NOTAS','- El orden de las columnas NO importa'],
+      ['','- Los nombres de columna se detectan automáticamente (mayúsculas/minúsculas indistinto)'],
+      ['','- No dejes filas vacías entre registros'],
+      ['','- Guarda el archivo como .xlsx o .csv']
+    ];
+  } else {
+    headers = ['Razón social','NIT','Sector','Municipio','Región','Dirección','Teléfono','Correo selección','Contacto RRHH','Tamaño empresa','Tipo empresa'];
+    ejemplo = ['Logística del Valle SAS','900123456-7','Logística y transporte','Medellín','Valle de Aburrá','Calle 80 # 20-30','6042345678','seleccion@logistica.com','Ana Bermúdez','Mediana (51-200)','Sociedad por acciones simplificada'];
+    instrucciones = [
+      ['INSTRUCCIONES PARA EL CARGUE MASIVO DE EMPRESAS'],
+      [''],
+      ['COLUMNAS OBLIGATORIAS (*)','Razón social, Sector, Región'],
+      ['COLUMNAS OPCIONALES','Todas las demás'],
+      [''],
+      ['VALORES VÁLIDOS - Región','Valle de Aburrá, Oriente, Norte, Occidente, Suroeste, Bajo Cauca, Nordeste, Magdalena Medio, Urabá'],
+      ['VALORES VÁLIDOS - Tamaño','Microempresa (1-10), Pequeña (11-50), Mediana (51-200), Grande (201+)'],
+      ['VALORES VÁLIDOS - Tipo','SAS, Ltda, SA, Cooperativa, Fundación, Entidad pública, Persona natural'],
+      [''],
+      ['NOTAS','- El orden de las columnas NO importa'],
+      ['','- Los nombres de columna se detectan automáticamente'],
+      ['','- El NIT se usa para detectar duplicados']
+    ];
+  }
+
+  // Hoja datos
+  var wsData = XLSX.utils.aoa_to_sheet([headers, ejemplo]);
+  wsData['!cols'] = headers.map(function(){ return {wch:22}; });
+  // Estilo header (no soportado directamente en xlsx.full, pero sí la estructura)
+  XLSX.utils.book_append_sheet(wb, wsData, 'Datos');
+
+  // Hoja instrucciones
+  var wsInst = XLSX.utils.aoa_to_sheet(instrucciones);
+  wsInst['!cols'] = [{wch:40},{wch:80}];
+  XLSX.utils.book_append_sheet(wb, wsInst, 'Instrucciones');
+
+  XLSX.writeFile(wb, 'plantilla_cargue_'+tipo+'.xlsx');
+  toast('Plantilla de '+tipo+' descargada');
+}
+// ════════════════════════════════════════════════════
 </script>
   <script src="cno2025.js" defer></script>
 </body>
