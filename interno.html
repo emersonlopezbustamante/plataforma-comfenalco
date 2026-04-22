@@ -870,7 +870,8 @@ function renderVacantes(lista){
       '<td>'+
         '<div style="font-weight:700">'+v.cargo+'</div>'+
         (v.cno_denominacion?'<div style="font-size:10px;color:var(--texto-g);margin-top:1px">🏛️ '+v.cno_denominacion+' <span style="opacity:.6">· Cód.'+v.cno_codigo+'</span></div>':'')+
-      '</td>'+(v.incluyente?'<div style="font-size:11px;color:#155724">♿ Incluyente</div>':'')+'</td>'+
+        (v.incluyente?'<div style="font-size:11px;color:#155724">♿ Incluyente</div>':'')+
+      '</td>'+
       '<td style="color:var(--texto-g);font-size:13px">'+v.empresa+'</td>'+
       '<td style="color:var(--texto-g)">'+v.municipio+'</td>'+
       '<td style="color:var(--texto-g);font-size:13px">'+fmtCOP(v.sal_min)+(v.sal_max?' – '+fmtCOP(v.sal_max):'')+'</td>'+
@@ -1061,45 +1062,43 @@ function buscarCNO(q) {
   if(!box) return;
   q = (q||'').trim();
   if(q.length < 2) { box.style.display='none'; return; }
-
   clearTimeout(_cnoTimer);
   _cnoTimer = setTimeout(function(){
     if(typeof CNO_DATA === 'undefined') {
-      box.innerHTML='<div style="padding:12px;color:var(--texto-g);font-size:13px">⏳ Cargando CNO 2025... intenta de nuevo en un momento</div>';
-      box.style.display='block';
-      // Reintentar en 500ms
-      setTimeout(function(){ if(q===document.getElementById('mv-cno-buscar').value) buscarCNO(q); }, 500);
+      box.innerHTML = '<div style="padding:12px;color:#4a5a4a;font-size:13px">Cargando CNO 2025...</div>';
+      box.style.display = 'block';
+      setTimeout(function(){ buscarCNO(document.getElementById('mv-cno-buscar').value); }, 600);
       return;
     }
     var ql = q.toLowerCase();
     var results = [];
-    for(var i=0; i<CNO_DATA.length && results.length<50; i++){
+    for(var i = 0; i < CNO_DATA.length && results.length < 50; i++){
       if(CNO_DATA[i].d.toLowerCase().indexOf(ql) > -1) results.push(CNO_DATA[i]);
     }
     if(!results.length){
-      box.innerHTML='<div style="padding:12px;color:var(--texto-g);font-size:13px">Sin resultados para "'+q+'" en CNO 2025</div>';
-      box.style.display='block';
+      box.innerHTML = '<div style="padding:12px;color:#4a5a4a;font-size:13px">Sin resultados para: ' + q + '</div>';
+      box.style.display = 'block';
       return;
     }
-    box.innerHTML = results.map(function(r, i){
-      var dn = r.d.replace(new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')', 'gi'),
-        '<strong style="color:var(--verde)">$1</strong>');
-      return '<div onclick="seleccionarCNO('+i+')" data-i="'+i+'" '+
-        'style="padding:10px 16px;cursor:pointer;border-bottom:1px solid var(--borde);display:flex;justify-content:space-between;align-items:center;gap:10px" '+
-        'onmouseover="this.style.background='var(--suave)'" onmouseout="this.style.background='#fff'">'+
-        '<div>'+
-          '<div style="font-size:13px;font-weight:600;color:var(--negro)">'+dn+'</div>'+
-          '<div style="font-size:11px;color:var(--texto-g);margin-top:2px">'+r.o+'</div>'+
-        '</div>'+
-        '<span style="background:var(--suave);color:var(--verde);padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700;flex-shrink:0">'+r.c+'</span>'+
-      '</div>';
-    }).join('');
-    // guardar resultados actuales para selección por índice
     box._resultados = results;
+    box.innerHTML = '';
+    results.forEach(function(r, i){
+      var div = document.createElement('div');
+      div.style.cssText = 'padding:10px 16px;cursor:pointer;border-bottom:1px solid #d8e2d8;display:flex;justify-content:space-between;align-items:center;gap:10px';
+      div.innerHTML =
+        '<div>' +
+          '<div style="font-size:13px;font-weight:600;color:#1a2a1a">' + r.d + '</div>' +
+          '<div style="font-size:11px;color:#4a5a4a;margin-top:2px">' + r.o + '</div>' +
+        '</div>' +
+        '<span style="background:#e8efe8;color:#094a4b;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700;flex-shrink:0">' + r.c + '</span>';
+      div.addEventListener('mouseenter', function(){ this.style.background = '#e8efe8'; });
+      div.addEventListener('mouseleave', function(){ this.style.background = '#fff'; });
+      div.addEventListener('click', function(){ seleccionarCNO(i); });
+      box.appendChild(div);
+    });
     box.style.display = 'block';
   }, 220);
 }
-
 function seleccionarCNO(idx){
   var box = document.getElementById('cno-resultados');
   if(!box || !box._resultados) return;
