@@ -4,6 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Panel Interno — Comfenalco Antioquia</title>
+  <script src="cno2025.js"></script>
   <script async crossorigin="anonymous"
     data-clerk-publishable-key="pk_test_bGlrZWQtYmlzb24tNTEuY2xlcmsuYWNjb3VudHMuZGV2JA"
     src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@5/dist/clerk.browser.js"
@@ -500,6 +501,43 @@
         </div>
       </div>
 
+      <div class="fsection">🏛️ Clasificación CNO 2025 (obligatorio SPE)</div>
+      <div class="fgrid" style="position:relative">
+        <div class="fgroup" style="grid-column:1/-1">
+          <label class="flabel">Buscar cargo equivalente CNO 2025 <span class="req">*</span></label>
+          <div style="position:relative">
+            <input class="fval" type="text" id="mv-cno-buscar"
+              placeholder="Escribe el cargo para buscar en las 9.611 denominaciones CNO 2025..."
+              oninput="buscarCNO(this.value)" autocomplete="off"
+              style="padding-right:36px"/>
+            <span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--texto-g);font-size:16px">🔍</span>
+          </div>
+          <div id="cno-resultados" style="display:none;position:absolute;z-index:9999;background:#fff;border:1.5px solid var(--pist);border-radius:0 0 10px 10px;box-shadow:0 8px 24px rgba(9,74,75,.18);max-height:280px;overflow-y:auto;left:0;right:0;top:100%"></div>
+        </div>
+        <div class="fgroup">
+          <label class="flabel">Denominación CNO seleccionada</label>
+          <input class="fval" id="mv-cno-denominacion" type="text" readonly
+            placeholder="Se llena al seleccionar de la lista"
+            style="background:var(--suave);cursor:default;color:var(--verde);font-weight:700"/>
+        </div>
+        <div class="fgroup">
+          <label class="flabel">Ocupación CNO (cargo equivalente oficial)</label>
+          <input class="fval" id="mv-cno-ocupacion" type="text" readonly
+            placeholder="Ocupación según CNO 2025"
+            style="background:var(--suave);cursor:default"/>
+        </div>
+        <div class="fgroup">
+          <label class="flabel">Código CNO</label>
+          <input class="fval" id="mv-cno-codigo" type="text" readonly
+            placeholder="Código" style="background:var(--suave);cursor:default"/>
+        </div>
+        <div class="fgroup" id="cno-badge-wrap" style="display:none">
+          <div style="background:rgba(9,74,75,.06);border-left:3px solid var(--pist);border-radius:6px;padding:10px 14px;font-size:12px;color:var(--verde)">
+            ✅ <strong>CNO 2025 SENA</strong> — Denominación registrada conforme a la Clasificación Nacional de Ocupaciones 2025, Decreto 249/2004 y actualización SENA.
+          </div>
+        </div>
+      </div>
+
       <div class="fsection">📝 Descripción</div>
       <div class="fgrid one">
         <div class="fgroup">
@@ -830,7 +868,10 @@ function renderVacantes(lista){
   tb.innerHTML = lista.map(function(v){
     var diasCell = v.tipo==='hidrocarburos' ? diasColor(v.dias_pub, v.ventana||5) : '<span style="color:var(--texto-g)">'+v.dias_pub+'</span>';
     return '<tr>'+
-      '<td><div style="font-weight:700">'+v.cargo+'</div>'+(v.incluyente?'<div style="font-size:11px;color:#155724">♿ Incluyente</div>':'')+'</td>'+
+      '<td>'+
+        '<div style="font-weight:700">'+v.cargo+'</div>'+
+        (v.cno_denominacion?'<div style="font-size:10px;color:var(--texto-g);margin-top:1px">🏛️ '+v.cno_denominacion+' <span style="opacity:.6">· Cód.'+v.cno_codigo+'</span></div>':'')+
+      '</td>'+(v.incluyente?'<div style="font-size:11px;color:#155724">♿ Incluyente</div>':'')+'</td>'+
       '<td style="color:var(--texto-g);font-size:13px">'+v.empresa+'</td>'+
       '<td style="color:var(--texto-g)">'+v.municipio+'</td>'+
       '<td style="color:var(--texto-g);font-size:13px">'+fmtCOP(v.sal_min)+(v.sal_max?' – '+fmtCOP(v.sal_max):'')+'</td>'+
@@ -909,6 +950,16 @@ function verVacante(id){
       '<span class="badge b-normal">👥 '+v.postulados+' postulados</span>'+
       '<span class="badge b-normal">📅 '+v.dias_pub+' días publicada</span>'+
     '</div>'+
+    (v.cno_denominacion?
+      '<div style="background:rgba(9,74,75,.06);border-left:3px solid var(--pist);border-radius:8px;padding:12px 16px;margin-bottom:16px;display:flex;gap:16px;align-items:flex-start">'+
+        '<div style="font-size:20px">🏛️</div>'+
+        '<div>'+
+          '<div style="font-size:10px;font-weight:700;color:var(--texto-g);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">CNO 2025 — SENA (Decreto 249/2004)</div>'+
+          '<div style="font-weight:800;font-size:14px;color:var(--verde)">'+v.cno_denominacion+'</div>'+
+          '<div style="font-size:12px;color:var(--texto-g);margin-top:2px">'+v.cno_ocupacion+' &nbsp;·&nbsp; Código: <strong>'+v.cno_codigo+'</strong></div>'+
+        '</div>'+
+      '</div>'
+    :'')+
     '<div class="det-section">📋 Requisitos</div>'+
     '<div class="det-grid">'+
       '<div class="det-item"><label>Educación mínima</label><span>'+v.edu+'</span></div>'+
@@ -985,6 +1036,12 @@ function abrirModalVacante(tipo){
   selM.innerHTML = '<option value="">Selecciona municipio...</option>';
   MUNICIPIOS.forEach(function(m){ var o=document.createElement('option'); o.value=m.id; o.textContent=m.n+' ('+m.s+')'; selM.appendChild(o); });
 
+  // Limpiar campos CNO
+  ['mv-cno-buscar','mv-cno-denominacion','mv-cno-ocupacion','mv-cno-codigo'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.value='';
+  });
+  var badge=document.getElementById('cno-badge-wrap'); if(badge) badge.style.display='none';
+  var box=document.getElementById('cno-resultados'); if(box) box.style.display='none';
   // Fecha cierre por defecto 30 días
   var fc = document.getElementById('mv-cierre');
   var d = new Date(); d.setDate(d.getDate()+30);
@@ -996,6 +1053,78 @@ function abrirModalVacante(tipo){
 
   abrirModal('modal-vac');
 }
+
+// ═══ BUSCADOR CNO 2025 ═══════════════════════════════════
+var _cnoTimer = null;
+
+function buscarCNO(q) {
+  var box = document.getElementById('cno-resultados');
+  if(!box) return;
+  q = (q||'').trim();
+  if(q.length < 2) { box.style.display='none'; return; }
+
+  clearTimeout(_cnoTimer);
+  _cnoTimer = setTimeout(function(){
+    if(typeof CNO_DATA === 'undefined') {
+      box.innerHTML='<div style="padding:12px;color:var(--texto-g);font-size:13px">⏳ Cargando base CNO 2025...</div>';
+      box.style.display='block';
+      return;
+    }
+    var ql = q.toLowerCase();
+    var results = [];
+    for(var i=0; i<CNO_DATA.length && results.length<50; i++){
+      if(CNO_DATA[i].d.toLowerCase().indexOf(ql) > -1) results.push(CNO_DATA[i]);
+    }
+    if(!results.length){
+      box.innerHTML='<div style="padding:12px;color:var(--texto-g);font-size:13px">Sin resultados para "'+q+'" en CNO 2025</div>';
+      box.style.display='block';
+      return;
+    }
+    box.innerHTML = results.map(function(r, i){
+      var dn = r.d.replace(new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')', 'gi'),
+        '<strong style="color:var(--verde)">$1</strong>');
+      return '<div onclick="seleccionarCNO('+i+')" data-i="'+i+'" '+
+        'style="padding:10px 16px;cursor:pointer;border-bottom:1px solid var(--borde);display:flex;justify-content:space-between;align-items:center;gap:10px" '+
+        'onmouseover="this.style.background='var(--suave)'" onmouseout="this.style.background='#fff'">'+
+        '<div>'+
+          '<div style="font-size:13px;font-weight:600;color:var(--negro)">'+dn+'</div>'+
+          '<div style="font-size:11px;color:var(--texto-g);margin-top:2px">'+r.o+'</div>'+
+        '</div>'+
+        '<span style="background:var(--suave);color:var(--verde);padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700;flex-shrink:0">'+r.c+'</span>'+
+      '</div>';
+    }).join('');
+    // guardar resultados actuales para selección por índice
+    box._resultados = results;
+    box.style.display = 'block';
+  }, 220);
+}
+
+function seleccionarCNO(idx){
+  var box = document.getElementById('cno-resultados');
+  if(!box || !box._resultados) return;
+  var r = box._resultados[idx];
+  if(!r) return;
+  document.getElementById('mv-cno-buscar').value = r.d;
+  document.getElementById('mv-cno-denominacion').value = r.d;
+  document.getElementById('mv-cno-ocupacion').value = r.o;
+  document.getElementById('mv-cno-codigo').value = r.c;
+  var badge = document.getElementById('cno-badge-wrap');
+  if(badge) badge.style.display = 'block';
+  box.style.display = 'none';
+  // Si el campo cargo está vacío, autocompletar con la denominación
+  var mvCargo = document.getElementById('mv-cargo');
+  if(mvCargo && !mvCargo.value.trim()) mvCargo.value = r.d;
+}
+
+// Cerrar dropdown al hacer clic fuera
+document.addEventListener('click', function(e){
+  var box = document.getElementById('cno-resultados');
+  var inp = document.getElementById('mv-cno-buscar');
+  if(box && inp && !inp.contains(e.target) && !box.contains(e.target)){
+    box.style.display='none';
+  }
+});
+// ════════════════════════════════════════════════════════════
 
 function guardarVacante(){
   var cargo   = document.getElementById('mv-cargo').value.trim();
@@ -1026,7 +1155,10 @@ function guardarVacante(){
     fecha_pub: new Date().toISOString().split('T')[0],
     dias_pub: 0,
     desc: document.getElementById('mv-desc').value,
-    incluyente: document.getElementById('mv-incluyente').value==='si'
+    incluyente: document.getElementById('mv-incluyente').value==='si',
+    cno_denominacion: (document.getElementById('mv-cno-denominacion')||{}).value||'',
+    cno_ocupacion:    (document.getElementById('mv-cno-ocupacion')||{}).value||'',
+    cno_codigo:       (document.getElementById('mv-cno-codigo')||{}).value||''
   };
 
   if(tipoModalVacante==='hidrocarburos'){
