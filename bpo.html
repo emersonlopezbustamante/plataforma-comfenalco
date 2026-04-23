@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BPO de Empleo — Agencia de Empleo y Emprendimiento · Comfenalco Antioquia</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root{--verde:#094a4b;--pist:#a8c94e;--pist-h:#8fb53a;--naranja:#e67e22;--azul:#2d4a6b;--rojo:#e74c3c;--fondo:#f4f6f4;--borde:#d8e2d8;--texto-g:#4a5a4a;--suave:#e8efe8;--negro:#1a2a1a;--r:8px;--t:.22s ease}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;font-size:15px;color:var(--negro);background:#fff;min-height:100vh}
+    button{cursor:pointer;font-family:inherit;border:none}
+    input,select,textarea{font-family:inherit}
+
+    /* TOPBAR */
+    #topbar{background:#fff;padding:0 40px;height:70px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 2px 20px rgba(9,74,75,.08)}
+    .brand-logos{display:flex;align-items:center;gap:14px}
+    .brand-logos img:first-child{height:40px;max-width:180px;object-fit:contain}
+    .brand-sep{width:1px;height:30px;background:var(--borde)}
+    .brand-logos img:last-child{height:30px;max-width:140px;object-fit:contain}
+    .nav-links{display:flex;align-items:center;gap:24px}
+    .nav-link{font-size:14px;font-weight:600;color:var(--texto-g);cursor:pointer;transition:color var(--t)}
+    .nav-link:hover{color:var(--verde)}
+    .back-btn{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:var(--texto-g);cursor:pointer;padding:8px 16px;border-radius:8px;background:var(--suave);transition:background var(--t)}
+    .back-btn:hover{background:var(--borde)}
+
+    .btn{display:inline-flex;align-items:center;gap:7px;padding:12px 26px;border-radius:var(--r);font-weight:700;font-size:14px;border:none;transition:all var(--t);cursor:pointer;font-family:inherit}
+    .btn:active{transform:scale(.97)}
+    .btn-primary{background:var(--naranja);color:#fff}
+    .btn-primary:hover{background:#d35400}
+    .btn-verde{background:var(--verde);color:#fff}
+    .btn-verde:hover{background:#0d6b6c}
+    .btn-outline{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.4)}
+    .btn-outline:hover{background:rgba(255,255,255,.1)}
+    .btn-ghost{background:var(--suave);color:var(--texto-g)}
+    .btn-sm{padding:8px 18px;font-size:13px}
+
+    /* HERO */
+    .hero{background:linear-gradient(135deg,#0d1f3a 0%,#0d3b4a 50%,#094a4b 100%);padding:80px 40px 60px;position:relative;overflow:hidden}
+    .hero::before{content:'';position:absolute;top:-100px;right:-100px;width:450px;height:450px;border-radius:50%;background:rgba(168,201,78,.06)}
+    .hero::after{content:'';position:absolute;bottom:-80px;left:20%;width:300px;height:300px;border-radius:50%;background:rgba(168,201,78,.04)}
+    .hero-inner{max-width:1100px;margin:0 auto;position:relative;z-index:1}
+    .hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(168,201,78,.15);border:1px solid rgba(168,201,78,.3);color:#a8c94e;font-size:11px;font-weight:700;padding:5px 14px;border-radius:20px;letter-spacing:.06em;margin-bottom:20px}
+    .hero-title{font-family:'Nunito',sans-serif;font-size:52px;font-weight:900;color:#fff;line-height:1.05;margin-bottom:16px}
+    .hero-title span{color:#a8c94e}
+    .hero-sub{font-size:18px;color:rgba(255,255,255,.75);line-height:1.6;max-width:680px;margin-bottom:32px}
+    .hero-btns{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:48px}
+    .hero-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;max-width:800px}
+    .kpi{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:20px;text-align:center}
+    .kpi-num{font-family:'Nunito',sans-serif;font-size:36px;font-weight:900;color:#a8c94e;line-height:1}
+    .kpi-lbl{font-size:12px;color:rgba(255,255,255,.6);margin-top:6px;line-height:1.4}
+
+    /* PARA QUIÉN */
+    .para-quien{background:var(--fondo);padding:64px 40px}
+    .para-quien-inner{max-width:1100px;margin:0 auto}
+    .sec-title{font-family:'Nunito',sans-serif;font-size:34px;font-weight:900;color:var(--negro);margin-bottom:8px}
+    .sec-sub{font-size:16px;color:var(--texto-g);margin-bottom:40px;max-width:600px}
+    .publicos{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+    .pub-card{background:#fff;border-radius:16px;box-shadow:0 2px 20px rgba(9,74,75,.08);padding:28px;border-top:4px solid}
+    .pub-card.p1{border-top-color:var(--pist)}
+    .pub-card.p2{border-top-color:var(--naranja)}
+    .pub-card.p3{border-top-color:var(--azul)}
+    .pub-ico{font-size:36px;margin-bottom:12px}
+    .pub-title{font-family:'Nunito',sans-serif;font-size:18px;font-weight:800;color:var(--negro);margin-bottom:8px}
+    .pub-desc{font-size:14px;color:var(--texto-g);line-height:1.6;margin-bottom:14px}
+    .pub-item{font-size:13px;color:var(--texto-g);padding:5px 0;border-bottom:1px solid var(--borde);display:flex;align-items:center;gap:8px}
+    .pub-item:last-child{border-bottom:none}
+    .pub-item::before{content:'›';color:var(--naranja);font-weight:900;font-size:16px}
+
+    /* SERVICIOS */
+    .servicios{padding:72px 40px;background:#fff}
+    .servicios-inner{max-width:1100px;margin:0 auto}
+    .srv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:40px}
+    .srv-card{background:var(--fondo);border-radius:16px;padding:28px;border:2px solid transparent;transition:all var(--t);position:relative;overflow:hidden}
+    .srv-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:4px;background:var(--naranja)}
+    .srv-card:hover{border-color:var(--naranja);background:#fff;box-shadow:0 8px 30px rgba(230,126,34,.12);transform:translateY(-4px)}
+    .srv-num{font-family:'Nunito',sans-serif;font-size:11px;font-weight:800;color:var(--naranja);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px}
+    .srv-ico{font-size:36px;margin-bottom:12px}
+    .srv-nombre{font-family:'Nunito',sans-serif;font-size:18px;font-weight:800;color:var(--negro);margin-bottom:8px}
+    .srv-desc{font-size:13px;color:var(--texto-g);line-height:1.6;margin-bottom:14px}
+    .srv-tags{display:flex;gap:6px;flex-wrap:wrap}
+    .srv-tag{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:700;background:rgba(230,126,34,.1);color:var(--naranja)}
+
+    /* PROCESO */
+    .proceso{background:linear-gradient(135deg,#0d1f3a,#0d3b4a);padding:72px 40px}
+    .proceso-inner{max-width:1100px;margin:0 auto}
+    .proceso-title{font-family:'Nunito',sans-serif;font-size:34px;font-weight:900;color:#fff;margin-bottom:8px}
+    .proceso-sub{font-size:16px;color:rgba(255,255,255,.65);margin-bottom:48px}
+    .pasos-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:0;position:relative}
+    .pasos-grid::after{content:'';position:absolute;top:28px;left:60px;right:60px;height:2px;background:linear-gradient(90deg,#a8c94e,rgba(168,201,78,.2))}
+    .paso-item{display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;position:relative;z-index:1}
+    .paso-circle{width:56px;height:56px;border-radius:50%;background:#a8c94e;color:#0d3b4a;font-family:'Nunito',sans-serif;font-weight:900;font-size:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 16px rgba(168,201,78,.4)}
+    .paso-nombre{font-weight:700;font-size:13px;color:#fff}
+    .paso-desc{font-size:11px;color:rgba(255,255,255,.55);line-height:1.4}
+
+    /* ATRIBUTOS */
+    .atributos{padding:72px 40px;background:var(--fondo)}
+    .atributos-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+    .attr-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .attr-card{background:#fff;border-radius:12px;padding:20px;display:flex;gap:14px;align-items:flex-start;box-shadow:0 2px 12px rgba(9,74,75,.06);transition:box-shadow var(--t)}
+    .attr-card:hover{box-shadow:0 4px 24px rgba(9,74,75,.12)}
+    .attr-ico{width:44px;height:44px;border-radius:10px;background:rgba(230,126,34,.1);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+    .attr-titulo{font-weight:700;font-size:14px;color:var(--negro);margin-bottom:4px}
+    .attr-desc{font-size:12px;color:var(--texto-g);line-height:1.5}
+    .attr-texto .sec-title{font-size:30px;margin-bottom:12px}
+    .attr-texto p{font-size:15px;color:var(--texto-g);line-height:1.7;margin-bottom:20px}
+    .attr-contacto-rapido{background:var(--verde);border-radius:12px;padding:20px 24px;color:#fff}
+    .attr-contacto-rapido .t{font-weight:700;font-size:14px;margin-bottom:12px}
+    .attr-cinfo{display:flex;align-items:center;gap:10px;font-size:13px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.1)}
+    .attr-cinfo:last-child{border-bottom:none}
+    .attr-cinfo strong{color:var(--pist)}
+
+    /* FORMULARIO */
+    .formulario{padding:72px 40px;background:#fff}
+    .formulario-inner{max-width:900px;margin:0 auto}
+    .form-card{background:linear-gradient(135deg,#0d1f3a,#094a4b);border-radius:24px;padding:48px;overflow:hidden;position:relative}
+    .form-card::before{content:'';position:absolute;top:-60px;right:-60px;width:220px;height:220px;border-radius:50%;background:rgba(168,201,78,.08)}
+    .form-titulo{font-family:'Nunito',sans-serif;font-size:28px;font-weight:900;color:#fff;margin-bottom:8px}
+    .form-sub{font-size:15px;color:rgba(255,255,255,.65);margin-bottom:32px}
+    .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+    .fgrid.one{grid-template-columns:1fr}
+    .flabel{font-size:11px;font-weight:700;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;display:block}
+    .req{color:#a8c94e}
+    .finput{width:100%;padding:12px 16px;border:1.5px solid rgba(255,255,255,.15);border-radius:10px;background:rgba(255,255,255,.08);color:#fff;font-size:14px;font-family:inherit;outline:none;transition:border-color .22s}
+    .finput::placeholder{color:rgba(255,255,255,.3)}
+    .finput:focus{border-color:#a8c94e}
+    select.finput option{color:#1a2a1a;background:#fff}
+    textarea.finput{resize:vertical;min-height:100px;line-height:1.5}
+    .tabs-tipo{display:flex;gap:8px;margin-bottom:24px}
+    .tab-tipo{flex:1;padding:10px;border-radius:8px;border:1.5px solid rgba(255,255,255,.15);background:transparent;color:rgba(255,255,255,.6);font-size:13px;font-weight:600;cursor:pointer;transition:all .22s;text-align:center}
+    .tab-tipo.active{background:rgba(168,201,78,.2);border-color:#a8c94e;color:#a8c94e}
+    .form-info{margin-top:24px;padding-top:20px;border-top:1px solid rgba(255,255,255,.1);display:flex;gap:20px;flex-wrap:wrap}
+    .finfo{font-size:12px;color:rgba(255,255,255,.5);display:flex;align-items:center;gap:8px}
+    .finfo strong{color:#a8c94e}
+
+    /* SEDES */
+    .sedes{background:var(--suave);padding:56px 40px}
+    .sedes-inner{max-width:1100px;margin:0 auto}
+    .sedes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-top:28px}
+    .sede-item{background:#fff;border-radius:10px;padding:14px;font-size:12px;color:var(--texto-g);border-left:3px solid var(--pist)}
+    .sede-region{font-size:10px;font-weight:700;color:var(--naranja);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+    .sede-nombre{font-weight:700;font-size:13px;color:var(--negro);margin-bottom:3px}
+
+    /* TOAST */
+    #toasts{position:fixed;bottom:24px;right:24px;display:flex;flex-direction:column;gap:10px;z-index:9999}
+    .toast{background:var(--verde);color:#fff;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:600;box-shadow:0 4px 20px rgba(9,74,75,.3);display:flex;align-items:center;gap:10px;animation:slideUp .22s ease;min-width:260px;border-left:4px solid var(--pist)}
+
+    /* FOOTER */
+    footer{background:#0d1f3a;color:rgba(255,255,255,.6);padding:32px 40px;text-align:center;font-size:13px}
+    footer strong{color:#fff;font-family:'Nunito'}
+    footer a{color:#a8c94e;text-decoration:none}
+
+    @keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    @media(max-width:900px){
+      .hero-title{font-size:34px}.hero-kpis{grid-template-columns:repeat(2,1fr)}
+      .publicos,.srv-grid,.atributos-inner{grid-template-columns:1fr}
+      .attr-grid{grid-template-columns:1fr}
+      .pasos-grid{grid-template-columns:1fr;gap:20px}
+      .pasos-grid::after{display:none}
+      .fgrid{grid-template-columns:1fr}
+      #topbar{padding:0 16px}
+      .nav-links{display:none}
+      .hero,.servicios,.atributos,.formulario,.sedes,.para-quien,.proceso{padding-left:20px;padding-right:20px}
+      .form-card{padding:28px 20px}
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header id="topbar">
+  <div class="brand-logos">
+    <img src="logo_comfe_y_servicio.jpeg" alt="Comfenalco"/>
+    <div class="brand-sep"></div>
+    <img src="logo_agencia.png" alt="Agencia"/>
+  </div>
+  <div class="nav-links">
+    <span class="nav-link" onclick="scroll2('para-quien-s')">¿Para quién?</span>
+    <span class="nav-link" onclick="scroll2('servicios-s')">Servicios</span>
+    <span class="nav-link" onclick="scroll2('proceso-s')">Proceso</span>
+    <span class="nav-link" onclick="scroll2('contacto-s')">Cotizar</span>
+  </div>
+  <div class="back-btn" onclick="window.location.href='index.html'">← Volver al inicio</div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">⭐ AGENCIA DE EMPLEO Y EMPRENDIMIENTO · COMFENALCO ANTIOQUIA</div>
+    <h1 class="hero-title">BPO de Empleo<br/><span>Comfenalco Antioquia</span></h1>
+    <p class="hero-sub">Centro de conexión y valoración de alto impacto. Servicios especializados de selección, orientación, valoración y desarrollo de talento para personas y empresas de toda Antioquia.</p>
+    <div class="hero-btns">
+      <button class="btn btn-primary" onclick="scroll2('contacto-s')">Solicitar cotización →</button>
+      <button class="btn btn-outline" onclick="scroll2('servicios-s')">Ver servicios</button>
+    </div>
+    <div class="hero-kpis">
+      <div class="kpi"><div class="kpi-num">15</div><div class="kpi-lbl">días hábiles de respuesta garantizados</div></div>
+      <div class="kpi"><div class="kpi-num">1.000</div><div class="kpi-lbl">hojas de vida procesadas por segundo</div></div>
+      <div class="kpi"><div class="kpi-num">9</div><div class="kpi-lbl">regiones de Antioquia con presencia</div></div>
+      <div class="kpi"><div class="kpi-num">2013</div><div class="kpi-lbl">Una de las primeras agencias de empleo de Colombia</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PARA QUIÉN -->
+<section class="para-quien" id="para-quien-s">
+  <div class="para-quien-inner">
+    <div class="sec-title">¿Para quién son estos servicios?</div>
+    <p class="sec-sub">El BPO de Empleo atiende tanto a personas como a empresas de todo Antioquia, afiliadas o no a Comfenalco.</p>
+    <div class="publicos">
+      <div class="pub-card p1">
+        <div class="pub-ico">👤</div>
+        <div class="pub-title">Personas que buscan empleo</div>
+        <p class="pub-desc">Desempleados, trabajadores activos y personas que quieren mejorar su perfil o hacer una transición laboral.</p>
+        <div class="pub-item">Orientación ocupacional personalizada</div>
+        <div class="pub-item">Valoración de competencias</div>
+        <div class="pub-item">Active Placement si fuiste desvinculado</div>
+        <div class="pub-item">Conexión con vacantes de alto nivel</div>
+        <div class="pub-item">Subsidio al desempleo (Ley 2225/2022)</div>
+      </div>
+      <div class="pub-card p2">
+        <div class="pub-ico">🚀</div>
+        <div class="pub-title">Emprendedores</div>
+        <p class="pub-desc">Personas con idea de negocio o emprendimiento creado que necesitan talento y acompañamiento para crecer.</p>
+        <div class="pub-item">Ruta de fomento empresarial (6 etapas)</div>
+        <div class="pub-item">Selección de colaboradores para tu negocio</div>
+        <div class="pub-item">Formación avanzada en desarrollo empresarial</div>
+        <div class="pub-item">Acceso a portafolio de mercados</div>
+        <div class="pub-item">Macroruedas de negocios</div>
+      </div>
+      <div class="pub-card p3" style="border-top-color:var(--azul)">
+        <div class="pub-ico">🏢</div>
+        <div class="pub-title">Empresas</div>
+        <p class="pub-desc">Organizaciones de cualquier tamaño, afiliadas o no a Comfenalco, que necesiten procesos de selección o desarrollo de su equipo.</p>
+        <div class="pub-item">Head hunting para cargos estratégicos</div>
+        <div class="pub-item">Preselección con matching por IA</div>
+        <div class="pub-item">Assessment Center y pruebas técnicas</div>
+        <div class="pub-item">Active Placement — desvinculación humanizada</div>
+        <div class="pub-item">Capacitación a grupos cerrados (sin costo)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICIOS -->
+<section class="servicios" id="servicios-s">
+  <div class="servicios-inner">
+    <div class="sec-title">Nuestros servicios especializados</div>
+    <p class="sec-sub">Servicios diseñados para conectar el talento correcto con la oportunidad correcta, usando tecnología e inteligencia humana.</p>
+    <div class="srv-grid">
+
+      <div class="srv-card">
+        <div class="srv-num">Servicio 01</div>
+        <div class="srv-ico">🎯</div>
+        <div class="srv-nombre">Head Hunting especializado</div>
+        <div class="srv-desc">Búsqueda activa de perfiles directivos, gerenciales y técnicos de alto nivel. Identificamos talentos alineados con la cultura organizacional, incluyendo perfiles que no están en el mercado visible.</div>
+        <div class="srv-tags"><span class="srv-tag">Directivos</span><span class="srv-tag">Gerentes</span><span class="srv-tag">Mandos medios</span><span class="srv-tag">Profesionales</span></div>
+      </div>
+
+      <div class="srv-card">
+        <div class="srv-num">Servicio 02</div>
+        <div class="srv-ico">🤖</div>
+        <div class="srv-nombre">Matching con Inteligencia Artificial</div>
+        <div class="srv-desc">Algoritmos de procesamiento de lenguaje natural que cruzan perfiles con vacantes en tiempo real. Filtra por industria, área y experiencia. Machine learning que aprende con cada proceso — 1.000 HV por segundo.</div>
+        <div class="srv-tags"><span class="srv-tag">IA</span><span class="srv-tag">Machine learning</span><span class="srv-tag">Tiempo real</span><span class="srv-tag">Objetividad</span></div>
+      </div>
+
+      <div class="srv-card">
+        <div class="srv-num">Servicio 03</div>
+        <div class="srv-ico">🔬</div>
+        <div class="srv-nombre">Valoración integral de candidatos</div>
+        <div class="srv-desc">Assessment Center y baterías de pruebas con soporte de biometría y gamificación. Evalúa flexibilidad cognitiva, capacidad conversacional, adaptativa, valentía gerencial y agilismo — las competencias del futuro.</div>
+        <div class="srv-tags"><span class="srv-tag">Assessment Center</span><span class="srv-tag">Biometría</span><span class="srv-tag">Gamificación</span></div>
+      </div>
+
+      <div class="srv-card">
+        <div class="srv-num">Servicio 04</div>
+        <div class="srv-ico">🧑‍💼</div>
+        <div class="srv-nombre">Active Placement</div>
+        <div class="srv-desc">Programa de retiro laboral humanizado. Acompañamos a las personas en el proceso de desvinculación y las preparamos para su reinserción. Identifica fortalezas, experiencias y preferencias para potenciar la empleabilidad. Cuida tu marca empleadora.</div>
+        <div class="srv-tags"><span class="srv-tag">Desvinculación</span><span class="srv-tag">Reinserción</span><span class="srv-tag">Marca empleadora</span></div>
+      </div>
+
+      <div class="srv-card">
+        <div class="srv-num">Servicio 05</div>
+        <div class="srv-ico">🎓</div>
+        <div class="srv-nombre">Capacitación empresarial</div>
+        <div class="srv-desc">Más de 100 programas de formación en 12 sectores. Grupos cerrados para empresas sin costo (Ley 2069, Decreto 689). Sectores: call center, comercio, construcción, tecnología, salud, turismo, logística y más. Mínimo 20 trabajadores.</div>
+        <div class="srv-tags"><span class="srv-tag">Sin costo</span><span class="srv-tag">+100 programas</span><span class="srv-tag">12 sectores</span></div>
+      </div>
+
+      <div class="srv-card">
+        <div class="srv-num">Servicio 06</div>
+        <div class="srv-ico">♿</div>
+        <div class="srv-nombre">Inclusión laboral</div>
+        <div class="srv-desc">Ruta de 6 etapas para conectar con talento diverso: diagnóstico, sensibilización, asesoría especializada, vinculación, seguimiento y Premios Inclusión. Para personas con discapacidad, víctimas, migrantes, jóvenes, adultos mayores y más.</div>
+        <div class="srv-tags"><span class="srv-tag">Diversidad</span><span class="srv-tag">Premios Inclusión</span><span class="srv-tag">6 etapas</span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PROCESO -->
+<section class="proceso" id="proceso-s">
+  <div class="proceso-inner">
+    <div class="proceso-title">¿Cómo funciona el proceso?</div>
+    <p class="proceso-sub">Desde la solicitud hasta el candidato validado en 15 días hábiles</p>
+    <div class="pasos-grid">
+      <div class="paso-item">
+        <div class="paso-circle">1</div>
+        <div class="paso-nombre">Solicitud</div>
+        <div class="paso-desc">Diligencias el formulario o contactas al asesor</div>
+      </div>
+      <div class="paso-item">
+        <div class="paso-circle">2</div>
+        <div class="paso-nombre">Diagnóstico</div>
+        <div class="paso-desc">Analizamos el perfil requerido y el contexto organizacional</div>
+      </div>
+      <div class="paso-item">
+        <div class="paso-circle">3</div>
+        <div class="paso-nombre">Búsqueda</div>
+        <div class="paso-desc">IA + red de talento + laboratorios de empleo</div>
+      </div>
+      <div class="paso-item">
+        <div class="paso-circle">4</div>
+        <div class="paso-nombre">Valoración</div>
+        <div class="paso-desc">Assessment, pruebas psicotécnicas y referenciación</div>
+      </div>
+      <div class="paso-item">
+        <div class="paso-circle">5</div>
+        <div class="paso-nombre">Presentación</div>
+        <div class="paso-desc">Terna de candidatos validados en máx. 15 días hábiles</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ATRIBUTOS + CONTACTO RÁPIDO -->
+<section class="atributos" id="porque-s">
+  <div class="atributos-inner">
+    <div>
+      <div class="attr-texto">
+        <div class="sec-title">¿Por qué elegir el BPO de Empleo Comfenalco?</div>
+        <p>Somos una de las primeras agencias de empleo de Colombia. Desde 2013 conectamos personas y empresas en todo Antioquia con rigor, tecnología y compromiso social.</p>
+      </div>
+      <div class="attr-grid">
+        <div class="attr-card"><div class="attr-ico">⚡</div><div><div class="attr-titulo">Oportunidad</div><div class="attr-desc">15 días hábiles garantizados para responder con candidatos validados</div></div></div>
+        <div class="attr-card"><div class="attr-ico">🌐</div><div><div class="attr-titulo">Accesibilidad</div><div class="attr-desc">Precio competitivo con tarifa diferencial para afiliados a Comfenalco Antioquia</div></div></div>
+        <div class="attr-card"><div class="attr-ico">🤖</div><div><div class="attr-titulo">Tecnología IA</div><div class="attr-desc">Plataforma que procesa 1.000 HV por segundo con objetividad y machine learning</div></div></div>
+        <div class="attr-card"><div class="attr-ico">🏆</div><div><div class="attr-titulo">Experiencia comprobada</div><div class="attr-desc">Más de 10 años conectando talento con oportunidades en las 9 regiones</div></div></div>
+        <div class="attr-card"><div class="attr-ico">♿</div><div><div class="attr-titulo">Inclusión</div><div class="attr-desc">Especialistas en vinculación de poblaciones diversas con ruta certificada</div></div></div>
+        <div class="attr-card"><div class="attr-ico">📍</div><div><div class="attr-titulo">Presencia regional</div><div class="attr-desc">Sedes físicas y 2 laboratorios móviles en Medellín, Urabá, Oriente y todo Antioquia</div></div></div>
+      </div>
+    </div>
+    <div>
+      <div class="attr-contacto-rapido" style="margin-bottom:16px">
+        <div class="t">📞 Contacto directo BPO</div>
+        <div class="attr-cinfo"><strong>headhunter@comfenalcoantioquia.com</strong></div>
+        <div class="attr-cinfo">Celular: <strong>310 401 8651</strong></div>
+        <div class="attr-cinfo">Central: <strong>(604) 444 9184</strong></div>
+        <div class="attr-cinfo">Web: <strong>comfenalcoantioquia.com.co</strong></div>
+      </div>
+      <div style="background:#fff;border-radius:12px;padding:20px;box-shadow:0 2px 12px rgba(9,74,75,.08)">
+        <div style="font-family:'Nunito';font-weight:800;font-size:16px;color:var(--negro);margin-bottom:12px">📋 Ruta activa para empresas afiliadas</div>
+        <div style="font-size:13px;color:var(--texto-g);line-height:1.6;margin-bottom:12px">Por ser afiliada a Comfenalco Antioquia accedes con <strong>tarifa diferencial</strong> en todos los servicios BPO. Contacta a tu asesor empresarial asignado para activar la ruta.</div>
+        <div style="background:#d4edda;border-radius:8px;padding:10px 14px;font-size:12px;color:#155724;font-weight:700">✅ Servicio sin costo para selección de personal, capacitación y laboratorios de empleo</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FORMULARIO -->
+<section class="formulario" id="contacto-s">
+  <div class="formulario-inner">
+    <div class="form-card">
+      <div class="form-titulo">📋 Solicitar cotización o información</div>
+      <p class="form-sub">Déjanos tus datos y un asesor especializado te contactará en menos de 24 horas hábiles</p>
+
+      <div style="margin-bottom:20px">
+        <div class="flabel">Soy</div>
+        <div class="tabs-tipo">
+          <div class="tab-tipo active" id="tab-persona" onclick="setTipo('persona')">👤 Persona / Candidato</div>
+          <div class="tab-tipo" id="tab-empresa" onclick="setTipo('empresa')">🏢 Empresa / Empleador</div>
+          <div class="tab-tipo" id="tab-empren" onclick="setTipo('emprendedor')">🚀 Emprendedor/a</div>
+        </div>
+      </div>
+
+      <div class="fgrid">
+        <div>
+          <label class="flabel">Nombre completo <span class="req">*</span></label>
+          <input class="finput" type="text" id="f-nombre" placeholder="Juan Camilo García"/>
+        </div>
+        <div>
+          <label class="flabel" id="lbl-cargo">Cargo actual / Profesión</label>
+          <input class="finput" type="text" id="f-cargo" placeholder="Gerente de RRHH / Psicólogo"/>
+        </div>
+      </div>
+      <div class="fgrid" id="fgrid-empresa">
+        <div>
+          <label class="flabel">Empresa / Organización <span class="req">*</span></label>
+          <input class="finput" type="text" id="f-empresa" placeholder="Nombre de la empresa"/>
+        </div>
+        <div>
+          <label class="flabel">NIT / Documento</label>
+          <input class="finput" type="text" id="f-nit" placeholder="900.123.456-7"/>
+        </div>
+      </div>
+      <div class="fgrid">
+        <div>
+          <label class="flabel">Celular <span class="req">*</span></label>
+          <input class="finput" type="tel" id="f-tel" placeholder="310 401 8651"/>
+        </div>
+        <div>
+          <label class="flabel">Correo electrónico <span class="req">*</span></label>
+          <input class="finput" type="email" id="f-correo" placeholder="correo@empresa.com"/>
+        </div>
+      </div>
+      <div class="fgrid">
+        <div>
+          <label class="flabel">Región / Municipio</label>
+          <select class="finput" id="f-region">
+            <option value="">Selecciona...</option>
+            <option>Valle de Aburrá — Medellín, Bello, Itagüí...</option>
+            <option>Oriente — Rionegro, El Santuario...</option>
+            <option>Norte — Yarumal, Santa Rosa de Osos...</option>
+            <option>Occidente — Santa Fe de Antioquia...</option>
+            <option>Suroeste — Andes, Ciudad Bolívar...</option>
+            <option>Bajo Cauca — Caucasia...</option>
+            <option>Nordeste — Cisneros, Remedios...</option>
+            <option>Magdalena Medio — Puerto Berrío...</option>
+            <option>Urabá — Apartadó, Turbo...</option>
+          </select>
+        </div>
+        <div>
+          <label class="flabel">Servicio de interés <span class="req">*</span></label>
+          <select class="finput" id="f-servicio">
+            <option value="">¿Qué servicio necesitas?</option>
+            <option>Head Hunting — cargos directivos y especializados</option>
+            <option>Matching con IA — selección masiva</option>
+            <option>Valoración integral — Assessment Center</option>
+            <option>Active Placement — programa de desvinculación</option>
+            <option>Proceso de selección completo</option>
+            <option>Capacitación empresarial (grupo cerrado)</option>
+            <option>Inclusión laboral</option>
+            <option>Orientación ocupacional (persona natural)</option>
+            <option>Subsidio al desempleo</option>
+            <option>Ruta de emprendimiento</option>
+            <option>Varios servicios / Quiero asesoría</option>
+          </select>
+        </div>
+      </div>
+      <div class="fgrid one">
+        <div>
+          <label class="flabel">Cuéntanos tu necesidad</label>
+          <textarea class="finput" id="f-mensaje" placeholder="Describe brevemente qué cargo necesitas cubrir, el contexto de tu empresa, o lo que estás buscando. Esto nos permite preparar una propuesta personalizada..."></textarea>
+        </div>
+      </div>
+      <button class="btn btn-primary" style="width:100%;padding:16px;font-size:16px;border-radius:12px;margin-top:8px;justify-content:center" onclick="enviarSolicitud()">
+        Enviar solicitud → Un asesor te contactará en menos de 24 horas
+      </button>
+      <div id="form-resultado" style="display:none;margin-top:16px;padding:16px;background:rgba(168,201,78,.15);border-radius:10px;text-align:center;color:#a8c94e;font-weight:700;font-size:15px"></div>
+
+      <div class="form-info">
+        <div class="finfo">📧 <strong>headhunter@comfenalcoantioquia.com</strong></div>
+        <div class="finfo">📞 <strong>310 401 8651</strong></div>
+        <div class="finfo">☎️ <strong>(604) 444 9184</strong></div>
+        <div class="finfo">🌐 <strong>comfenalcoantioquia.com.co</strong></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SEDES -->
+<section class="sedes">
+  <div class="sedes-inner">
+    <div class="sec-title" style="font-size:26px">Nuestras sedes en Antioquia</div>
+    <p style="color:var(--texto-g);font-size:14px;margin-bottom:4px">4 Laboratorios de Empleo físicos + 2 laboratorios móviles que recorren todo el departamento</p>
+    <div class="sedes-grid">
+      <div class="sede-item"><div class="sede-region">Valle de Aburrá</div><div class="sede-nombre">Medellín Centro</div><div>Cra 43 # 49-20 Girardot · (604) 444 9184</div></div>
+      <div class="sede-item"><div class="sede-region">Valle de Aburrá</div><div class="sede-nombre">Medellín Parque Bolívar</div><div>Cra 49 Nº 54-63 · (604) 444 9184</div></div>
+      <div class="sede-item"><div class="sede-region">Valle de Aburrá</div><div class="sede-nombre">Bello</div><div>CC Puerta del Norte · Diag 55 Nº 54-67</div></div>
+      <div class="sede-item"><div class="sede-region">Valle de Aburrá</div><div class="sede-nombre">Sabaneta</div><div>CC Mayorca · Cll 51 Sur Nº 48-57</div></div>
+      <div class="sede-item" style="border-left-color:var(--naranja)"><div class="sede-region">🔬 Laboratorio · Oriente</div><div class="sede-nombre">Rionegro</div><div>Cra 50 Nº 50-24 · (604) 448 7760</div></div>
+      <div class="sede-item" style="border-left-color:var(--naranja)"><div class="sede-region">🔬 Laboratorio · Oriente</div><div class="sede-nombre">El Santuario</div><div>Corp. Foremsa · (604) 448 7760</div></div>
+      <div class="sede-item"><div class="sede-region">Oriente</div><div class="sede-nombre">La Ceja</div><div>Cll 20 Nº 19-43 · (604) 553 1414</div></div>
+      <div class="sede-item"><div class="sede-region">Norte</div><div class="sede-nombre">Yarumal · Santa Rosa</div><div>Cll 22 Nº 19-17 · (604) 860 7440</div></div>
+      <div class="sede-item"><div class="sede-region">Occidente</div><div class="sede-nombre">Sta. Fe de Antioquia</div><div>Cll 10 Nº 11-29 · (604) 511 3133</div></div>
+      <div class="sede-item"><div class="sede-region">Occidente</div><div class="sede-nombre">Cañasgordas</div><div>Cra 29A Nº 25-4 · (604) 444 9184</div></div>
+      <div class="sede-item"><div class="sede-region">Suroeste</div><div class="sede-nombre">Andes · Ciudad Bolívar</div><div>Cra 51 Nº 49A-48 · (604) 444 9184</div></div>
+      <div class="sede-item" style="border-left-color:var(--naranja)"><div class="sede-region">🔬 Laboratorio · Urabá</div><div class="sede-nombre">Apartadó</div><div>CC Nuestro Urabá · (604) 828 8388</div></div>
+      <div class="sede-item"><div class="sede-region">Urabá</div><div class="sede-nombre">Turbo</div><div>Cll 104 Nº 18-26 · (604) 827 3724</div></div>
+      <div class="sede-item"><div class="sede-region">Bajo Cauca</div><div class="sede-nombre">Caucasia</div><div>Trv 13 Nº 14C-18 · (604) 839 5888</div></div>
+      <div class="sede-item"><div class="sede-region">Nordeste</div><div class="sede-nombre">Cisneros</div><div>Cll Nariño Nº 20-47 · (604) 444 9184</div></div>
+      <div class="sede-item"><div class="sede-region">Magdalena Medio</div><div class="sede-nombre">Puerto Berrío</div><div>Cll 49 Nº 4-30 · (604) 444 9184</div></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <strong>Agencia de Empleo y Emprendimiento — Comfenalco Antioquia</strong>
+  <p style="margin-top:8px">BPO de Empleo · <a href="mailto:headhunter@comfenalcoantioquia.com">headhunter@comfenalcoantioquia.com</a> · (604) 444 9184 · @ComfenalcoAnt</p>
+  <p style="margin-top:6px;font-size:12px">Vigilado SuperSubsidio · Servicio Público de Empleo · <a href="https://www.comfenalcoantioquia.com.co" target="_blank">comfenalcoantioquia.com.co</a></p>
+</footer>
+
+<div id="toasts"></div>
+
+<script>
+function scroll2(id){var el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
+function toast(m){var tc=document.getElementById('toasts'),el=document.createElement('div');el.className='toast';el.textContent='✅ '+m;tc.appendChild(el);setTimeout(function(){el.remove();},4000);}
+
+var tipoActual='persona';
+function setTipo(t){
+  tipoActual=t;
+  ['persona','empresa','empren'].forEach(function(x){
+    var el=document.getElementById('tab-'+x);
+    if(el) el.classList.toggle('active', x===t || (t==='emprendedor'&&x==='empren'));
+  });
+  var grid=document.getElementById('fgrid-empresa');
+  var lbl=document.getElementById('lbl-cargo');
+  if(t==='persona'){
+    if(grid) grid.style.display='none';
+    if(lbl) lbl.textContent='Profesión / Área de interés';
+    document.getElementById('f-cargo').placeholder='Ej: Administrador, Técnico electricista';
+  } else if(t==='emprendedor'){
+    if(grid) grid.style.display='grid';
+    if(lbl) lbl.textContent='Nombre del emprendimiento';
+    document.getElementById('f-cargo').placeholder='Nombre de tu proyecto o idea de negocio';
+    document.getElementById('f-empresa').placeholder='Nombre del emprendimiento';
+  } else {
+    if(grid) grid.style.display='grid';
+    if(lbl) lbl.textContent='Cargo en la empresa';
+    document.getElementById('f-cargo').placeholder='Gerente de RRHH / Director / Propietario';
+    document.getElementById('f-empresa').placeholder='Nombre de la empresa';
+  }
+}
+
+// Inicializar — ocultar campo empresa para persona
+window.addEventListener('load', function(){ setTipo('persona'); });
+
+function enviarSolicitud(){
+  var nombre=document.getElementById('f-nombre').value.trim();
+  var tel=document.getElementById('f-tel').value.trim();
+  var correo=document.getElementById('f-correo').value.trim();
+  var servicio=document.getElementById('f-servicio').value;
+  if(!nombre||!tel||!correo||!servicio){
+    toast('Completa los campos obligatorios (nombre, celular, correo y servicio)');return;
+  }
+  // En producción → enviar a EmailJS / Resend / API Netlify
+  var res=document.getElementById('form-resultado');
+  res.style.display='block';
+  res.innerHTML='✅ ¡Solicitud recibida! Hola <strong>'+nombre+'</strong>, un asesor BPO de Comfenalco Antioquia se comunicará contigo en menos de 24 horas hábiles.<br/><span style="font-size:13px;opacity:.8">Contacto directo: headhunter@comfenalcoantioquia.com · 310 401 8651</span>';
+  ['f-nombre','f-cargo','f-empresa','f-nit','f-tel','f-correo','f-mensaje'].forEach(function(id){
+    var el=document.getElementById(id);if(el)el.value='';
+  });
+  document.getElementById('f-servicio').value='';
+  document.getElementById('f-region').value='';
+  res.scrollIntoView({behavior:'smooth',block:'center'});
+}
+</script>
+</body>
+</html>
