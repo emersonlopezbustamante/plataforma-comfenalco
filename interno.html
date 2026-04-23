@@ -303,7 +303,7 @@
     </div>
 
     <!-- DASHBOARD -->
-    <div id="pg-dashboard" class="hidden">
+    <div id="pg-dashboard" class="hidden" onclick="event.stopPropagation()">
       <div class="ptitle">📊 Dashboard</div>
       <p class="psub">Indicadores en tiempo real de la Agencia de Empleo</p>
       <div class="stats-row">
@@ -329,7 +329,7 @@
     </div>
 
     <!-- CANDIDATOS -->
-    <div id="pg-candidatos" class="hidden">
+    <div id="pg-candidatos" class="hidden" onclick="event.stopPropagation()">
       <div class="ptitle">👤 Candidatos</div>
       <p class="psub">Banco de hojas de vida registradas</p>
       <div class="twrap">
@@ -340,7 +340,7 @@
     </div>
 
     <!-- EMPRESAS -->
-    <div id="pg-empresas" class="hidden">
+    <div id="pg-empresas" class="hidden" onclick="event.stopPropagation()">
       <div class="ph">
         <div><div class="ptitle">🏢 Empresas</div><p class="psub">Directorio de empresas aliadas registradas</p></div>
         <button class="btn btn-primary" onclick="abrirModalEmpresa()">+ Registrar empresa</button>
@@ -374,7 +374,7 @@
     </div>
 
     <!-- VACANTES — MÓDULO PRINCIPAL -->
-    <div id="pg-vacantes" class="hidden">
+    <div id="pg-vacantes" class="hidden" onclick="event.stopPropagation()">
       <div class="ph">
         <div>
           <div class="ptitle">💼 Gestión de Vacantes</div>
@@ -469,22 +469,22 @@
     </div>
 
     <!-- REPORTES -->
-    <div id="pg-reportes" class="hidden">
+    <div id="pg-reportes" class="hidden" onclick="event.stopPropagation()">
       <div class="ph">
         <div>
           <div class="ptitle">📈 Reportes e indicadores</div>
           <p class="psub">Medición integral de la Agencia de Empleo y Emprendimiento — Comfenalco Antioquia</p>
         </div>
         <div class="export-bar">
-          <button class="btn btn-ghost btn-sm" onclick="exportarReportesExcel()">📥 Exportar Excel</button>
-          <button class="btn btn-ghost btn-sm" onclick="exportarReportesPDF()">📄 Exportar PDF</button>
+          <button class="btn btn-ghost btn-sm" type="button" onclick="exportarReportesExcel();event.stopPropagation()">📥 Exportar Excel</button>
+          <button class="btn btn-ghost btn-sm" type="button" onclick="exportarReportesPDF();event.stopPropagation()">📄 Exportar PDF</button>
         </div>
       </div>
 
       <!-- FILTROS GLOBALES -->
       <div class="rep-filtros">
         <span style="font-size:12px;font-weight:700;color:var(--verde)">🔍 Filtrar por:</span>
-        <select class="finput" id="rep-periodo" onchange="renderReportes()" style="padding:7px 12px;font-size:12px;min-width:150px">
+        <select class="finput" id="rep-periodo" onchange="renderReportes();event.stopPropagation()" style="padding:7px 12px;font-size:12px;min-width:150px">
           <option value="2025">Año 2025</option>
           <option value="2024">Año 2024</option>
           <option value="t1">Trimestre 1 (Ene–Mar)</option>
@@ -493,37 +493,37 @@
           <option value="t4">Trimestre 4 (Oct–Dic)</option>
           <option value="mes">Mes actual</option>
         </select>
-        <select class="finput" id="rep-region" onchange="renderReportes()" style="padding:7px 12px;font-size:12px;min-width:170px">
+        <select class="finput" id="rep-region" onchange="renderReportes();event.stopPropagation()" style="padding:7px 12px;font-size:12px;min-width:170px">
           <option value="">Todas las regiones</option>
           <option>Valle de Aburrá</option><option>Oriente</option><option>Norte</option>
           <option>Occidente</option><option>Suroeste</option><option>Bajo Cauca</option>
           <option>Nordeste</option><option>Magdalena Medio</option><option>Urabá</option>
         </select>
-        <select class="finput" id="rep-coordinador" onchange="renderReportes()" style="padding:7px 12px;font-size:12px;min-width:170px">
+        <select class="finput" id="rep-coordinador" onchange="renderReportes();event.stopPropagation()" style="padding:7px 12px;font-size:12px;min-width:170px">
           <option value="">Todos los coordinadores</option>
           <option>Coordinación Valle de Aburrá</option><option>Coordinación Oriente</option>
           <option>Coordinación Norte</option><option>Coordinación Urabá</option>
         </select>
-        <button class="btn btn-ghost btn-sm" onclick="resetFiltrosRep()">↺ Limpiar filtros</button>
+        <button class="btn btn-ghost btn-sm" onclick="resetFiltrosRep();event.stopPropagation()">↺ Limpiar filtros</button>
       </div>
 
       <!-- TABS DE BLOQUES -->
       <div class="rep-tabs" id="rep-tabs">
-        <button class="rep-tab active" onclick="verBloque('todos')">📊 Resumen general</button>
-        <button class="rep-tab" onclick="verBloque('intermediacion')">💼 Intermediación</button>
-        <button class="rep-tab" onclick="verBloque('empresas')">🏢 Empresas</button>
-        <button class="rep-tab" onclick="verBloque('inclusion')">♿ Inclusión</button>
-        <button class="rep-tab" onclick="verBloque('orientacion')">🎯 Orientación</button>
-        <button class="rep-tab" onclick="verBloque('pruebas')">🔬 Pruebas / Lab.</button>
-        <button class="rep-tab" onclick="verBloque('jornadas')">📍 Jornadas / Eventos</button>
-        <button class="rep-tab" onclick="verBloque('capacitacion')">🎓 Capacitación</button>
+        <button type="button" class="rep-tab active" onclick="verBloque('todos',this);event.stopPropagation()">📊 Resumen general</button>
+        <button type="button" class="rep-tab" onclick="verBloque('intermediacion',this);event.stopPropagation()">💼 Intermediación</button>
+        <button type="button" class="rep-tab" onclick="verBloque('empresas',this);event.stopPropagation()">🏢 Empresas</button>
+        <button type="button" class="rep-tab" onclick="verBloque('inclusion',this);event.stopPropagation()">♿ Inclusión</button>
+        <button type="button" class="rep-tab" onclick="verBloque('orientacion',this);event.stopPropagation()">🎯 Orientación</button>
+        <button type="button" class="rep-tab" onclick="verBloque('pruebas',this);event.stopPropagation()">🔬 Pruebas / Lab.</button>
+        <button type="button" class="rep-tab" onclick="verBloque('jornadas',this);event.stopPropagation()">📍 Jornadas / Eventos</button>
+        <button type="button" class="rep-tab" onclick="verBloque('capacitacion',this);event.stopPropagation()">🎓 Capacitación</button>
       </div>
 
       <div id="rep-contenido"></div>
     </div>
 
   <!-- ══ CARGUE MASIVO ══ -->
-  <div id="pg-cargue" class="hidden">
+  <div id="pg-cargue" class="hidden" onclick="event.stopPropagation()">
     <div class="ph">
       <div>
         <div class="ptitle">📤 Cargue masivo</div>
@@ -968,7 +968,7 @@ function nav(p){
   PAGS.forEach(function(x){ var el=document.getElementById('pg-'+x); if(el) el.classList.add('hidden'); });
   document.querySelectorAll('.nitem').forEach(function(n){ n.classList.remove('active'); });
   var t = document.getElementById('pg-'+p); if(t) t.classList.remove('hidden');
-  var ni = document.querySelector('[onclick*="nav(\''+p+'\')"]'); if(ni) ni.classList.add('active');
+  var ni = document.querySelector('#sidebar [onclick*="nav(\''+p+'\')"]'); if(ni) ni.classList.add('active');
   if(p==='dashboard')  cargarDash();
   if(p==='empresas')   renderEmpresas(empresasActuales);
   if(p==='vacantes')   renderVacantes(vacantesActuales);
@@ -2052,12 +2052,12 @@ function renderReportes() {
   }
 }
 
-function verBloque(bloque) {
+function verBloque(bloque, btn) {
   bloqueActual = bloque;
   document.querySelectorAll('.rep-tab').forEach(function(b) {
     b.classList.remove('active');
   });
-  event.target.classList.add('active');
+  if (btn) btn.classList.add('active');
   renderReportes();
 }
 
