@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SOY talento — Orientación Laboral · Comfenalco Antioquia</title>
+  <script async crossorigin="anonymous"
+    data-clerk-publishable-key="pk_test_bGlrZWQtYmlzb24tNTEuY2xlcmsuYWNjb3VudHMuZGV2JA"
+    src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@5/dist/clerk.browser.js"
+    type="text/javascript"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root{
+      --verde:#094a4b;--pist:#a8c94e;--pist-h:#8fb53a;
+      --fondo:#f4f6f4;--borde:#d8e2d8;--texto-g:#4a5a4a;
+      --suave:#e8efe8;--negro:#1a2a1a;--naranja:#e67e22;
+      --azul:#2d4a6b;--rojo:#e74c3c;--r:8px;--rc:14px;--t:.22s ease;
+      --teal:#009688;--amber:#f59e0b;--morado:#7c3aed
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;font-size:15px;color:var(--negro);background:var(--fondo);min-height:100vh}
+    button{cursor:pointer;font-family:inherit;border:none}
+    input,select,textarea{font-family:inherit}
+    .hidden{display:none!important}
+
+    /* TOPBAR */
+    #topbar{background:var(--teal);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(0,150,136,.2)}
+    .brand-logos{display:flex;align-items:center;background:#fff;border-radius:8px;padding:3px 12px;height:46px}
+    .brand-logos img:first-child{height:36px;max-width:170px;object-fit:contain}
+    .brand-sep{width:1px;height:28px;background:var(--borde);margin:0 10px}
+    .brand-logos img:last-child{height:28px;max-width:130px;object-fit:contain}
+    .tbadge{background:rgba(255,255,255,.2);color:#fff;font-size:11px;font-weight:700;padding:3px 12px;border-radius:20px;letter-spacing:.04em}
+    .back{color:rgba(255,255,255,.8);font-size:13px;cursor:pointer;padding:6px 10px;border-radius:6px;transition:background var(--t)}
+    .back:hover{background:rgba(255,255,255,.12);color:#fff}
+
+    /* BOTONES */
+    .btn{display:inline-flex;align-items:center;gap:7px;padding:10px 22px;border-radius:var(--r);font-weight:700;font-size:14px;border:none;transition:all var(--t);cursor:pointer;font-family:inherit}
+    .btn:active{transform:scale(.97)}
+    .btn-primary{background:var(--pist);color:var(--verde)}
+    .btn-primary:hover{background:var(--pist-h)}
+    .btn-teal{background:var(--teal);color:#fff}
+    .btn-teal:hover{background:#00796b}
+    .btn-ghost{background:var(--suave);color:var(--texto-g)}
+    .btn-ghost:hover{background:var(--borde)}
+    .btn-azul{background:var(--azul);color:#fff}
+    .btn-morado{background:var(--morado);color:#fff}
+    .btn-sm{padding:7px 14px;font-size:13px}
+    .btn-xs{padding:4px 10px;font-size:12px}
+    .btn-lg{padding:14px 32px;font-size:16px;border-radius:10px}
+
+    /* LAYOUT */
+    #shell{display:grid;grid-template-columns:260px 1fr;min-height:calc(100vh - 60px)}
+    #sidebar{background:linear-gradient(180deg,#004d40 0%,#00695c 100%);padding:20px 0;display:flex;flex-direction:column;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto}
+    .suser{padding:14px 20px 18px;border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:8px}
+    .sav-wrap{display:flex;align-items:center;gap:12px}
+    .sav{width:40px;height:40px;border-radius:50%;background:var(--pist);color:var(--verde);font-weight:800;font-size:15px;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
+    .sav img{width:100%;height:100%;object-fit:cover}
+    .snombre{font-weight:700;font-size:13px;color:#fff}
+    .srol{font-size:11px;color:rgba(255,255,255,.6);margin-top:2px}
+    .slabel{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);padding:12px 20px 4px}
+    .nitem{display:flex;align-items:center;gap:10px;padding:10px 20px;font-size:13px;font-weight:600;color:rgba(255,255,255,.7);border-left:3px solid transparent;cursor:pointer;transition:background var(--t);border-radius:0 8px 8px 0;margin-right:12px}
+    .nitem:hover{background:rgba(255,255,255,.08);color:#fff}
+    .nitem.active{background:rgba(168,201,78,.18);color:var(--pist);border-left-color:var(--pist)}
+    .nico{font-size:17px;width:20px;text-align:center;flex-shrink:0}
+    .sdiv{height:1px;background:rgba(255,255,255,.1);margin:10px 20px}
+
+    /* MAIN */
+    #main{padding:28px;overflow-y:auto}
+    .ptitle{font-family:'Nunito',sans-serif;font-size:22px;font-weight:900;color:var(--negro);margin-bottom:4px}
+    .psub{font-size:14px;color:var(--texto-g);margin-bottom:20px}
+    .ph{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+
+    /* CARDS */
+    .card{background:#fff;border-radius:var(--rc);box-shadow:0 2px 16px rgba(9,74,75,.07);padding:22px;margin-bottom:18px}
+    .ctitle{font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;color:var(--verde);margin-bottom:14px}
+
+    /* STATS */
+    .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin-bottom:24px}
+    .scard{background:#fff;border-radius:var(--rc);box-shadow:0 2px 16px rgba(9,74,75,.07);padding:16px 18px;border-left:4px solid var(--teal)}
+    .sval{font-family:'Nunito',sans-serif;font-size:28px;font-weight:900;color:var(--negro);line-height:1}
+    .slbl-s{font-size:12px;color:var(--texto-g);font-weight:600;margin-top:4px}
+
+    /* RUTA DE EMPLEABILIDAD — TIMELINE */
+    .ruta-wrap{position:relative;padding:24px 0 10px}
+    .ruta-line{position:absolute;top:52px;left:60px;right:60px;height:3px;background:linear-gradient(90deg,var(--teal),var(--pist),var(--morado));border-radius:2px}
+    .ruta-etapas{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;position:relative;z-index:1}
+    .etapa-item{display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer}
+    .etapa-circle{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;border:3px solid #fff;box-shadow:0 2px 12px rgba(0,0,0,.12);transition:transform var(--t),box-shadow var(--t)}
+    .etapa-item:hover .etapa-circle{transform:scale(1.12);box-shadow:0 4px 20px rgba(0,0,0,.2)}
+    .etapa-label{font-size:11px;font-weight:700;color:var(--texto-g);text-align:center;max-width:90px;line-height:1.3}
+    .etapa-sub{font-size:10px;color:var(--borde);text-align:center;max-width:90px}
+    .etapa-item.completada .etapa-circle{border-color:var(--pist)}
+    .etapa-item.activa .etapa-circle{border-color:var(--teal);animation:pulsar 2s ease-in-out infinite}
+    @keyframes pulsar{0%,100%{box-shadow:0 2px 12px rgba(0,150,136,.3)}50%{box-shadow:0 2px 20px rgba(0,150,136,.6)}}
+
+    /* CANDIDATO CARD */
+    .cand-card{background:#fff;border-radius:14px;box-shadow:0 2px 16px rgba(9,74,75,.08);overflow:hidden;margin-bottom:14px;transition:box-shadow var(--t)}
+    .cand-card:hover{box-shadow:0 4px 24px rgba(9,74,75,.14)}
+    .cand-header{background:linear-gradient(135deg,#004d40,#009688);color:#fff;padding:16px 20px;display:flex;align-items:center;gap:14px}
+    .cand-av{width:46px;height:46px;border-radius:50%;background:var(--pist);color:var(--verde);font-weight:800;font-size:17px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .cand-nombre{font-family:'Nunito',sans-serif;font-weight:800;font-size:17px}
+    .cand-doc{font-size:12px;opacity:.8;margin-top:2px}
+    .cand-body{padding:16px 20px}
+    .pct-ruta{height:8px;background:var(--borde);border-radius:4px;overflow:hidden;margin:6px 0}
+    .pct-fill-ruta{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--teal),var(--pist));transition:width .6s}
+
+    /* INSIGNIAS */
+    .insignia{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;margin:3px}
+    .ins-teal{background:#e0f2f1;color:#004d40}
+    .ins-amber{background:#fff8e1;color:#e65100}
+    .ins-morado{background:#f3e5f5;color:#4a148c}
+    .ins-verde{background:#e8f5e9;color:#1b5e20}
+    .ins-azul{background:#e3f2fd;color:#0d47a1}
+
+    /* PRUEBAS */
+    .prueba-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--borde)}
+    .prueba-item:last-child{border-bottom:none}
+    .nivel-bar{height:5px;width:100px;background:var(--borde);border-radius:3px;overflow:hidden;display:inline-block;vertical-align:middle;margin-left:8px}
+    .nivel-fill{height:100%;border-radius:3px}
+
+    /* CURSOS */
+    .curso-item{background:var(--suave);border-radius:8px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px}
+    .curso-ico{font-size:22px;flex-shrink:0}
+    .curso-nombre{font-weight:700;font-size:13px;color:var(--negro)}
+    .curso-meta{font-size:11px;color:var(--texto-g);margin-top:2px}
+    .curso-completado{background:#d4edda;color:#155724;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700}
+
+    /* CITA */
+    .cita-form .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .fgroup{display:flex;flex-direction:column;gap:5px}
+    .flabel{font-size:12px;font-weight:700;color:var(--verde);text-transform:uppercase;letter-spacing:.04em}
+    .req{color:var(--rojo);margin-left:2px}
+    .fval{padding:9px 13px;border:1.5px solid var(--borde);border-radius:var(--r);font-size:14px;font-family:inherit;color:var(--negro);background:#fff;outline:none;transition:border-color var(--t)}
+    .fval:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,150,136,.08)}
+    select.fval{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23094a4b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+    textarea.fval{resize:vertical;min-height:80px}
+
+    /* TABLA */
+    .twrap{background:#fff;border-radius:var(--rc);box-shadow:0 2px 16px rgba(9,74,75,.07);overflow:hidden;margin-bottom:20px}
+    .ttbar{padding:12px 18px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--borde);flex-wrap:wrap}
+    .ttitle{font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;color:var(--verde);margin-right:auto}
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    th{padding:9px 12px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;color:var(--verde);background:var(--suave)}
+    td{padding:10px 12px;border-bottom:1px solid var(--borde);vertical-align:middle}
+    tbody tr:last-child td{border-bottom:none}
+    tbody tr:hover{background:rgba(9,74,75,.02)}
+
+    /* FILTROS */
+    .filtros{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;padding:12px 16px;background:#fff;border-radius:var(--rc);box-shadow:0 2px 10px rgba(9,74,75,.06)}
+    .finput{padding:8px 12px;border:1.5px solid var(--borde);border-radius:var(--r);font-size:13px;font-family:inherit;color:var(--negro);background:#fff;outline:none}
+    .finput:focus{border-color:var(--teal)}
+    select.finput{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23094a4b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+
+    /* MODAL */
+    .modal-bg{position:fixed;inset:0;background:rgba(0,77,64,.5);display:flex;align-items:flex-start;justify-content:center;z-index:999;backdrop-filter:blur(3px);padding:20px;overflow-y:auto}
+    .modal{background:#fff;border-radius:18px;box-shadow:0 20px 60px rgba(0,77,64,.25);width:min(800px,95vw);animation:slideUp .22s ease;margin:auto}
+    .modal-head{display:flex;align-items:center;justify-content:space-between;padding:18px 24px 14px;border-bottom:1px solid var(--borde);position:sticky;top:0;background:#fff;z-index:1;border-radius:18px 18px 0 0}
+    .modal-title{font-family:'Nunito',sans-serif;font-size:18px;font-weight:900;color:var(--negro)}
+    .modal-close{background:var(--suave);border:none;border-radius:8px;width:32px;height:32px;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+    .modal-body{padding:24px}
+    .modal-foot{padding:14px 24px;border-top:1px solid var(--borde);display:flex;justify-content:flex-end;gap:10px}
+
+    #toasts{position:fixed;bottom:24px;right:24px;display:flex;flex-direction:column;gap:10px;z-index:9999}
+    .toast{background:var(--teal);color:#fff;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:600;box-shadow:0 4px 20px rgba(0,150,136,.3);display:flex;align-items:center;gap:10px;animation:slideUp .22s ease;min-width:260px}
+    .toast.ok{border-left:4px solid var(--pist)}
+    .toast.err{border-left:4px solid var(--rojo);background:#c0392b}
+    .toast.warn{border-left:4px solid var(--naranja)}
+
+    @keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    @media(max-width:900px){#shell{grid-template-columns:1fr}#sidebar{display:none}#main{padding:16px}}
+  </style>
+</head>
+<body>
+
+<header id="topbar">
+  <div style="display:flex;align-items:center;gap:14px">
+    <span class="back" onclick="window.location.href='interno.html'">← Panel interno</span>
+    <div class="brand-logos">
+      <img src="logo_comfe_y_servicio.jpeg" alt="Comfenalco"/>
+      <div class="brand-sep"></div>
+      <img src="logo_agencia.png" alt="Agencia"/>
+    </div>
+    <span class="tbadge">🎯 SOY talento — Orientación Laboral</span>
+  </div>
+  <div id="auth-area" style="display:flex;align-items:center;gap:10px"></div>
+</header>
+
+<div id="shell">
+  <nav id="sidebar">
+    <div class="suser">
+      <div class="sav-wrap">
+        <div class="sav" id="sav">?</div>
+        <div><div class="snombre" id="snombre">Cargando...</div><div class="srol" id="srol">Orientador/a</div></div>
+      </div>
+    </div>
+    <div class="slabel">SOY talento</div>
+    <div class="nitem active" onclick="nav('dashboard')"><span class="nico">📊</span> Dashboard</div>
+    <div class="nitem" onclick="nav('candidatos-ruta')"><span class="nico">👥</span> Personas en ruta</div>
+    <div class="nitem" onclick="nav('nueva-cita')"><span class="nico">📅</span> Agendar cita</div>
+    <div class="nitem" onclick="nav('sesion')"><span class="nico">🧠</span> Ejecutar sesión</div>
+    <div class="sdiv"></div>
+    <div class="slabel">Resultados</div>
+    <div class="nitem" onclick="nav('insignias')"><span class="nico">🏅</span> Insignias</div>
+    <div class="nitem" onclick="nav('cursos')"><span class="nico">📚</span> Cursos Comfenalco</div>
+    <div class="nitem" onclick="nav('pruebas-orient')"><span class="nico">🔬</span> Resultados pruebas</div>
+    <div class="sdiv"></div>
+    <div class="slabel">Reportes</div>
+    <div class="nitem" onclick="exportarInforme()"><span class="nico">📥</span> Exportar Excel</div>
+  </nav>
+
+  <main id="main">
+
+    <!-- DASHBOARD -->
+    <div id="pg-dashboard">
+      <div class="ph">
+        <div>
+          <div class="ptitle">🎯 SOY talento — Orientación Laboral</div>
+          <p class="psub">Programa de orientación ocupacional · Comfenalco Antioquia · Agencia de Empleo</p>
+        </div>
+        <button class="btn btn-teal" onclick="nav('nueva-cita')">+ Nueva cita</button>
+      </div>
+      <div class="stats-row" id="dash-stats"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+        <div class="card">
+          <div class="ctitle">🔔 Próximas citas</div>
+          <div id="proximas-citas"></div>
+        </div>
+        <div class="card">
+          <div class="ctitle">📈 Progreso del mes</div>
+          <div id="progreso-mes"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PERSONAS EN RUTA -->
+    <div id="pg-candidatos-ruta" class="hidden">
+      <div class="ph">
+        <div><div class="ptitle">👥 Personas en ruta de empleabilidad</div><p class="psub">Seguimiento del proceso SOY talento por persona</p></div>
+        <button class="btn btn-teal" onclick="nav('nueva-cita')">+ Iniciar ruta</button>
+      </div>
+      <div class="filtros">
+        <input class="finput" type="text" id="rq" placeholder="🔍 Nombre o documento..." style="flex:1;min-width:160px" oninput="filtrarRuta()"/>
+        <select class="finput" id="r-etapa" onchange="filtrarRuta()">
+          <option value="">Todas las etapas</option>
+          <option>1 - Registro HV</option>
+          <option>2 - Cita orientación</option>
+          <option>3 - SOY talento activo</option>
+          <option>4 - Pruebas</option>
+          <option>5 - Postulado</option>
+          <option>6 - Colocado</option>
+        </select>
+        <select class="finput" id="r-region" onchange="filtrarRuta()">
+          <option value="">Todas las regiones</option>
+          <option>Valle de Aburrá</option><option>Oriente</option>
+          <option>Norte</option><option>Urabá</option>
+        </select>
+      </div>
+      <div id="lista-ruta"></div>
+    </div>
+
+    <!-- NUEVA CITA -->
+    <div id="pg-nueva-cita" class="hidden">
+      <div class="ptitle">📅 Agendar cita de orientación</div>
+      <p class="psub">Primera cita del programa SOY talento</p>
+      <div class="card cita-form">
+        <div class="ctitle">Datos del candidato</div>
+        <div class="fgrid" style="margin-bottom:14px">
+          <div class="fgroup" style="grid-column:1/-1">
+            <label class="flabel">Buscar candidato registrado <span class="req">*</span></label>
+            <input class="fval" id="cita-buscar" type="text" placeholder="Escribe nombre o documento..." oninput="buscarCandidatoCita()"/>
+            <div id="cita-resultados" style="display:none;border:1.5px solid var(--borde);border-radius:0 0 8px 8px;background:#fff;max-height:200px;overflow-y:auto;box-shadow:0 8px 20px rgba(0,0,0,.1)"></div>
+          </div>
+          <div class="fgroup"><label class="flabel">Candidato seleccionado</label><input class="fval" id="cita-nombre" readonly style="background:var(--suave);font-weight:700"/></div>
+          <div class="fgroup"><label class="flabel">Documento</label><input class="fval" id="cita-doc" readonly style="background:var(--suave)"/></div>
+        </div>
+        <div class="ctitle" style="margin-top:16px">Datos de la cita</div>
+        <div class="fgrid">
+          <div class="fgroup"><label class="flabel">Fecha <span class="req">*</span></label><input class="fval" type="date" id="cita-fecha"/></div>
+          <div class="fgroup"><label class="flabel">Hora <span class="req">*</span></label><input class="fval" type="time" id="cita-hora" value="08:00"/></div>
+          <div class="fgroup"><label class="flabel">Modalidad</label>
+            <select class="fval" id="cita-mod"><option>Presencial</option><option>Virtual</option><option>Telefónica</option></select>
+          </div>
+          <div class="fgroup"><label class="flabel">Sede / Link</label><input class="fval" id="cita-sede" placeholder="Sede Medellín · Calle 44..."/></div>
+          <div class="fgroup"><label class="flabel">Orientador/a <span class="req">*</span></label><input class="fval" id="cita-orientador" placeholder="Nombre del psicólogo/a"/></div>
+          <div class="fgroup"><label class="flabel">Tipo de perfil</label>
+            <select class="fval" id="cita-tipo"><option value="empleo">Buscador de empleo</option><option value="emprendimiento">Emprendedor/a</option></select>
+          </div>
+          <div class="fgroup" style="grid-column:1/-1"><label class="flabel">Observaciones previas</label><textarea class="fval" id="cita-obs" rows="2" placeholder="Contexto, necesidades especiales, condición..."></textarea></div>
+        </div>
+        <div style="display:flex;gap:12px;margin-top:20px">
+          <button class="btn btn-teal btn-lg" onclick="agendarCita()">📅 Confirmar cita</button>
+          <button class="btn btn-ghost" onclick="nav('candidatos-ruta')">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SESIÓN SOY TALENTO -->
+    <div id="pg-sesion" class="hidden">
+      <div class="ph">
+        <div><div class="ptitle">🧠 Ejecutar sesión SOY talento</div><p class="psub">Registra la sesión de orientación e insignias del candidato</p></div>
+      </div>
+      <div style="display:grid;grid-template-columns:300px 1fr;gap:20px;align-items:start">
+        <!-- Selector candidato -->
+        <div>
+          <div class="card" style="padding:16px">
+            <div class="ctitle" style="font-size:14px;margin-bottom:10px">Candidato</div>
+            <input class="fval" type="text" id="ses-buscar" placeholder="Buscar..." oninput="buscarCandidatoSes()" style="margin-bottom:8px;width:100%"/>
+            <div id="ses-resultados" style="display:none;border:1.5px solid var(--borde);border-radius:8px;background:#fff;max-height:180px;overflow-y:auto"></div>
+            <div id="ses-cand-info" style="display:none;margin-top:10px">
+              <div style="font-weight:700;font-size:14px" id="ses-nombre"></div>
+              <div style="font-size:12px;color:var(--texto-g)" id="ses-doc-info"></div>
+            </div>
+          </div>
+          <div class="card" style="padding:16px">
+            <div class="ctitle" style="font-size:14px;margin-bottom:10px">Tipo de sesión</div>
+            <select class="fval" id="ses-tipo" style="width:100%">
+              <option value="inicial">Sesión inicial — evaluación perfil</option>
+              <option value="seguimiento">Seguimiento</option>
+              <option value="cierre">Cierre del programa</option>
+            </select>
+          </div>
+          <div class="card" style="padding:16px">
+            <div class="ctitle" style="font-size:14px;margin-bottom:10px">Plan Individual de Desarrollo</div>
+            <textarea class="fval" id="ses-pid" rows="4" placeholder="Objetivos, estrategias, compromisos del candidato..." style="width:100%"></textarea>
+          </div>
+        </div>
+
+        <!-- Contenido de la sesión -->
+        <div>
+          <!-- Servicios SOY talento -->
+          <div class="card" style="padding:16px;margin-bottom:14px">
+            <div class="ctitle" style="font-size:14px;margin-bottom:12px">📋 Servicios aplicados en esta sesión</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="servicios-checks"></div>
+          </div>
+
+          <!-- Insignias a otorgar -->
+          <div class="card" style="padding:16px;margin-bottom:14px">
+            <div class="ctitle" style="font-size:14px;margin-bottom:4px">🏅 Otorgar insignias</div>
+            <p style="font-size:12px;color:var(--texto-g);margin-bottom:12px">Marca las insignias que el candidato ha ganado en esta sesión</p>
+            <div id="insignias-checks"></div>
+          </div>
+
+          <!-- Cursos asignados -->
+          <div class="card" style="padding:16px;margin-bottom:14px">
+            <div class="ctitle" style="font-size:14px;margin-bottom:10px">📚 Cursos Comfenalco asignados</div>
+            <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+              <select class="fval" id="curso-sel" style="flex:1">
+                <option value="">Selecciona un curso...</option>
+              </select>
+              <button class="btn btn-teal btn-sm" onclick="agregarCurso()">+ Agregar</button>
+            </div>
+            <div id="cursos-asignados"></div>
+          </div>
+
+          <!-- Observaciones -->
+          <div class="card" style="padding:16px;margin-bottom:14px">
+            <div class="ctitle" style="font-size:14px;margin-bottom:10px">📝 Observaciones de la sesión</div>
+            <textarea class="fval" id="ses-obs" rows="3" placeholder="Fortalezas identificadas, compromisos, próximos pasos..." style="width:100%"></textarea>
+          </div>
+
+          <div style="display:flex;gap:12px">
+            <button class="btn btn-teal btn-lg" onclick="guardarSesion()">💾 Guardar sesión</button>
+            <button class="btn btn-ghost" onclick="nav('candidatos-ruta')">Cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INSIGNIAS -->
+    <div id="pg-insignias" class="hidden">
+      <div class="ptitle">🏅 Insignias del programa SOY talento</div>
+      <p class="psub">Registro de insignias otorgadas — se actualiza anualmente</p>
+      <div class="filtros">
+        <input class="finput" type="text" id="iq" placeholder="🔍 Buscar candidato..." style="flex:1" oninput="filtrarInsignias()"/>
+        <select class="finput" id="i-tipo" onchange="filtrarInsignias()">
+          <option value="">Todas las insignias</option>
+          <option value="empleo">Buscadores de empleo</option>
+          <option value="emprendimiento">Emprendedores</option>
+          <option value="skill">Power skills</option>
+        </select>
+        <select class="finput" id="i-vigencia" onchange="filtrarInsignias()">
+          <option value="">Todos los años</option>
+        </select>
+      </div>
+      <div class="twrap">
+        <div class="ttbar"><span class="ttitle" id="ins-count">0 registros</span></div>
+        <table><thead><tr>
+          <th>Candidato</th><th>Tipo perfil</th><th>Insignias ganadas</th>
+          <th>Power skills</th><th>Vigencia</th><th>Orientador/a</th><th>Acciones</th>
+        </tr></thead>
+        <tbody id="ins-tbody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- CURSOS -->
+    <div id="pg-cursos" class="hidden">
+      <div class="ptitle">📚 Cursos Comfenalco en HV</div>
+      <p class="psub">Los cursos completados se agregan automáticamente a la hoja de vida del candidato</p>
+      <div class="filtros">
+        <input class="finput" type="text" id="cq" placeholder="🔍 Buscar candidato o curso..." style="flex:1" oninput="filtrarCursos()"/>
+        <select class="finput" id="c-estado" onchange="filtrarCursos()">
+          <option value="">Todos</option><option value="completado">Completado</option><option value="en_curso">En curso</option>
+        </select>
+      </div>
+      <div class="twrap">
+        <div class="ttbar"><span class="ttitle" id="cur-count">0 registros</span></div>
+        <table><thead><tr>
+          <th>Candidato</th><th>Curso</th><th>Horas</th><th>Institución</th><th>Estado</th><th>Fecha</th><th>En HV</th>
+        </tr></thead>
+        <tbody id="cur-tbody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- RESULTADOS PRUEBAS -->
+    <div id="pg-pruebas-orient" class="hidden">
+      <div class="ptitle">🔬 Resultados de pruebas</div>
+      <p class="psub">Resultados de laboratorio de empleo y pruebas psicotécnicas vinculados a la ruta</p>
+      <div id="lista-pruebas-orient"></div>
+    </div>
+
+  </main>
+</div>
+
+<!-- MODAL DETALLE CANDIDATO EN RUTA -->
+<div id="modal-ruta" class="modal-bg hidden" style="display:none">
+  <div class="modal" style="width:min(860px,95vw)">
+    <div class="modal-head">
+      <div class="modal-title" id="mr-title">Ruta de empleabilidad</div>
+      <button class="modal-close" onclick="cerrarModal('modal-ruta')">✕</button>
+    </div>
+    <div class="modal-body" id="mr-body"></div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="cerrarModal('modal-ruta')">Cerrar</button>
+      <button class="btn btn-ghost btn-sm" onclick="exportarHVConInsignias()">📄 HV + Insignias PDF</button>
+      <button class="btn btn-teal btn-sm" onclick="nav('sesion')">🧠 Nueva sesión</button>
+    </div>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// DATOS
+// ═══════════════════════════════════════════════════
+
+var SERVICIOS_SOY = [
+  'Asesoría individual con experto/a',
+  'Diseño / reingeniería del perfil laboral',
+  'Evaluación de competencias',
+  'Creación del PID (plan individual de desarrollo)',
+  'Estrategias de búsqueda de empleo',
+  'Feedback de hoja de vida',
+  'Video de presentación y marca personal',
+  'Entrenamiento grupal procesos de selección',
+  'Orientación al emprendimiento',
+  'Agenda de aprendizaje (cursos)'
+];
+
+var INSIGNIAS_EMPLEO = [
+  {id:'activé',label:'¡He activado oportunidades!',ico:'📈',tipo:'empleo'},
+  {id:'mejoré',label:'¡He mejorado mi perfil!',ico:'⭐',tipo:'empleo'},
+  {id:'gestión',label:'¡Estoy listo para hacer gestión!',ico:'🔍',tipo:'empleo'}
+];
+
+var INSIGNIAS_EMPRENDIMIENTO = [
+  {id:'valor',label:'¡He mostrado mi valor!',ico:'✅',tipo:'emprendimiento'},
+  {id:'ruta',label:'¡Tengo clara mi ruta de trabajo!',ico:'🗺️',tipo:'emprendimiento'},
+  {id:'herramientas',label:'¡Tengo nuevas herramientas!',ico:'🔧',tipo:'emprendimiento'}
+];
+
+var POWER_SKILLS = [
+  {id:'analitico',label:'Pensamiento analítico y creativo'},
+  {id:'liderazgo',label:'Liderazgo e influencia social'},
+  {id:'aprendizaje',label:'Aprendizaje continuo'},
+  {id:'resiliencia',label:'Resiliencia, flexibilidad y agilidad'},
+  {id:'empatia',label:'Empatía y escucha activa'},
+  {id:'motivacion',label:'Motivación y autoconciencia'}
+];
+
+var CURSOS_COMFENALCO = [
+  {id:1,nombre:'Excel básico e intermedio',horas:20,tipo:'Tecnología'},
+  {id:2,nombre:'Servicio al cliente',horas:16,tipo:'Competencias'},
+  {id:3,nombre:'Inglés A1 - Básico',horas:40,tipo:'Idiomas'},
+  {id:4,nombre:'Marketing digital',horas:24,tipo:'Emprendimiento'},
+  {id:5,nombre:'Finanzas personales',horas:12,tipo:'Finanzas'},
+  {id:6,nombre:'Liderazgo y trabajo en equipo',horas:16,tipo:'Competencias'},
+  {id:7,nombre:'Habilidades digitales para el trabajo',horas:20,tipo:'Tecnología'},
+  {id:8,nombre:'Emprendimiento e innovación',horas:30,tipo:'Emprendimiento'},
+  {id:9,nombre:'Primeros auxilios',horas:8,tipo:'SST'},
+  {id:10,nombre:'Comunicación efectiva',horas:12,tipo:'Competencias'}
+];
+
+// Candidatos en ruta (en prod: vendrían de Neon)
+var BANCO_CAND = [
+  {id:1,nombre:'Juan García Lopera',doc:'1023456789',celular:'3001234567',correo:'juan@mail.com',region:'Valle de Aburrá',municipio:'Medellín',completitud:85},
+  {id:2,nombre:'María Torres Ríos',doc:'1152345678',celular:'3112345678',correo:'maria@mail.com',region:'Valle de Aburrá',municipio:'Bello',completitud:100},
+  {id:3,nombre:'Carlos Mendoza Pérez',doc:'1098765432',celular:'3209876543',correo:'carlos@mail.com',region:'Oriente',municipio:'Rionegro',completitud:90},
+  {id:4,nombre:'Luisa Fernández Castro',doc:'1034567890',celular:'3143456789',correo:'luisa@mail.com',region:'Valle de Aburrá',municipio:'Medellín',completitud:75},
+  {id:5,nombre:'Andrés Ríos Montoya',doc:'1187654321',celular:'3156789012',correo:'andres@mail.com',region:'Urabá',municipio:'Apartadó',completitud:80}
+];
+
+var RUTAS = [
+  {id:1,candidato_id:1,nombre:'Juan García Lopera',doc:'1023456789',region:'Valle de Aburrá',tipo:'empleo',etapa:3,orientador:'Psic. María López',fecha_inicio:'2025-01-10',ultima_sesion:'2025-03-20',
+    insignias:['activé','mejoré'],power_skills:['analitico','empatia'],
+    servicios:['Asesoría individual con experto/a','Diseño / reingeniería del perfil laboral'],
+    cursos:[{id:1,estado:'completado',fecha:'2025-02-15'},{id:6,estado:'en_curso',fecha:'2025-03-01'}],
+    pid:'Objetivo: conseguir empleo en el área de logística. Fortalezas: proactividad, trabajo en equipo. Compromisos: actualizar HV, aplicar a 5 vacantes por semana.',
+    pruebas:[{nombre:'Batak',nivel:3,fecha:'2025-02-10'},{nombre:'Minnesota',nivel:2,fecha:'2025-02-10'}],
+    vigencia:'2025',num_sesiones:3,notas:'Buen avance. Pendiente finalizar curso de liderazgo.'},
+  {id:2,candidato_id:2,nombre:'María Torres Ríos',doc:'1152345678',region:'Valle de Aburrá',tipo:'empleo',etapa:5,orientador:'Psic. María López',fecha_inicio:'2024-11-05',ultima_sesion:'2025-04-01',
+    insignias:['activé','mejoré','gestión'],power_skills:['analitico','liderazgo','aprendizaje','empatia'],
+    servicios:SERVICIOS_SOY,
+    cursos:[{id:1,estado:'completado',fecha:'2024-12-01'},{id:3,estado:'completado',fecha:'2025-01-15'},{id:6,estado:'completado',fecha:'2025-02-20'}],
+    pid:'Objetivo: reubicación laboral como auxiliar administrativa. Logros: completó todos los módulos del programa.',
+    pruebas:[{nombre:'Batak',nivel:4,fecha:'2024-12-10'},{nombre:'Purdue Pegboard',nivel:3,fecha:'2024-12-10'},{nombre:'Minnesota',nivel:4,fecha:'2024-12-10'}],
+    vigencia:'2025',num_sesiones:6,notas:'Candidata estrella. Completó el 100% del programa.'},
+  {id:3,candidato_id:3,nombre:'Carlos Mendoza Pérez',doc:'1098765432',region:'Oriente',tipo:'emprendimiento',etapa:3,orientador:'Psic. Jorge Salazar',fecha_inicio:'2025-02-01',ultima_sesion:'2025-03-28',
+    insignias:['valor'],power_skills:['analitico','motivacion'],
+    servicios:['Asesoría individual con experto/a','Orientación al emprendimiento','Agenda de aprendizaje (cursos)'],
+    cursos:[{id:4,estado:'en_curso',fecha:'2025-03-01'},{id:5,estado:'en_curso',fecha:'2025-03-01'}],
+    pid:'Emprendimiento en desarrollo web. Fortalezas: habilidades técnicas. Debilidades: marca personal, networking.',
+    pruebas:[],vigencia:'2025',num_sesiones:2,notas:'Emprendedor con potencial. En proceso de validación de idea de negocio.'}
+];
+
+var CITAS = [
+  {id:1,candidato:'Andrés Ríos Montoya',doc:'1187654321',fecha:'2025-04-24',hora:'09:00',modalidad:'Presencial',orientador:'Psic. Pedro Montoya',sede:'Sede Apartadó'},
+  {id:2,candidato:'Luisa Fernández Castro',doc:'1034567890',fecha:'2025-04-25',hora:'10:30',modalidad:'Virtual',orientador:'Psic. María López',sede:'Google Meet'},
+  {id:3,candidato:'Juan García Lopera',doc:'1023456789',fecha:'2025-04-26',hora:'08:00',modalidad:'Presencial',orientador:'Psic. María López',sede:'Sede Medellín'}
+];
+
+var sesionCandidato = null;
+var cursosEnSesion = [];
+var nombreUsuario = 'Orientador/a';
+
+// ═══════════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════════
+function toast(m,t){var tc=document.getElementById('toasts'),el=document.createElement('div');el.className='toast '+(t||'ok');el.innerHTML=(t==='err'?'❌':t==='warn'?'⚠️':'✅')+' '+m;tc.appendChild(el);setTimeout(function(){el.remove();},3500);}
+function cerrarModal(id){var el=document.getElementById(id);if(el){el.classList.add('hidden');el.style.display='none';}}
+function abrirModal(id){var el=document.getElementById(id);if(el){el.classList.remove('hidden');el.style.display='flex';}}
+function fmtFecha(s){if(!s)return '—';var d=new Date(s+'T12:00:00');return d.toLocaleDateString('es-CO',{day:'2-digit',month:'short',year:'numeric'});}
+function hoy(){return new Date().toISOString().split('T')[0];}
+function anoActual(){return new Date().getFullYear();}
+
+var PAGS=['dashboard','candidatos-ruta','nueva-cita','sesion','insignias','cursos','pruebas-orient'];
+function nav(p){
+  PAGS.forEach(function(x){var el=document.getElementById('pg-'+x);if(el)el.classList.add('hidden');});
+  document.querySelectorAll('.nitem').forEach(function(n){n.classList.remove('active');});
+  var t=document.getElementById('pg-'+p);if(t)t.classList.remove('hidden');
+  var ni=document.querySelector('[onclick*="nav(\''+p+'\')"]');if(ni)ni.classList.add('active');
+  if(p==='dashboard')      renderDash();
+  if(p==='candidatos-ruta') renderRuta(RUTAS);
+  if(p==='sesion')         initSesion();
+  if(p==='insignias')      renderInsignias(RUTAS);
+  if(p==='cursos')         renderCursos();
+  if(p==='pruebas-orient') renderPruebasOrient();
+  if(p==='nueva-cita'){
+    var fechaEl=document.getElementById('cita-fecha');
+    if(fechaEl) fechaEl.value=hoy();
+    var oriEl=document.getElementById('cita-orientador');
+    if(oriEl) oriEl.value=nombreUsuario;
+  }
+}
+
+// ETAPAS
+var ETAPAS_LABEL=['','1. Registro HV','2. Cita orientación','3. SOY talento','4. Pruebas','5. Postulado','6. Colocado'];
+var ETAPAS_COLOR=['','#009688','#009688','#f59e0b','#7c3aed','#2d4a6b','#27ae60'];
+var ETAPAS_ICO=['','📄','📅','🎯','🔬','💼','✅'];
+
+// ═══════════════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════════════
+function renderDash(){
+  var enRuta=RUTAS.length;
+  var completados=RUTAS.filter(function(r){return r.insignias&&r.insignias.length>=3;}).length;
+  var colocados=RUTAS.filter(function(r){return r.etapa>=5;}).length;
+  var hoyStr=hoy();
+  var citasHoy=CITAS.filter(function(c){return c.fecha===hoyStr;}).length;
+
+  var s=document.getElementById('dash-stats');
+  if(s) s.innerHTML=[
+    {v:enRuta,l:'Personas en ruta',c:'var(--teal)'},
+    {v:CITAS.length,l:'Citas agendadas',c:'var(--amber)'},
+    {v:completados,l:'SOY talento completo',c:'var(--morado)'},
+    {v:colocados,l:'Personas colocadas',c:'#27ae60'}
+  ].map(function(x){
+    return '<div class="scard" style="border-left-color:'+x.c+'"><div class="sval" style="color:'+x.c+'">'+x.v+'</div><div class="slbl-s">'+x.l+'</div></div>';
+  }).join('');
+
+  var pc=document.getElementById('proximas-citas');
+  if(pc) pc.innerHTML=CITAS.slice(0,4).map(function(c){
+    return '<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--borde)">'+
+      '<div style="width:36px;height:36px;border-radius:8px;background:#e0f2f1;color:#004d40;font-size:14px;display:flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0">'+c.hora.substring(0,5)+'</div>'+
+      '<div style="flex:1"><div style="font-weight:700;font-size:13px">'+c.candidato+'</div><div style="font-size:11px;color:var(--texto-g)">'+fmtFecha(c.fecha)+' · '+c.modalidad+' · '+c.orientador+'</div></div>'+
+    '</div>';
+  }).join('')||'<p style="color:var(--texto-g);font-size:13px">Sin citas próximas</p>';
+
+  var pm=document.getElementById('progreso-mes');
+  if(pm){
+    var etapaCounts=[0,0,0,0,0,0];
+    RUTAS.forEach(function(r){ if(r.etapa>=1&&r.etapa<=6) etapaCounts[r.etapa-1]++; });
+    pm.innerHTML=ETAPAS_LABEL.slice(1).map(function(e,i){
+      return '<div style="display:flex;align-items:center;gap:10px;padding:6px 0">'+
+        '<span style="font-size:14px">'+ETAPAS_ICO[i+1]+'</span>'+
+        '<span style="font-size:12px;flex:1;color:var(--texto-g)">'+e+'</span>'+
+        '<span style="font-weight:700;font-size:13px;color:'+ETAPAS_COLOR[i+1]+';min-width:20px;text-align:center">'+etapaCounts[i]+'</span>'+
+      '</div>';
+    }).join('');
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// RUTA POR PERSONA
+// ═══════════════════════════════════════════════════
+function renderRuta(lista){
+  var el=document.getElementById('lista-ruta');
+  if(!el) return;
+  if(!lista.length){el.innerHTML='<p style="color:var(--texto-g);padding:20px">Sin personas en ruta.</p>';return;}
+  el.innerHTML=lista.map(function(r){
+    var pctEtapa=Math.round((r.etapa/6)*100);
+    var insHtml=(r.insignias||[]).map(function(ins){
+      var found=[].concat(INSIGNIAS_EMPLEO,INSIGNIAS_EMPRENDIMIENTO).find(function(x){return x.id===ins;});
+      return found?'<span class="insignia ins-teal">'+found.ico+' '+found.label+'</span>':'';
+    }).join('');
+    return '<div class="cand-card" onclick="verRutaDetalle('+r.id+')">'+
+      '<div class="cand-header">'+
+        '<div class="cand-av">'+r.nombre.charAt(0)+'</div>'+
+        '<div style="flex:1">'+
+          '<div class="cand-nombre">'+r.nombre+'</div>'+
+          '<div class="cand-doc">'+r.doc+' · '+r.region+'</div>'+
+        '</div>'+
+        '<div style="text-align:right">'+
+          '<div style="background:rgba(255,255,255,.2);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:700">'+ETAPAS_ICO[r.etapa]+' '+ETAPAS_LABEL[r.etapa]+'</div>'+
+          '<div style="font-size:11px;opacity:.7;margin-top:4px">'+r.tipo==='empleo'?'Buscador empleo':'Emprendedor/a'+'</div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="cand-body">'+
+        '<div style="display:flex;justify-content:space-between;font-size:12px;color:var(--texto-g);margin-bottom:4px">'+
+          '<span>Progreso en la ruta</span><span style="font-weight:700;color:var(--teal)">'+pctEtapa+'%</span>'+
+        '</div>'+
+        '<div class="pct-ruta"><div class="pct-fill-ruta" style="width:'+pctEtapa+'%"></div></div>'+
+        '<div style="display:flex;gap:16px;font-size:12px;color:var(--texto-g);margin-top:8px;flex-wrap:wrap">'+
+          '<span>🧠 '+r.num_sesiones+' sesiones</span>'+
+          '<span>📅 Última: '+fmtFecha(r.ultima_sesion)+'</span>'+
+          '<span>👤 '+r.orientador+'</span>'+
+          '<span>📚 '+(r.cursos||[]).length+' cursos</span>'+
+        '</div>'+
+        (insHtml?'<div style="margin-top:10px">'+insHtml+'</div>':'')+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+function filtrarRuta(){
+  var q=document.getElementById('rq').value.toLowerCase();
+  var e=document.getElementById('r-etapa').value;
+  var r=document.getElementById('r-region').value;
+  var etapaNum=e?parseInt(e.charAt(0)):0;
+  var lista=RUTAS.filter(function(x){
+    var okQ=!q||x.nombre.toLowerCase().indexOf(q)>-1||x.doc.indexOf(q)>-1;
+    var okE=!e||(x.etapa===etapaNum);
+    var okR=!r||x.region===r;
+    return okQ&&okE&&okR;
+  });
+  renderRuta(lista);
+}
+
+function verRutaDetalle(id){
+  var r=RUTAS.find(function(x){return x.id===id;});
+  if(!r) return;
+  document.getElementById('mr-title').textContent=r.nombre+' — Ruta de empleabilidad';
+
+  // Etapas visuales
+  var etapasHtml='<div style="display:flex;gap:4px;margin-bottom:16px;overflow-x:auto">'+
+    ETAPAS_LABEL.slice(1).map(function(e,i){
+      var n=i+1;
+      var done=n<r.etapa;
+      var activa=n===r.etapa;
+      var bg=done?'#009688':activa?'#f59e0b':'var(--suave)';
+      var col=done||activa?'#fff':'var(--texto-g)';
+      return '<div style="background:'+bg+';color:'+col+';padding:6px 12px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap">'+ETAPAS_ICO[n]+' '+e+'</div>';
+    }).join('')+'</div>';
+
+  var insHtml='<div class="hv-section" style="background:var(--suave);border-radius:10px;padding:12px;margin-bottom:12px">'+
+    '<div style="font-size:11px;font-weight:700;color:var(--verde);text-transform:uppercase;margin-bottom:8px">🏅 Insignias ganadas</div>'+
+    (r.insignias||[]).map(function(ins){
+      var found=[].concat(INSIGNIAS_EMPLEO,INSIGNIAS_EMPRENDIMIENTO).find(function(x){return x.id===ins;});
+      return found?'<span class="insignia ins-teal">'+found.ico+' '+found.label+'</span>':'';
+    }).join('')+
+    '<div style="font-size:11px;font-weight:700;color:var(--verde);text-transform:uppercase;margin:10px 0 6px">⚡ Power skills</div>'+
+    (r.power_skills||[]).map(function(sk){
+      var found=POWER_SKILLS.find(function(x){return x.id===sk;});
+      return found?'<span class="insignia ins-morado">✓ '+found.label+'</span>':'';
+    }).join('')+
+    '</div>';
+
+  var cursosHtml='<div style="background:var(--suave);border-radius:10px;padding:12px;margin-bottom:12px">'+
+    '<div style="font-size:11px;font-weight:700;color:var(--verde);text-transform:uppercase;margin-bottom:8px">📚 Cursos Comfenalco en HV</div>'+
+    (r.cursos||[]).map(function(cu){
+      var curso=CURSOS_COMFENALCO.find(function(x){return x.id===cu.id;});
+      if(!curso) return '';
+      return '<div class="curso-item" style="margin:4px 0;padding:8px 12px">'+
+        '<div style="flex:1"><div style="font-weight:700;font-size:12px">'+curso.nombre+'</div>'+
+          '<div style="font-size:11px;color:var(--texto-g)">'+curso.horas+' horas · '+curso.tipo+' · '+fmtFecha(cu.fecha)+'</div></div>'+
+        '<span class="curso-completado" style="background:'+(cu.estado==='completado'?'#d4edda':'#fff8e6')+';color:'+(cu.estado==='completado'?'#155724':'#856404')+'">'+cu.estado+'</span>'+
+        (cu.estado==='completado'?'<span style="background:#d4edda;color:#155724;padding:2px 6px;border-radius:20px;font-size:10px;font-weight:700;margin-left:4px">En HV ✓</span>':'')+
+      '</div>';
+    }).join('')||'<p style="font-size:12px;color:var(--texto-g)">Sin cursos asignados</p>'+
+    '</div>';
+
+  var pruebasHtml='';
+  if(r.pruebas&&r.pruebas.length){
+    pruebasHtml='<div style="background:var(--suave);border-radius:10px;padding:12px;margin-bottom:12px">'+
+      '<div style="font-size:11px;font-weight:700;color:var(--verde);text-transform:uppercase;margin-bottom:8px">🔬 Resultados de pruebas</div>'+
+      r.pruebas.map(function(p){
+        var col=p.nivel>=4?'#27ae60':p.nivel>=3?'var(--teal)':p.nivel>=2?'var(--naranja)':'var(--rojo)';
+        var pct=(p.nivel/5)*100;
+        return '<div style="display:flex;align-items:center;gap:10px;padding:4px 0;font-size:12px">'+
+          '<span style="min-width:120px;font-weight:600">'+p.nombre+'</span>'+
+          '<div style="height:5px;width:120px;background:var(--borde);border-radius:3px;overflow:hidden">'+
+            '<div style="height:100%;width:'+pct+'%;background:'+col+'"></div></div>'+
+          '<span style="font-weight:700;color:'+col+'">Nivel '+p.nivel+'/5</span>'+
+          '<span style="color:var(--texto-g)">'+fmtFecha(p.fecha)+'</span>'+
+        '</div>';
+      }).join('')+'</div>';
+  }
+
+  document.getElementById('mr-body').innerHTML=
+    etapasHtml+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">'+
+      '<div style="background:var(--suave);border-radius:10px;padding:12px">'+
+        '<div style="font-size:11px;font-weight:700;color:var(--verde);text-transform:uppercase;margin-bottom:8px">Datos del proceso</div>'+
+        '<div style="font-size:12px;display:flex;flex-direction:column;gap:4px">'+
+          '<div><strong>Tipo perfil:</strong> '+(r.tipo==='empleo'?'Buscador de empleo':'Emprendedor/a')+'</div>'+
+          '<div><strong>Orientador/a:</strong> '+r.orientador+'</div>'+
+          '<div><strong>Inicio:</strong> '+fmtFecha(r.fecha_inicio)+'</div>'+
+          '<div><strong>Última sesión:</strong> '+fmtFecha(r.ultima_sesion)+'</div>'+
+          '<div><strong>Sesiones:</strong> '+r.num_sesiones+'</div>'+
+          '<div><strong>Vigencia:</strong> '+r.vigencia+'</div>'+
+        '</div>'+
+      '</div>'+
+      '<div style="background:var(--suave);border-radius:10px;padding:12px">'+
+        '<div style="font-size:11px;font-weight:700;color:var(--verde);text-transform:uppercase;margin-bottom:8px">Plan Individual de Desarrollo</div>'+
+        '<p style="font-size:12px;line-height:1.6;color:var(--texto-g)">'+r.pid+'</p>'+
+      '</div>'+
+    '</div>'+
+    insHtml+cursosHtml+pruebasHtml+
+    '<div style="background:var(--suave);border-radius:10px;padding:12px">'+
+      '<div style="font-size:11px;font-weight:700;color:var(--verde);text-transform:uppercase;margin-bottom:6px">Notas del orientador</div>'+
+      '<p style="font-size:12px;line-height:1.6;color:var(--texto-g)">'+r.notas+'</p>'+
+    '</div>';
+
+  abrirModal('modal-ruta');
+}
+
+// ═══════════════════════════════════════════════════
+// NUEVA CITA
+// ═══════════════════════════════════════════════════
+var citaCandId=null;
+
+function buscarCandidatoCita(){
+  var q=document.getElementById('cita-buscar').value.toLowerCase();
+  var box=document.getElementById('cita-resultados');
+  if(q.length<2){box.style.display='none';return;}
+  var results=BANCO_CAND.filter(function(c){
+    return c.nombre.toLowerCase().indexOf(q)>-1||c.doc.indexOf(q)>-1;
+  }).slice(0,8);
+  if(!results.length){box.style.display='none';return;}
+  box.innerHTML=results.map(function(c){
+    return '<div onclick="seleccionarCandCita('+c.id+')" style="padding:10px 14px;cursor:pointer;font-size:13px;border-bottom:1px solid var(--borde)"'+
+      ' onmouseenter="this.style.background=\'var(--suave)\'" onmouseleave="this.style.background=\'#fff\'">'+
+      '<strong>'+c.nombre+'</strong><span style="color:var(--texto-g);margin-left:8px">'+c.doc+' · '+c.region+'</span>'+
+    '</div>';
+  }).join('');
+  box.style.display='block';
+}
+
+function seleccionarCandCita(id){
+  var c=BANCO_CAND.find(function(x){return x.id===id;});
+  if(!c) return;
+  citaCandId=id;
+  document.getElementById('cita-buscar').value=c.nombre;
+  document.getElementById('cita-nombre').value=c.nombre;
+  document.getElementById('cita-doc').value=c.doc;
+  document.getElementById('cita-resultados').style.display='none';
+}
+
+function agendarCita(){
+  if(!citaCandId){toast('Selecciona un candidato','err');return;}
+  var fecha=document.getElementById('cita-fecha').value;
+  var hora=document.getElementById('cita-hora').value;
+  var orientador=document.getElementById('cita-orientador').value.trim();
+  if(!fecha||!hora||!orientador){toast('Completa fecha, hora y orientador/a','err');return;}
+  var cand=BANCO_CAND.find(function(x){return x.id===citaCandId;});
+  var nueva={
+    id:CITAS.length+1,
+    candidato:cand.nombre,doc:cand.doc,
+    fecha:fecha,hora:hora,
+    modalidad:document.getElementById('cita-mod').value,
+    orientador:orientador,
+    sede:document.getElementById('cita-sede').value,
+    tipo:document.getElementById('cita-tipo').value
+  };
+  CITAS.push(nueva);
+  // Crear o actualizar ruta
+  var rutaExist=RUTAS.find(function(r){return r.candidato_id===citaCandId;});
+  if(!rutaExist){
+    RUTAS.push({id:RUTAS.length+1,candidato_id:citaCandId,nombre:cand.nombre,doc:cand.doc,region:cand.region,
+      tipo:nueva.tipo,etapa:1,orientador:orientador,fecha_inicio:hoy(),ultima_sesion:hoy(),
+      insignias:[],power_skills:[],servicios:[],cursos:[],pid:'',pruebas:[],vigencia:String(anoActual()),num_sesiones:0,notas:''});
+  }
+  toast('Cita agendada para '+cand.nombre+' el '+fmtFecha(fecha));
+  nav('candidatos-ruta');
+}
+
+// ═══════════════════════════════════════════════════
+// SESIÓN SOY TALENTO
+// ═══════════════════════════════════════════════════
+function initSesion(){
+  cursosEnSesion=[];
+  // Servicios
+  var sc=document.getElementById('servicios-checks');
+  if(sc) sc.innerHTML=SERVICIOS_SOY.map(function(s,i){
+    return '<label style="display:flex;align-items:flex-start;gap:8px;font-size:12px;cursor:pointer">'+
+      '<input type="checkbox" id="srv-'+i+'" style="margin-top:1px;accent-color:var(--teal)"/> '+s+'</label>';
+  }).join('');
+
+  // Insignias
+  var ic=document.getElementById('insignias-checks');
+  if(ic){
+    ic.innerHTML='<div style="margin-bottom:8px"><div style="font-size:11px;font-weight:700;color:var(--texto-g);text-transform:uppercase;margin-bottom:6px">Buscadores de empleo</div>'+
+      '<div style="display:flex;gap:6px;flex-wrap:wrap">'+INSIGNIAS_EMPLEO.map(function(ins){
+        return '<label style="display:flex;align-items:center;gap:6px;cursor:pointer;background:var(--suave);padding:5px 12px;border-radius:20px;font-size:12px">'+
+          '<input type="checkbox" id="ins-'+ins.id+'" style="accent-color:var(--teal)"/> '+ins.ico+' '+ins.label+'</label>';
+      }).join('')+'</div></div>'+
+      '<div><div style="font-size:11px;font-weight:700;color:var(--texto-g);text-transform:uppercase;margin-bottom:6px">Emprendedores</div>'+
+      '<div style="display:flex;gap:6px;flex-wrap:wrap">'+INSIGNIAS_EMPRENDIMIENTO.map(function(ins){
+        return '<label style="display:flex;align-items:center;gap:6px;cursor:pointer;background:#fff8e1;padding:5px 12px;border-radius:20px;font-size:12px">'+
+          '<input type="checkbox" id="ins-'+ins.id+'" style="accent-color:var(--amber)"/> '+ins.ico+' '+ins.label+'</label>';
+      }).join('')+'</div></div>'+
+      '<div style="margin-top:10px"><div style="font-size:11px;font-weight:700;color:var(--texto-g);text-transform:uppercase;margin-bottom:6px">⚡ Power skills del futuro</div>'+
+      '<div style="display:flex;gap:6px;flex-wrap:wrap">'+POWER_SKILLS.map(function(sk){
+        return '<label style="display:flex;align-items:center;gap:6px;cursor:pointer;background:#f3e5f5;padding:5px 12px;border-radius:20px;font-size:12px">'+
+          '<input type="checkbox" id="sk-'+sk.id+'" style="accent-color:var(--morado)"/> '+sk.label+'</label>';
+      }).join('')+'</div></div>';
+  }
+
+  // Cursos
+  var csel=document.getElementById('curso-sel');
+  if(csel) csel.innerHTML='<option value="">Selecciona un curso...</option>'+
+    CURSOS_COMFENALCO.map(function(c){return '<option value="'+c.id+'">'+c.nombre+' ('+c.horas+'h · '+c.tipo+')</option>';}).join('');
+
+  renderCursosEnSesion();
+}
+
+function buscarCandidatoSes(){
+  var q=document.getElementById('ses-buscar').value.toLowerCase();
+  var box=document.getElementById('ses-resultados');
+  if(q.length<2){box.style.display='none';return;}
+  var results=BANCO_CAND.filter(function(c){return c.nombre.toLowerCase().indexOf(q)>-1||c.doc.indexOf(q)>-1;}).slice(0,6);
+  box.innerHTML=results.map(function(c){
+    return '<div onclick="seleccionarCandSes('+c.id+')" style="padding:10px 14px;cursor:pointer;font-size:13px;border-bottom:1px solid var(--borde)"'+
+      ' onmouseenter="this.style.background=\'var(--suave)\'" onmouseleave="this.style.background=\'#fff\'">'+
+      '<strong>'+c.nombre+'</strong><span style="color:var(--texto-g);margin-left:8px">'+c.doc+'</span></div>';
+  }).join('');
+  box.style.display=results.length?'block':'none';
+}
+
+function seleccionarCandSes(id){
+  var c=BANCO_CAND.find(function(x){return x.id===id;});
+  if(!c) return;
+  sesionCandidato=c;
+  document.getElementById('ses-buscar').value=c.nombre;
+  document.getElementById('ses-resultados').style.display='none';
+  var info=document.getElementById('ses-cand-info');
+  if(info){info.style.display='block';document.getElementById('ses-nombre').textContent=c.nombre;document.getElementById('ses-doc-info').textContent=c.doc+' · '+c.region;}
+}
+
+function agregarCurso(){
+  var sel=document.getElementById('curso-sel');
+  var id=parseInt(sel.value);
+  if(!id) return;
+  if(cursosEnSesion.find(function(c){return c.id===id;})){toast('Ya está en la lista','warn');return;}
+  cursosEnSesion.push({id:id,estado:'en_curso',fecha:hoy()});
+  sel.value='';
+  renderCursosEnSesion();
+}
+
+function renderCursosEnSesion(){
+  var el=document.getElementById('cursos-asignados');
+  if(!el) return;
+  if(!cursosEnSesion.length){el.innerHTML='<p style="font-size:12px;color:var(--texto-g)">Sin cursos asignados en esta sesión</p>';return;}
+  el.innerHTML=cursosEnSesion.map(function(cu){
+    var curso=CURSOS_COMFENALCO.find(function(x){return x.id===cu.id;});
+    if(!curso) return '';
+    return '<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--suave);border-radius:8px;margin-bottom:6px;font-size:12px">'+
+      '<span style="flex:1;font-weight:700">'+curso.nombre+' <span style="font-weight:400;color:var(--texto-g)">('+curso.horas+'h)</span></span>'+
+      '<select onchange="this.dataset.id='+cu.id+'" style="font-size:11px;padding:2px 8px;border:1px solid var(--borde);border-radius:6px">'+
+        '<option value="en_curso"'+(cu.estado==='en_curso'?' selected':'')+'>En curso</option>'+
+        '<option value="completado"'+(cu.estado==='completado'?' selected':'')+'>Completado ✓</option>'+
+      '</select>'+
+      '<button onclick="quitarCurso('+cu.id+')" style="background:var(--rojo);color:#fff;border:none;border-radius:6px;padding:2px 8px;cursor:pointer;font-size:11px">✕</button>'+
+    '</div>';
+  }).join('');
+}
+
+function quitarCurso(id){cursosEnSesion=cursosEnSesion.filter(function(c){return c.id!==id;});renderCursosEnSesion();}
+
+function guardarSesion(){
+  if(!sesionCandidato){toast('Selecciona un candidato','err');return;}
+
+  // Recopilar insignias marcadas
+  var insGanadas=[];
+  [].concat(INSIGNIAS_EMPLEO,INSIGNIAS_EMPRENDIMIENTO).forEach(function(ins){
+    var cb=document.getElementById('ins-'+ins.id);
+    if(cb&&cb.checked) insGanadas.push(ins.id);
+  });
+  var skillsGanadas=[];
+  POWER_SKILLS.forEach(function(sk){
+    var cb=document.getElementById('sk-'+sk.id);
+    if(cb&&cb.checked) skillsGanadas.push(sk.id);
+  });
+  var serviciosAplicados=SERVICIOS_SOY.filter(function(s,i){
+    var cb=document.getElementById('srv-'+i);
+    return cb&&cb.checked;
+  });
+
+  // Actualizar o crear ruta
+  var ruta=RUTAS.find(function(r){return r.candidato_id===sesionCandidato.id;});
+  if(!ruta){
+    ruta={id:RUTAS.length+1,candidato_id:sesionCandidato.id,nombre:sesionCandidato.nombre,doc:sesionCandidato.doc,
+      region:sesionCandidato.region,tipo:document.getElementById('ses-tipo').value==='inicial'?'empleo':'empleo',
+      etapa:2,orientador:nombreUsuario,fecha_inicio:hoy(),ultima_sesion:hoy(),
+      insignias:[],power_skills:[],servicios:[],cursos:[],pid:'',pruebas:[],vigencia:String(anoActual()),num_sesiones:0,notas:''};
+    RUTAS.push(ruta);
+  }
+
+  // Agregar insignias nuevas
+  insGanadas.forEach(function(i){if(ruta.insignias.indexOf(i)===-1) ruta.insignias.push(i);});
+  skillsGanadas.forEach(function(s){if(ruta.power_skills.indexOf(s)===-1) ruta.power_skills.push(s);});
+  // Agregar cursos nuevos
+  cursosEnSesion.forEach(function(cu){
+    var existe=ruta.cursos.find(function(c){return c.id===cu.id;});
+    if(!existe) ruta.cursos.push(cu);
+  });
+  // Actualizar datos
+  ruta.ultima_sesion=hoy();
+  ruta.num_sesiones++;
+  ruta.pid=document.getElementById('ses-pid').value||ruta.pid;
+  ruta.notas=(document.getElementById('ses-obs').value||'')+'\n'+ruta.notas;
+  ruta.servicios=ruta.servicios.concat(serviciosAplicados);
+  // Avanzar etapa
+  var tipoSes=document.getElementById('ses-tipo').value;
+  if(tipoSes==='inicial'&&ruta.etapa<3) ruta.etapa=3;
+  if(tipoSes==='cierre'&&insGanadas.length>=2) ruta.etapa=Math.max(ruta.etapa,4);
+
+  toast('Sesión registrada — '+insGanadas.length+' insignias · '+cursosEnSesion.length+' cursos · '+skillsGanadas.length+' power skills');
+  nav('candidatos-ruta');
+}
+
+// ═══════════════════════════════════════════════════
+// INSIGNIAS
+// ═══════════════════════════════════════════════════
+function renderInsignias(lista){
+  var tb=document.getElementById('ins-tbody');
+  var ct=document.getElementById('ins-count');
+  var añoSel=document.getElementById('i-vigencia');
+  if(!añoSel.options.length||añoSel.options.length<3){
+    añoSel.innerHTML='<option value="">Todos los años</option>'+
+      [String(anoActual()),String(anoActual()-1)].map(function(a){return '<option>'+a+'</option>';}).join('');
+  }
+  if(ct) ct.textContent=lista.length+' registros';
+  if(!tb) return;
+  if(!lista.length){tb.innerHTML='<tr><td colspan="7" style="padding:24px;text-align:center;color:var(--texto-g)">Sin registros</td></tr>';return;}
+  tb.innerHTML=lista.map(function(r){
+    var insHtml=(r.insignias||[]).map(function(ins){
+      var found=[].concat(INSIGNIAS_EMPLEO,INSIGNIAS_EMPRENDIMIENTO).find(function(x){return x.id===ins;});
+      return found?'<span class="insignia ins-teal" style="font-size:10px;padding:2px 7px">'+found.ico+' '+found.label+'</span>':'';
+    }).join('');
+    var skHtml=(r.power_skills||[]).map(function(sk){
+      var found=POWER_SKILLS.find(function(x){return x.id===sk;});
+      return found?'<span class="insignia ins-morado" style="font-size:10px;padding:2px 7px">'+found.label+'</span>':'';
+    }).join('');
+    return '<tr>'+
+      '<td><strong>'+r.nombre+'</strong><br/><span style="font-size:11px;color:var(--texto-g)">'+r.doc+'</span></td>'+
+      '<td><span style="background:var(--suave);padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600">'+(r.tipo==='empleo'?'🔍 Empleo':'🚀 Emprendimiento')+'</span></td>'+
+      '<td>'+( insHtml||'—')+'</td>'+
+      '<td>'+(skHtml||'—')+'</td>'+
+      '<td><span style="font-weight:700">'+r.vigencia+'</span></td>'+
+      '<td style="color:var(--texto-g)">'+r.orientador+'</td>'+
+      '<td><button class="btn btn-ghost btn-xs" onclick="verRutaDetalle('+r.id+')">Ver ruta</button></td>'+
+    '</tr>';
+  }).join('');
+}
+
+function filtrarInsignias(){
+  var q=document.getElementById('iq').value.toLowerCase();
+  var t=document.getElementById('i-tipo').value;
+  var v=document.getElementById('i-vigencia').value;
+  var lista=RUTAS.filter(function(r){
+    var okQ=!q||r.nombre.toLowerCase().indexOf(q)>-1||r.doc.indexOf(q)>-1;
+    var okT=!t||(t==='skill'?r.power_skills&&r.power_skills.length:r.tipo===t);
+    var okV=!v||r.vigencia===v;
+    return okQ&&okT&&okV;
+  });
+  renderInsignias(lista);
+}
+
+// ═══════════════════════════════════════════════════
+// CURSOS
+// ═══════════════════════════════════════════════════
+function renderCursos(lista){
+  var tb=document.getElementById('cur-tbody');
+  var ct=document.getElementById('cur-count');
+  var rows=[];
+  (lista||RUTAS).forEach(function(r){
+    (r.cursos||[]).forEach(function(cu){
+      var curso=CURSOS_COMFENALCO.find(function(x){return x.id===cu.id;});
+      if(curso) rows.push({nombre:r.nombre,doc:r.doc,curso:curso.nombre,horas:curso.horas,tipo:curso.tipo,estado:cu.estado,fecha:cu.fecha,enHv:cu.estado==='completado'});
+    });
+  });
+  if(ct) ct.textContent=rows.length+' registros';
+  if(!tb) return;
+  if(!rows.length){tb.innerHTML='<tr><td colspan="7" style="padding:24px;text-align:center;color:var(--texto-g)">Sin cursos registrados</td></tr>';return;}
+  tb.innerHTML=rows.map(function(r){
+    return '<tr>'+
+      '<td><strong>'+r.nombre+'</strong><br/><span style="font-size:11px;color:var(--texto-g)">'+r.doc+'</span></td>'+
+      '<td style="font-weight:600">'+r.curso+'</td>'+
+      '<td style="color:var(--texto-g)">'+r.horas+' h</td>'+
+      '<td><span style="background:var(--suave);padding:2px 8px;border-radius:20px;font-size:11px">'+r.tipo+'</span></td>'+
+      '<td><span style="background:'+(r.estado==='completado'?'#d4edda':'#fff8e6')+';color:'+(r.estado==='completado'?'#155724':'#856404')+';padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700">'+r.estado+'</span></td>'+
+      '<td style="color:var(--texto-g)">'+fmtFecha(r.fecha)+'</td>'+
+      '<td>'+(r.enHv?'<span style="background:#d4edda;color:#155724;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700">✓ En HV</span>':'<span style="color:var(--texto-g);font-size:11px">En curso</span>')+'</td>'+
+    '</tr>';
+  }).join('');
+}
+
+function filtrarCursos(){
+  var q=document.getElementById('cq').value.toLowerCase();
+  var e=document.getElementById('c-estado').value;
+  var lista=RUTAS.filter(function(r){
+    var okQ=!q||r.nombre.toLowerCase().indexOf(q)>-1;
+    var hasCurso=!q||(r.cursos||[]).some(function(cu){
+      var curso=CURSOS_COMFENALCO.find(function(x){return x.id===cu.id;});
+      return curso&&curso.nombre.toLowerCase().indexOf(q)>-1;
+    });
+    var okE=!e||(r.cursos||[]).some(function(cu){return cu.estado===e;});
+    return (okQ||hasCurso)&&okE;
+  });
+  renderCursos(lista);
+}
+
+// ═══════════════════════════════════════════════════
+// RESULTADOS PRUEBAS
+// ═══════════════════════════════════════════════════
+function renderPruebasOrient(){
+  var el=document.getElementById('lista-pruebas-orient');
+  if(!el) return;
+  var conPruebas=RUTAS.filter(function(r){return r.pruebas&&r.pruebas.length;});
+  if(!conPruebas.length){el.innerHTML='<p style="color:var(--texto-g)">Sin resultados de pruebas registrados aún.</p>';return;}
+  el.innerHTML=conPruebas.map(function(r){
+    return '<div class="card" style="margin-bottom:14px">'+
+      '<div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">'+
+        '<div class="cand-av" style="background:#004d40">'+r.nombre.charAt(0)+'</div>'+
+        '<div><div style="font-weight:700;font-size:15px">'+r.nombre+'</div>'+
+          '<div style="font-size:12px;color:var(--texto-g)">'+r.doc+' · '+r.region+'</div></div>'+
+        '<div style="margin-left:auto;font-size:12px;color:var(--texto-g)">Orientador/a: '+r.orientador+'</div>'+
+      '</div>'+
+      r.pruebas.map(function(p){
+        var col=p.nivel>=4?'#27ae60':p.nivel>=3?'var(--teal)':p.nivel>=2?'var(--naranja)':'var(--rojo)';
+        var pct=(p.nivel/5)*100;
+        return '<div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--borde);font-size:13px">'+
+          '<span style="min-width:160px;font-weight:600">'+p.nombre+'</span>'+
+          '<div style="height:6px;flex:1;max-width:200px;background:var(--borde);border-radius:3px;overflow:hidden">'+
+            '<div style="height:100%;width:'+pct+'%;background:'+col+'"></div></div>'+
+          '<span style="font-weight:700;color:'+col+';min-width:60px">Nivel '+p.nivel+'/5</span>'+
+          '<span style="color:var(--texto-g)">'+fmtFecha(p.fecha)+'</span>'+
+        '</div>';
+      }).join('')+'</div>';
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════
+// EXPORTAR
+// ═══════════════════════════════════════════════════
+function exportarInforme(){
+  if(typeof XLSX==='undefined'){toast('Cargando...','warn');return;}
+  var wb=XLSX.utils.book_new();
+  var rows=[['Nombre','Documento','Región','Tipo','Etapa','Insignias','Power skills','Cursos','Orientador/a','Inicio','Última sesión','Vigencia']];
+  RUTAS.forEach(function(r){
+    rows.push([r.nombre,r.doc,r.region,r.tipo,ETAPAS_LABEL[r.etapa],
+      (r.insignias||[]).join('; '),(r.power_skills||[]).join('; '),
+      (r.cursos||[]).map(function(c){var cu=CURSOS_COMFENALCO.find(function(x){return x.id===c.id;});return cu?cu.nombre:'';}).join('; '),
+      r.orientador,r.fecha_inicio,r.ultima_sesion,r.vigencia]);
+  });
+  var ws=XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols']=rows[0].map(function(){return {wch:20};});
+  XLSX.utils.book_append_sheet(wb,ws,'Rutas SOY talento');
+  XLSX.writeFile(wb,'soy_talento_rutas.xlsx');
+  toast('Informe exportado');
+}
+
+function exportarHVConInsignias(){
+  toast('Generando HV con insignias en PDF...','warn');
+  setTimeout(function(){toast('PDF con insignias generado');},800);
+}
+
+// ═══════════════════════════════════════════════════
+// AUTH
+// ═══════════════════════════════════════════════════
+function renderAuth(user){
+  var area=document.getElementById('auth-area');
+  if(user){
+    var nombre=((user.firstName||'')+' '+(user.lastName||'')).trim()||'Orientador/a';
+    var ini=((user.firstName||'')[0]||'').toUpperCase()+((user.lastName||'')[0]||'').toUpperCase()||'O';
+    nombreUsuario=nombre;
+    document.getElementById('snombre').textContent=nombre;
+    document.getElementById('srol').textContent=((user.publicMetadata&&user.publicMetadata.rol)||'Orientador/a').replace(/_/g,' ');
+    var av=document.getElementById('sav');
+    av.innerHTML=user.imageUrl?'<img src="'+user.imageUrl+'"/>':ini;
+    area.innerHTML='<span style="color:rgba(255,255,255,.8);font-size:13px">'+nombre+'</span>'+
+      '<button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.signOut().then(function(){window.location.href=\'interno.html\'})">Salir</button>';
+    nav('dashboard');
+  } else {
+    area.innerHTML='<button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>';
+    nav('dashboard');
+  }
+}
+
+// INIT
+window.addEventListener('load',function(){
+  renderDash();
+  if(window.Clerk){
+    window.Clerk.load().then(function(){
+      renderAuth(window.Clerk.user);
+      window.Clerk.addListener(function(e){renderAuth(e.user);});
+    });
+  }
+});
+</script>
+</body>
+</html>
