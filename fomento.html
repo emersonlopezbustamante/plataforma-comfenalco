@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fomento Empresarial y Emprendimiento · Comfenalco Antioquia</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root{
+      --verde:#094a4b;--pist:#a8c94e;--pist-h:#8fb53a;
+      --naranja:#e67e22;--azul:#2d4a6b;--rojo:#e74c3c;
+      --morado:#7c3aed;--teal:#009688;
+      --fondo:#f4f6f4;--borde:#d8e2d8;--texto-g:#4a5a4a;
+      --suave:#e8efe8;--negro:#1a2a1a;--r:8px;--rc:14px;--t:.22s ease
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;font-size:15px;color:var(--negro);background:#fff}
+    button{cursor:pointer;font-family:inherit;border:none}
+    input,select,textarea{font-family:inherit}
+
+    /* TOPBAR */
+    #topbar{background:#fff;padding:0 40px;height:68px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 2px 16px rgba(9,74,75,.07)}
+    .brand-logos{display:flex;align-items:center;gap:14px}
+    .brand-logos img:first-child{height:40px;max-width:180px;object-fit:contain}
+    .brand-sep{width:1px;height:30px;background:var(--borde)}
+    .brand-logos img:last-child{height:30px;max-width:140px;object-fit:contain}
+    .nav-links{display:flex;gap:24px}
+    .nav-link{font-size:14px;font-weight:600;color:var(--texto-g);cursor:pointer;transition:color var(--t)}
+    .nav-link:hover{color:var(--verde)}
+    .back-btn{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:var(--texto-g);cursor:pointer;padding:8px 16px;border-radius:8px;background:var(--suave);transition:background var(--t)}
+    .back-btn:hover{background:var(--borde)}
+
+    /* BOTONES */
+    .btn{display:inline-flex;align-items:center;gap:7px;padding:12px 26px;border-radius:var(--r);font-weight:700;font-size:14px;border:none;transition:all var(--t);cursor:pointer;font-family:inherit}
+    .btn:active{transform:scale(.97)}
+    .btn-pist{background:var(--pist);color:var(--verde)}
+    .btn-pist:hover{background:var(--pist-h)}
+    .btn-verde{background:var(--verde);color:#fff}
+    .btn-verde:hover{background:#0d6b6c}
+    .btn-outline{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.35)}
+    .btn-outline:hover{background:rgba(255,255,255,.1)}
+    .btn-ghost{background:var(--suave);color:var(--texto-g)}
+    .btn-ghost:hover{background:var(--borde)}
+    .btn-sm{padding:8px 18px;font-size:13px}
+    .btn-lg{padding:14px 34px;font-size:16px;border-radius:10px}
+
+    /* HERO */
+    .hero{background:linear-gradient(135deg,#0d3b20 0%,#094a4b 55%,#0d4a2a 100%);padding:80px 40px 64px;position:relative;overflow:hidden}
+    .hero::before{content:'';position:absolute;top:-80px;right:-80px;width:380px;height:380px;border-radius:50%;background:rgba(168,201,78,.08)}
+    .hero::after{content:'';position:absolute;bottom:-60px;left:10%;width:260px;height:260px;border-radius:50%;background:rgba(168,201,78,.05)}
+    .hero-inner{max-width:1100px;margin:0 auto;position:relative;z-index:1}
+    .hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(168,201,78,.15);border:1px solid rgba(168,201,78,.3);color:#a8c94e;font-size:11px;font-weight:700;padding:5px 14px;border-radius:20px;letter-spacing:.06em;margin-bottom:20px}
+    .hero-title{font-family:'Nunito',sans-serif;font-size:50px;font-weight:900;color:#fff;line-height:1.05;margin-bottom:14px}
+    .hero-title span{color:#a8c94e}
+    .hero-sub{font-size:17px;color:rgba(255,255,255,.75);line-height:1.65;max-width:660px;margin-bottom:32px}
+    .hero-btns{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:52px}
+    .hero-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;max-width:820px}
+    .kpi-box{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:20px;text-align:center}
+    .kpi-num{font-family:'Nunito',sans-serif;font-size:34px;font-weight:900;color:#a8c94e;line-height:1}
+    .kpi-lbl{font-size:12px;color:rgba(255,255,255,.6);margin-top:6px;line-height:1.4}
+
+    /* PUBLICOS */
+    .publicos-sec{background:var(--fondo);padding:64px 40px}
+    .publicos-inner{max-width:1100px;margin:0 auto}
+    .sec-title{font-family:'Nunito',sans-serif;font-size:34px;font-weight:900;color:var(--negro);margin-bottom:8px}
+    .sec-sub{font-size:16px;color:var(--texto-g);margin-bottom:36px;max-width:620px}
+    .pub-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+    .pub-card{background:#fff;border-radius:16px;padding:28px;box-shadow:0 2px 18px rgba(9,74,75,.08);border-top:4px solid}
+    .pub-ico{font-size:38px;margin-bottom:12px}
+    .pub-title{font-family:'Nunito',sans-serif;font-size:18px;font-weight:800;color:var(--negro);margin-bottom:8px}
+    .pub-desc{font-size:14px;color:var(--texto-g);line-height:1.6;margin-bottom:14px}
+    .pub-item{font-size:13px;color:var(--texto-g);padding:5px 0;border-bottom:1px solid var(--borde);display:flex;align-items:center;gap:8px}
+    .pub-item:last-child{border-bottom:none}
+    .pub-item::before{content:'›';font-weight:900;font-size:16px}
+
+    /* PROGRAMAS */
+    .programas-sec{padding:72px 40px;background:#fff}
+    .programas-inner{max-width:1100px;margin:0 auto}
+    .prog-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:40px}
+    .prog-card{border-radius:16px;padding:28px;border:2px solid transparent;transition:all var(--t);position:relative;overflow:hidden;background:var(--fondo)}
+    .prog-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:4px}
+    .prog-card:hover{border-color:currentColor;background:#fff;box-shadow:0 8px 32px rgba(9,74,75,.10);transform:translateY(-4px)}
+    .pc-verde::before{background:var(--verde)}.pc-verde:hover{border-color:var(--verde)}
+    .pc-pist::before{background:var(--pist)}.pc-pist:hover{border-color:var(--pist)}
+    .pc-naranja::before{background:var(--naranja)}.pc-naranja:hover{border-color:var(--naranja)}
+    .pc-azul::before{background:var(--azul)}.pc-azul:hover{border-color:var(--azul)}
+    .pc-morado::before{background:var(--morado)}.pc-morado:hover{border-color:var(--morado)}
+    .pc-teal::before{background:var(--teal)}.pc-teal:hover{border-color:var(--teal)}
+    .prog-num{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--texto-g);margin-bottom:10px}
+    .prog-ico{font-size:34px;margin-bottom:10px}
+    .prog-nombre{font-family:'Nunito',sans-serif;font-size:17px;font-weight:800;color:var(--negro);margin-bottom:8px}
+    .prog-desc{font-size:13px;color:var(--texto-g);line-height:1.6;margin-bottom:12px}
+    .prog-tags{display:flex;gap:5px;flex-wrap:wrap}
+    .prog-tag{font-size:11px;padding:3px 9px;border-radius:20px;font-weight:700;background:rgba(9,74,75,.07);color:var(--verde)}
+
+    /* RUTA EMPRESARIOS */
+    .ruta-sec{background:linear-gradient(135deg,#0d3b20,#094a4b);padding:72px 40px}
+    .ruta-inner{max-width:1100px;margin:0 auto}
+    .ruta-title{font-family:'Nunito',sans-serif;font-size:34px;font-weight:900;color:#fff;margin-bottom:8px}
+    .ruta-sub{font-size:16px;color:rgba(255,255,255,.65);margin-bottom:48px}
+    .ruta-tabs{display:flex;gap:10px;margin-bottom:36px;flex-wrap:wrap}
+    .ruta-tab{padding:9px 22px;border-radius:20px;font-size:13px;font-weight:700;cursor:pointer;transition:all .22s;color:rgba(255,255,255,.6);border:1.5px solid rgba(255,255,255,.15);background:transparent}
+    .ruta-tab.active{background:var(--pist);color:var(--verde);border-color:var(--pist)}
+    .ruta-contenido{display:none}
+    .ruta-contenido.active{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start}
+    .ruta-pasos{display:flex;flex-direction:column;gap:0}
+    .paso{display:flex;gap:16px;align-items:flex-start;padding:16px 0;border-bottom:1px solid rgba(255,255,255,.08);position:relative}
+    .paso:last-child{border-bottom:none}
+    .paso-n{width:36px;height:36px;border-radius:50%;background:var(--pist);color:var(--verde);font-family:'Nunito';font-weight:900;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .paso-body .t{font-weight:700;font-size:14px;color:#fff;margin-bottom:3px}
+    .paso-body .s{font-size:12px;color:rgba(255,255,255,.55);line-height:1.5}
+    .ruta-info{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:24px}
+    .ruta-info .t{font-family:'Nunito';font-weight:800;font-size:17px;color:#fff;margin-bottom:12px}
+    .ruta-info .s{font-size:13px;color:rgba(255,255,255,.65);line-height:1.6;margin-bottom:16px}
+    .ri-item{display:flex;align-items:center;gap:10px;font-size:13px;color:rgba(255,255,255,.75);padding:6px 0;border-bottom:1px solid rgba(255,255,255,.08)}
+    .ri-item:last-child{border-bottom:none}
+    .ri-item::before{content:'✓';color:var(--pist);font-weight:900}
+
+    /* VITRINA */
+    .vitrina-sec{padding:72px 40px;background:var(--fondo)}
+    .vitrina-inner{max-width:1100px;margin:0 auto}
+    .vitrina-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;margin-top:32px}
+    .vitrina-card{background:#fff;border-radius:14px;box-shadow:0 2px 16px rgba(9,74,75,.08);overflow:hidden;transition:all var(--t)}
+    .vitrina-card:hover{box-shadow:0 8px 28px rgba(9,74,75,.14);transform:translateY(-4px)}
+    .vc-header{height:90px;display:flex;align-items:center;padding:0 20px;gap:14px}
+    .vc-av{width:56px;height:56px;border-radius:12px;background:var(--verde);color:#fff;font-family:'Nunito';font-weight:900;font-size:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .vc-nombre{font-family:'Nunito';font-weight:800;font-size:15px;color:#fff;line-height:1.3}
+    .vc-sector{font-size:11px;color:rgba(255,255,255,.75);margin-top:3px}
+    .vc-body{padding:16px 20px}
+    .vc-region{font-size:11px;font-weight:700;color:var(--texto-g);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+    .vc-desc{font-size:12px;color:var(--texto-g);line-height:1.5;margin-bottom:10px}
+    .vc-footer{padding:12px 20px;border-top:1px solid var(--borde);display:flex;align-items:center;justify-content:space-between}
+    .vc-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--suave);color:var(--verde)}
+    .vitrina-empty{text-align:center;padding:40px;color:var(--texto-g);grid-column:1/-1}
+
+    /* EVENTOS */
+    .eventos-sec{padding:72px 40px;background:#fff}
+    .eventos-inner{max-width:1100px;margin:0 auto}
+    .ev-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:36px}
+    .ev-card{border-radius:14px;overflow:hidden;box-shadow:0 2px 16px rgba(9,74,75,.08);transition:all var(--t)}
+    .ev-card:hover{transform:translateY(-4px);box-shadow:0 8px 28px rgba(9,74,75,.14)}
+    .ev-header{padding:20px 22px;color:#fff}
+    .ev-tipo{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;opacity:.8;margin-bottom:6px}
+    .ev-nombre{font-family:'Nunito';font-size:18px;font-weight:800;line-height:1.2;margin-bottom:6px}
+    .ev-fecha{font-size:12px;opacity:.8}
+    .ev-body{padding:16px 22px;background:#fff}
+    .ev-desc{font-size:13px;color:var(--texto-g);line-height:1.6;margin-bottom:12px}
+    .ev-tags{display:flex;gap:5px;flex-wrap:wrap}
+    .ev-tag{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700;background:var(--suave);color:var(--verde)}
+    .ev-footer{padding:10px 22px 16px;background:#fff;display:flex;gap:8px}
+
+    /* CLUSTERS */
+    .clusters-sec{background:var(--fondo);padding:64px 40px}
+    .clusters-inner{max-width:1100px;margin:0 auto}
+    .cl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:36px}
+    .cl-card{background:#fff;border-radius:14px;padding:28px;box-shadow:0 2px 14px rgba(9,74,75,.07);text-align:center;transition:all var(--t)}
+    .cl-card:hover{transform:translateY(-4px);box-shadow:0 6px 24px rgba(9,74,75,.13)}
+    .cl-ico{font-size:44px;margin-bottom:14px}
+    .cl-nombre{font-family:'Nunito';font-size:18px;font-weight:800;color:var(--negro);margin-bottom:8px}
+    .cl-desc{font-size:13px;color:var(--texto-g);line-height:1.6}
+    .cl-badge{display:inline-block;margin-top:10px;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:700}
+
+    /* FORMULARIO */
+    .form-sec{padding:72px 40px;background:#fff}
+    .form-inner{max-width:900px;margin:0 auto}
+    .form-card{background:linear-gradient(135deg,#0d3b20,#094a4b);border-radius:24px;padding:48px;position:relative;overflow:hidden}
+    .form-card::before{content:'';position:absolute;top:-60px;right:-60px;width:220px;height:220px;border-radius:50%;background:rgba(168,201,78,.08)}
+    .form-titulo{font-family:'Nunito';font-size:28px;font-weight:900;color:#fff;margin-bottom:8px}
+    .form-sub{font-size:15px;color:rgba(255,255,255,.65);margin-bottom:32px}
+    .tabs-reg{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap}
+    .tab-reg{flex:1;padding:10px;border-radius:8px;border:1.5px solid rgba(255,255,255,.15);background:transparent;color:rgba(255,255,255,.6);font-size:13px;font-weight:600;cursor:pointer;transition:all .22s;text-align:center}
+    .tab-reg.active{background:rgba(168,201,78,.2);border-color:#a8c94e;color:#a8c94e}
+    .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+    .fgrid.one{grid-template-columns:1fr}
+    .flabel{font-size:11px;font-weight:700;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px;display:block}
+    .req{color:#a8c94e}
+    .finput{width:100%;padding:12px 16px;border:1.5px solid rgba(255,255,255,.15);border-radius:10px;background:rgba(255,255,255,.08);color:#fff;font-size:14px;font-family:inherit;outline:none;transition:border-color .22s}
+    .finput::placeholder{color:rgba(255,255,255,.3)}
+    .finput:focus{border-color:#a8c94e}
+    select.finput option{color:#1a2a1a;background:#fff}
+    textarea.finput{resize:vertical;min-height:90px}
+    .form-info{margin-top:20px;padding-top:16px;border-top:1px solid rgba(255,255,255,.1);display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:rgba(255,255,255,.5)}
+    .form-info strong{color:#a8c94e}
+
+    /* FOOTER */
+    footer{background:#0d3b20;color:rgba(255,255,255,.6);padding:28px 40px;text-align:center;font-size:13px}
+    footer strong{color:#fff;font-family:'Nunito'}
+    footer a{color:#a8c94e;text-decoration:none}
+
+    /* UTILS */
+    #toasts{position:fixed;bottom:24px;right:24px;display:flex;flex-direction:column;gap:10px;z-index:9999}
+    .toast{background:var(--verde);color:#fff;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:600;box-shadow:0 4px 20px rgba(9,74,75,.3);display:flex;align-items:center;gap:10px;animation:slideUp .22s ease;min-width:260px;border-left:4px solid var(--pist)}
+    @keyframes slideUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+    @media(max-width:900px){
+      .hero-title{font-size:32px}.hero-kpis{grid-template-columns:repeat(2,1fr)}
+      .pub-grid,.prog-grid,.ev-grid,.cl-grid{grid-template-columns:1fr}
+      .ruta-contenido.active{grid-template-columns:1fr}
+      .fgrid{grid-template-columns:1fr}
+      .hero,.publicos-sec,.programas-sec,.ruta-sec,.vitrina-sec,.eventos-sec,.clusters-sec,.form-sec{padding-left:20px;padding-right:20px}
+      #topbar{padding:0 16px}.nav-links{display:none}
+      .form-card{padding:28px 20px}
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header id="topbar">
+  <div class="brand-logos">
+    <img src="logo_comfe_y_servicio.jpeg" alt="Comfenalco"/>
+    <div class="brand-sep"></div>
+    <img src="logo_agencia.png" alt="Agencia"/>
+  </div>
+  <div class="nav-links">
+    <span class="nav-link" onclick="ir('programas-s')">Programas</span>
+    <span class="nav-link" onclick="ir('ruta-s')">Ruta empresarial</span>
+    <span class="nav-link" onclick="ir('vitrina-s')">Vitrina</span>
+    <span class="nav-link" onclick="ir('eventos-s')">Eventos</span>
+    <span class="nav-link" onclick="ir('contacto-s')">Inscribirme</span>
+  </div>
+  <div class="back-btn" onclick="window.location.href='index.html'">← Inicio</div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">🌱 AGENCIA DE EMPLEO Y EMPRENDIMIENTO · COMFENALCO ANTIOQUIA</div>
+    <h1 class="hero-title">Fomento Empresarial<br/><span>y Emprendimiento</span></h1>
+    <p class="hero-sub">Impulsamos el crecimiento económico de las MiPymes y emprendedores de Antioquia. Conectamos territorios, abrimos mercados y fortalecemos capacidades con programas de alto impacto.</p>
+    <div class="hero-btns">
+      <button class="btn btn-pist btn-lg" onclick="ir('contacto-s')">Quiero inscribirme →</button>
+      <button class="btn btn-outline" onclick="ir('vitrina-s')">Ver vitrina empresarial</button>
+    </div>
+    <div class="hero-kpis">
+      <div class="kpi-box"><div class="kpi-num">+500</div><div class="kpi-lbl">MiPymes acompañadas anualmente</div></div>
+      <div class="kpi-box"><div class="kpi-num">9</div><div class="kpi-lbl">regiones de Antioquia con presencia</div></div>
+      <div class="kpi-box"><div class="kpi-num">3</div><div class="kpi-lbl">clusters estratégicos: Turismo, Agroalimentario y Moda</div></div>
+      <div class="kpi-box"><div class="kpi-num">2013</div><div class="kpi-lbl">desde cuando transformamos economías locales</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ¿PARA QUIÉN? -->
+<section class="publicos-sec">
+  <div class="publicos-inner">
+    <div class="sec-title">¿Para quién es este programa?</div>
+    <p class="sec-sub">Apoyamos a quienes quieren crecer, formalizarse y conectar con nuevos mercados en todo Antioquia.</p>
+    <div class="pub-grid">
+      <div class="pub-card" style="border-top-color:var(--pist)">
+        <div class="pub-ico">🚀</div>
+        <div class="pub-title">Emprendedores</div>
+        <p class="pub-desc">Trabajadores, beneficiarios y cesantes afiliados a Comfenalco con ideas de negocio o emprendimientos en etapa inicial.</p>
+        <div class="pub-item" style="--c:var(--pist)">Con idea de negocio o emprendimiento creado</div>
+        <div class="pub-item">Cesantes que quieren autoemplarse</div>
+        <div class="pub-item">Beneficiarios mayores de 18 años</div>
+        <div class="pub-item">Trabajadores activos afiliados a la caja</div>
+      </div>
+      <div class="pub-card" style="border-top-color:var(--verde)">
+        <div class="pub-ico">🏪</div>
+        <div class="pub-title">MiPymes afiliadas</div>
+        <p class="pub-desc">Micro, pequeñas y medianas empresas afiliadas a Comfenalco Antioquia, formalizadas en Cámara de Comercio en cualquier etapa.</p>
+        <div class="pub-item">Etapa inicial — validación de modelo</div>
+        <div class="pub-item">Etapa de escalamiento</div>
+        <div class="pub-item">Etapa de comercialización y expansión</div>
+        <div class="pub-item">Acceso con tarifa diferencial por ser afiliada</div>
+      </div>
+      <div class="pub-card" style="border-top-color:var(--azul)">
+        <div class="pub-ico">🌐</div>
+        <div class="pub-title">Empresas en red</div>
+        <p class="pub-desc">Organizaciones que buscan relacionamiento comercial, acceso a nuevos mercados o alianzas con otras empresas a nivel nacional e internacional.</p>
+        <div class="pub-item">Empresas que quieren vender a grandes compradores</div>
+        <div class="pub-item">Participantes en macroruedas nacionales</div>
+        <div class="pub-item">Empresas de los clusters turismo, moda y agroalimentario</div>
+        <div class="pub-item">Interesadas en pasantías de buenas prácticas</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROGRAMAS -->
+<section class="programas-sec" id="programas-s">
+  <div class="programas-inner">
+    <div class="sec-title">Programas de fomento empresarial</div>
+    <p class="sec-sub">Cada programa está diseñado para responder a una etapa específica del ciclo de crecimiento empresarial.</p>
+    <div class="prog-grid">
+
+      <div class="prog-card pc-verde">
+        <div class="prog-num">Programa 01</div>
+        <div class="prog-ico">🔭</div>
+        <div class="prog-nombre">Ruta de Emprendimiento</div>
+        <div class="prog-desc">Proceso de 6 etapas para personas con idea de negocio o emprendimiento creado: registro inicial, entrevista, diagnóstico, formación avanzada, acceso a portafolio y diagnóstico final.</div>
+        <div class="prog-tags"><span class="prog-tag">6 etapas</span><span class="prog-tag">Afiliados</span><span class="prog-tag">Cesantes</span></div>
+      </div>
+
+      <div class="prog-card pc-pist">
+        <div class="prog-num">Programa 02</div>
+        <div class="prog-ico">📈</div>
+        <div class="prog-nombre">Ruta de Fomento Empresarial</div>
+        <div class="prog-desc">Para MiPymes afiliadas: diagnóstico, priorización, formación en desarrollo empresarial, laboratorios sectoriales, asesoría, acceso a mercados, créditos, pasantías y diagnóstico final.</div>
+        <div class="prog-tags"><span class="prog-tag">10 etapas</span><span class="prog-tag">MiPymes</span><span class="prog-tag">Cámara de Comercio</span></div>
+      </div>
+
+      <div class="prog-card pc-naranja">
+        <div class="prog-num">Programa 03</div>
+        <div class="prog-ico">🏆</div>
+        <div class="prog-nombre">+ Competitivas</div>
+        <div class="prog-desc">Mentoría empresarial para micro, pequeñas y medianas empresas en las subregiones de Bajo Cauca, Occidente y Suroeste antioqueño. Fortalece habilidades digitales, comunicación y competitividad territorial.</div>
+        <div class="prog-tags"><span class="prog-tag">Mentoría</span><span class="prog-tag">Subregiones</span><span class="prog-tag">Digital</span></div>
+      </div>
+
+      <div class="prog-card pc-teal">
+        <div class="prog-num">Programa 04</div>
+        <div class="prog-ico">✈️</div>
+        <div class="prog-nombre">Más Turismo, Más Negocios</div>
+        <div class="prog-desc">Alianza con la Cámara de Comercio de Medellín y su Clúster Turismo. Formación y asesorías personalizadas para MiPymes del sector HORECA (hoteles, restaurantes, cafeterías) y agencias de viajes. Turismo sostenible y competitivo.</div>
+        <div class="prog-tags"><span class="prog-tag">HORECA</span><span class="prog-tag">Turismo</span><span class="prog-tag">9 regiones</span></div>
+      </div>
+
+      <div class="prog-card pc-azul">
+        <div class="prog-num">Programa 05</div>
+        <div class="prog-ico">🌱</div>
+        <div class="prog-nombre">Impacto Positivo</div>
+        <div class="prog-desc">Programas de fortalecimiento para clusters estratégicos: Turismo, Agroalimentario y Moda. Aprendizaje inmersivo con visitas a empresas referentes en otras ciudades, departamentos e incluso a nivel internacional.</div>
+        <div class="prog-tags"><span class="prog-tag">Clusters</span><span class="prog-tag">Agroalimentario</span><span class="prog-tag">Moda</span><span class="prog-tag">Internacional</span></div>
+      </div>
+
+      <div class="prog-card pc-morado">
+        <div class="prog-num">Programa 06</div>
+        <div class="prog-ico">💻</div>
+        <div class="prog-nombre">Vitrina comercial y micrositio</div>
+        <div class="prog-desc">Espacio digital de relacionamiento y economía colaborativa. Las empresas y emprendedores publican su oferta de productos y servicios, generan contactos comerciales y construyen comunidad de apoyo empresarial.</div>
+        <div class="prog-tags"><span class="prog-tag">Digital</span><span class="prog-tag">Economía colaborativa</span><span class="prog-tag">Relacionamiento</span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- RUTA EMPRESARIAL -->
+<section class="ruta-sec" id="ruta-s">
+  <div class="ruta-inner">
+    <div class="ruta-title">Rutas de acompañamiento</div>
+    <p class="ruta-sub">Selecciona tu perfil para ver los pasos del proceso</p>
+    <div class="ruta-tabs">
+      <button type="button" class="ruta-tab active" onclick="verRuta('emprendedor',this)">🚀 Emprendedores</button>
+      <button type="button" class="ruta-tab" onclick="verRuta('mipyme',this)">🏪 MiPymes</button>
+      <button type="button" class="ruta-tab" onclick="verRuta('turismo',this)">✈️ Más Turismo</button>
+    </div>
+
+    <!-- Emprendedores -->
+    <div id="ruta-emprendedor" class="ruta-contenido active">
+      <div class="ruta-pasos">
+        <div class="paso"><div class="paso-n">1</div><div class="paso-body"><div class="t">Registro inicial</div><div class="s">Inscripción en el programa a través de la Agencia de Empleo o en línea</div></div></div>
+        <div class="paso"><div class="paso-n">2</div><div class="paso-body"><div class="t">Entrevista de emprendimiento</div><div class="s">Validación de la idea, motivaciones y perfil emprendedor con un asesor</div></div></div>
+        <div class="paso"><div class="paso-n">3</div><div class="paso-body"><div class="t">Diagnóstico de ingreso</div><div class="s">Evaluación del estado actual del emprendimiento: idea, prototipo o negocio en marcha</div></div></div>
+        <div class="paso"><div class="paso-n">4</div><div class="paso-body"><div class="t">Formación avanzada</div><div class="s">Módulos de modelos de negocio, marketing, finanzas y estrategia de crecimiento</div></div></div>
+        <div class="paso"><div class="paso-n">5</div><div class="paso-body"><div class="t">Acceso al portafolio</div><div class="s">Conexión con mentores, financiadores, ruedas de negocios y vitrina comercial</div></div></div>
+        <div class="paso"><div class="paso-n">6</div><div class="paso-body"><div class="t">Diagnóstico final</div><div class="s">Medición de avances, plan de continuidad y certificación del proceso</div></div></div>
+      </div>
+      <div class="ruta-info">
+        <div class="t">¿Quién puede acceder?</div>
+        <div class="s">Trabajadores, beneficiarios y cesantes afiliados a Comfenalco Antioquia con una idea de negocio o emprendimiento en cualquier etapa. Acceso sin costo.</div>
+        <div class="ri-item">Trabajadores activos afiliados a la caja</div>
+        <div class="ri-item">Beneficiarios mayores de 18 años</div>
+        <div class="ri-item">Cesantes que desean crear empresa</div>
+        <div class="ri-item">No se requiere empresa formalizada para empezar</div>
+        <div class="ri-item">Sin costo — respaldado por Comfenalco</div>
+        <button type="button" class="btn btn-pist btn-sm" style="margin-top:16px" onclick="ir('contacto-s')">Inscribirme ahora →</button>
+      </div>
+    </div>
+
+    <!-- MiPymes -->
+    <div id="ruta-mipyme" class="ruta-contenido">
+      <div class="ruta-pasos">
+        <div class="paso"><div class="paso-n">1</div><div class="paso-body"><div class="t">Diagnóstico de ingreso</div><div class="s">Evaluación integral de la empresa: estructura, mercado, finanzas y potencial</div></div></div>
+        <div class="paso"><div class="paso-n">2</div><div class="paso-body"><div class="t">Priorización de líneas de trabajo</div><div class="s">Identificación de las áreas de mayor impacto para intervenir primero</div></div></div>
+        <div class="paso"><div class="paso-n">3</div><div class="paso-body"><div class="t">Formación en desarrollo empresarial</div><div class="s">Capacitación especializada según el sector y las necesidades detectadas</div></div></div>
+        <div class="paso"><div class="paso-n">4</div><div class="paso-body"><div class="t">Laboratorios sectoriales</div><div class="s">Espacios de co-creación con otras empresas del mismo sector</div></div></div>
+        <div class="paso"><div class="paso-n">5</div><div class="paso-body"><div class="t">Asesoría y acompañamiento</div><div class="s">Consultoría personalizada con expertos en cada área de intervención</div></div></div>
+        <div class="paso"><div class="paso-n">6</div><div class="paso-body"><div class="t">Acceso a mercados y créditos</div><div class="s">Ruedas de negocios, macroruedas y conexión con entidades financieras</div></div></div>
+        <div class="paso"><div class="paso-n">7</div><div class="paso-body"><div class="t">Pasantías empresariales</div><div class="s">Visitas de aprendizaje a empresas referentes en otras ciudades y países</div></div></div>
+        <div class="paso"><div class="paso-n">8</div><div class="paso-body"><div class="t">Diagnóstico final y certificación</div><div class="s">Medición de indicadores de crecimiento y reconocimiento del proceso</div></div></div>
+      </div>
+      <div class="ruta-info">
+        <div class="t">¿Quién puede acceder?</div>
+        <div class="s">MiPymes afiliadas a Comfenalco Antioquia, formalizadas en Cámara de Comercio. Por ser afiliada accedes con tarifa diferencial.</div>
+        <div class="ri-item">Empresa formalizada en Cámara de Comercio</div>
+        <div class="ri-item">Afiliada a Comfenalco Antioquia</div>
+        <div class="ri-item">Cualquier etapa: inicial, escalamiento o comercialización</div>
+        <div class="ri-item">Micro, pequeñas y medianas empresas</div>
+        <div class="ri-item">Tarifa diferencial por ser afiliada</div>
+        <button type="button" class="btn btn-pist btn-sm" style="margin-top:16px" onclick="ir('contacto-s')">Inscribir mi empresa →</button>
+      </div>
+    </div>
+
+    <!-- Turismo -->
+    <div id="ruta-turismo" class="ruta-contenido">
+      <div class="ruta-pasos">
+        <div class="paso"><div class="paso-n">1</div><div class="paso-body"><div class="t">Inscripción al programa</div><div class="s">Empresas HORECA (hoteles, restaurantes, cafeterías) y agencias de viajes de Antioquia</div></div></div>
+        <div class="paso"><div class="paso-n">2</div><div class="paso-body"><div class="t">Diagnóstico turístico</div><div class="s">Evaluación del nivel de competitividad y áreas de mejora en servicios turísticos</div></div></div>
+        <div class="paso"><div class="paso-n">3</div><div class="paso-body"><div class="t">Formación especializada</div><div class="s">Modelos de negocio, marketing turístico, gestión operativa y servicio al cliente</div></div></div>
+        <div class="paso"><div class="paso-n">4</div><div class="paso-body"><div class="t">Turismo sostenible</div><div class="s">Herramientas de responsabilidad ambiental y desarrollo sostenible en turismo</div></div></div>
+        <div class="paso"><div class="paso-n">5</div><div class="paso-body"><div class="t">Asesorías personalizadas</div><div class="s">Acompañamiento uno a uno con expertos del Clúster Turismo Cámara de Comercio</div></div></div>
+        <div class="paso"><div class="paso-n">6</div><div class="paso-body"><div class="t">Vitrina ANATO y eventos</div><div class="s">Participación en la Vitrina Turística ANATO y otros eventos sectoriales nacionales</div></div></div>
+      </div>
+      <div class="ruta-info">
+        <div class="t">Alianza Comfenalco + Cámara de Comercio</div>
+        <div class="s">Programa ejecutado en alianza con el Clúster Turismo de la Cámara de Comercio de Medellín para Antioquia. Edición 2025 en marcha.</div>
+        <div class="ri-item">Hoteles, restaurantes y cafeterías (HORECA)</div>
+        <div class="ri-item">Agencias de viajes de todas las regiones</div>
+        <div class="ri-item">125 MiPymes por edición</div>
+        <div class="ri-item">Presencia en Vitrina Turística ANATO</div>
+        <div class="ri-item">Programa sin costo para participantes</div>
+        <button type="button" class="btn btn-pist btn-sm" style="margin-top:16px" onclick="ir('contacto-s')">Aplicar al programa →</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- VITRINA EMPRESARIAL -->
+<section class="vitrina-sec" id="vitrina-s">
+  <div class="vitrina-inner">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:12px">
+      <div>
+        <div class="sec-title">Vitrina Empresarial</div>
+        <p class="sec-sub" style="margin-bottom:0">Empresas y emprendedores registrados en la plataforma — conoce su oferta y conéctate</p>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <input type="text" id="vitrina-q" class="finput" placeholder="🔍 Buscar empresa..." style="border:1.5px solid var(--borde);color:var(--negro);background:#fff;padding:9px 14px;min-width:200px" oninput="filtrarVitrina()"/>
+        <select id="vitrina-sector" class="finput" style="border:1.5px solid var(--borde);color:var(--negro);background:#fff;padding:9px 14px" onchange="filtrarVitrina()">
+          <option value="">Todos los sectores</option>
+          <option>Logística y transporte</option><option>Tecnología</option>
+          <option>Turismo y gastronomía</option><option>Agroindustria</option>
+          <option>Moda y confección</option><option>Comercio</option>
+          <option>Salud y bienestar</option><option>Construcción</option>
+        </select>
+        <select id="vitrina-region" class="finput" style="border:1.5px solid var(--borde);color:var(--negro);background:#fff;padding:9px 14px" onchange="filtrarVitrina()">
+          <option value="">Todas las regiones</option>
+          <option>Valle de Aburrá</option><option>Oriente</option><option>Norte</option>
+          <option>Urabá</option><option>Suroeste</option><option>Bajo Cauca</option>
+        </select>
+      </div>
+    </div>
+    <div class="vitrina-grid" id="vitrina-grid"></div>
+    <div style="text-align:center;margin-top:28px">
+      <button type="button" class="btn btn-verde" onclick="ir('contacto-s')">+ Registrar mi empresa en la vitrina</button>
+    </div>
+  </div>
+</section>
+
+<!-- EVENTOS Y MACRORUEDAS -->
+<section class="eventos-sec" id="eventos-s">
+  <div class="eventos-inner">
+    <div class="sec-title">Eventos y macroruedas</div>
+    <p class="sec-sub">Espacios de relacionamiento, networking y acceso a mercados para empresas y emprendedores</p>
+    <div class="ev-grid">
+
+      <div class="ev-card">
+        <div class="ev-header" style="background:linear-gradient(135deg,#094a4b,#2d4a6b)">
+          <div class="ev-tipo">Macrorueda nacional</div>
+          <div class="ev-nombre">Unidos en la Ruta 2025</div>
+          <div class="ev-fecha">📅 Julio 11, 2025 · Plaza Mayor — Cámara de Comercio El Poblado</div>
+        </div>
+        <div class="ev-body">
+          <div class="ev-desc">Encuentro anual de MiPymes de todo el país organizado por Comfenalco Antioquia en alianza con Cafam, Compensar, Comfama y otras cajas. Agenda académica, muestra comercial y ruedas de negocio planificadas. Hasta 1.000 cupos sin costo.</div>
+          <div class="ev-tags"><span class="ev-tag">Sin costo</span><span class="ev-tag">1.000 cupos</span><span class="ev-tag">Nacional</span><span class="ev-tag">Networking</span></div>
+        </div>
+        <div class="ev-footer">
+          <button type="button" class="btn btn-verde btn-sm" onclick="ir('contacto-s')">Inscribirme</button>
+          <button type="button" class="btn btn-ghost btn-sm">Más info</button>
+        </div>
+      </div>
+
+      <div class="ev-card">
+        <div class="ev-header" style="background:linear-gradient(135deg,#e67e22,#d35400)">
+          <div class="ev-tipo">Programa sectorial</div>
+          <div class="ev-nombre">Más Turismo, Más Negocios 2026</div>
+          <div class="ev-fecha">📅 Lanzamiento Abril 16, 2026 · Cámara de Comercio Medellín</div>
+        </div>
+        <div class="ev-body">
+          <div class="ev-desc">Nueva edición del programa insignia de turismo sostenible. Formación y asesorías para 125 MiPymes del sector HORECA y agencias de viajes. En alianza con el Clúster Turismo de la Cámara de Comercio de Medellín para Antioquia.</div>
+          <div class="ev-tags"><span class="ev-tag">HORECA</span><span class="ev-tag">125 MiPymes</span><span class="ev-tag">Turismo</span><span class="ev-tag">Sostenible</span></div>
+        </div>
+        <div class="ev-footer">
+          <button type="button" class="btn btn-sm" style="background:var(--naranja);color:#fff" onclick="ir('contacto-s')">Aplicar</button>
+          <button type="button" class="btn btn-ghost btn-sm">Más info</button>
+        </div>
+      </div>
+
+      <div class="ev-card">
+        <div class="ev-header" style="background:linear-gradient(135deg,#7c3aed,#4a1d96)">
+          <div class="ev-tipo">Vitrina turística</div>
+          <div class="ev-nombre">ANATO 2026</div>
+          <div class="ev-fecha">📅 Febrero 25–27, 2026 · Bogotá — Corferias</div>
+        </div>
+        <div class="ev-body">
+          <div class="ev-desc">El escenario más importante del turismo en Colombia. Comfenalco acompaña a sus empresas afiliadas del sector turístico a participar en la Vitrina Turística ANATO, uno de los eventos más relevantes de Latinoamérica para el sector.</div>
+          <div class="ev-tags"><span class="ev-tag">Turismo</span><span class="ev-tag">Bogotá</span><span class="ev-tag">Latinoamérica</span><span class="ev-tag">Vitrina</span></div>
+        </div>
+        <div class="ev-footer">
+          <button type="button" class="btn btn-sm" style="background:#7c3aed;color:#fff" onclick="ir('contacto-s')">Postular empresa</button>
+          <button type="button" class="btn btn-ghost btn-sm">Más info</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CLUSTERS -->
+<section class="clusters-sec">
+  <div class="clusters-inner">
+    <div class="sec-title">Sectores estratégicos — Clusters</div>
+    <p class="sec-sub">Trabajamos con los sectores de mayor impacto económico y social en Antioquia</p>
+    <div class="cl-grid">
+      <div class="cl-card">
+        <div class="cl-ico">✈️</div>
+        <div class="cl-nombre">Turismo y gastronomía</div>
+        <div class="cl-desc">HORECA, agencias de viajes, operadores turísticos y empresas de experiencias. Antioquia lidera el número de prestadores turísticos en Colombia desde 2019.</div>
+        <span class="cl-badge" style="background:#e8f5e9;color:#155724">En alianza con Clúster Turismo — Cámara de Comercio Medellín</span>
+      </div>
+      <div class="cl-card">
+        <div class="cl-ico">🌾</div>
+        <div class="cl-nombre">Agroalimentario</div>
+        <div class="cl-desc">Productos agrícolas, transformación alimentaria, emprendimientos rurales y cadenas agroalimentarias de las subregiones de Antioquia.</div>
+        <span class="cl-badge" style="background:#fff8e1;color:#856404">Presencia en 9 regiones</span>
+      </div>
+      <div class="cl-card">
+        <div class="cl-ico">👗</div>
+        <div class="cl-nombre">Moda y confección</div>
+        <div class="cl-desc">Diseñadores, fabricantes y comercializadores del sector textil y de moda. Antioquia como referente nacional del sector creativo y de confección.</div>
+        <span class="cl-badge" style="background:#f3e5f5;color:#4a148c">Economías culturales y creativas</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FORMULARIO -->
+<section class="form-sec" id="contacto-s">
+  <div class="form-inner">
+    <div class="form-card">
+      <div class="form-titulo">🌱 Inscribirme o solicitar información</div>
+      <p class="form-sub">Cuéntanos sobre tu emprendimiento o empresa y te asignamos el programa que mejor se ajusta a tu etapa</p>
+
+      <div style="margin-bottom:20px">
+        <div class="flabel">Soy</div>
+        <div class="tabs-reg">
+          <div class="tab-reg active" id="tr-empren" onclick="setTipoFomento('emprendedor')">🚀 Emprendedor/a</div>
+          <div class="tab-reg" id="tr-mipyme" onclick="setTipoFomento('mipyme')">🏪 MiPyme</div>
+          <div class="tab-reg" id="tr-turismo" onclick="setTipoFomento('turismo')">✈️ Sector turismo</div>
+          <div class="tab-reg" id="tr-otro" onclick="setTipoFomento('otro')">🌐 Otro</div>
+        </div>
+      </div>
+
+      <div class="fgrid">
+        <div><label class="flabel">Nombre completo <span class="req">*</span></label><input class="finput" type="text" id="f-nombre" placeholder="Ana María González"/></div>
+        <div><label class="flabel" id="lbl-cargo">Profesión / Área</label><input class="finput" type="text" id="f-cargo" placeholder="Diseñadora, gastrónoma, ingeniero..."/></div>
+      </div>
+      <div class="fgrid" id="fg-empresa">
+        <div><label class="flabel">Nombre del negocio / empresa</label><input class="finput" type="text" id="f-empresa" placeholder="Nombre del emprendimiento o empresa"/></div>
+        <div><label class="flabel">NIT / Registro Cámara de Comercio</label><input class="finput" type="text" id="f-nit" placeholder="900.123.456-7 (si aplica)"/></div>
+      </div>
+      <div class="fgrid">
+        <div><label class="flabel">Celular <span class="req">*</span></label><input class="finput" type="tel" id="f-tel" placeholder="310 123 4567"/></div>
+        <div><label class="flabel">Correo electrónico <span class="req">*</span></label><input class="finput" type="email" id="f-correo" placeholder="correo@ejemplo.com"/></div>
+      </div>
+      <div class="fgrid">
+        <div>
+          <label class="flabel">Región / Municipio</label>
+          <select class="finput" id="f-region">
+            <option value="">Selecciona...</option>
+            <option>Valle de Aburrá — Medellín, Bello, Itagüí...</option>
+            <option>Oriente — Rionegro, La Ceja...</option>
+            <option>Norte — Yarumal, Santa Rosa...</option>
+            <option>Occidente — Sta. Fe de Antioquia...</option>
+            <option>Suroeste — Andes, Ciudad Bolívar...</option>
+            <option>Bajo Cauca — Caucasia...</option>
+            <option>Nordeste — Cisneros...</option>
+            <option>Magdalena Medio — Puerto Berrío...</option>
+            <option>Urabá — Apartadó, Turbo...</option>
+          </select>
+        </div>
+        <div>
+          <label class="flabel">Sector económico</label>
+          <select class="finput" id="f-sector">
+            <option value="">Selecciona...</option>
+            <option>Turismo y gastronomía (HORECA)</option>
+            <option>Agroalimentario</option>
+            <option>Moda y confección</option>
+            <option>Tecnología e innovación</option>
+            <option>Comercio</option>
+            <option>Salud y bienestar</option>
+            <option>Construcción</option>
+            <option>Logística y transporte</option>
+            <option>Educación</option>
+            <option>Otro sector</option>
+          </select>
+        </div>
+      </div>
+      <div class="fgrid one">
+        <div>
+          <label class="flabel">Programa de interés</label>
+          <select class="finput" id="f-programa">
+            <option value="">¿A qué programa deseas aplicar?</option>
+            <option>Ruta de Emprendimiento (6 etapas)</option>
+            <option>Ruta de Fomento Empresarial MiPymes</option>
+            <option>Programa + Competitivas</option>
+            <option>Más Turismo, Más Negocios</option>
+            <option>Impacto Positivo — clusters</option>
+            <option>Vitrina comercial y micrositio</option>
+            <option>Macrorueda de Negocios Unidos en la Ruta</option>
+            <option>ANATO 2026 — Vitrina Turística</option>
+            <option>No sé — quiero asesoría</option>
+          </select>
+        </div>
+      </div>
+      <div class="fgrid one">
+        <div><label class="flabel">Cuéntanos sobre tu negocio o idea</label>
+          <textarea class="finput" id="f-mensaje" placeholder="Describe brevemente en qué etapa estás, qué necesitas y qué esperas del programa. Esto nos ayuda a asignarte el acompañamiento correcto..."></textarea>
+        </div>
+      </div>
+      <button type="button" class="btn btn-pist btn-lg" style="width:100%;justify-content:center;margin-top:8px" onclick="enviarFomento()">
+        Enviar inscripción → Un asesor te contactará pronto
+      </button>
+      <div id="f-resultado" style="display:none;margin-top:16px;padding:16px;background:rgba(168,201,78,.15);border-radius:10px;text-align:center;color:#a8c94e;font-weight:700;font-size:15px"></div>
+      <div class="form-info">
+        <span>📍 Visita cualquiera de nuestras <strong>16 sedes en Antioquia</strong></span>
+        <span>☎️ <strong>(604) 444 9184</strong></span>
+        <span>🌐 <strong>comfenalcoantioquia.com.co</strong></span>
+        <span>Todos los servicios son <strong>sin costo</strong> para afiliados</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <strong>Fomento Empresarial y Emprendimiento — Comfenalco Antioquia</strong>
+  <p style="margin-top:8px">Agencia de Empleo y Emprendimiento · (604) 444 9184 · <a href="https://www.comfenalcoantioquia.com.co">comfenalcoantioquia.com.co</a> · @ComfenalcoAnt</p>
+</footer>
+
+<div id="toasts"></div>
+
+<script>
+// ── UTILIDADES ──────────────────────────────────────────────
+function ir(id){var el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
+function toast(m){var tc=document.getElementById('toasts'),el=document.createElement('div');el.className='toast';el.textContent='✅ '+m;tc.appendChild(el);setTimeout(function(){el.remove();},4000);}
+
+// ── RUTAS TABS ──────────────────────────────────────────────
+function verRuta(id, btn) {
+  event.stopPropagation();
+  document.querySelectorAll('.ruta-contenido').forEach(function(el){el.classList.remove('active');});
+  document.querySelectorAll('.ruta-tab').forEach(function(b){b.classList.remove('active');});
+  var el=document.getElementById('ruta-'+id);if(el)el.classList.add('active');
+  if(btn)btn.classList.add('active');
+}
+
+// ── TIPO FORMULARIO ─────────────────────────────────────────
+var tipoFomento='emprendedor';
+function setTipoFomento(t){
+  event.stopPropagation();
+  tipoFomento=t;
+  ['empren','mipyme','turismo','otro'].forEach(function(x){
+    var el=document.getElementById('tr-'+x);if(el)el.classList.remove('active');
+  });
+  var mapId={emprendedor:'empren',mipyme:'mipyme',turismo:'turismo',otro:'otro'};
+  var el=document.getElementById('tr-'+mapId[t]);if(el)el.classList.add('active');
+  var lb=document.getElementById('lbl-cargo');
+  var ca=document.getElementById('f-cargo');
+  if(t==='emprendedor'){if(lb)lb.textContent='Profesión / Área';if(ca)ca.placeholder='Diseñadora, gastrónoma, técnico...';}
+  else if(t==='mipyme'){if(lb)lb.textContent='Cargo en la empresa';if(ca)ca.placeholder='Gerente, propietario, administrador...';}
+  else if(t==='turismo'){if(lb)lb.textContent='Tipo de negocio';if(ca)ca.placeholder='Hotel, restaurante, agencia de viajes...';}
+  else{if(lb)lb.textContent='Rol';if(ca)ca.placeholder='Describa su perfil...';}
+}
+
+// ── VITRINA ─────────────────────────────────────────────────
+// Seed de empresas desde el sistema — se complementa con empresasActuales si está disponible
+var VITRINA_SEED = [
+  {nombre:'Logística del Valle SAS',sector:'Logística y transporte',municipio:'Medellín',region:'Valle de Aburrá',desc:'Soluciones integrales de almacenamiento, distribución y última milla para empresas del sector manufacturero.',tipo:'MiPyme',color:'#094a4b'},
+  {nombre:'TechCo Colombia',sector:'Tecnología',municipio:'Envigado',region:'Valle de Aburrá',desc:'Desarrollo de software, aplicaciones móviles y consultoría tecnológica para MiPymes de la región.',tipo:'MiPyme',color:'#2d4a6b'},
+  {nombre:'Café de Origen Antioqueño',sector:'Agroalimentario',municipio:'Rionegro',region:'Oriente',desc:'Café especial de origen con trazabilidad completa. Exportación directa y conexión con tostadores internacionales.',tipo:'Emprendimiento',color:'#7c3aed'},
+  {nombre:'Casa Turística El Retiro',sector:'Turismo y gastronomía',municipio:'El Retiro',region:'Oriente',desc:'Turismo rural y experiencias gastronómicas en el Oriente antioqueño. Ganadores Premios Inclusión 2024.',tipo:'MiPyme',color:'#e67e22'},
+  {nombre:'Moda Consciente MF',sector:'Moda y confección',municipio:'Medellín',region:'Valle de Aburrá',desc:'Confección sostenible con materiales reciclados. Colecciones para exportación y marcas locales.',tipo:'Emprendimiento',color:'#009688'},
+  {nombre:'Agro Urabá Fresh',sector:'Agroalimentario',municipio:'Apartadó',region:'Urabá',desc:'Exportación de banano, plátano y productos tropicales frescos. Certificación global GAP y mercados en Europa.',tipo:'MiPyme',color:'#27ae60'}
+];
+
+function renderVitrina(lista){
+  var grid=document.getElementById('vitrina-grid');
+  if(!grid)return;
+  if(!lista||!lista.length){
+    grid.innerHTML='<div class="vitrina-empty"><p style="font-size:15px">No hay empresas que coincidan con los filtros.</p><button type="button" class="btn btn-verde btn-sm" style="margin-top:12px" onclick="ir(\'contacto-s\')">Registrar mi empresa</button></div>';
+    return;
+  }
+  grid.innerHTML=lista.map(function(e){
+    var ini=(e.nombre||'?').split(' ').slice(0,2).map(function(w){return w[0]||'';}).join('').toUpperCase();
+    var col=e.color||'var(--verde)';
+    return '<div class="vitrina-card">'+
+      '<div class="vc-header" style="background:'+col+'">'+
+        '<div class="vc-av">'+ini+'</div>'+
+        '<div><div class="vc-nombre">'+e.nombre+'</div><div class="vc-sector">'+e.sector+'</div></div>'+
+      '</div>'+
+      '<div class="vc-body">'+
+        '<div class="vc-region">📍 '+e.region+' · '+(e.municipio||'')+'</div>'+
+        '<div class="vc-desc">'+(e.desc||'Empresa en la vitrina comercial de Comfenalco Antioquia.')+'</div>'+
+      '</div>'+
+      '<div class="vc-footer">'+
+        '<span class="vc-badge">'+(e.tipo||'Empresa')+'</span>'+
+        '<button type="button" class="btn btn-ghost btn-sm" style="font-size:11px;padding:5px 12px" onclick="toast(\'Para conectar con '+(e.nombre||'esta empresa')+' usa el formulario de contacto.\')">Conectar →</button>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+function filtrarVitrina(){
+  var q=document.getElementById('vitrina-q').value.toLowerCase();
+  var s=document.getElementById('vitrina-sector').value;
+  var r=document.getElementById('vitrina-region').value;
+  var lista=VITRINA_SEED.filter(function(e){
+    var okQ=!q||e.nombre.toLowerCase().indexOf(q)>-1||(e.sector||'').toLowerCase().indexOf(q)>-1;
+    var okS=!s||e.sector===s;
+    var okR=!r||e.region===r;
+    return okQ&&okS&&okR;
+  });
+  renderVitrina(lista);
+}
+
+// ── FORMULARIO ──────────────────────────────────────────────
+function enviarFomento(){
+  event.stopPropagation();
+  var nombre=document.getElementById('f-nombre').value.trim();
+  var tel=document.getElementById('f-tel').value.trim();
+  var correo=document.getElementById('f-correo').value.trim();
+  if(!nombre||!tel||!correo){toast('Completa nombre, celular y correo para continuar');return;}
+  var res=document.getElementById('f-resultado');
+  res.style.display='block';
+  res.innerHTML='✅ ¡Inscripción recibida! Hola <strong>'+nombre+'</strong> — un asesor de Fomento Empresarial de Comfenalco Antioquia te contactará en los próximos días hábiles para orientarte sobre el programa más adecuado para tu etapa.<br/><span style="font-size:13px;opacity:.8">Recuerda visitar cualquiera de nuestras 16 sedes en Antioquia o llamar al (604) 444 9184.</span>';
+  ['f-nombre','f-cargo','f-empresa','f-nit','f-tel','f-correo','f-mensaje'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('f-programa').value='';
+  document.getElementById('f-sector').value='';
+  document.getElementById('f-region').value='';
+  res.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+// ── INIT ────────────────────────────────────────────────────
+window.addEventListener('load',function(){
+  renderVitrina(VITRINA_SEED);
+  setTipoFomento('emprendedor');
+});
+</script>
+</body>
+</html>
