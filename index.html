@@ -82,7 +82,49 @@
     @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
     .fu{animation:fadeUp .5s ease both}
     @media(max-width:768px){#topbar{padding:0 16px}.brand-logos{padding:3px 10px;height:44px}.brand-logos img:first-child{height:32px}.brand-logos img:last-child{height:26px}.hero{padding:48px 16px 40px}.hero-title{font-size:30px}.hero-stats{gap:24px}.portales-section,.vacantes-section{padding:40px 16px}}
-  </style>
+  
+  /* BPO SECTION */
+  .bpo-section{background:linear-gradient(135deg,#1a2a4a 0%,#0d3b4a 60%,#094a4b 100%);padding:72px 32px;position:relative;overflow:hidden}
+  .bpo-section::before{content:'';position:absolute;top:-80px;right:-80px;width:320px;height:320px;border-radius:50%;background:rgba(168,201,78,.07)}
+  .bpo-section::after{content:'';position:absolute;bottom:-60px;left:-60px;width:200px;height:200px;border-radius:50%;background:rgba(168,201,78,.05)}
+  .bpo-inner{max-width:1200px;margin:0 auto;position:relative;z-index:1}
+  .bpo-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(168,201,78,.15);border:1px solid rgba(168,201,78,.3);color:#a8c94e;font-size:12px;font-weight:700;padding:5px 14px;border-radius:20px;letter-spacing:.06em;margin-bottom:16px}
+  .bpo-header{display:grid;grid-template-columns:1fr auto;gap:32px;align-items:start;margin-bottom:48px}
+  .bpo-title{font-family:'Nunito',sans-serif;font-size:36px;font-weight:900;color:#fff;line-height:1.1;margin-bottom:10px}
+  .bpo-title span{color:#a8c94e}
+  .bpo-subtitle{font-size:16px;color:rgba(255,255,255,.7);line-height:1.6;max-width:600px}
+  .bpo-kpis{display:flex;gap:32px;flex-wrap:wrap}
+  .bpo-kpi{text-align:center}
+  .bpo-kpi-num{font-family:'Nunito',sans-serif;font-size:32px;font-weight:900;color:#a8c94e;line-height:1}
+  .bpo-kpi-lbl{font-size:12px;color:rgba(255,255,255,.6);margin-top:4px}
+  .bpo-servicios{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;margin-bottom:48px}
+  .bpo-srv{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:24px;transition:all .22s ease;cursor:default}
+  .bpo-srv:hover{background:rgba(168,201,78,.1);border-color:rgba(168,201,78,.35);transform:translateY(-4px)}
+  .bpo-srv-ico{font-size:32px;margin-bottom:12px}
+  .bpo-srv-nombre{font-family:'Nunito',sans-serif;font-size:17px;font-weight:800;color:#fff;margin-bottom:6px}
+  .bpo-srv-desc{font-size:13px;color:rgba(255,255,255,.65);line-height:1.6}
+  .bpo-srv-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+  .bpo-tag{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700;background:rgba(168,201,78,.15);color:#a8c94e}
+  .bpo-bottom{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start}
+  .bpo-atributos{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .bpo-attr{display:flex;align-items:flex-start;gap:12px;padding:16px;background:rgba(255,255,255,.05);border-radius:10px}
+  .bpo-attr-ico{width:36px;height:36px;border-radius:8px;background:rgba(168,201,78,.2);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+  .bpo-attr-txt .t{font-weight:700;font-size:13px;color:#fff;margin-bottom:2px}
+  .bpo-attr-txt .s{font-size:12px;color:rgba(255,255,255,.55);line-height:1.4}
+  .bpo-contacto{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:28px}
+  .bpo-contacto-title{font-family:'Nunito',sans-serif;font-size:20px;font-weight:800;color:#fff;margin-bottom:6px}
+  .bpo-contacto-sub{font-size:13px;color:rgba(255,255,255,.6);margin-bottom:20px}
+  .bpo-form .frow{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+  .bpo-form .frow.one{grid-template-columns:1fr}
+  .bpo-input{width:100%;padding:10px 14px;border:1.5px solid rgba(255,255,255,.15);border-radius:8px;background:rgba(255,255,255,.08);color:#fff;font-size:13px;font-family:inherit;outline:none;transition:border-color .22s}
+  .bpo-input::placeholder{color:rgba(255,255,255,.35)}
+  .bpo-input:focus{border-color:#a8c94e}
+  select.bpo-input option{color:#1a2a1a;background:#fff}
+  .bpo-contacto-info{margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,.1);display:flex;gap:16px;flex-wrap:wrap}
+  .bpo-cinfo{font-size:12px;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:6px}
+  .bpo-cinfo strong{color:#a8c94e}
+  @media(max-width:900px){.bpo-header{grid-template-columns:1fr}.bpo-bottom{grid-template-columns:1fr}.bpo-atributos{grid-template-columns:1fr}.bpo-form .frow{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
 
@@ -159,8 +201,145 @@
       <button class="btn portal-btn" style="background:#2d4a6b;color:#fff">Ingresar al panel interno →</button>
     </div>
 
+    <div class="portal-card fu" style="animation-delay:.4s;border-top-color:#e67e22;grid-column:1/-1;background:linear-gradient(135deg,#1a2a4a,#0d3b4a);cursor:pointer" onclick="document.querySelector('.bpo-section').scrollIntoView({behavior:'smooth'})">
+      <div style="display:flex;align-items:center;gap:20px;width:100%;flex-wrap:wrap">
+        <div class="portal-icon" style="font-size:38px">⭐</div>
+        <div style="flex:1">
+          <div class="portal-tag" style="background:rgba(230,126,34,.2);color:#e67e22">Servicio Premium · Solo para empresas</div>
+          <div class="portal-nombre" style="color:#fff;font-size:22px;margin-top:6px">BPO de Empleo Comfenalco</div>
+          <p class="portal-desc" style="color:rgba(255,255,255,.75)">Head hunting · Matching con IA · Assessment Center · Active Placement · Respuesta en 15 días hábiles</p>
+        </div>
+        <button class="btn" style="background:#e67e22;color:#fff;padding:12px 24px;white-space:nowrap;flex-shrink:0">Ver servicios BPO y cotizar →</button>
+      </div>
+    </div>
+
   </div>
 </section>
+
+<section class="bpo-section">
+  <div class="bpo-inner">
+    <div class="bpo-badge">⭐ SERVICIO ESPECIALIZADO · SOLO PARA EMPRESAS</div>
+    <div class="bpo-header">
+      <div>
+        <div class="bpo-title">BPO de Empleo<br/><span>Comfenalco Antioquia</span></div>
+        <p class="bpo-subtitle">Centro de conexión y valoración de alto impacto para cargos estratégicos, directivos, profesionales y mandos medios. Respondemos en 15 días hábiles con candidatos validados.</p>
+      </div>
+      <div class="bpo-kpis">
+        <div class="bpo-kpi"><div class="bpo-kpi-num">15</div><div class="bpo-kpi-lbl">días hábiles<br/>de respuesta</div></div>
+        <div class="bpo-kpi"><div class="bpo-kpi-num">1.000</div><div class="bpo-kpi-lbl">HV procesadas<br/>por segundo</div></div>
+        <div class="bpo-kpi"><div class="bpo-kpi-num">9</div><div class="bpo-kpi-lbl">regiones de<br/>Antioquia</div></div>
+      </div>
+    </div>
+
+    <div class="bpo-servicios">
+      <div class="bpo-srv">
+        <div class="bpo-srv-ico">🎯</div>
+        <div class="bpo-srv-nombre">Head Hunting especializado</div>
+        <div class="bpo-srv-desc">Búsqueda activa de perfiles directivos, gerenciales y técnicos de alto nivel que no están en el mercado visible. Identificamos talentos pasivos alineados con la cultura de tu organización.</div>
+        <div class="bpo-srv-tags"><span class="bpo-tag">Directivos</span><span class="bpo-tag">Gerentes</span><span class="bpo-tag">Mandos medios</span></div>
+      </div>
+      <div class="bpo-srv">
+        <div class="bpo-srv-ico">🤖</div>
+        <div class="bpo-srv-nombre">Matching con Inteligencia Artificial</div>
+        <div class="bpo-srv-desc">Algoritmos de procesamiento de lenguaje natural que cruzan perfiles con vacantes en tiempo real. Filtra por industria, área y experiencia. Machine learning que aprende con cada proceso.</div>
+        <div class="bpo-srv-tags"><span class="bpo-tag">IA</span><span class="bpo-tag">Machine learning</span><span class="bpo-tag">Tiempo real</span></div>
+      </div>
+      <div class="bpo-srv">
+        <div class="bpo-srv-ico">🔬</div>
+        <div class="bpo-srv-nombre">Valoración integral de candidatos</div>
+        <div class="bpo-srv-desc">Assessment Center y baterías de pruebas con soporte de biometría y gamificación. Evaluamos flexibilidad cognitiva, capacidad conversacional, valentía gerencial y agilismo. Competencias del futuro.</div>
+        <div class="bpo-srv-tags"><span class="bpo-tag">Assessment Center</span><span class="bpo-tag">Biometría</span><span class="bpo-tag">Gamificación</span></div>
+      </div>
+      <div class="bpo-srv">
+        <div class="bpo-srv-ico">🔗</div>
+        <div class="bpo-srv-nombre">Procesos flexibles a la medida</div>
+        <div class="bpo-srv-desc">Desde valoraciones puntuales y referenciaciones hasta procesos de selección completos. Adaptamos la profundidad del servicio según la necesidad y urgencia de la empresa cliente.</div>
+        <div class="bpo-srv-tags"><span class="bpo-tag">Valoraciones</span><span class="bpo-tag">Referenciaciones</span><span class="bpo-tag">Proceso completo</span></div>
+      </div>
+      <div class="bpo-srv">
+        <div class="bpo-srv-ico">🧑‍💼</div>
+        <div class="bpo-srv-nombre">Active Placement</div>
+        <div class="bpo-srv-desc">Programa de desvinculación humanizada. Acompañamos a tus colaboradores en el proceso de retiro y los preparamos para su reinserción laboral. Cuida tu marca empleadora en momentos difíciles.</div>
+        <div class="bpo-srv-tags"><span class="bpo-tag">Desvinculación</span><span class="bpo-tag">Reinserción</span><span class="bpo-tag">Marca empleadora</span></div>
+      </div>
+      <div class="bpo-srv">
+        <div class="bpo-srv-ico">📊</div>
+        <div class="bpo-srv-nombre">Dinámica laboral regional</div>
+        <div class="bpo-srv-desc">Informes de tendencias del mercado laboral de las 9 regiones de Antioquia desde 2017. Análisis de brechas, demanda de habilidades, aspectos culturales y oportunidades por sector productivo.</div>
+        <div class="bpo-srv-tags"><span class="bpo-tag">Informes</span><span class="bpo-tag">9 regiones</span><span class="bpo-tag">Desde 2017</span></div>
+      </div>
+    </div>
+
+    <div class="bpo-bottom">
+      <div>
+        <div style="font-family:'Nunito',sans-serif;font-size:18px;font-weight:800;color:#fff;margin-bottom:16px">¿Por qué elegir el BPO Comfenalco?</div>
+        <div class="bpo-atributos">
+          <div class="bpo-attr"><div class="bpo-attr-ico">⚡</div><div class="bpo-attr-txt"><div class="t">Oportunidad</div><div class="s">15 días hábiles garantizados para responder con candidatos validados</div></div></div>
+          <div class="bpo-attr"><div class="bpo-attr-ico">🌐</div><div class="bpo-attr-txt"><div class="t">Accesibilidad</div><div class="s">Precio competitivo con tarifa diferencial para afiliados a Comfenalco</div></div></div>
+          <div class="bpo-attr"><div class="bpo-attr-ico">🤖</div><div class="bpo-attr-txt"><div class="t">Tecnología IA</div><div class="s">Plataforma que procesa 1.000 HV por segundo con objetividad garantizada</div></div></div>
+          <div class="bpo-attr"><div class="bpo-attr-ico">🏆</div><div class="bpo-attr-txt"><div class="t">Experiencia</div><div class="s">Desde 2013 conectando empresas y talento en todo Antioquia</div></div></div>
+          <div class="bpo-attr"><div class="bpo-attr-ico">♿</div><div class="bpo-attr-txt"><div class="t">Inclusión laboral</div><div class="s">Especialistas en vinculación de poblaciones diversas con ruta certificada</div></div></div>
+          <div class="bpo-attr"><div class="bpo-attr-ico">📍</div><div class="bpo-attr-txt"><div class="t">Presencia regional</div><div class="s">Sedes físicas y laboratorios móviles en las 9 regiones de Antioquia</div></div></div>
+        </div>
+      </div>
+
+      <div class="bpo-contacto">
+        <div class="bpo-contacto-title">📋 Solicitar cotización</div>
+        <div class="bpo-contacto-sub">Déjanos tus datos y un asesor especializado te contactará en menos de 24 horas</div>
+        <div class="bpo-form">
+          <div class="frow">
+            <input class="bpo-input" type="text" id="bpo-nombre" placeholder="Nombre completo *"/>
+            <input class="bpo-input" type="text" id="bpo-cargo" placeholder="Cargo que ocupa"/>
+          </div>
+          <div class="frow">
+            <input class="bpo-input" type="text" id="bpo-empresa" placeholder="Empresa / Razón social *"/>
+            <input class="bpo-input" type="text" id="bpo-nit" placeholder="NIT"/>
+          </div>
+          <div class="frow">
+            <input class="bpo-input" type="tel" id="bpo-tel" placeholder="Teléfono / Celular *"/>
+            <input class="bpo-input" type="email" id="bpo-correo" placeholder="Correo electrónico *"/>
+          </div>
+          <div class="frow one">
+            <select class="bpo-input" id="bpo-servicio">
+              <option value="">¿Qué servicio le interesa? *</option>
+              <option>Head Hunting especializado</option>
+              <option>Matching con Inteligencia Artificial</option>
+              <option>Valoración integral / Assessment Center</option>
+              <option>Active Placement (desvinculación humanizada)</option>
+              <option>Proceso de selección completo</option>
+              <option>Informes de dinámica laboral</option>
+              <option>Capacitación empresarial (grupo cerrado)</option>
+              <option>Inclusión laboral</option>
+              <option>Varios servicios / No sé cuál necesito</option>
+            </select>
+          </div>
+          <div class="frow one">
+            <select class="bpo-input" id="bpo-tipo">
+              <option value="">Tipo de empresa</option>
+              <option>Afiliada a Comfenalco Antioquia</option>
+              <option>No afiliada</option>
+              <option>Persona natural / Independiente</option>
+            </select>
+          </div>
+          <div class="frow one">
+            <textarea class="bpo-input" id="bpo-mensaje" rows="3" placeholder="Cuéntenos brevemente su necesidad o la vacante que desea cubrir..." style="resize:none"></textarea>
+          </div>
+          <button class="btn btn-primary" style="width:100%;padding:14px;font-size:15px;border-radius:10px;margin-top:4px" onclick="enviarBPO()">
+            Solicitar cotización → 
+          </button>
+          <div id="bpo-resultado" style="display:none;margin-top:12px;padding:12px;background:rgba(168,201,78,.15);border-radius:8px;color:#a8c94e;font-size:13px;font-weight:700;text-align:center"></div>
+        </div>
+        <div class="bpo-contacto-info">
+          <div class="bpo-cinfo">📧 <strong>headhunter@comfenalcoantioquia.com</strong></div>
+          <div class="bpo-cinfo">📞 <strong>310 401 8651</strong></div>
+          <div class="bpo-cinfo">☎️ <strong>(604) 444 9184</strong></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
 
 <section class="vacantes-section">
   <div class="vacantes-inner">
@@ -174,6 +353,7 @@
   </div>
 </section>
 
+<a id="bpo-anchor"></a>
 <footer>
   <strong style="font-family:Nunito;font-size:18px">Agencia de Empleo y Emprendimiento</strong>
   <p>Comfenalco Antioquia · Servicio Público de Empleo</p>
@@ -280,6 +460,26 @@ window.addEventListener('load', function(){
     });
   }
 });
+
+function enviarBPO(){
+  var nombre = document.getElementById('bpo-nombre').value.trim();
+  var empresa = document.getElementById('bpo-empresa').value.trim();
+  var tel = document.getElementById('bpo-tel').value.trim();
+  var correo = document.getElementById('bpo-correo').value.trim();
+  var servicio = document.getElementById('bpo-servicio').value;
+  if(!nombre||!empresa||!tel||!correo||!servicio){
+    alert('Por favor completa los campos obligatorios (*)');return;
+  }
+  // En producción: enviar a API / EmailJS / Neon
+  var res = document.getElementById('bpo-resultado');
+  res.style.display = 'block';
+  res.innerHTML = '✅ ¡Solicitud enviada! Un asesor BPO se comunicará con '+nombre+' en menos de 24 horas.';
+  ['bpo-nombre','bpo-cargo','bpo-empresa','bpo-nit','bpo-tel','bpo-correo','bpo-mensaje'].forEach(function(id){
+    var el=document.getElementById(id);if(el)el.value='';
+  });
+  document.getElementById('bpo-servicio').value='';
+  document.getElementById('bpo-tipo').value='';
+}
 </script>
 </body>
 </html>
