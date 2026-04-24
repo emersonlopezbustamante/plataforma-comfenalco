@@ -3,87 +3,162 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Portal Candidatos — Comfenalco Antioquia</title>
+  <title>Candidatos — Comfenalco Antioquia</title>
   <script async crossorigin="anonymous"
     data-clerk-publishable-key="pk_test_bGlrZWQtYmlzb24tNTEuY2xlcmsuYWNjb3VudHMuZGV2JA"
     src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@5/dist/clerk.browser.js"
     type="text/javascript"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
   <style>
-    :root{--verde:#094a4b;--pist:#a8c94e;--pist-h:#8fb53a;--blanco:#fff;--fondo:#f4f6f4;--borde:#d8e2d8;--texto-g:#4a5a4a;--suave:#e8efe8;--negro:#1a2a1a;--r:8px;--rc:14px;--t:.22s ease}
+    :root{--verde:#094a4b;--pist:#a8c94e;--pist-h:#8fb53a;--fondo:#f4f6f4;--borde:#d8e2d8;--texto-g:#4a5a4a;--suave:#e8efe8;--negro:#1a2a1a;--naranja:#e67e22;--azul:#2d4a6b;--rojo:#e74c3c;--r:8px;--rc:14px;--t:.22s ease}
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     body{font-family:'Inter',sans-serif;font-size:15px;color:var(--negro);background:var(--fondo);min-height:100vh}
     button{cursor:pointer;font-family:inherit;border:none}
+    input,select,textarea{font-family:inherit}
     .hidden{display:none!important}
-    #topbar{background:var(--verde);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(9,74,75,.2)}
+
+    #topbar{background:var(--verde);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(9,74,75,.2)}
     .brand-logos{display:flex;align-items:center;background:#fff;border-radius:8px;padding:3px 12px;height:46px}
     .brand-logos img:first-child{height:36px;max-width:170px;object-fit:contain}
     .brand-sep{width:1px;height:28px;background:var(--borde);margin:0 10px}
     .brand-logos img:last-child{height:28px;max-width:130px;object-fit:contain}
-    .back{color:rgba(255,255,255,.7);font-size:13px;cursor:pointer;padding:6px 10px;border-radius:6px;transition:background var(--t);display:flex;align-items:center;gap:4px}
+    .back{color:rgba(255,255,255,.7);font-size:13px;cursor:pointer;padding:6px 10px;border-radius:6px;transition:background var(--t)}
     .back:hover{background:rgba(255,255,255,.1);color:#fff}
+
     .btn{display:inline-flex;align-items:center;gap:7px;padding:10px 22px;border-radius:var(--r);font-weight:700;font-size:14px;border:none;transition:all var(--t);cursor:pointer;font-family:inherit}
     .btn:active{transform:scale(.97)}
     .btn-primary{background:var(--pist);color:var(--verde)}
     .btn-primary:hover{background:var(--pist-h)}
+    .btn-verde{background:var(--verde);color:#fff}
+    .btn-verde:hover{background:#0d6b6c}
     .btn-outline{background:transparent;color:var(--verde);border:2px solid var(--verde)}
     .btn-outline:hover{background:var(--verde);color:#fff}
     .btn-ghost{background:var(--suave);color:var(--texto-g)}
-    .btn-sm{padding:7px 16px;font-size:13px}
+    .btn-ghost:hover{background:var(--borde)}
+    .btn-azul{background:var(--azul);color:#fff}
+    .btn-sm{padding:7px 14px;font-size:13px}
+    .btn-xs{padding:4px 10px;font-size:12px}
     .btn-lg{padding:14px 32px;font-size:16px;border-radius:10px}
+
     #shell{display:grid;grid-template-columns:260px 1fr;min-height:calc(100vh - 60px)}
-    #sidebar{background:#fff;border-right:1.5px solid var(--borde);padding:24px 0;display:flex;flex-direction:column;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto}
-    .ucard{padding:16px 20px 20px;border-bottom:1px solid var(--borde);margin-bottom:8px;text-align:center}
-    .uav{width:64px;height:64px;border-radius:50%;background:var(--pist);color:var(--verde);font-weight:900;font-size:24px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;overflow:hidden}
+    #sidebar{background:#fff;border-right:1.5px solid var(--borde);padding:20px 0;display:flex;flex-direction:column;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto}
+    .ucard{padding:16px 20px;border-bottom:1px solid var(--borde);margin-bottom:8px;text-align:center}
+    .uav{width:60px;height:60px;border-radius:50%;background:var(--pist);color:var(--verde);font-weight:900;font-size:22px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;overflow:hidden}
     .uav img{width:100%;height:100%;object-fit:cover}
-    .unombre{font-family:'Nunito',sans-serif;font-weight:800;font-size:16px;color:var(--verde)}
-    .utag{font-size:12px;color:var(--texto-g);margin-top:2px}
-    .cbar{height:6px;background:var(--borde);border-radius:3px;margin-top:10px;overflow:hidden}
+    .unombre{font-family:'Nunito',sans-serif;font-weight:800;font-size:15px;color:var(--verde)}
+    .utag{font-size:12px;color:var(--texto-g)}
+    .cbar{height:6px;background:var(--borde);border-radius:3px;margin-top:8px;overflow:hidden}
     .cfill{height:100%;background:var(--pist);border-radius:3px;transition:width .5s}
-    .clabel{font-size:11px;color:var(--texto-g);margin-top:4px;text-align:right}
-    .slabel{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--texto-g);padding:12px 20px 4px}
-    .nitem{display:flex;align-items:center;gap:11px;padding:10px 20px;font-size:14px;font-weight:600;color:var(--texto-g);border-left:3px solid transparent;cursor:pointer;transition:background var(--t);border-radius:0 8px 8px 0;margin-right:12px}
+    .clabel{font-size:11px;color:var(--texto-g);margin-top:3px;text-align:right}
+    .slabel{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--texto-g);padding:10px 20px 4px}
+    .nitem{display:flex;align-items:center;gap:10px;padding:9px 20px;font-size:13px;font-weight:600;color:var(--texto-g);border-left:3px solid transparent;cursor:pointer;transition:background var(--t);border-radius:0 8px 8px 0;margin-right:12px}
     .nitem:hover{background:var(--suave);color:var(--verde)}
-    .nitem.active{background:rgba(9,74,75,.08);color:var(--verde);border-left-color:var(--pist);font-weight:700}
-    .nico{font-size:18px;width:22px;text-align:center;flex-shrink:0}
+    .nitem.active{background:rgba(9,74,75,.08);color:var(--verde);border-left-color:var(--pist)}
+    .nico{font-size:17px;width:20px;text-align:center;flex-shrink:0}
+
     #main{padding:28px;overflow-y:auto}
-    .ptitle{font-family:'Nunito',sans-serif;font-size:24px;font-weight:900;color:var(--verde);margin-bottom:4px}
-    .psub{font-size:14px;color:var(--texto-g);margin-bottom:24px}
-    .acc-card{background:#fff;border-radius:20px;box-shadow:0 4px 24px rgba(9,74,75,.10);padding:60px 40px;text-align:center;max-width:480px;margin:60px auto}
-    .acc-icon{font-size:64px;margin-bottom:20px}
-    .acc-title{font-family:'Nunito',sans-serif;font-size:26px;font-weight:900;color:var(--verde);margin-bottom:10px}
-    .acc-sub{color:var(--texto-g);font-size:15px;margin-bottom:28px;line-height:1.6}
-    .acc-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-    .vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
-    .vcard{background:#fff;border-radius:14px;box-shadow:0 2px 16px rgba(9,74,75,.08);padding:20px;display:flex;flex-direction:column;gap:8px;border-left:4px solid var(--pist);transition:transform var(--t)}
-    .vcard:hover{transform:translateY(-3px)}
-    .vcargo{font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;color:var(--verde)}
-    .vemp{font-size:13px;color:var(--texto-g)}
-    .vmeta{display:flex;gap:10px;font-size:12px;color:var(--texto-g);flex-wrap:wrap}
-    .badge-a{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:600;background:#d4edda;color:#155724}
-    .card{background:#fff;border-radius:var(--rc);box-shadow:0 2px 16px rgba(9,74,75,.08);padding:24px}
-    .pasos{display:flex;align-items:center;margin-bottom:28px;overflow-x:auto;gap:0}
-    .paso{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;position:relative;min-width:70px}
-    .paso::after{content:'';position:absolute;top:16px;left:50%;width:100%;height:2px;background:var(--borde)}
+    .ptitle{font-family:'Nunito',sans-serif;font-size:22px;font-weight:900;color:var(--verde);margin-bottom:4px}
+    .psub{font-size:14px;color:var(--texto-g);margin-bottom:20px}
+
+    /* PASOS */
+    .pasos{display:flex;align-items:center;margin-bottom:28px;overflow-x:auto;gap:0;padding-bottom:4px}
+    .paso{display:flex;flex-direction:column;align-items:center;gap:5px;flex:1;position:relative;min-width:64px;cursor:pointer}
+    .paso::after{content:'';position:absolute;top:15px;left:50%;width:100%;height:2px;background:var(--borde)}
     .paso:last-child::after{display:none}
-    .paso.done::after{background:var(--pist)}
-    .pc{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;z-index:1;background:var(--suave);color:var(--texto-g);border:2px solid var(--borde)}
+    .paso.done::after,.paso.active::after{background:var(--pist)}
+    .pc{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;z-index:1;background:var(--suave);color:var(--texto-g);border:2px solid var(--borde)}
     .paso.done .pc{background:var(--pist);color:var(--verde);border-color:var(--pist)}
     .paso.active .pc{background:var(--verde);color:#fff;border-color:var(--verde)}
-    .pl{font-size:11px;color:var(--texto-g);font-weight:600;text-align:center}
+    .pl{font-size:10px;color:var(--texto-g);font-weight:600;text-align:center}
     .paso.active .pl{color:var(--verde)}
-    .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-    .fgroup{display:flex;flex-direction:column;gap:6px}
-    .flabel{font-size:13px;font-weight:600;color:var(--verde)}
-    .finput{padding:10px 14px;border:1.5px solid var(--borde);border-radius:var(--r);font-size:14px;font-family:inherit;color:var(--negro);background:#fff;outline:none;transition:border-color var(--t)}
-    .finput:focus{border-color:var(--verde);box-shadow:0 0 0 3px rgba(9,74,75,.10)}
-    textarea.finput{resize:vertical;min-height:90px}
-    .fnav{display:flex;justify-content:space-between;margin-top:24px;padding-top:20px;border-top:1px solid var(--borde)}
-    .loading{display:flex;align-items:center;justify-content:center;padding:48px;gap:12px;color:var(--texto-g)}
-    .spinner{width:28px;height:28px;border:3px solid var(--borde);border-top-color:var(--verde);border-radius:50%;animation:spin .8s linear infinite}
-    @keyframes spin{to{transform:rotate(360deg)}}
-    @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-    @media(max-width:768px){#shell{grid-template-columns:1fr}#sidebar{display:none}#main{padding:16px}.fgrid{grid-template-columns:1fr}}
+
+    .card{background:#fff;border-radius:var(--rc);box-shadow:0 2px 16px rgba(9,74,75,.08);padding:24px;margin-bottom:20px}
+    .ctitle{font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;color:var(--verde);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+
+    .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .fgrid.one{grid-template-columns:1fr}
+    .fgrid.three{grid-template-columns:1fr 1fr 1fr}
+    .fgroup{display:flex;flex-direction:column;gap:5px}
+    .flabel{font-size:12px;font-weight:700;color:var(--verde);text-transform:uppercase;letter-spacing:.04em}
+    .req{color:var(--rojo);margin-left:2px}
+    .fval{padding:9px 13px;border:1.5px solid var(--borde);border-radius:var(--r);font-size:14px;font-family:inherit;color:var(--negro);background:#fff;outline:none;transition:border-color var(--t)}
+    .fval:focus{border-color:var(--verde);box-shadow:0 0 0 3px rgba(9,74,75,.08)}
+    select.fval{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23094a4b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+    textarea.fval{resize:vertical;min-height:80px;line-height:1.5}
+    .fsep{font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;color:var(--verde);margin:14px 0 10px;padding-bottom:4px;border-bottom:2px solid var(--pist);grid-column:1/-1}
+    .fnav{display:flex;justify-content:space-between;margin-top:20px;padding-top:16px;border-top:1px solid var(--borde)}
+
+    /* VACANTES */
+    .vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+    .vcard{background:#fff;border-radius:12px;box-shadow:0 2px 14px rgba(9,74,75,.08);padding:18px;border-left:4px solid var(--pist);transition:transform var(--t)}
+    .vcard:hover{transform:translateY(-3px)}
+    .vcargo{font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;color:var(--verde)}
+    .vmeta{display:flex;gap:10px;font-size:12px;color:var(--texto-g);flex-wrap:wrap;margin:6px 0}
+    .badge-a{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600;background:#d4edda;color:#155724}
+    .match-bar{height:5px;background:var(--borde);border-radius:3px;margin-top:6px;overflow:hidden}
+    .match-fill{height:100%;border-radius:3px}
+
+    /* HV RESUMEN */
+    .hv-section{background:var(--suave);border-radius:10px;padding:14px;margin-bottom:12px}
+    .hv-label{font-size:11px;font-weight:700;color:var(--verde);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+    .hv-row{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;border-bottom:1px solid var(--borde)}
+    .hv-row:last-child{border-bottom:none}
+
+    /* POSTULACIONES */
+    .post-card{background:#fff;border-radius:10px;box-shadow:0 2px 10px rgba(9,74,75,.08);padding:16px;margin-bottom:10px;display:flex;align-items:center;gap:14px}
+    .post-estado{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+    .pe-r{background:#fdecea;color:var(--rojo)}
+    .pe-e{background:#d4edda;color:#155724}
+    .pe-p{background:#fff3cd;color:#856404}
+
+    /* ACC */
+    .acc-card{background:#fff;border-radius:20px;box-shadow:0 4px 24px rgba(9,74,75,.10);padding:60px 40px;text-align:center;max-width:480px;margin:40px auto}
+    .acc-icon{font-size:60px;margin-bottom:16px}
+    .acc-title{font-family:'Nunito',sans-serif;font-size:24px;font-weight:900;color:var(--verde);margin-bottom:8px}
+    .acc-sub{color:var(--texto-g);font-size:14px;margin-bottom:24px;line-height:1.6}
+
+    /* BANCO HV — INTERNO */
+    .twrap{background:#fff;border-radius:var(--rc);box-shadow:0 2px 16px rgba(9,74,75,.08);overflow:hidden;margin-bottom:24px}
+    .ttbar{padding:14px 20px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--borde);flex-wrap:wrap}
+    .ttitle{font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;color:var(--verde);margin-right:auto}
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    th{padding:9px 12px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;color:var(--verde);background:var(--suave)}
+    td{padding:10px 12px;border-bottom:1px solid var(--borde);vertical-align:middle}
+    tbody tr:last-child td{border-bottom:none}
+    tbody tr:hover{background:rgba(9,74,75,.02)}
+
+    /* FILTROS */
+    .filtros-bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;padding:12px 16px;background:#fff;border-radius:var(--rc);box-shadow:0 2px 10px rgba(9,74,75,.06)}
+    .finput{padding:8px 12px;border:1.5px solid var(--borde);border-radius:var(--r);font-size:13px;font-family:inherit;color:var(--negro);background:#fff;outline:none;transition:border-color var(--t)}
+    .finput:focus{border-color:var(--verde)}
+    select.finput{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23094a4b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+
+    /* MATCHING */
+    .match-card{background:#fff;border-radius:12px;box-shadow:0 2px 14px rgba(9,74,75,.08);padding:16px 20px;margin-bottom:10px;display:flex;gap:14px;align-items:flex-start;cursor:pointer;transition:box-shadow var(--t);border:2px solid transparent}
+    .match-card:hover{box-shadow:0 6px 24px rgba(9,74,75,.14)}
+    .match-card.seleccionada{border-color:var(--pist);background:rgba(168,201,78,.04)}
+    .match-pct{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:14px;color:#fff;flex-shrink:0}
+    .checkbox-sel{width:20px;height:20px;accent-color:var(--verde);cursor:pointer;flex-shrink:0;margin-top:3px}
+
+    /* MODAL */
+    .modal-bg{position:fixed;inset:0;background:rgba(9,74,75,.5);display:flex;align-items:flex-start;justify-content:center;z-index:999;backdrop-filter:blur(3px);animation:fadeIn .18s ease;padding:20px;overflow-y:auto}
+    .modal{background:#fff;border-radius:18px;box-shadow:0 20px 60px rgba(9,74,75,.25);width:min(720px,95vw);animation:slideUp .22s ease;margin:auto}
+    .modal-head{display:flex;align-items:center;justify-content:space-between;padding:18px 24px 14px;border-bottom:1px solid var(--borde);position:sticky;top:0;background:#fff;z-index:1;border-radius:18px 18px 0 0}
+    .modal-title{font-family:'Nunito',sans-serif;font-size:18px;font-weight:900;color:var(--verde)}
+    .modal-close{background:var(--suave);border:none;border-radius:8px;width:32px;height:32px;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+    .modal-body{padding:24px}
+    .modal-foot{padding:14px 24px;border-top:1px solid var(--borde);display:flex;justify-content:flex-end;gap:10px}
+
+    #toasts{position:fixed;bottom:24px;right:24px;display:flex;flex-direction:column;gap:10px;z-index:9999}
+    .toast{background:var(--verde);color:#fff;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:600;box-shadow:0 4px 20px rgba(9,74,75,.3);display:flex;align-items:center;gap:10px;animation:slideUp .22s ease;min-width:260px}
+    .toast.ok{border-left:4px solid var(--pist)}
+    .toast.err{border-left:4px solid var(--rojo);background:#c0392b}
+    .toast.warn{border-left:4px solid var(--naranja)}
+
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    @keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    @media(max-width:768px){#shell{grid-template-columns:1fr}#sidebar{display:none}#main{padding:16px}.fgrid,.fgrid.three{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
@@ -103,208 +178,1011 @@
 <div id="shell">
   <nav id="sidebar">
     <div class="ucard">
-      <div class="uav" id="uav">?</div>
-      <div class="unombre" id="unombre">Cargando...</div>
-      <div class="utag">Candidato</div>
-      <div class="cbar"><div class="cfill" id="cfill" style="width:20%"></div></div>
-      <div class="clabel">HV 20% completa</div>
+      <div class="uav" id="uav">👤</div>
+      <div class="unombre" id="unombre">Mi perfil</div>
+      <div class="utag" id="urol">Candidato</div>
+      <div class="cbar"><div class="cfill" id="cfill" style="width:0%"></div></div>
+      <div class="clabel" id="clabel">HV 0% completa</div>
     </div>
     <div class="slabel">Mi espacio</div>
     <div class="nitem active" onclick="nav('vacantes')"><span class="nico">💼</span> Vacantes disponibles</div>
-    <div class="nitem"        onclick="nav('mi-hv')"><span class="nico">📄</span> Mi hoja de vida</div>
-    <div class="nitem"        onclick="nav('postulaciones')"><span class="nico">📬</span> Mis postulaciones</div>
-    <div class="nitem"        onclick="nav('perfil')"><span class="nico">⚙️</span> Mi perfil</div>
+    <div class="nitem" id="nav-hv" onclick="nav('mi-hv')"><span class="nico">📄</span> Mi hoja de vida</div>
+    <div class="nitem" onclick="nav('postulaciones')"><span class="nico">📬</span> Mis postulaciones</div>
+    <!-- Solo visible para intermediadores/asesores -->
+    <div class="nitem hidden" id="nav-banco" onclick="nav('banco-hv')"><span class="nico">🗄️</span> Banco de HV</div>
+    <div class="nitem hidden" id="nav-matching" onclick="nav('matching')"><span class="nico">🎯</span> Matching HV↔Vacantes</div>
+    <div class="nitem hidden" id="nav-envio" onclick="nav('envio-empresa')"><span class="nico">📧</span> Enviar HV a empresa</div>
   </nav>
 
   <main id="main">
 
-    <div id="pg-acceso" class="hidden">
+    <!-- ACCESO -->
+    <div id="pg-acceso" class="hidden" onclick="event.stopPropagation()">
       <div class="acc-card">
         <div class="acc-icon">👤</div>
         <div class="acc-title">Portal de Candidatos</div>
-        <p class="acc-sub">Inicia sesión o crea una cuenta gratuita para acceder a todas las vacantes y crear tu hoja de vida.</p>
-        <div class="acc-btns">
-          <button class="btn btn-outline btn-lg" onclick="window.Clerk.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>
-          <button class="btn btn-primary btn-lg" onclick="window.Clerk.openSignUp({afterSignUpUrl:window.location.href})">✏️ Crear cuenta gratis</button>
+        <p class="acc-sub">Inicia sesión para ver vacantes, crear tu hoja de vida y postularte a empleos.</p>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+          <button type="button" class="btn btn-outline btn-lg" onclick="window.Clerk.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>
+          <button type="button" class="btn btn-primary btn-lg" onclick="window.Clerk.openSignUp({afterSignUpUrl:window.location.href})">✏️ Crear cuenta</button>
         </div>
       </div>
     </div>
 
-    <div id="pg-vacantes" class="hidden">
+    <!-- VACANTES -->
+    <div id="pg-vacantes" class="hidden" onclick="event.stopPropagation()">
       <div class="ptitle">💼 Vacantes disponibles</div>
-      <p class="psub">Encuentra tu próxima oportunidad laboral en Antioquia</p>
-      <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap">
-        <input class="finput" type="text" id="vq" placeholder="🔍 Buscar cargo..." style="flex:1;min-width:180px"/>
-        <select class="finput" id="vm" style="min-width:180px"><option value="">📍 Todos los municipios</option></select>
-        <button class="btn btn-primary" onclick="filtrarV()">Buscar</button>
+      <p class="psub">Encuentra tu próxima oportunidad</p>
+      <div class="filtros-bar">
+        <input class="finput" type="text" id="vq" placeholder="🔍 Buscar cargo o empresa..." style="flex:1;min-width:160px" oninput="filtrarV()"/>
+        <select class="finput" id="vm" onchange="filtrarV()"><option value="">📍 Todos los municipios</option></select>
+        <select class="finput" id="vcontrato" onchange="filtrarV()">
+          <option value="">Todos los contratos</option>
+          <option>Término fijo</option><option>Indefinido</option><option>Obra labor</option><option>Prestación de servicios</option>
+        </select>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="limpiarFiltrosV()">✕</button>
       </div>
       <div class="vgrid" id="vlista"></div>
     </div>
 
-    <div id="pg-mi-hv" class="hidden">
+    <!-- MI HV — 6 PASOS -->
+    <div id="pg-mi-hv" class="hidden" onclick="event.stopPropagation()">
       <div class="ptitle">📄 Mi hoja de vida</div>
-      <p class="psub">Completa tu perfil paso a paso para aumentar tus oportunidades</p>
-      <div class="pasos">
-        <div class="paso done"><div class="pc">✓</div><div class="pl">Cuenta</div></div>
-        <div class="paso active"><div class="pc">2</div><div class="pl">Datos personales</div></div>
-        <div class="paso"><div class="pc">3</div><div class="pl">Educación</div></div>
-        <div class="paso"><div class="pc">4</div><div class="pl">Experiencia</div></div>
-        <div class="paso"><div class="pc">5</div><div class="pl">Competencias</div></div>
-        <div class="paso"><div class="pc">6</div><div class="pl">Finalizar</div></div>
-      </div>
-      <div class="card">
-        <h3 style="font-family:Nunito;font-weight:800;color:var(--verde);margin-bottom:20px">Paso 2 — Datos personales</h3>
-        <div class="fgrid">
-          <div class="fgroup"><label class="flabel">Nombres *</label><input class="finput" type="text" placeholder="Ej: Juan Carlos"/></div>
-          <div class="fgroup"><label class="flabel">Apellidos *</label><input class="finput" type="text" placeholder="Ej: Gómez Pérez"/></div>
-          <div class="fgroup"><label class="flabel">Tipo de documento</label>
-            <select class="finput"><option>Cédula de ciudadanía</option><option>Cédula de extranjería</option><option>Pasaporte</option><option>Tarjeta de identidad</option></select>
-          </div>
-          <div class="fgroup"><label class="flabel">Número de documento *</label><input class="finput" type="text" placeholder="1.234.567.890"/></div>
-          <div class="fgroup"><label class="flabel">Fecha de nacimiento</label><input class="finput" type="date"/></div>
-          <div class="fgroup"><label class="flabel">Género</label>
-            <select class="finput"><option>Masculino</option><option>Femenino</option><option>No binario</option><option>Prefiero no decir</option></select>
-          </div>
-          <div class="fgroup"><label class="flabel">Municipio de residencia</label>
-            <select class="finput" id="hvm"><option value="">Selecciona...</option></select>
-          </div>
-          <div class="fgroup"><label class="flabel">Celular *</label><input class="finput" type="tel" placeholder="300 123 4567"/></div>
-          <div class="fgroup"><label class="flabel">Área de interés</label>
-            <select class="finput"><option>Administración</option><option>Logística</option><option>Sistemas</option><option>Salud</option><option>Educación</option><option>Manufactura</option><option>Comercio</option><option>Construcción</option><option>Agroindustria</option><option>Otro</option></select>
-          </div>
-          <div class="fgroup"><label class="flabel">Pretensión salarial (COP)</label><input class="finput" type="number" placeholder="1500000"/></div>
-          <div class="fgroup"><label class="flabel">Condición especial</label>
-            <select class="finput"><option value="ninguna">Ninguna</option><option value="joven">Joven (18-28 años)</option><option value="victima_conflicto">Víctima del conflicto</option><option value="discapacidad">Persona con discapacidad</option><option value="migrante">Migrante</option><option value="adulto_mayor">Adulto mayor</option><option value="madre_cabeza">Madre cabeza de hogar</option></select>
-          </div>
-        </div>
-        <div class="fgroup" style="margin-top:16px">
-          <label class="flabel">Perfil profesional</label>
-          <textarea class="finput" placeholder="Describe tu experiencia, habilidades y objetivos profesionales..."></textarea>
-        </div>
-        <div class="fnav">
-          <button class="btn btn-ghost">← Anterior</button>
-          <button class="btn btn-primary">Guardar y continuar →</button>
-        </div>
-      </div>
+      <p class="psub">Completa tu perfil para aumentar tus oportunidades</p>
+      <div class="pasos" id="pasos-hv"></div>
+      <div id="paso-contenido"></div>
     </div>
 
-    <div id="pg-postulaciones" class="hidden">
+    <!-- POSTULACIONES -->
+    <div id="pg-postulaciones" class="hidden" onclick="event.stopPropagation()">
       <div class="ptitle">📬 Mis postulaciones</div>
       <p class="psub">Seguimiento de tus procesos de selección</p>
-      <div class="card"><p style="color:var(--texto-g)">Aún no tienes postulaciones activas. Busca vacantes y postúlate.</p>
-        <button class="btn btn-primary" style="margin-top:16px" onclick="nav('vacantes')">Ver vacantes →</button>
+      <div id="lista-postulaciones"></div>
+    </div>
+
+    <!-- BANCO HV — SOLO INTERNOS -->
+    <div id="pg-banco-hv" class="hidden" onclick="event.stopPropagation()">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+        <div><div class="ptitle">🗄️ Banco de hojas de vida</div><p class="psub">Busca candidatos para vacantes activas</p></div>
+        <button type="button" class="btn btn-primary" onclick="nav('matching')">🎯 Ir a Matching</button>
+      </div>
+      <div class="filtros-bar">
+        <input class="finput" type="text" id="bq" placeholder="🔍 Nombre, documento, cargo..." style="flex:1;min-width:160px" oninput="filtrarBanco()"/>
+        <select class="finput" id="b-area" onchange="filtrarBanco()">
+          <option value="">Todas las áreas</option>
+          <option>Administración</option><option>Logística</option><option>Sistemas</option>
+          <option>Salud</option><option>Manufactura</option><option>Construcción</option><option>Agroindustria</option>
+        </select>
+        <select class="finput" id="b-region" onchange="filtrarBanco()">
+          <option value="">Todas las regiones</option>
+          <option>Valle de Aburrá</option><option>Oriente</option><option>Norte</option><option>Urabá</option>
+        </select>
+        <select class="finput" id="b-pct" onchange="filtrarBanco()">
+          <option value="">Cualquier completitud</option>
+          <option value="100">HV 100% completa</option>
+          <option value="80">HV 80%+</option>
+        </select>
+      </div>
+      <div class="twrap">
+        <div class="ttbar"><span class="ttitle" id="banco-count">0 candidatos</span></div>
+        <table>
+          <thead><tr><th>Nombre</th><th>Doc.</th><th>Área interés</th><th>Región</th><th>Exp.</th><th>Edu.</th><th>HV %</th><th>Acciones</th></tr></thead>
+          <tbody id="banco-tbody"></tbody>
+        </table>
       </div>
     </div>
 
-    <div id="pg-perfil" class="hidden">
-      <div class="ptitle">⚙️ Mi perfil</div>
-      <p class="psub">Configuración de tu cuenta</p>
-      <div class="card" style="max-width:480px">
-        <p style="color:var(--texto-g);margin-bottom:16px">Gestiona tu información de acceso.</p>
-        <button class="btn btn-primary" onclick="window.Clerk.openUserProfile()">Abrir configuración →</button>
+    <!-- MATCHING -->
+    <div id="pg-matching" class="hidden" onclick="event.stopPropagation()">
+      <div class="ptitle">🎯 Matching HV ↔ Vacantes</div>
+      <p class="psub">Selecciona una vacante y el sistema mostrará los candidatos más compatibles del banco</p>
+      <div style="display:grid;grid-template-columns:320px 1fr;gap:20px">
+        <div>
+          <div class="card" style="padding:16px">
+            <div class="ctitle" style="font-size:14px">1️⃣ Selecciona la vacante</div>
+            <select class="fval" id="match-vacante" onchange="ejecutarMatching()" style="width:100%">
+              <option value="">Elige una vacante...</option>
+            </select>
+            <div id="match-vac-detalle" style="margin-top:12px;font-size:12px;color:var(--texto-g)"></div>
+          </div>
+          <div class="card" style="padding:16px" id="match-filtros-card">
+            <div class="ctitle" style="font-size:14px">2️⃣ Ajusta filtros</div>
+            <div class="fgroup" style="margin-bottom:10px">
+              <label class="flabel">Región prioritaria</label>
+              <select class="fval" id="match-region" onchange="ejecutarMatching()">
+                <option value="">Cualquier región</option>
+                <option>Valle de Aburrá</option><option>Oriente</option><option>Norte</option><option>Urabá</option>
+              </select>
+            </div>
+            <div class="fgroup">
+              <label class="flabel">HV mínima completa</label>
+              <select class="fval" id="match-hv-min" onchange="ejecutarMatching()">
+                <option value="0">Sin mínimo</option>
+                <option value="60">60%+</option>
+                <option value="80">80%+</option>
+                <option value="100">100%</option>
+              </select>
+            </div>
+          </div>
+          <!-- HV seleccionadas para enviar -->
+          <div class="card" style="padding:16px" id="sel-panel">
+            <div class="ctitle" style="font-size:14px">3️⃣ HV seleccionadas</div>
+            <div id="sel-lista" style="font-size:13px;color:var(--texto-g);margin-bottom:12px">Ninguna seleccionada aún</div>
+            <button type="button" class="btn btn-primary" style="width:100%" onclick="nav('envio-empresa')">📧 Enviar a empresa →</button>
+          </div>
+        </div>
+        <div>
+          <div style="font-family:'Nunito';font-weight:800;font-size:16px;color:var(--verde);margin-bottom:14px" id="match-titulo">Selecciona una vacante para ver candidatos compatibles</div>
+          <div id="match-resultados"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ENVÍO A EMPRESA -->
+    <div id="pg-envio-empresa" class="hidden" onclick="event.stopPropagation()">
+      <div class="ptitle">📧 Enviar HV a empresa</div>
+      <p class="psub">Envía las hojas de vida seleccionadas con un clic al correo de selección de la empresa</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+        <div class="card">
+          <div class="ctitle">📋 Resumen del envío</div>
+          <div id="envio-resumen"></div>
+          <div class="fgroup" style="margin-top:16px">
+            <label class="flabel">Mensaje personalizado (opcional)</label>
+            <textarea class="fval" id="envio-mensaje" rows="4" placeholder="Estimados, adjunto las hojas de vida seleccionadas para la vacante...&#10;&#10;Quedamos atentos.&#10;&#10;Comfenalco Antioquia"></textarea>
+          </div>
+          <button type="button" class="btn btn-primary" style="width:100%;margin-top:16px;padding:14px" onclick="enviarHVsEmpresa()">
+            📧 Enviar HV a empresa ahora
+          </button>
+        </div>
+        <div class="card">
+          <div class="ctitle">👤 HV incluidas en el envío</div>
+          <div id="envio-hvs-lista"></div>
+        </div>
       </div>
     </div>
 
   </main>
 </div>
 
+<!-- MODAL DETALLE CANDIDATO -->
+<div id="modal-cand" class="modal-bg hidden">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="mc-title">Hoja de vida</div>
+      <button type="button" class="modal-close" onclick="cerrarModal('modal-cand')">✕</button>
+    </div>
+    <div class="modal-body" id="mc-body"></div>
+    <div class="modal-foot">
+      <button type="button" class="btn btn-ghost" onclick="cerrarModal('modal-cand')">Cerrar</button>
+      <button type="button" class="btn btn-azul btn-sm" onclick="descargarPDFCandidatoActual()">📄 Descargar HV PDF</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL POSTULAR -->
+<div id="modal-postular" class="modal-bg hidden">
+  <div class="modal" style="width:min(480px,95vw)">
+    <div class="modal-head">
+      <div class="modal-title">Postularme a vacante</div>
+      <button type="button" class="modal-close" onclick="cerrarModal('modal-postular')">✕</button>
+    </div>
+    <div class="modal-body" id="mp-body"></div>
+    <div class="modal-foot">
+      <button type="button" class="btn btn-ghost" onclick="cerrarModal('modal-postular')">Cancelar</button>
+      <button type="button" class="btn btn-primary" onclick="confirmarPostulacion()">✅ Confirmar postulación</button>
+    </div>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
 <script>
+// ═══════════════════════════════════════════════════
+// DATOS
+// ═══════════════════════════════════════════════════
 var MUNICIPIOS=[
   {id:1,n:'Medellín',s:'Valle de Aburrá'},{id:2,n:'Bello',s:'Valle de Aburrá'},
   {id:3,n:'Itagüí',s:'Valle de Aburrá'},{id:4,n:'Envigado',s:'Valle de Aburrá'},
   {id:5,n:'Sabaneta',s:'Valle de Aburrá'},{id:11,n:'Rionegro',s:'Oriente'},
   {id:13,n:'La Ceja',s:'Oriente'},{id:21,n:'Santa Rosa de Osos',s:'Norte'},
-  {id:22,n:'Yarumal',s:'Norte'},{id:31,n:'Santa Fe de Antioquia',s:'Occidente'},
-  {id:41,n:'Andes',s:'Suroeste'},{id:51,n:'Caucasia',s:'Bajo Cauca'},
-  {id:71,n:'Apartadó',s:'Urabá'},{id:72,n:'Turbo',s:'Urabá'}
+  {id:22,n:'Yarumal',s:'Norte'},{id:41,n:'Andes',s:'Suroeste'},
+  {id:51,n:'Caucasia',s:'Bajo Cauca'},{id:71,n:'Apartadó',s:'Urabá'},{id:72,n:'Turbo',s:'Urabá'}
 ];
-var VACANTES=[
-  {id:'1',cargo:'Auxiliar de Bodega',empresa:'Logística del Valle SAS',municipio:'Medellín',salario:1300000,contrato:'Término fijo',postulados:12},
-  {id:'2',cargo:'Desarrollador Web Jr.',empresa:'TechCo Colombia',municipio:'Envigado',salario:2500000,contrato:'Indefinido',postulados:5},
-  {id:'3',cargo:'Operario de Producción',empresa:'Manufacturas Bello SA',municipio:'Bello',salario:1160000,contrato:'Término fijo',postulados:28},
-  {id:'4',cargo:'Asesor Comercial',empresa:'Seguros Andinos Ltda',municipio:'Itagüí',salario:1800000,contrato:'Indefinido',postulados:9},
-  {id:'5',cargo:'Técnico de Refrigeración',empresa:'Fríos del Oriente SAS',municipio:'Rionegro',salario:1800000,contrato:'Término fijo',postulados:3},
-  {id:'6',cargo:'Auxiliar Contable',empresa:'Contadores Asociados Ltda',municipio:'Medellín',salario:1400000,contrato:'Término fijo',postulados:17},
-  {id:'7',cargo:'Inspector de Calidad',empresa:'Agrícola Urabá SA',municipio:'Apartadó',salario:1500000,contrato:'Obra labor',postulados:6},
-  {id:'8',cargo:'Auxiliar de Enfermería',empresa:'Hospital Regional Norte',municipio:'Santa Rosa de Osos',salario:1400000,contrato:'Término fijo',postulados:14},
-  {id:'9',cargo:'Analista de Datos',empresa:'TechCo Colombia',municipio:'Envigado',salario:3000000,contrato:'Indefinido',postulados:8},
-  {id:'10',cargo:'Conductor C2',empresa:'Logística del Valle SAS',municipio:'Medellín',salario:1500000,contrato:'Obra labor',postulados:21}
+
+var VACANTES_DATA=[
+  {id:1,cargo:'Auxiliar de Bodega',empresa:'Logística del Valle SAS',correo_emp:'seleccion@logisticavalle.com',municipio:'Medellín',region:'Valle de Aburrá',salario:1300000,contrato:'Término fijo',jornada:'Completa',edu:'Secundaria',exp_meses:6,area:'Logística',postulados:12,estado:'activa',tipo:'normal',desc:'Apoyo en recepción y despacho de mercancía, manejo de inventarios y montacargas.'},
+  {id:2,cargo:'Desarrollador Web Jr.',empresa:'TechCo Colombia',correo_emp:'rrhh@techco.com.co',municipio:'Envigado',region:'Valle de Aburrá',salario:2500000,contrato:'Indefinido',jornada:'Completa',edu:'Tecnólogo',exp_meses:12,area:'Sistemas',postulados:5,estado:'activa',tipo:'normal',desc:'Desarrollo con React y Node.js, trabajo en equipo ágil.'},
+  {id:3,cargo:'Operario de Producción',empresa:'Manufacturas Bello SA',correo_emp:'seleccion@manufacturasbello.com',municipio:'Bello',region:'Valle de Aburrá',salario:1160000,contrato:'Término fijo',jornada:'Completa',edu:'Secundaria',exp_meses:0,area:'Manufactura',postulados:28,estado:'activa',tipo:'normal',desc:'Manejo de maquinaria en línea de producción industrial.'},
+  {id:4,cargo:'Asesor Comercial',empresa:'Seguros Andinos Ltda',correo_emp:'talento@segurosandinos.com',municipio:'Itagüí',region:'Valle de Aburrá',salario:1800000,contrato:'Indefinido',jornada:'Completa',edu:'Técnico',exp_meses:6,area:'Administración',postulados:9,estado:'activa',tipo:'normal',desc:'Venta de seguros, manejo de cartera de clientes.'},
+  {id:5,cargo:'Auxiliar de Enfermería',empresa:'Hospital Regional Norte',correo_emp:'rrhh@hospitalregional.com',municipio:'Santa Rosa de Osos',region:'Norte',salario:1400000,contrato:'Término fijo',jornada:'Completa',edu:'Técnico',exp_meses:6,area:'Salud',postulados:14,estado:'activa',tipo:'incluyente',desc:'Apoyo en atención al paciente hospitalizado.'},
+  {id:6,cargo:'Inspector de Calidad',empresa:'Agrícola Urabá SA',correo_emp:'seleccion@agricolauraba.com',municipio:'Apartadó',region:'Urabá',salario:1500000,contrato:'Obra labor',jornada:'Completa',edu:'Técnico',exp_mesos:12,area:'Agroindustria',postulados:6,estado:'activa',tipo:'normal',desc:'Control de calidad en proceso agroindustrial de banano.'}
 ];
-var pagActual='vacantes';
 
-function ir(url){window.location.href=url;}
-function fmtCOP(n){return '$'+Number(n).toLocaleString('es-CO');}
+var BANCO_HV=[
+  {id:1,nombre:'Juan García Lopera',doc:'1023456789',celular:'3001234567',correo:'juan@mail.com',municipio:'Medellín',region:'Valle de Aburrá',area:'Logística',edu:'Técnico',edu_nivel:2,exp_meses:12,completitud:85,perfil:'Operario con experiencia en bodega y cargue/descargue de mercancía.',condicion:'ninguna',pretension:1400000,registrado_por:'Ana Bermúdez',fecha_reg:'2025-01-10',postulaciones:[1]},
+  {id:2,nombre:'María Torres Ríos',doc:'1152345678',celular:'3112345678',correo:'maria@mail.com',municipio:'Bello',region:'Valle de Aburrá',area:'Administración',edu:'Tecnólogo',edu_nivel:3,exp_meses:24,completitud:100,perfil:'Administradora con experiencia en atención al cliente y manejo de personal.',condicion:'madre_cabeza',pretension:1800000,registrado_por:'Ana Bermúdez',fecha_reg:'2025-01-15',postulaciones:[]},
+  {id:3,nombre:'Carlos Mendoza Pérez',doc:'1098765432',celular:'3209876543',correo:'carlos@mail.com',municipio:'Rionegro',region:'Oriente',area:'Sistemas',edu:'Tecnólogo',edu_nivel:3,exp_meses:18,completitud:90,perfil:'Desarrollador con conocimientos en React, Node.js y bases de datos SQL.',condicion:'joven',pretension:2500000,registrado_por:'Jorge Salazar',fecha_reg:'2025-02-01',postulaciones:[]},
+  {id:4,nombre:'Luisa Fernández Castro',doc:'1034567890',celular:'3143456789',correo:'luisa@mail.com',municipio:'Medellín',region:'Valle de Aburrá',area:'Salud',edu:'Técnico',edu_nivel:2,exp_meses:8,completitud:75,perfil:'Auxiliar de enfermería con experiencia en urgencias y hospitalización.',condicion:'ninguna',pretension:1400000,registrado_por:'Ana Bermúdez',fecha_reg:'2025-02-10',postulaciones:[]},
+  {id:5,nombre:'Andrés Ríos Montoya',doc:'1187654321',celular:'3156789012',correo:'andres@mail.com',municipio:'Apartadó',region:'Urabá',area:'Agroindustria',edu:'Secundaria',edu_nivel:1,exp_meses:36,completitud:80,perfil:'Trabajador agrícola con experiencia en cultivos de banano y control de calidad.',condicion:'ninguna',pretension:1300000,registrado_por:'Pedro Montoya',fecha_reg:'2025-03-01',postulaciones:[]},
+  {id:6,nombre:'Sofía Castro Vargas',doc:'1067890123',celular:'3178901234',correo:'sofia@mail.com',municipio:'Itagüí',region:'Valle de Aburrá',area:'Administración',edu:'Profesional',edu_nivel:4,exp_meses:30,completitud:95,perfil:'Administradora de empresas con experiencia en ventas y servicio al cliente.',condicion:'ninguna',pretension:2000000,registrado_por:'Ana Bermúdez',fecha_reg:'2025-03-15',postulaciones:[]},
+  {id:7,nombre:'Roberto Díaz Serna',doc:'1023890456',celular:'3167890123',correo:'roberto@mail.com',municipio:'Bello',region:'Valle de Aburrá',area:'Manufactura',edu:'Secundaria',edu_nivel:1,exp_meses:60,completitud:70,perfil:'Operario con amplia experiencia en manufactura y manejo de maquinaria industrial.',condicion:'ninguna',pretension:1200000,registrado_por:'María López',fecha_reg:'2025-04-01',postulaciones:[]}
+];
 
+var EDU_NIVELES={Primaria:0,Secundaria:1,Técnico:2,Tecnólogo:3,Profesional:4,Especialización:5};
+var PASOS_HV=['Cuenta','Personales','Educación','Experiencia','Competencias','Finalizar'];
+var pasoActual=1;
+var hvActual={};
+var vacPostularId=null;
+var candidatoModal=null;
+var hvSeleccionadas=[];
+var vacMatchId=null;
+var userRol='candidato';
+
+// ═══════════════════════════════════════════════════
+// UTILIDADES
+// ═══════════════════════════════════════════════════
+function toast(msg,tipo){var tc=document.getElementById('toasts'),t=document.createElement('div');t.className='toast '+(tipo||'ok');t.innerHTML=(tipo==='err'?'❌':tipo==='warn'?'⚠️':'✅')+' '+msg;tc.appendChild(t);setTimeout(function(){t.remove();},3500);}
+function cerrarModal(id){document.getElementById(id).classList.add('hidden');}
+function abrirModal(id){document.getElementById(id).classList.remove('hidden');}
+function fmtCOP(n){return n?'$'+Number(n).toLocaleString('es-CO'):'A convenir';}
+function fmtFecha(s){if(!s)return '—';var d=new Date(s+'T12:00:00');return d.toLocaleDateString('es-CO',{day:'2-digit',month:'short',year:'numeric'});}
+var PAGS=['acceso','vacantes','mi-hv','postulaciones','banco-hv','matching','envio-empresa'];
 function nav(p){
-  pagActual=p;
-  ['acceso','vacantes','mi-hv','postulaciones','perfil'].forEach(function(x){
-    var el=document.getElementById('pg-'+x); if(el) el.classList.add('hidden');
-  });
+  PAGS.forEach(function(x){var el=document.getElementById('pg-'+x);if(el)el.classList.add('hidden');});
   document.querySelectorAll('.nitem').forEach(function(n){n.classList.remove('active');});
-  var t=document.getElementById('pg-'+p); if(t) t.classList.remove('hidden');
-  if(p==='vacantes') renderV(VACANTES);
+  var t=document.getElementById('pg-'+p);if(t)t.classList.remove('hidden');
+  var ni=document.querySelector('#sidebar [onclick*="nav(\''+p+'\')"]');if(ni)ni.classList.add('active');
+  if(p==='vacantes')      renderVacantes(VACANTES_DATA);
+  if(p==='mi-hv')         renderPasoHV();
+  if(p==='postulaciones') renderPostulaciones();
+  if(p==='banco-hv')      renderBanco(BANCO_HV);
+  if(p==='matching')      initMatching();
+  if(p==='envio-empresa') renderEnvio();
 }
 
-function renderV(lista){
-  var g=document.getElementById('vlista'); if(!g) return;
-  if(!lista.length){g.innerHTML='<p style="color:var(--texto-g);padding:24px;grid-column:1/-1">No hay vacantes que coincidan.</p>';return;}
+// ═══════════════════════════════════════════════════
+// VACANTES
+// ═══════════════════════════════════════════════════
+function renderVacantes(lista){
+  var g=document.getElementById('vlista');
+  if(!g) return;
+  if(!lista.length){g.innerHTML='<p style="color:var(--texto-g);grid-column:1/-1">No hay vacantes que coincidan.</p>';return;}
   g.innerHTML=lista.map(function(v){
     return '<div class="vcard">'+
-      '<div class="vcargo">'+v.cargo+'</div>'+
-      '<div class="vemp">🏢 '+v.empresa+'</div>'+
-      '<div class="vmeta"><span>📍 '+v.municipio+'</span><span>💵 '+fmtCOP(v.salario)+'</span><span>📑 '+v.contrato+'</span><span>👥 '+v.postulados+' postulados</span></div>'+
-      '<div style="display:flex;gap:8px;margin-top:8px;align-items:center">'+
-        '<span class="badge-a">activa</span>'+
-        '<button class="btn btn-primary btn-sm" style="margin-left:auto">Postularme</button>'+
-      '</div></div>';
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px">'+
+        '<div class="vcargo">'+v.cargo+'</div>'+
+        (v.tipo!=='normal'?'<span style="background:#d4edda;color:#155724;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700">♿ Incluyente</span>':'')+
+      '</div>'+
+      '<div style="font-size:13px;color:var(--texto-g);margin-bottom:4px">🏢 '+v.empresa+'</div>'+
+      '<div class="vmeta"><span>📍 '+v.municipio+'</span><span>💵 '+fmtCOP(v.salario)+'</span><span>📑 '+v.contrato+'</span></div>'+
+      '<div style="font-size:12px;color:var(--texto-g);margin-bottom:10px;line-height:1.5">'+v.desc.substring(0,90)+(v.desc.length>90?'...':'')+'</div>'+
+      '<div style="display:flex;align-items:center;gap:8px">'+
+        '<span class="badge-a">Activa</span>'+
+        '<span style="font-size:12px;color:var(--texto-g)">👥 '+v.postulados+' postulados</span>'+
+        '<button type="button" class="btn btn-primary btn-sm" style="margin-left:auto" onclick="abrirPostular('+v.id+')">Postularme</button>'+
+      '</div>'+
+    '</div>';
   }).join('');
 }
 
 function filtrarV(){
-  var q=document.getElementById('vq').value.toLowerCase().trim();
+  var q=document.getElementById('vq').value.toLowerCase();
   var m=document.getElementById('vm').value;
-  var muni=MUNICIPIOS.find(function(x){return x.id===parseInt(m);});
-  var lista=VACANTES.filter(function(v){
+  var c=document.getElementById('vcontrato').value;
+  var lista=VACANTES_DATA.filter(function(v){
     var okQ=!q||v.cargo.toLowerCase().indexOf(q)>-1||v.empresa.toLowerCase().indexOf(q)>-1;
+    var muni=MUNICIPIOS.find(function(x){return x.id===parseInt(m);});
     var okM=!m||v.municipio===(muni?muni.n:'');
-    return okQ&&okM;
+    var okC=!c||v.contrato===c;
+    return okQ&&okM&&okC;
   });
-  renderV(lista);
+  renderVacantes(lista);
 }
 
+function limpiarFiltrosV(){
+  ['vq','vm','vcontrato'].forEach(function(id){document.getElementById(id).value='';});
+  renderVacantes(VACANTES_DATA);
+}
+
+function abrirPostular(id){
+  var v=VACANTES_DATA.find(function(x){return x.id===id;});
+  if(!v) return;
+  vacPostularId=id;
+  document.getElementById('mp-body').innerHTML=
+    '<div style="background:var(--suave);border-radius:10px;padding:16px;margin-bottom:16px">'+
+      '<div style="font-family:Nunito;font-weight:800;font-size:16px;color:var(--verde);margin-bottom:4px">'+v.cargo+'</div>'+
+      '<div style="font-size:13px;color:var(--texto-g)">🏢 '+v.empresa+' · 📍 '+v.municipio+'</div>'+
+      '<div style="font-size:13px;color:var(--texto-g);margin-top:4px">💵 '+fmtCOP(v.salario)+' · 📑 '+v.contrato+'</div>'+
+    '</div>'+
+    '<p style="font-size:13px;color:var(--texto-g);line-height:1.6">'+v.desc+'</p>'+
+    '<div style="background:#fff8e6;border-left:3px solid var(--naranja);border-radius:6px;padding:10px 14px;margin-top:14px;font-size:12px;color:#856404">'+
+      '⚠️ Al postularte autorizas a Comfenalco Antioquia compartir tu hoja de vida con la empresa para el proceso de selección.'+
+    '</div>';
+  abrirModal('modal-postular');
+}
+
+function confirmarPostulacion(){
+  var v=VACANTES_DATA.find(function(x){return x.id===vacPostularId;});
+  if(v) v.postulados++;
+  cerrarModal('modal-postular');
+  toast('¡Postulación exitosa a '+v.cargo+'!');
+  renderVacantes(VACANTES_DATA);
+}
+
+// ═══════════════════════════════════════════════════
+// HV — 6 PASOS
+// ═══════════════════════════════════════════════════
+function renderPasosNav(){
+  var cont=document.getElementById('pasos-hv');
+  if(!cont) return;
+  cont.innerHTML=PASOS_HV.map(function(p,i){
+    var idx=i+1;
+    var cls=idx<pasoActual?'paso done':idx===pasoActual?'paso active':'paso';
+    return '<div class="'+cls+'" onclick="irPaso('+idx+')">'+
+      '<div class="pc">'+(idx<pasoActual?'✓':idx)+'</div>'+
+      '<div class="pl">'+p+'</div>'+
+    '</div>';
+  }).join('');
+}
+
+function irPaso(n){
+  if(n<=pasoActual||n===pasoActual+1){pasoActual=n;renderPasoHV();}
+}
+
+function renderPasoHV(){
+  renderPasosNav();
+  var cont=document.getElementById('paso-contenido');
+  if(!cont) return;
+  var pct=Math.min(Math.round(((pasoActual-1)/5)*100),100);
+  var cfill=document.getElementById('cfill');
+  var clabel=document.getElementById('clabel');
+  if(cfill) cfill.style.width=pct+'%';
+  if(clabel) clabel.textContent='HV '+pct+'% completa';
+
+  if(pasoActual===1) cont.innerHTML=renderPaso1();
+  else if(pasoActual===2) cont.innerHTML=renderPaso2();
+  else if(pasoActual===3) cont.innerHTML=renderPaso3();
+  else if(pasoActual===4) cont.innerHTML=renderPaso4();
+  else if(pasoActual===5) cont.innerHTML=renderPaso5();
+  else cont.innerHTML=renderPaso6();
+}
+
+function renderPaso1(){
+  return '<div class="card"><div class="ctitle">🔑 Paso 1 — Cuenta creada</div>'+
+    '<div style="text-align:center;padding:20px">'+
+      '<div style="font-size:48px;margin-bottom:12px">✅</div>'+
+      '<p style="color:var(--texto-g);font-size:14px;margin-bottom:20px">Tu cuenta está activa. Ahora completa tu información personal para crear tu hoja de vida.</p>'+
+      '<button type="button" class="btn btn-primary btn-lg" onclick="pasoActual=2;renderPasoHV()">Continuar →</button>'+
+    '</div></div>';}
+
+function renderPaso2(){
+  var h=hvActual;
+  return '<div class="card"><div class="ctitle">👤 Paso 2 — Datos personales</div>'+
+    '<div class="fgrid">'+
+      '<div class="fgroup"><label class="flabel">Nombres <span class="req">*</span></label><input class="fval" id="h-n1" value="'+(h.nombre1||'')+'" placeholder="Primer nombre"/></div>'+
+      '<div class="fgroup"><label class="flabel">Apellidos <span class="req">*</span></label><input class="fval" id="h-a1" value="'+(h.apell1||'')+'" placeholder="Primer apellido"/></div>'+
+      '<div class="fgroup"><label class="flabel">Tipo documento</label>'+
+        '<select class="fval" id="h-tdoc"><option value="CC">CC</option><option value="CE">CE</option><option value="PA">Pasaporte</option><option value="TI">TI</option></select>'+
+      '</div>'+
+      '<div class="fgroup"><label class="flabel">Número documento <span class="req">*</span></label><input class="fval" id="h-doc" value="'+(h.doc||'')+'" placeholder="1.234.567.890"/></div>'+
+      '<div class="fgroup"><label class="flabel">Fecha de nacimiento</label><input class="fval" type="date" id="h-fnac" value="'+(h.fnac||'')+'"/></div>'+
+      '<div class="fgroup"><label class="flabel">Género</label><select class="fval" id="h-gen"><option>Masculino</option><option>Femenino</option><option>No binario</option><option>Prefiero no decir</option></select></div>'+
+      '<div class="fgroup"><label class="flabel">Municipio residencia <span class="req">*</span></label>'+
+        '<select class="fval" id="h-mpio">'+MUNICIPIOS.map(function(m){return '<option value="'+m.n+'">'+m.n+' ('+m.s+')</option>';}).join('')+'</select>'+
+      '</div>'+
+      '<div class="fgroup"><label class="flabel">Celular <span class="req">*</span></label><input class="fval" type="tel" id="h-cel" value="'+(h.celular||'')+'" placeholder="300 123 4567"/></div>'+
+      '<div class="fgroup"><label class="flabel">Correo electrónico</label><input class="fval" type="email" id="h-correo" value="'+(h.correo||'')+'" placeholder="correo@ejemplo.com"/></div>'+
+      '<div class="fgroup"><label class="flabel">Condición especial</label>'+
+        '<select class="fval" id="h-cond"><option value="ninguna">Ninguna</option><option value="joven">Joven (18-28 años)</option><option value="victima">Víctima del conflicto</option><option value="discapacidad">Discapacidad</option><option value="migrante">Migrante</option><option value="madre_cabeza">Madre cabeza de hogar</option></select>'+
+      '</div>'+
+      '<div class="fgroup"><label class="flabel">Pretensión salarial (COP)</label><input class="fval" type="number" id="h-sal" value="'+(h.pretension||'')+'" placeholder="1500000"/></div>'+
+      '<div class="fgroup"><label class="flabel">Área de interés <span class="req">*</span></label>'+
+        '<select class="fval" id="h-area"><option>Logística</option><option>Sistemas</option><option>Administración</option><option>Salud</option><option>Manufactura</option><option>Construcción</option><option>Agroindustria</option><option>Educación</option><option>Comercio</option></select>'+
+      '</div>'+
+    '</div>'+
+    '<div class="fgroup" style="margin-top:14px"><label class="flabel">Perfil profesional</label><textarea class="fval" id="h-perfil" rows="3" placeholder="Describe tu experiencia, habilidades y objetivos...">'+(h.perfil||'')+'</textarea></div>'+
+    '<div class="fnav"><button type="button" class="btn btn-ghost" onclick="pasoActual=1;renderPasoHV()">← Anterior</button><button type="button" class="btn btn-primary" onclick="guardarPaso2()">Guardar y continuar →</button></div>'+
+  '</div>';}
+
+function guardarPaso2(){
+  var n1=document.getElementById('h-n1').value.trim();
+  var a1=document.getElementById('h-a1').value.trim();
+  var doc=document.getElementById('h-doc').value.trim();
+  var cel=document.getElementById('h-cel').value.trim();
+  if(!n1||!a1||!doc||!cel){toast('Completa los campos obligatorios (*)','err');return;}
+  hvActual.nombre1=n1; hvActual.apell1=a1; hvActual.doc=doc; hvActual.celular=cel;
+  hvActual.correo=document.getElementById('h-correo').value;
+  hvActual.fnac=document.getElementById('h-fnac').value;
+  hvActual.municipio=document.getElementById('h-mpio').value;
+  hvActual.condicion=document.getElementById('h-cond').value;
+  hvActual.pretension=document.getElementById('h-sal').value;
+  hvActual.area=document.getElementById('h-area').value;
+  hvActual.perfil=document.getElementById('h-perfil').value;
+  pasoActual=3; renderPasoHV();
+}
+
+function renderPaso3(){
+  var h=hvActual;
+  return '<div class="card"><div class="ctitle">🎓 Paso 3 — Educación</div>'+
+    '<div class="fgrid">'+
+      '<div class="fgroup"><label class="flabel">Nivel educativo <span class="req">*</span></label>'+
+        '<select class="fval" id="h-edu"><option>Primaria</option><option>Secundaria</option><option>Técnico</option><option>Tecnólogo</option><option>Profesional</option><option>Especialización</option></select>'+
+      '</div>'+
+      '<div class="fgroup"><label class="flabel">Estado</label>'+
+        '<select class="fval" id="h-edu-est"><option>Completo</option><option>En curso</option><option>Incompleto</option></select>'+
+      '</div>'+
+      '<div class="fgroup"><label class="flabel">Institución</label><input class="fval" id="h-inst" value="'+(h.institucion||'')+'" placeholder="Nombre de la institución"/></div>'+
+      '<div class="fgroup"><label class="flabel">Título obtenido</label><input class="fval" id="h-titulo" value="'+(h.titulo||'')+'" placeholder="Ej: Técnico en logística"/></div>'+
+      '<div class="fgroup"><label class="flabel">Año de grado</label><input class="fval" type="number" id="h-anio" value="'+(h.anio_grado||'')+'" placeholder="2020"/></div>'+
+    '</div>'+
+    '<div style="background:var(--suave);border-radius:8px;padding:12px;margin-top:14px;font-size:13px;color:var(--texto-g)">💡 Puedes agregar más títulos después de completar la HV.</div>'+
+    '<div class="fnav"><button type="button" class="btn btn-ghost" onclick="pasoActual=2;renderPasoHV()">← Anterior</button><button type="button" class="btn btn-primary" onclick="guardarPaso3()">Guardar y continuar →</button></div>'+
+  '</div>';}
+
+function guardarPaso3(){
+  hvActual.edu=document.getElementById('h-edu').value;
+  hvActual.edu_nivel=Object.keys(EDU_NIVELES).indexOf(hvActual.edu);
+  hvActual.edu_estado=document.getElementById('h-edu-est').value;
+  hvActual.institucion=document.getElementById('h-inst').value;
+  hvActual.titulo=document.getElementById('h-titulo').value;
+  hvActual.anio_grado=document.getElementById('h-anio').value;
+  pasoActual=4; renderPasoHV();
+}
+
+function renderPaso4(){
+  var h=hvActual;
+  return '<div class="card"><div class="ctitle">💼 Paso 4 — Experiencia laboral</div>'+
+    '<div style="background:var(--suave);border-radius:8px;padding:12px;margin-bottom:16px;font-size:13px;color:var(--texto-g)">'+
+      '¿Tienes experiencia laboral? Si no, deja los campos en blanco y continúa.'+
+    '</div>'+
+    '<div class="fgrid">'+
+      '<div class="fgroup"><label class="flabel">Empresa / organización</label><input class="fval" id="h-emp-exp" value="'+(h.emp_exp||'')+'" placeholder="Empresa donde trabajaste"/></div>'+
+      '<div class="fgroup"><label class="flabel">Cargo desempeñado</label><input class="fval" id="h-cargo-exp" value="'+(h.cargo_exp||'')+'" placeholder="Ej: Auxiliar de bodega"/></div>'+
+      '<div class="fgroup"><label class="flabel">Desde (mes/año)</label><input class="fval" type="month" id="h-exp-ini" value="'+(h.exp_ini||'')+'"/></div>'+
+      '<div class="fgroup"><label class="flabel">Hasta</label><input class="fval" type="month" id="h-exp-fin" value="'+(h.exp_fin||'')+'"/></div>'+
+      '<div class="fgroup"><label class="flabel">Meses totales de experiencia</label><input class="fval" type="number" id="h-exp-m" value="'+(h.exp_meses||0)+'" min="0" placeholder="0"/></div>'+
+    '</div>'+
+    '<div class="fgroup" style="margin-top:14px"><label class="flabel">Funciones realizadas</label><textarea class="fval" id="h-funciones" rows="3" placeholder="Describe tus principales funciones...">'+(h.funciones||'')+'</textarea></div>'+
+    '<div class="fnav"><button type="button" class="btn btn-ghost" onclick="pasoActual=3;renderPasoHV()">← Anterior</button><button type="button" class="btn btn-primary" onclick="guardarPaso4()">Guardar y continuar →</button></div>'+
+  '</div>';}
+
+function guardarPaso4(){
+  hvActual.emp_exp=document.getElementById('h-emp-exp').value;
+  hvActual.cargo_exp=document.getElementById('h-cargo-exp').value;
+  hvActual.exp_ini=document.getElementById('h-exp-ini').value;
+  hvActual.exp_fin=document.getElementById('h-exp-fin').value;
+  hvActual.exp_meses=parseInt(document.getElementById('h-exp-m').value)||0;
+  hvActual.funciones=document.getElementById('h-funciones').value;
+  pasoActual=5; renderPasoHV();
+}
+
+function renderPaso5(){
+  var competencias=['Trabajo en equipo','Comunicación efectiva','Orientación al logro','Atención al detalle','Manejo de herramientas manuales','Manejo de computador','Inglés básico','Excel intermedio','Conducción vehículo','Manejo de inventarios','Servicio al cliente','Liderazgo'];
+  return '<div class="card"><div class="ctitle">⭐ Paso 5 — Competencias e idiomas</div>'+
+    '<div style="margin-bottom:14px"><div class="flabel" style="margin-bottom:8px">Selecciona tus competencias</div>'+
+      '<div style="display:flex;flex-wrap:wrap;gap:8px" id="comp-chips">'+
+        competencias.map(function(c){
+          var sel=(hvActual.competencias||[]).indexOf(c)>-1;
+          return '<span onclick="toggleComp(this)" data-c="'+c+'" style="padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid var(--borde);background:'+(sel?'var(--pist)':'#fff')+';color:'+(sel?'var(--verde)':'var(--texto-g)')+'">'+c+'</span>';
+        }).join('')+
+      '</div>'+
+    '</div>'+
+    '<div class="fgrid"><div class="fgroup"><label class="flabel">Idiomas</label><input class="fval" id="h-idiomas" value="'+(hvActual.idiomas||'')+'" placeholder="Ej: Inglés A2, Portugués básico"/></div></div>'+
+    '<div class="fgroup" style="margin-top:14px"><label class="flabel">Otras habilidades</label><textarea class="fval" id="h-habilidades" rows="2" placeholder="Software, maquinaria, certificaciones...">'+(hvActual.habilidades||'')+'</textarea></div>'+
+    '<div class="fnav"><button type="button" class="btn btn-ghost" onclick="pasoActual=4;renderPasoHV()">← Anterior</button><button type="button" class="btn btn-primary" onclick="guardarPaso5()">Guardar y continuar →</button></div>'+
+  '</div>';}
+
+function toggleComp(el){
+  var c=el.getAttribute('data-c');
+  if(!hvActual.competencias) hvActual.competencias=[];
+  var i=hvActual.competencias.indexOf(c);
+  if(i>-1){hvActual.competencias.splice(i,1);el.style.background='#fff';el.style.color='var(--texto-g)';}
+  else{hvActual.competencias.push(c);el.style.background='var(--pist)';el.style.color='var(--verde)';}
+}
+
+function guardarPaso5(){
+  hvActual.idiomas=document.getElementById('h-idiomas').value;
+  hvActual.habilidades=document.getElementById('h-habilidades').value;
+  pasoActual=6; renderPasoHV();
+}
+
+function renderPaso6(){
+  var h=hvActual;
+  var completitud=calcCompletitud(h);
+  var cfill=document.getElementById('cfill');
+  var clabel=document.getElementById('clabel');
+  if(cfill) cfill.style.width=completitud+'%';
+  if(clabel) clabel.textContent='HV '+completitud+'% completa';
+  return '<div class="card"><div class="ctitle">✅ Paso 6 — Tu hoja de vida</div>'+
+    '<div style="background:linear-gradient(135deg,var(--verde),#0d6b6c);color:#fff;border-radius:12px;padding:20px 24px;margin-bottom:20px">'+
+      '<div style="font-family:Nunito;font-size:20px;font-weight:900;margin-bottom:4px">'+(h.nombre1||'Tu nombre')+' '+(h.apell1||'')+'</div>'+
+      '<div style="opacity:.8;font-size:13px;margin-bottom:8px">'+(h.doc||'Documento')+'</div>'+
+      '<div style="display:flex;gap:16px;font-size:13px;opacity:.85;flex-wrap:wrap">'+
+        '<span>📍 '+(h.municipio||'—')+'</span>'+
+        '<span>📞 '+(h.celular||'—')+'</span>'+
+        '<span>📧 '+(h.correo||'—')+'</span>'+
+      '</div>'+
+      '<div style="margin-top:10px;background:rgba(255,255,255,.15);border-radius:8px;padding:6px 12px;display:inline-block;font-size:13px;font-weight:700">'+
+        'HV '+completitud+'% completa'+
+      '</div>'+
+    '</div>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">'+
+      '<div class="hv-section"><div class="hv-label">Educación</div>'+
+        '<div class="hv-row"><span>Nivel</span><strong>'+(h.edu||'—')+'</strong></div>'+
+        '<div class="hv-row"><span>Institución</span><span>'+(h.institucion||'—')+'</span></div>'+
+        '<div class="hv-row"><span>Título</span><span>'+(h.titulo||'—')+'</span></div>'+
+      '</div>'+
+      '<div class="hv-section"><div class="hv-label">Experiencia</div>'+
+        '<div class="hv-row"><span>Empresa</span><span>'+(h.emp_exp||'Sin experiencia')+'</span></div>'+
+        '<div class="hv-row"><span>Cargo</span><span>'+(h.cargo_exp||'—')+'</span></div>'+
+        '<div class="hv-row"><span>Meses exp.</span><strong>'+(h.exp_meses||0)+' meses</strong></div>'+
+      '</div>'+
+    '</div>'+
+    (h.perfil?'<div class="hv-section"><div class="hv-label">Perfil profesional</div><p style="font-size:13px;line-height:1.6">'+h.perfil+'</p></div>':'')+''+
+    (h.competencias&&h.competencias.length?'<div class="hv-section" style="margin-top:12px"><div class="hv-label">Competencias</div><div style="display:flex;flex-wrap:wrap;gap:6px">'+h.competencias.map(function(c){return '<span style="background:var(--pist);color:var(--verde);padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700">'+c+'</span>';}).join('')+'</div></div>':'')+
+    '<div style="display:flex;gap:12px;margin-top:20px;flex-wrap:wrap">'+
+      '<button type="button" class="btn btn-primary btn-lg" onclick="guardarHVFinal()">💾 Guardar HV</button>'+
+      '<button type="button" class="btn btn-azul btn-sm" onclick="generarPDFHV()">📄 Descargar PDF</button>'+
+      '<button type="button" class="btn btn-ghost btn-sm" onclick="nav(\'vacantes\')">💼 Ver vacantes</button>'+
+    '</div>'+
+  '</div>';}
+
+function calcCompletitud(h){
+  var campos=[h.nombre1,h.apell1,h.doc,h.celular,h.municipio,h.edu,h.perfil,h.area,h.correo,h.exp_meses>0?'si':null];
+  var ok=campos.filter(Boolean).length;
+  return Math.round((ok/campos.length)*100);
+}
+
+function guardarHVFinal(){
+  hvActual.completitud=calcCompletitud(hvActual);
+  // En producción: guardar en Neon
+  toast('Hoja de vida guardada exitosamente ('+hvActual.completitud+'% completa)');
+  var cfill=document.getElementById('cfill');
+  if(cfill) cfill.style.width=hvActual.completitud+'%';
+}
+
+// ═══════════════════════════════════════════════════
+// PDF HOJA DE VIDA
+// ═══════════════════════════════════════════════════
+function generarPDFHV(hv){
+  hv=hv||hvActual;
+  if(!hv||!hv.nombre1){toast('Completa al menos el nombre y documento primero','warn');return;}
+  if(typeof window.jspdf==='undefined'){toast('Cargando PDF...','warn');setTimeout(function(){generarPDFHV(hv);},1000);return;}
+  var jsPDF=window.jspdf.jsPDF;
+  var doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  var W=210,mg=20,y=mg;
+
+  // Header
+  doc.setFillColor(9,74,75);doc.rect(0,0,W,32,'F');
+  doc.setTextColor(255,255,255);
+  doc.setFontSize(18);doc.setFont('helvetica','bold');
+  doc.text('HOJA DE VIDA',mg,13);
+  doc.setFontSize(10);doc.setFont('helvetica','normal');
+  doc.text('Agencia de Empleo y Emprendimiento — Comfenalco Antioquia',mg,20);
+  doc.setFontSize(8);doc.text('Servicio Público de Empleo',mg,27);
+  y=40;
+
+  // Datos personales
+  doc.setFillColor(232,244,232);doc.rect(mg,y,W-mg*2,24,'F');
+  doc.setTextColor(9,74,75);doc.setFontSize(14);doc.setFont('helvetica','bold');
+  doc.text((hv.nombre1||'')+' '+(hv.apell1||''),mg+4,y+8);
+  doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(60,60,60);
+  doc.text((hv.tdoc||'CC')+': '+(hv.doc||'—')+'   |   Área: '+(hv.area||'—')+'   |   Municipio: '+(hv.municipio||'—'),mg+4,y+14);
+  doc.text('📞 '+(hv.celular||'—')+'   |   📧 '+(hv.correo||'—')+'   |   Condición: '+(hv.condicion||'ninguna'),mg+4,y+20);
+  y+=30;
+
+  // Función sección
+  function sec(titulo){
+    doc.setFillColor(9,74,75);doc.rect(mg,y,W-mg*2,7,'F');
+    doc.setTextColor(255,255,255);doc.setFontSize(9);doc.setFont('helvetica','bold');
+    doc.text(titulo,mg+3,y+5);y+=9;
+  }
+  function fila(lbl,val,bold){
+    doc.setFontSize(9);
+    doc.setFont('helvetica','bold');doc.setTextColor(9,74,75);doc.text(lbl+':',mg+3,y);
+    doc.setFont('helvetica',bold?'bold':'normal');doc.setTextColor(30,30,30);
+    doc.text(String(val||'—'),mg+45,y,{maxWidth:W-mg*2-47});
+    y+=6;
+  }
+
+  // Perfil
+  if(hv.perfil){
+    sec('PERFIL PROFESIONAL');
+    doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(30,30,30);
+    var perfilLines=doc.splitTextToSize(hv.perfil,W-mg*2-4);
+    doc.text(perfilLines,mg+3,y);y+=perfilLines.length*5+4;
+  }
+
+  // Educación
+  sec('EDUCACIÓN');
+  fila('Nivel educativo',hv.edu);fila('Estado',hv.edu_estado);
+  fila('Institución',hv.institucion);fila('Título',hv.titulo);fila('Año de grado',hv.anio_grado);
+  y+=2;
+
+  // Experiencia
+  sec('EXPERIENCIA LABORAL');
+  if(hv.emp_exp){
+    fila('Empresa',hv.emp_exp,true);fila('Cargo',hv.cargo_exp);
+    fila('Período',hv.exp_ini+' — '+(hv.exp_fin||'Presente'));fila('Meses de exp.',(hv.exp_meses||0)+' meses');
+    if(hv.funciones){
+      doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(9,74,75);doc.text('Funciones:',mg+3,y);y+=5;
+      doc.setFont('helvetica','normal');doc.setTextColor(30,30,30);
+      var funLines=doc.splitTextToSize(hv.funciones,W-mg*2-4);
+      doc.text(funLines,mg+3,y);y+=funLines.length*5+3;
+    }
+  } else {
+    doc.setFontSize(9);doc.setFont('helvetica','italic');doc.setTextColor(100,100,100);
+    doc.text('Sin experiencia laboral previa',mg+3,y);y+=8;
+  }
+  y+=2;
+
+  // Competencias
+  if(hv.competencias&&hv.competencias.length){
+    sec('COMPETENCIAS');
+    var compText=hv.competencias.join(' · ');
+    var compLines=doc.splitTextToSize(compText,W-mg*2-4);
+    doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(30,30,30);
+    doc.text(compLines,mg+3,y);y+=compLines.length*5+4;
+  }
+
+  // Idiomas
+  if(hv.idiomas){
+    sec('IDIOMAS Y HABILIDADES');
+    doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(30,30,30);
+    doc.text(hv.idiomas,mg+3,y);y+=7;
+    if(hv.habilidades){var hl=doc.splitTextToSize(hv.habilidades,W-mg*2-4);doc.text(hl,mg+3,y);y+=hl.length*5+3;}
+  }
+
+  // Pretensión
+  if(hv.pretension){
+    y+=4;
+    doc.setFillColor(232,244,232);doc.rect(mg,y,W-mg*2,10,'F');
+    doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(9,74,75);
+    doc.text('Pretensión salarial: '+fmtCOP(hv.pretension),mg+4,y+6.5);
+    y+=14;
+  }
+
+  // Pie
+  doc.setFillColor(9,74,75);doc.rect(0,287,W,10,'F');
+  doc.setTextColor(255,255,255);doc.setFontSize(7);doc.setFont('helvetica','normal');
+  doc.text('Comfenalco Antioquia — Agencia de Empleo y Emprendimiento — Servicio Público de Empleo',mg,293);
+  doc.text(new Date().toLocaleDateString('es-CO'),W-mg-15,293);
+
+  var nombre_archivo='HV_'+(hv.nombre1||'candidato')+'_'+(hv.apell1||'')+'.pdf';
+  doc.save(nombre_archivo.replace(/\s+/g,'_'));
+  toast('PDF de HV descargado');
+}
+
+function descargarPDFCandidatoActual(){
+  if(candidatoModal) generarPDFHV(candidatoModal);
+}
+
+// ═══════════════════════════════════════════════════
+// POSTULACIONES
+// ═══════════════════════════════════════════════════
+function renderPostulaciones(){
+  var el=document.getElementById('lista-postulaciones');
+  if(!el) return;
+  // Buscar vacantes a las que está postulado
+  var posts=VACANTES_DATA.filter(function(v){return v.postulados>0;}).slice(0,3); // mock
+  if(!posts.length){
+    el.innerHTML='<div class="card" style="text-align:center;padding:40px"><p style="color:var(--texto-g)">Aún no tienes postulaciones.</p><button type="button" class="btn btn-primary" style="margin-top:16px" onclick="nav(\'vacantes\')">Ver vacantes →</button></div>';
+    return;
+  }
+  el.innerHTML=posts.map(function(v,i){
+    var estados=['En revisión','Preseleccionado','En proceso'];
+    var clases=['pe-p','pe-e','pe-r'];
+    return '<div class="post-card">'+
+      '<div style="font-size:32px">💼</div>'+
+      '<div style="flex:1"><div style="font-weight:700;font-size:14px">'+v.cargo+'</div>'+
+        '<div style="font-size:13px;color:var(--texto-g)">🏢 '+v.empresa+' · 📍 '+v.municipio+'</div>'+
+      '</div>'+
+      '<div style="text-align:right"><span class="post-estado '+clases[i%3]+'">'+estados[i%3]+'</span>'+
+        '<div style="font-size:11px;color:var(--texto-g);margin-top:4px">'+fmtCOP(v.salario)+'</div>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════
+// BANCO HV — SOLO INTERNOS
+// ═══════════════════════════════════════════════════
+function renderBanco(lista){
+  var tb=document.getElementById('banco-tbody');
+  var ct=document.getElementById('banco-count');
+  if(ct) ct.textContent=lista.length+' candidato'+(lista.length!==1?'s':'');
+  if(!tb) return;
+  if(!lista.length){tb.innerHTML='<tr><td colspan="8" style="padding:24px;text-align:center;color:var(--texto-g)">Sin resultados</td></tr>';return;}
+  tb.innerHTML=lista.map(function(c){
+    var pctColor=c.completitud>=80?'#27ae60':c.completitud>=50?'var(--naranja)':'var(--rojo)';
+    return '<tr>'+
+      '<td><strong>'+c.nombre+'</strong><br/><span style="font-size:11px;color:var(--texto-g)">'+c.doc+'</span></td>'+
+      '<td style="color:var(--texto-g)">'+c.doc+'</td>'+
+      '<td><span style="background:var(--suave);color:var(--texto-g);padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600">'+c.area+'</span></td>'+
+      '<td style="color:var(--texto-g)">'+c.region+'</td>'+
+      '<td style="color:var(--texto-g)">'+c.exp_meses+' meses</td>'+
+      '<td style="color:var(--texto-g)">'+c.edu+'</td>'+
+      '<td><span style="color:'+pctColor+';font-weight:700">'+c.completitud+'%</span></td>'+
+      '<td><div style="display:flex;gap:4px">'+
+        '<button type="button" class="btn btn-ghost btn-xs" onclick="verCandidato('+c.id+')">Ver HV</button>'+
+        '<button type="button" class="btn btn-azul btn-xs" onclick="verCandidatoYDescargar('+c.id+')">📄 PDF</button>'+
+      '</div></td>'+
+    '</tr>';
+  }).join('');
+}
+
+function filtrarBanco(){
+  var q=document.getElementById('bq').value.toLowerCase();
+  var a=document.getElementById('b-area').value;
+  var r=document.getElementById('b-region').value;
+  var p=parseInt(document.getElementById('b-pct').value)||0;
+  var lista=BANCO_HV.filter(function(c){
+    var okQ=!q||c.nombre.toLowerCase().indexOf(q)>-1||c.doc.indexOf(q)>-1||c.area.toLowerCase().indexOf(q)>-1;
+    var okA=!a||c.area===a;
+    var okR=!r||c.region===r;
+    var okP=!p||c.completitud>=p;
+    return okQ&&okA&&okR&&okP;
+  });
+  renderBanco(lista);
+}
+
+function verCandidato(id){
+  var c=BANCO_HV.find(function(x){return x.id===id;});
+  if(!c) return;
+  candidatoModal=c;
+  document.getElementById('mc-title').textContent=c.nombre;
+  document.getElementById('mc-body').innerHTML=
+    '<div style="background:linear-gradient(135deg,var(--verde),#0d6b6c);color:#fff;border-radius:10px;padding:16px 20px;margin-bottom:16px">'+
+      '<div style="font-family:Nunito;font-size:18px;font-weight:900">'+c.nombre+'</div>'+
+      '<div style="opacity:.8;font-size:13px;margin:4px 0">'+c.doc+' · '+c.municipio+' · '+c.region+'</div>'+
+      '<div style="font-size:13px;opacity:.85">📞 '+c.celular+' · 📧 '+c.correo+'</div>'+
+    '</div>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">'+
+      '<div class="hv-section"><div class="hv-label">Perfil</div><p style="font-size:13px;line-height:1.6">'+c.perfil+'</p></div>'+
+      '<div class="hv-section"><div class="hv-label">Datos clave</div>'+
+        '<div class="hv-row"><span>Área</span><strong>'+c.area+'</strong></div>'+
+        '<div class="hv-row"><span>Educación</span><strong>'+c.edu+'</strong></div>'+
+        '<div class="hv-row"><span>Experiencia</span><strong>'+c.exp_meses+' meses</strong></div>'+
+        '<div class="hv-row"><span>Pretensión</span><strong>'+fmtCOP(c.pretension)+'</strong></div>'+
+        '<div class="hv-row"><span>Condición</span><span>'+c.condicion+'</span></div>'+
+        '<div class="hv-row"><span>HV completa</span><strong style="color:'+(c.completitud>=80?'#27ae60':'var(--naranja)')+'">'+c.completitud+'%</strong></div>'+
+      '</div>'+
+    '</div>'+
+    '<div style="font-size:12px;color:var(--texto-g);border-top:1px solid var(--borde);padding-top:8px">'+
+      'Registrado por: <strong>'+c.registrado_por+'</strong> el '+fmtFecha(c.fecha_reg)+
+    '</div>';
+  abrirModal('modal-cand');
+}
+
+function verCandidatoYDescargar(id){
+  var c=BANCO_HV.find(function(x){return x.id===id;});
+  if(c) generarPDFHV(c);
+}
+
+// ═══════════════════════════════════════════════════
+// MATCHING HV ↔ VACANTES
+// ═══════════════════════════════════════════════════
+function initMatching(){
+  var sel=document.getElementById('match-vacante');
+  if(!sel) return;
+  sel.innerHTML='<option value="">Elige una vacante...</option>'+
+    VACANTES_DATA.filter(function(v){return v.estado==='activa';}).map(function(v){
+      return '<option value="'+v.id+'">'+v.cargo+' — '+v.empresa+' ('+v.municipio+')</option>';
+    }).join('');
+}
+
+function calcMatch(candidato, vacante){
+  var score=0;
+  // Área (40 puntos)
+  if(candidato.area===vacante.area) score+=40;
+  // Educación (20 puntos)
+  var eduMin=EDU_NIVELES[vacante.edu]||0;
+  if(candidato.edu_nivel>=eduMin) score+=20;
+  else if(candidato.edu_nivel===eduMin-1) score+=10;
+  // Experiencia (20 puntos)
+  if(candidato.exp_meses>=vacante.exp_meses) score+=20;
+  else score+=Math.round((candidato.exp_meses/Math.max(vacante.exp_meses,1))*20);
+  // Región (10 puntos)
+  if(candidato.region===vacante.region) score+=10;
+  // Completitud HV (10 puntos)
+  score+=Math.round((candidato.completitud/100)*10);
+  return Math.min(score,100);
+}
+
+function ejecutarMatching(){
+  var vId=parseInt(document.getElementById('match-vacante').value);
+  var regFiltro=document.getElementById('match-region').value;
+  var hvMin=parseInt(document.getElementById('match-hv-min').value)||0;
+  var res=document.getElementById('match-resultados');
+  var titulo=document.getElementById('match-titulo');
+  if(!vId){if(res)res.innerHTML='';if(titulo)titulo.textContent='Selecciona una vacante para ver candidatos compatibles';return;}
+
+  vacMatchId=vId;
+  var v=VACANTES_DATA.find(function(x){return x.id===vId;});
+  if(!v) return;
+  if(titulo) titulo.textContent='Candidatos compatibles para: '+v.cargo+' — '+v.empresa;
+
+  // Detalle vacante
+  var det=document.getElementById('match-vac-detalle');
+  if(det) det.innerHTML=
+    '<div style="background:var(--suave);border-radius:8px;padding:10px;font-size:12px">'+
+    '<div><strong>Área:</strong> '+v.area+'</div>'+
+    '<div><strong>Educación mín.:</strong> '+v.edu+'</div>'+
+    '<div><strong>Exp. mín.:</strong> '+v.exp_meses+' meses</div>'+
+    '<div><strong>Región:</strong> '+v.region+'</div>'+
+    '</div>';
+
+  var candidatos=BANCO_HV.filter(function(c){
+    var okR=!regFiltro||c.region===regFiltro;
+    var okHv=!hvMin||c.completitud>=hvMin;
+    return okR&&okHv;
+  });
+
+  var resultados=candidatos.map(function(c){
+    return {candidato:c,pct:calcMatch(c,v)};
+  }).sort(function(a,b){return b.pct-a.pct;});
+
+  if(!res) return;
+  if(!resultados.length){res.innerHTML='<p style="color:var(--texto-g)">Sin candidatos disponibles con los filtros actuales.</p>';return;}
+
+  res.innerHTML=resultados.map(function(r){
+    var c=r.candidato;
+    var pct=r.pct;
+    var color=pct>=75?'#27ae60':pct>=50?'var(--naranja)':'var(--rojo)';
+    var seleccionada=hvSeleccionadas.indexOf(c.id)>-1;
+    return '<div class="match-card '+(seleccionada?'seleccionada':'')+'" id="mc-'+c.id+'">'+
+      '<input type="checkbox" class="checkbox-sel" '+(seleccionada?'checked':'')+' onclick="toggleSelHV('+c.id+',event)"/>'+
+      '<div class="match-pct" style="background:'+color+'">'+pct+'%</div>'+
+      '<div style="flex:1">'+
+        '<div style="font-weight:700;font-size:14px">'+c.nombre+'</div>'+
+        '<div style="font-size:12px;color:var(--texto-g);margin:3px 0">'+c.doc+' · '+c.municipio+' · '+c.region+'</div>'+
+        '<div style="display:flex;gap:8px;font-size:12px;color:var(--texto-g);flex-wrap:wrap">'+
+          '<span>🎓 '+c.edu+'</span>'+
+          '<span>⏱️ '+c.exp_meses+' meses exp.</span>'+
+          '<span>📍 '+c.area+'</span>'+
+          '<span style="color:'+(c.completitud>=80?'#27ae60':'var(--naranja)')+'">HV '+c.completitud+'%</span>'+
+        '</div>'+
+        '<div style="font-size:11px;color:var(--texto-g);margin-top:4px;line-height:1.4">'+c.perfil.substring(0,80)+'...</div>'+
+        '<div class="match-bar" style="width:200px"><div class="match-fill" style="width:'+pct+'%;background:'+color+'"></div></div>'+
+      '</div>'+
+      '<div style="display:flex;flex-direction:column;gap:6px">'+
+        '<button type="button" class="btn btn-ghost btn-xs" onclick="verCandidato('+c.id+')">Ver HV</button>'+
+        '<button type="button" class="btn btn-azul btn-xs" onclick="verCandidatoYDescargar('+c.id+')">📄 PDF</button>'+
+        '<span style="font-size:11px;color:var(--texto-g)">'+fmtCOP(c.pretension)+'</span>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+
+  actualizarSelPanel();
+}
+
+function toggleSelHV(id, e){
+  e.stopPropagation();
+  var idx=hvSeleccionadas.indexOf(id);
+  var card=document.getElementById('mc-'+id);
+  if(idx>-1){
+    hvSeleccionadas.splice(idx,1);
+    if(card){card.classList.remove('seleccionada');var cb=card.querySelector('.checkbox-sel');if(cb)cb.checked=false;}
+  } else {
+    hvSeleccionadas.push(id);
+    if(card){card.classList.add('seleccionada');var cb2=card.querySelector('.checkbox-sel');if(cb2)cb2.checked=true;}
+  }
+  actualizarSelPanel();
+}
+
+function actualizarSelPanel(){
+  var el=document.getElementById('sel-lista');
+  if(!el) return;
+  if(!hvSeleccionadas.length){el.textContent='Ninguna seleccionada aún';return;}
+  var nombres=hvSeleccionadas.map(function(id){
+    var c=BANCO_HV.find(function(x){return x.id===id;});
+    return c?c.nombre:'—';
+  });
+  el.innerHTML=nombres.map(function(n){return '<div style="padding:3px 0;font-size:12px">✅ '+n+'</div>';}).join('');
+}
+
+// ═══════════════════════════════════════════════════
+// ENVÍO A EMPRESA
+// ═══════════════════════════════════════════════════
+function renderEnvio(){
+  var v=VACANTES_DATA.find(function(x){return x.id===vacMatchId;});
+  var resumen=document.getElementById('envio-resumen');
+  var hvLista=document.getElementById('envio-hvs-lista');
+
+  if(!v||!hvSeleccionadas.length){
+    if(resumen) resumen.innerHTML='<p style="color:var(--texto-g)">No hay HV seleccionadas. Ve a <button type="button" class="btn btn-ghost btn-xs" onclick="nav(\'matching\')">Matching</button> primero.</p>';
+    return;
+  }
+
+  var candidatos=hvSeleccionadas.map(function(id){return BANCO_HV.find(function(x){return x.id===id;});}).filter(Boolean);
+
+  if(resumen) resumen.innerHTML=
+    '<div class="hv-section">'+
+      '<div class="hv-label">Vacante</div>'+
+      '<div class="hv-row"><span>Cargo</span><strong>'+v.cargo+'</strong></div>'+
+      '<div class="hv-row"><span>Empresa</span><strong>'+v.empresa+'</strong></div>'+
+      '<div class="hv-row"><span>Correo destino</span><strong style="color:var(--verde)">'+v.correo_emp+'</strong></div>'+
+      '<div class="hv-row"><span>HV a enviar</span><strong>'+candidatos.length+'</strong></div>'+
+    '</div>';
+
+  if(hvLista) hvLista.innerHTML=candidatos.map(function(c){
+    var pct=vacMatchId?calcMatch(c,VACANTES_DATA.find(function(v){return v.id===vacMatchId;}))||0:0;
+    var color=pct>=75?'#27ae60':pct>=50?'var(--naranja)':'var(--rojo)';
+    return '<div style="background:var(--suave);border-radius:10px;padding:12px;margin-bottom:10px;display:flex;gap:12px;align-items:center">'+
+      '<div style="width:40px;height:40px;border-radius:50%;background:var(--verde);color:#fff;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0">'+c.nombre.charAt(0)+'</div>'+
+      '<div style="flex:1"><div style="font-weight:700;font-size:13px">'+c.nombre+'</div>'+
+        '<div style="font-size:12px;color:var(--texto-g)">'+c.edu+' · '+c.exp_meses+' meses exp. · HV '+c.completitud+'%</div>'+
+      '</div>'+
+      '<div style="font-weight:700;font-size:13px;color:'+color+'">'+pct+'% match</div>'+
+    '</div>';
+  }).join('');
+
+  // Mensaje por defecto
+  var msg=document.getElementById('envio-mensaje');
+  if(msg&&!msg.value && v){
+    msg.value='Estimado equipo de '+v.empresa+',\n\nAdjunto encontrarán las hojas de vida de los candidatos preseleccionados para la vacante de "'+v.cargo+'".\n\nEstos candidatos han sido evaluados y cumplen con el perfil requerido. Quedamos atentos a sus comentarios.\n\nSaludos,\nAgencia de Empleo y Emprendimiento\nComfenalco Antioquia\nTel: 604 444 9184';
+  }
+}
+
+function enviarHVsEmpresa(){
+  var v=VACANTES_DATA.find(function(x){return x.id===vacMatchId;});
+  if(!v||!hvSeleccionadas.length){toast('Selecciona al menos una HV y una vacante','warn');return;}
+  var candidatos=hvSeleccionadas.map(function(id){return BANCO_HV.find(function(x){return x.id===id;});}).filter(Boolean);
+  // En producción: llamar API de correo (EmailJS, Resend, etc.)
+  // Por ahora simulamos el envío
+  toast('✅ Enviando '+candidatos.length+' HV al correo '+v.correo_emp+'...');
+  setTimeout(function(){
+    toast('📧 HV enviadas exitosamente a '+v.empresa);
+    // Actualizar registro de envío
+    v.hv_enviadas=(v.hv_enviadas||0)+candidatos.length;
+    v.fecha_hv_enviadas=new Date().toISOString().split('T')[0];
+    hvSeleccionadas=[];
+  },1500);
+}
+
+// ═══════════════════════════════════════════════════
+// AUTH — detectar rol
+// ═══════════════════════════════════════════════════
 function renderAuth(user){
   var area=document.getElementById('auth-area');
   if(user){
     var nombre=((user.firstName||'')+' '+(user.lastName||'')).trim()||'Usuario';
     var ini=((user.firstName||'')[0]||'').toUpperCase()+((user.lastName||'')[0]||'').toUpperCase()||'U';
+    var rol=(user.publicMetadata&&user.publicMetadata.rol)||'candidato';
+    userRol=rol;
     document.getElementById('unombre').textContent=nombre;
+    document.getElementById('urol').textContent=rol.replace(/_/g,' ');
     var av=document.getElementById('uav');
     av.innerHTML=user.imageUrl?'<img src="'+user.imageUrl+'"/>':ini;
     area.innerHTML='<span style="color:rgba(255,255,255,.8);font-size:13px">'+nombre+'</span>'+
-      '<button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.signOut().then(function(){location.reload()})">Salir</button>';
-    document.getElementById('sidebar').style.display='flex';
+      '<button type="button" class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.signOut().then(function(){location.reload()})">Salir</button>';
+
+    // Mostrar módulos internos para intermediadores, asesores y auxiliares
+    var esInterno=['intermediador','asesor_empresarial','auxiliar_registro','administrador','analista_inclusion','analista_fomento'].indexOf(rol)>-1;
+    if(esInterno){
+      ['nav-banco','nav-matching','nav-envio'].forEach(function(id){
+        var el=document.getElementById(id);if(el)el.classList.remove('hidden');
+      });
+      document.getElementById('nav-hv').textContent='';
+      document.getElementById('nav-hv').innerHTML='<span class="nico">📄</span> Registrar HV';
+    }
     nav('vacantes');
   } else {
     area.innerHTML=
-      '<button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>'+
-      '<button class="btn btn-primary btn-sm" onclick="window.Clerk.openSignUp({afterSignUpUrl:window.location.href})">Registrarme</button>';
-    document.getElementById('sidebar').style.display='none';
-    document.getElementById('pg-acceso').classList.remove('hidden');
+      '<button type="button" class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>'+
+      '<button type="button" class="btn btn-primary btn-sm" onclick="window.Clerk.openSignUp({afterSignUpUrl:window.location.href})">Crear cuenta</button>';
+    nav('acceso');
   }
 }
 
+// ═══════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════
 window.addEventListener('load',function(){
-  // Municipios
-  var sels=['vm','hvm'];
-  sels.forEach(function(id){
-    var sel=document.getElementById(id); if(!sel) return;
-    MUNICIPIOS.forEach(function(m){
-      var o=document.createElement('option');
-      o.value=m.id; o.textContent=m.n+' ('+m.s+')';
-      sel.appendChild(o);
-    });
-  });
-  // Clerk
+  // Municipios selector
+  var vm=document.getElementById('vm');
+  if(vm) MUNICIPIOS.forEach(function(m){var o=document.createElement('option');o.value=m.id;o.textContent=m.n+' ('+m.s+')';vm.appendChild(o);});
+
   if(window.Clerk){
     window.Clerk.load().then(function(){
       renderAuth(window.Clerk.user);
@@ -312,6 +1190,17 @@ window.addEventListener('load',function(){
     });
   }
 });
+
+// Prevenir que Enter en inputs cause navegación o submit no deseado
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Enter'){
+    var t = e.target;
+    if(t.tagName === 'INPUT' && t.type !== 'submit' && t.type !== 'button'){
+      var pg = t.closest('[id^="pg-"]');
+      if(pg){ e.preventDefault(); e.stopPropagation(); }
+    }
+  }
+}, true);
 </script>
 </body>
 </html>

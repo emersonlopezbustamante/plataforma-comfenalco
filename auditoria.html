@@ -221,15 +221,15 @@
   <main id="main">
 
     <!-- ══ DASHBOARD ══ -->
-    <div id="pg-dashboard">
+    <div id="pg-dashboard" onclick="event.stopPropagation()">
       <div class="ph">
         <div>
           <div class="ptitle">🔍 Dashboard de Auditoría</div>
           <p class="psub">Control de calidad y cumplimiento de procesos — Agencia de Empleo y Emprendimiento</p>
         </div>
         <div style="display:flex;gap:10px">
-          <button class="btn btn-ghost btn-sm" onclick="ejecutarAuditoria()">🔄 Actualizar auditoría</button>
-          <button class="btn btn-dark btn-sm" onclick="exportarInformePDF()">📄 Exportar informe</button>
+          <button type="button" class="btn btn-ghost btn-sm" onclick="ejecutarAuditoria()">🔄 Actualizar auditoría</button>
+          <button type="button" class="btn btn-dark btn-sm" onclick="exportarInformePDF()">📄 Exportar informe</button>
         </div>
       </div>
       <div class="stats-row" id="dash-stats"></div>
@@ -237,28 +237,28 @@
     </div>
 
     <!-- ══ ALERTAS CRÍTICAS ══ -->
-    <div id="pg-criticas" class="hidden">
+    <div id="pg-criticas" class="hidden" onclick="event.stopPropagation()">
       <div class="ptitle">🔴 Alertas Críticas</div>
       <p class="psub">Requieren atención inmediata — errores que afectan directamente la calidad del servicio</p>
       <div id="lista-criticas"></div>
     </div>
 
     <!-- ══ ADVERTENCIAS ══ -->
-    <div id="pg-advertencias" class="hidden">
+    <div id="pg-advertencias" class="hidden" onclick="event.stopPropagation()">
       <div class="ptitle">🟡 Advertencias</div>
       <p class="psub">Situaciones que deben revisarse en las próximas 24 horas</p>
       <div id="lista-advertencias"></div>
     </div>
 
     <!-- ══ DUPLICADOS ══ -->
-    <div id="pg-duplicados" class="hidden">
+    <div id="pg-duplicados" class="hidden" onclick="event.stopPropagation()">
       <div class="ptitle">🔁 Control de Duplicados</div>
       <p class="psub">Candidatos, vacantes y contratados duplicados detectados en el sistema</p>
       <div id="lista-duplicados"></div>
     </div>
 
     <!-- ══ HV INCOMPLETAS ══ -->
-    <div id="pg-hvs" class="hidden">
+    <div id="pg-hvs" class="hidden" onclick="event.stopPropagation()">
       <div class="ptitle">📄 Hojas de Vida Incompletas</div>
       <p class="psub">Candidatos con HV al menos al 100% — sin esta información no se pueden postular adecuadamente</p>
       <div class="filtros-bar">
@@ -275,21 +275,21 @@
     </div>
 
     <!-- ══ VACANTES AUDITORÍA ══ -->
-    <div id="pg-vacantes-audit" class="hidden">
+    <div id="pg-vacantes-audit" class="hidden" onclick="event.stopPropagation()">
       <div class="ptitle">💼 Auditoría de Vacantes</div>
       <p class="psub">Vacantes con problemas de configuración, vencidas, sin postulados o con datos incompletos</p>
       <div id="lista-vacantes-audit"></div>
     </div>
 
     <!-- ══ E-CARDS ══ -->
-    <div id="pg-ecards-audit" class="hidden">
+    <div id="pg-ecards-audit" class="hidden" onclick="event.stopPropagation()">
       <div class="ptitle">🎨 Auditoría de E-Cards</div>
       <p class="psub">Verificación de calidad y completitud de las tarjetas publicitarias</p>
       <div id="lista-ecards-audit"></div>
     </div>
 
     <!-- ══ TIEMPOS ══ -->
-    <div id="pg-tiempos" class="hidden">
+    <div id="pg-tiempos" class="hidden" onclick="event.stopPropagation()">
       <div class="ptitle">⏱️ Control de Tiempos</div>
       <p class="psub">Seguimiento de tiempos de respuesta según los SLA establecidos</p>
       <div class="stats-row" id="tiempos-stats"></div>
@@ -297,7 +297,7 @@
     </div>
 
     <!-- ══ ACCESO COORDINADOR ══ -->
-    <div id="pg-acceso-coord" class="hidden">
+    <div id="pg-acceso-coord" class="hidden" onclick="event.stopPropagation()">
       <div class="acc-card">
         <div class="acc-icon">🔐</div>
         <div class="acc-title">Acceso Coordinador</div>
@@ -320,22 +320,22 @@
     </div>
 
     <!-- ══ DESEMPEÑO POR COLABORADOR ══ -->
-    <div id="pg-desemp-coord" class="hidden">
+    <div id="pg-desemp-coord" class="hidden" onclick="event.stopPropagation()">
       <div class="ph">
         <div>
           <div class="ptitle">👥 Desempeño del equipo</div>
           <p class="psub" id="coord-titulo">Región seleccionada</p>
         </div>
         <div style="display:flex;gap:10px">
-          <button class="btn btn-ghost btn-sm" onclick="nav('acceso-coord')">🔐 Cambiar región</button>
-          <button class="btn btn-dark btn-sm" onclick="exportarDesempenoExcel()">📥 Exportar</button>
+          <button type="button" class="btn btn-ghost btn-sm" onclick="nav('acceso-coord')">🔐 Cambiar región</button>
+          <button type="button" class="btn btn-dark btn-sm" onclick="exportarDesempenoExcel()">📥 Exportar</button>
         </div>
       </div>
       <div id="lista-desemp"></div>
     </div>
 
     <!-- ══ POR REGIÓN ══ -->
-    <div id="pg-por-region" class="hidden">
+    <div id="pg-por-region" class="hidden" onclick="event.stopPropagation()">
       <div class="ptitle">📍 Auditoría por región</div>
       <p class="psub">Resumen de alertas y cumplimiento segmentado por subregión</p>
       <div id="lista-region"></div>
@@ -349,12 +349,12 @@
   <div class="modal">
     <div class="modal-head">
       <div class="modal-title" id="ma-title">Detalle de alerta</div>
-      <button class="modal-close" onclick="cerrarModal('modal-alerta')">✕</button>
+      <button type="button" class="modal-close" onclick="cerrarModal('modal-alerta')">✕</button>
     </div>
     <div class="modal-body" id="ma-body"></div>
     <div class="modal-foot">
-      <button class="btn btn-ghost" onclick="cerrarModal('modal-alerta')">Cerrar</button>
-      <button class="btn btn-dark btn-sm" onclick="marcarRevisada()">✅ Marcar como revisada</button>
+      <button type="button" class="btn btn-ghost" onclick="cerrarModal('modal-alerta')">Cerrar</button>
+      <button type="button" class="btn btn-dark btn-sm" onclick="marcarRevisada()">✅ Marcar como revisada</button>
     </div>
   </div>
 </div>
@@ -429,7 +429,7 @@ function nav(p){
   PAGS.forEach(function(x){var el=document.getElementById('pg-'+x);if(el)el.classList.add('hidden');});
   document.querySelectorAll('.nitem').forEach(function(n){n.classList.remove('active');});
   var t=document.getElementById('pg-'+p);if(t)t.classList.remove('hidden');
-  var ni=document.querySelector('[onclick*="nav(\''+p+'\')"]');if(ni)ni.classList.add('active');
+  var ni=document.querySelector('#sidebar [onclick*="nav(\''+p+'\')"]');if(ni)ni.classList.add('active');
   if(p==='dashboard')      renderDashboard();
   if(p==='criticas')       renderAlertas('criticas');
   if(p==='advertencias')   renderAlertas('advertencias');
@@ -702,7 +702,7 @@ function renderAlertas(tipo){
           '<span class="alerta-tag">📍 '+a.region+'</span>'+
           '<span class="alerta-tag">📅 '+fmtFecha(a.fecha)+'</span>'+
           '<span class="alerta-tag '+(a.tipo==='critico'?'red':'yellow')+'">'+a.area+'</span>'+
-          '<button class="alerta-accion'+(revisada?' ok':'') +'" onclick="toggleRevisada(\''+a.id+'\')">'+
+          '<button type="button" class="alerta-accion'+(revisada?' ok':'') +'" onclick="toggleRevisada(\''+a.id+'\')">'+
             (revisada?'✓ Revisada':'Marcar revisada')+'</button>'+
         '</div>'+
       '</div>'+
@@ -741,7 +741,7 @@ function renderDuplicados(){
             '<span class="alerta-tag blue">👤 '+a.responsable+'</span>'+
             '<span class="alerta-tag">📍 '+a.region+'</span>'+
             '<span class="alerta-tag red">'+a.area+'</span>'+
-            '<button class="alerta-accion" onclick="toggleRevisada(\''+a.id+'\')">Marcar revisada</button>'+
+            '<button type="button" class="alerta-accion" onclick="toggleRevisada(\''+a.id+'\')">Marcar revisada</button>'+
           '</div>'+
         '</div>'+
       '</div>';
@@ -815,7 +815,7 @@ function renderVacantesAudit(){
           '<span class="alerta-tag blue">📧 '+a.correo+'</span>'+
           '<span class="alerta-tag">📍 '+a.region+'</span>'+
           '<span class="alerta-tag '+(a.tipo==='critico'?'red':'yellow')+'">'+a.area+'</span>'+
-          '<button class="alerta-accion" onclick="toggleRevisada(\''+a.id+'\')">Marcar revisada</button>'+
+          '<button type="button" class="alerta-accion" onclick="toggleRevisada(\''+a.id+'\')">Marcar revisada</button>'+
         '</div>'+
       '</div>'+
     '</div>';
@@ -1188,9 +1188,9 @@ function renderAuth(user){
     var av=document.getElementById('sav');
     av.innerHTML=user.imageUrl?'<img src="'+user.imageUrl+'"/>':ini;
     area.innerHTML='<span style="color:rgba(255,255,255,.7);font-size:13px">'+nombre+'</span>'+
-      '<button class="btn btn-sm" style="background:rgba(255,255,255,.1);color:#fff" onclick="window.Clerk.signOut().then(function(){window.location.href=\'interno.html\'})">Salir</button>';
+      '<button type="button" class="btn btn-sm" style="background:rgba(255,255,255,.1);color:#fff" onclick="window.Clerk.signOut().then(function(){window.location.href=\'interno.html\'})">Salir</button>';
   } else {
-    area.innerHTML='<button class="btn btn-sm" style="background:rgba(255,255,255,.1);color:#fff" onclick="window.Clerk.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>';
+    area.innerHTML='<button type="button" class="btn btn-sm" style="background:rgba(255,255,255,.1);color:#fff" onclick="window.Clerk.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>';
   }
 }
 
@@ -1207,6 +1207,17 @@ window.addEventListener('load',function(){
     });
   }
 });
+
+// Prevenir que Enter en inputs cause navegación o submit no deseado
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Enter'){
+    var t = e.target;
+    if(t.tagName === 'INPUT' && t.type !== 'submit' && t.type !== 'button'){
+      var pg = t.closest('[id^="pg-"]');
+      if(pg){ e.preventDefault(); e.stopPropagation(); }
+    }
+  }
+}, true);
 </script>
 </body>
 </html>

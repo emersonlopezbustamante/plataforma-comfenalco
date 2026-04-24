@@ -232,7 +232,7 @@
         <div class="ptitle">🗓️ Gestión de Eventos y Jornadas</div>
         <p class="psub">Jornadas · Perioscópios · Laboratorios de empleo · Ferias · Eventos especiales</p>
       </div>
-      <button class="btn btn-primary btn-lg" onclick="abrirModalEvento()">+ Crear evento</button>
+      <button type="button" class="btn btn-primary btn-lg" onclick="abrirModalEvento()">+ Crear evento</button>
     </div>
 
     <!-- STATS -->
@@ -247,7 +247,7 @@
     <!-- FILTROS -->
     <div class="filtros-bar">
       <input class="finput" type="text" id="fq" placeholder="🔍 Buscar evento..." style="flex:1;min-width:160px" oninput="filtrar()"/>
-      <select class="finput" id="f-tipo" onchange="filtrar()">
+      <select class="finput" id="f-tipo" onchange="filtrar();event.stopPropagation()">
         <option value="">Todos los tipos</option>
         <option>Jornada de empleo</option>
         <option>Perioscópio</option>
@@ -255,19 +255,19 @@
         <option>Feria empresarial</option>
         <option>Otro</option>
       </select>
-      <select class="finput" id="f-estado" onchange="filtrar()">
+      <select class="finput" id="f-estado" onchange="filtrar();event.stopPropagation()">
         <option value="">Todos los estados</option>
         <option value="Activo">Activo</option>
         <option value="Planificado">Planificado</option>
         <option value="Cerrado">Cerrado</option>
       </select>
-      <select class="finput" id="f-region" onchange="filtrar()">
+      <select class="finput" id="f-region" onchange="filtrar();event.stopPropagation()">
         <option value="">Todas las subregiones</option>
         <option>Valle de Aburrá</option><option>Oriente</option><option>Norte</option>
         <option>Occidente</option><option>Suroeste</option><option>Bajo Cauca</option>
         <option>Nordeste</option><option>Magdalena Medio</option><option>Urabá</option>
       </select>
-      <button class="btn btn-ghost btn-sm" onclick="limpiarFiltros()">✕ Limpiar</button>
+      <button type="button" class="btn btn-ghost btn-sm" onclick="limpiarFiltros();event.stopPropagation()">✕ Limpiar</button>
     </div>
 
     <!-- GRID EVENTOS -->
@@ -285,7 +285,7 @@
   <div class="modal">
     <div class="modal-head">
       <div class="modal-title" id="me-title">Crear nuevo evento</div>
-      <button class="modal-close" onclick="cerrarModal('modal-evento')">✕</button>
+      <button type="button" class="modal-close" onclick="cerrarModal('modal-evento')">✕</button>
     </div>
     <div class="modal-body">
       <div class="fgrid">
@@ -377,8 +377,8 @@
       </div>
     </div>
     <div class="modal-foot">
-      <button class="btn btn-ghost" onclick="cerrarModal('modal-evento')">Cancelar</button>
-      <button class="btn btn-primary" onclick="guardarEvento()">💾 Guardar evento</button>
+      <button type="button" class="btn btn-ghost" onclick="cerrarModal('modal-evento')">Cancelar</button>
+      <button type="button" class="btn btn-primary" onclick="guardarEvento()">💾 Guardar evento</button>
     </div>
   </div>
 </div>
@@ -393,7 +393,7 @@
         <div class="modal-title" id="mg-title">Gestión del evento</div>
         <div style="font-size:13px;color:var(--texto-g);margin-top:2px" id="mg-sub"></div>
       </div>
-      <button class="modal-close" onclick="cerrarModal('modal-gestion')">✕</button>
+      <button type="button" class="modal-close" onclick="cerrarModal('modal-gestion')">✕</button>
     </div>
     <div class="modal-body">
       <!-- TABS -->
@@ -412,11 +412,11 @@
       <!-- TAB PARTICIPANTES -->
       <div id="tab-participantes" class="tab-content hidden">
         <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
-          <button class="btn btn-primary btn-sm" onclick="abrirModalParticipante()">+ Registrar participante</button>
-          <button class="btn btn-verde btn-sm" onclick="importarExcel()">📂 Importar Excel masivo</button>
-          <button class="btn btn-ghost btn-sm" onclick="descargarPlantilla()">📥 Descargar plantilla Excel</button>
+          <button type="button" class="btn btn-primary btn-sm" onclick="abrirModalParticipante()">+ Registrar participante</button>
+          <button type="button" class="btn btn-verde btn-sm" onclick="importarExcel()">📂 Importar Excel masivo</button>
+          <button type="button" class="btn btn-ghost btn-sm" onclick="descargarPlantilla()">📥 Descargar plantilla Excel</button>
           <input type="file" id="excel-input" accept=".xlsx,.xls" style="display:none" onchange="procesarExcel(this)"/>
-          <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="exportarParticipantesEvento()">📊 Exportar lista</button>
+          <button type="button" class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="exportarParticipantesEvento()">📊 Exportar lista</button>
         </div>
         <div class="part-table-wrap">
           <div class="part-toolbar">
@@ -439,8 +439,8 @@
         <div style="margin-bottom:16px">
           <p style="font-size:14px;color:var(--texto-g);margin-bottom:12px">Sube fotos del evento y el PDF de la lista de asistencia firmada.</p>
           <div style="display:flex;gap:10px;flex-wrap:wrap">
-            <button class="btn btn-primary btn-sm" onclick="document.getElementById('foto-input').click()">📷 Subir fotos</button>
-            <button class="btn btn-verde btn-sm" onclick="document.getElementById('pdf-input').click()">📄 Subir PDF asistencia</button>
+            <button type="button" class="btn btn-primary btn-sm" onclick="document.getElementById('foto-input').click()">📷 Subir fotos</button>
+            <button type="button" class="btn btn-verde btn-sm" onclick="document.getElementById('pdf-input').click()">📄 Subir PDF asistencia</button>
             <input type="file" id="foto-input" accept="image/*" multiple style="display:none" onchange="subirFotos(this)"/>
             <input type="file" id="pdf-input" accept=".pdf" style="display:none" onchange="subirPDF(this)"/>
           </div>
@@ -461,8 +461,8 @@
 
     </div>
     <div class="modal-foot">
-      <button class="btn btn-ghost" onclick="cerrarModal('modal-gestion')">Cerrar</button>
-      <button class="btn btn-primary btn-sm" onclick="exportarParticipantesEvento()">📊 Exportar participantes</button>
+      <button type="button" class="btn btn-ghost" onclick="cerrarModal('modal-gestion')">Cerrar</button>
+      <button type="button" class="btn btn-primary btn-sm" onclick="exportarParticipantesEvento()">📊 Exportar participantes</button>
     </div>
   </div>
 </div>
@@ -472,7 +472,7 @@
   <div class="modal" style="width:min(600px,95vw)">
     <div class="modal-head">
       <div class="modal-title">Registrar participante</div>
-      <button class="modal-close" onclick="cerrarModal('modal-participante')">✕</button>
+      <button type="button" class="modal-close" onclick="cerrarModal('modal-participante')">✕</button>
     </div>
     <div class="modal-body">
       <div class="fgrid">
@@ -519,8 +519,8 @@
       </div>
     </div>
     <div class="modal-foot">
-      <button class="btn btn-ghost" onclick="cerrarModal('modal-participante')">Cancelar</button>
-      <button class="btn btn-primary" onclick="guardarParticipante()">💾 Registrar participante</button>
+      <button type="button" class="btn btn-ghost" onclick="cerrarModal('modal-participante')">Cancelar</button>
+      <button type="button" class="btn btn-primary" onclick="guardarParticipante()">💾 Registrar participante</button>
     </div>
   </div>
 </div>
@@ -677,8 +677,8 @@ function renderEventos(lista){
       '<div class="evento-footer">'+
         '<span class="evento-estado '+estadoClass(e.estado)+'">'+e.estado+'</span>'+
         '<div class="evento-acciones" onclick="event.stopPropagation()">'+
-          '<button class="btn btn-ghost btn-xs" onclick="abrirGestion('+e.id+')">Gestionar</button>'+
-          (e.estado!=='Cerrado'?'<button class="btn btn-primary btn-xs" onclick="abrirRegistroRapido('+e.id+')">+ Participante</button>':'')+
+          '<button type="button" class="btn btn-ghost btn-xs" onclick="abrirGestion('+e.id+')">Gestionar</button>'+
+          (e.estado!=='Cerrado'?'<button type="button" class="btn btn-primary btn-xs" onclick="abrirRegistroRapido('+e.id+')">+ Participante</button>':'')+
         '</div>'+
       '</div>'+
     '</div>';
@@ -842,8 +842,8 @@ function renderTabInfo(){
         '<div style="text-align:center"><div style="font-family:Nunito;font-size:28px;font-weight:900;color:'+(e.fotos_count>0?'var(--verde)':'var(--texto-g)')+'">'+e.fotos_count+'</div><div style="font-size:12px;color:var(--texto-g)">Fotos</div></div>'+
         '<div style="text-align:center"><div style="font-family:Nunito;font-size:28px;font-weight:900;color:'+(e.pdf_asistencia?'var(--verde)':'var(--texto-g)')+'">'+( e.pdf_asistencia?'✅':'—')+'</div><div style="font-size:12px;color:var(--texto-g)">PDF asistencia</div></div>'+
         '<div style="margin-left:auto;display:flex;gap:8px">'+
-          (e.estado!=='Cerrado'?'<button class="btn btn-primary btn-sm" onclick="switchTab(\'tab-participantes\')">+ Participantes</button>':'')+''+
-          (e.estado!=='Cerrado'?'<button class="btn btn-verde btn-sm" onclick="switchTab(\'tab-evidencias\')">📷 Evidencias</button>':'')+
+          (e.estado!=='Cerrado'?'<button type="button" class="btn btn-primary btn-sm" onclick="switchTab(\'tab-participantes\')">+ Participantes</button>':'')+''+
+          (e.estado!=='Cerrado'?'<button type="button" class="btn btn-verde btn-sm" onclick="switchTab(\'tab-evidencias\')">📷 Evidencias</button>':'')+
         '</div>'+
       '</div>'+
     '</div>';
@@ -870,7 +870,7 @@ function renderTabParticipantes(){
       '<td style="color:var(--texto-g);font-size:12px">'+p.correo+'</td>'+
       '<td><span style="background:var(--suave);color:var(--texto-g);padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600">'+p.area+'</span></td>'+
       '<td><span style="background:'+(p.condicion!=='ninguna'?'#d4edda':'var(--suave)')+';color:'+(p.condicion!=='ninguna'?'#155724':'var(--texto-g)')+';padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600">'+p.condicion+'</span></td>'+
-      '<td><button class="btn btn-ghost btn-xs" onclick="eliminarParticipante('+i+')" title="Eliminar">✕</button></td>'+
+      '<td><button type="button" class="btn btn-ghost btn-xs" onclick="eliminarParticipante('+i+')" title="Eliminar">✕</button></td>'+
     '</tr>';
   }).join('');
 }
@@ -883,7 +883,7 @@ function filtrarParticipantes(){
     return !q || (p.nombres+' '+p.apellidos).toLowerCase().indexOf(q)>-1 || p.doc.indexOf(q)>-1;
   });
   tb.innerHTML = lista.map(function(p,i){
-    return '<tr><td>'+(i+1)+'</td><td><strong>'+p.nombres+' '+p.apellidos+'</strong></td><td>'+p.doc+'</td><td>'+p.municipio+'</td><td>'+p.celular+'</td><td style="font-size:12px">'+p.correo+'</td><td>'+p.area+'</td><td>'+p.condicion+'</td><td><button class="btn btn-ghost btn-xs">✕</button></td></tr>';
+    return '<tr><td>'+(i+1)+'</td><td><strong>'+p.nombres+' '+p.apellidos+'</strong></td><td>'+p.doc+'</td><td>'+p.municipio+'</td><td>'+p.celular+'</td><td style="font-size:12px">'+p.correo+'</td><td>'+p.area+'</td><td>'+p.condicion+'</td><td><button type="button" class="btn btn-ghost btn-xs">✕</button></td></tr>';
   }).join('');
 }
 
@@ -896,14 +896,14 @@ function renderTabEvidencias(){
     html += '<div class="evidencia-item pdf-item">'+
       '<div style="font-size:32px">📄</div>'+
       '<div style="font-size:12px;font-weight:700;color:var(--verde);margin-top:6px">PDF Asistencia</div>'+
-      '<button class="ev-del" onclick="eventoActual.pdf_asistencia=null;renderTabEvidencias()">✕</button>'+
+      '<button type="button" class="ev-del" onclick="eventoActual.pdf_asistencia=null;renderTabEvidencias()">✕</button>'+
     '</div>';
   }
   for(var i=0;i<eventoActual.fotos_count;i++){
     html += '<div class="evidencia-item" style="background:var(--suave);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px">'+
       '<div style="font-size:28px">📷</div>'+
       '<div style="font-size:11px;color:var(--texto-g)">Foto '+(i+1)+'</div>'+
-      '<button class="ev-del" onclick="eventoActual.fotos_count=Math.max(0,eventoActual.fotos_count-1);renderTabEvidencias()">✕</button>'+
+      '<button type="button" class="ev-del" onclick="eventoActual.fotos_count=Math.max(0,eventoActual.fotos_count-1);renderTabEvidencias()">✕</button>'+
     '</div>';
   }
   html += '<div class="upload-zone" onclick="document.getElementById(\'foto-input\').click()" style="aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center">'+
@@ -928,8 +928,8 @@ function renderTabCierre(){
       '<p style="font-size:14px;color:var(--texto-g)">'+( e.obs_cierre||'Sin observaciones')+'</p>'+
     '</div>'+
     '<div style="margin-top:16px;display:flex;gap:10px">'+
-      '<button class="btn btn-verde btn-sm" onclick="exportarParticipantesEvento()">📊 Exportar participantes</button>'+
-      '<button class="btn btn-ghost btn-sm" onclick="generarInformeEvento()">📋 Informe completo</button>'+
+      '<button type="button" class="btn btn-verde btn-sm" onclick="exportarParticipantesEvento()">📊 Exportar participantes</button>'+
+      '<button type="button" class="btn btn-ghost btn-sm" onclick="generarInformeEvento()">📋 Informe completo</button>'+
     '</div>';
   } else {
     content = '<p style="color:var(--texto-g);margin-bottom:16px;font-size:14px">Al cerrar el evento quedará bloqueado para nuevas modificaciones. Asegúrate de haber registrado todos los participantes y subido las evidencias.</p>'+
@@ -947,7 +947,7 @@ function renderTabCierre(){
           '<label class="flabel" style="color:#991b1b">Observaciones de cierre</label>'+
           '<textarea class="fval" id="obs-cierre-input" placeholder="Describe cómo resultó el evento, logros, inconvenientes..." style="min-height:80px"></textarea>'+
         '</div>'+
-        '<button class="btn btn-danger" onclick="cerrarEvento()">🔒 Confirmar cierre del evento</button>'+
+        '<button type="button" class="btn btn-danger" onclick="cerrarEvento()">🔒 Confirmar cierre del evento</button>'+
       '</div>';
   }
   document.getElementById('mg-cierre-content').innerHTML = content;
@@ -1170,9 +1170,9 @@ function renderAuth(user){
     var av=document.getElementById('sav');
     av.innerHTML=user.imageUrl?'<img src="'+user.imageUrl+'"/>':ini;
     area.innerHTML='<span style="color:rgba(255,255,255,.8);font-size:13px">'+nombre+'</span>'+
-      '<button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.signOut().then(function(){window.location.href=\'interno.html\'})">Salir</button>';
+      '<button type="button" class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.signOut().then(function(){window.location.href=\'interno.html\'})">Salir</button>';
   } else {
-    area.innerHTML='<button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>';
+    area.innerHTML='<button type="button" class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>';
   }
 }
 
@@ -1189,6 +1189,17 @@ window.addEventListener('load',function(){
     });
   }
 });
+
+// Prevenir que Enter en inputs cause navegación o submit no deseado
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Enter'){
+    var t = e.target;
+    if(t.tagName === 'INPUT' && t.type !== 'submit' && t.type !== 'button'){
+      var pg = t.closest('[id^="pg-"]');
+      if(pg){ e.preventDefault(); e.stopPropagation(); }
+    }
+  }
+}, true);
 </script>
 </body>
 </html>

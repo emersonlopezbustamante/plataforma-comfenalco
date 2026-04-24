@@ -208,16 +208,16 @@
   <main id="main">
 
     <!-- SESIONES -->
-    <div id="pg-sesiones">
+    <div id="pg-sesiones" onclick="event.stopPropagation()">
       <div class="ph">
         <div>
           <div class="ptitle">🔬 Laboratorios de Empleo</div>
           <p class="psub">Gestión de sesiones, evaluaciones y seguimiento por región</p>
         </div>
         <div style="display:flex;gap:10px;flex-wrap:wrap">
-          <button class="btn btn-primary" onclick="nav('nueva-evaluacion')">+ Nueva evaluación</button>
-          <button class="btn btn-verde btn-sm" onclick="importarExcel()">📂 Importar Excel</button>
-          <button class="btn btn-sm" style="background:var(--azul);color:#fff" onclick="abrirInformeGlobal()">📊 Informe global PDF</button>
+          <button type="button" class="btn btn-primary" onclick="nav('nueva-evaluacion')">+ Nueva evaluación</button>
+          <button type="button" class="btn btn-verde btn-sm" onclick="importarExcel()">📂 Importar Excel</button>
+          <button type="button" class="btn btn-sm" style="background:var(--azul);color:#fff" onclick="abrirInformeGlobal()">📊 Informe global PDF</button>
           <input type="file" id="excel-input" accept=".xlsx,.xls,.xlsm" style="display:none" onchange="procesarExcelImport(this)"/>
         </div>
       </div>
@@ -232,25 +232,25 @@
 
       <div class="filtros-bar">
         <input class="finput" type="text" id="fq" placeholder="🔍 Buscar por nombre, empresa o municipio..." style="flex:1;min-width:180px" oninput="filtrar()"/>
-        <select class="finput" id="f-region" onchange="filtrar()">
+        <select class="finput" id="f-region" onchange="filtrar();event.stopPropagation()">
           <option value="">Todas las regiones</option>
           <option>Valle de Aburrá</option><option>Oriente</option><option>Norte</option>
           <option>Occidente</option><option>Suroeste</option><option>Bajo Cauca</option>
           <option>Nordeste</option><option>Magdalena Medio</option><option>Urabá</option>
         </select>
-        <select class="finput" id="f-perfil" onchange="filtrar()">
+        <select class="finput" id="f-perfil" onchange="filtrar();event.stopPropagation()">
           <option value="">Todos los perfiles</option>
           <option>Operativo</option><option>Administrativo</option><option>Agroindustrial</option><option>Construcción</option>
         </select>
-        <input class="finput" type="month" id="f-mes" onchange="filtrar()"/>
-        <button class="btn btn-ghost btn-sm" onclick="limpiarFiltros()">✕ Limpiar</button>
+        <input class="finput" type="month" id="f-mes" onchange="filtrar();event.stopPropagation()"/>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="limpiarFiltros();event.stopPropagation()">✕ Limpiar</button>
       </div>
 
       <div class="twrap">
         <div class="ttbar">
           <span class="ttitle" id="ses-count">0 sesiones</span>
-          <button class="btn btn-ghost btn-sm" onclick="exportarSesiones()">📥 Excel</button>
-          <button class="btn btn-sm" style="background:var(--azul);color:#fff" onclick="abrirInformeGlobal()">📄 PDF global</button>
+          <button type="button" class="btn btn-ghost btn-sm" onclick="exportarSesiones()">📥 Excel</button>
+          <button type="button" class="btn btn-sm" style="background:var(--azul);color:#fff" onclick="abrirInformeGlobal()">📄 PDF global</button>
         </div>
         <table>
           <thead><tr>
@@ -263,13 +263,13 @@
     </div>
 
     <!-- NUEVA EVALUACIÓN -->
-    <div id="pg-nueva-evaluacion" class="hidden">
+    <div id="pg-nueva-evaluacion" class="hidden" onclick="event.stopPropagation()">
       <div class="ph">
         <div>
           <div class="ptitle">➕ Nueva evaluación</div>
           <p class="psub">Registra los datos del participante y califica las pruebas aplicadas</p>
         </div>
-        <button class="btn btn-ghost btn-sm" onclick="nav('sesiones')">← Volver a sesiones</button>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="nav('sesiones')">← Volver a sesiones</button>
       </div>
 
       <!-- PASO 1: Datos del participante -->
@@ -331,8 +331,8 @@
         <div class="ctitle">💡 Recomendaciones</div>
         <p style="font-size:13px;color:var(--texto-g);margin-bottom:12px">Selecciona las recomendaciones según los resultados (el sistema también las sugerirá automáticamente al guardar):</p>
         <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap">
-          <button class="btn btn-ghost btn-xs" onclick="sugerirRecomendaciones()">🤖 Sugerir automáticamente</button>
-          <button class="btn btn-ghost btn-xs" onclick="limpiarRecs()">✕ Limpiar selección</button>
+          <button type="button" class="btn btn-ghost btn-xs" onclick="sugerirRecomendaciones()">🤖 Sugerir automáticamente</button>
+          <button type="button" class="btn btn-ghost btn-xs" onclick="limpiarRecs()">✕ Limpiar selección</button>
         </div>
         <div class="rec-banco" id="rec-banco"></div>
         <div class="fgroup" style="margin-top:12px">
@@ -349,19 +349,19 @@
       </div>
 
       <div style="display:flex;gap:12px;justify-content:flex-end;margin-bottom:32px">
-        <button class="btn btn-ghost" onclick="nav('sesiones')">Cancelar</button>
-        <button class="btn btn-outline" onclick="previsualizarResultado()">👁️ Previsualizar resultado</button>
-        <button class="btn btn-primary btn-lg" onclick="guardarEvaluacion()">💾 Guardar evaluación</button>
+        <button type="button" class="btn btn-ghost" onclick="nav('sesiones')">Cancelar</button>
+        <button type="button" class="btn btn-outline" onclick="previsualizarResultado()">👁️ Previsualizar resultado</button>
+        <button type="button" class="btn btn-primary btn-lg" onclick="guardarEvaluacion()">💾 Guardar evaluación</button>
       </div>
     </div>
 
     <!-- PARTICIPANTES -->
-    <div id="pg-participantes" class="hidden">
+    <div id="pg-participantes" class="hidden" onclick="event.stopPropagation()">
       <div class="ptitle">👥 Participantes evaluados</div>
       <p class="psub">Historial de todas las personas que han pasado por el laboratorio</p>
       <div class="twrap">
         <div class="ttbar"><span class="ttitle" id="part-count">0 participantes</span>
-          <button class="btn btn-ghost btn-sm" onclick="exportarParticipantes()">📥 Exportar</button>
+          <button type="button" class="btn btn-ghost btn-sm" onclick="exportarParticipantes()">📥 Exportar</button>
         </div>
         <table>
           <thead><tr><th>Nombre</th><th>Documento</th><th>Fecha</th><th>Región</th><th>Cargo aspirado</th><th>Empresa</th><th>Perfil global</th><th>Acciones</th></tr></thead>
@@ -371,7 +371,7 @@
     </div>
 
     <!-- INDICADORES -->
-    <div id="pg-indicadores" class="hidden">
+    <div id="pg-indicadores" class="hidden" onclick="event.stopPropagation()">
       <div class="ptitle">📊 Indicadores del mes</div>
       <p class="psub">Resumen de gestión para reportes mensuales</p>
       <div class="stats-row" id="ind-stats"></div>
@@ -399,14 +399,14 @@
   <div class="modal">
     <div class="modal-head">
       <div class="modal-title" id="mr-title">Resultado de evaluación</div>
-      <button class="modal-close" onclick="cerrarModal('modal-resultado')">✕</button>
+      <button type="button" class="modal-close" onclick="cerrarModal('modal-resultado')">✕</button>
     </div>
     <div class="modal-body" id="mr-body"></div>
     <div class="modal-foot">
-      <button class="btn btn-ghost" onclick="cerrarModal('modal-resultado')">Cerrar</button>
-      <button class="btn btn-verde btn-sm" onclick="exportarResultadoExcel()">📥 Excel</button>
-      <button class="btn btn-sm" style="background:var(--azul);color:#fff" onclick="generarPDFIndividual(sesionActual)">📄 PDF individual</button>
-      <button class="btn btn-primary" onclick="confirmarGuardar()">💾 Guardar</button>
+      <button type="button" class="btn btn-ghost" onclick="cerrarModal('modal-resultado')">Cerrar</button>
+      <button type="button" class="btn btn-verde btn-sm" onclick="exportarResultadoExcel()">📥 Excel</button>
+      <button type="button" class="btn btn-sm" style="background:var(--azul);color:#fff" onclick="generarPDFIndividual(sesionActual)">📄 PDF individual</button>
+      <button type="button" class="btn btn-primary" onclick="confirmarGuardar()">💾 Guardar</button>
     </div>
   </div>
 </div>
@@ -416,7 +416,7 @@
   <div class="modal" style="width:min(700px,95vw)">
     <div class="modal-head">
       <div class="modal-title">📊 Informe Global — Laboratorios de Empleo</div>
-      <button class="modal-close" onclick="cerrarModal('modal-global')">✕</button>
+      <button type="button" class="modal-close" onclick="cerrarModal('modal-global')">✕</button>
     </div>
     <div class="modal-body">
       <div class="fgrid">
@@ -439,9 +439,9 @@
       <div id="ig-preview" style="margin-top:16px"></div>
     </div>
     <div class="modal-foot">
-      <button class="btn btn-ghost" onclick="cerrarModal('modal-global')">Cerrar</button>
-      <button class="btn btn-verde btn-sm" onclick="exportarSesiones()">📥 Excel completo</button>
-      <button class="btn btn-primary" onclick="generarPDFGlobal()">📄 Generar PDF global</button>
+      <button type="button" class="btn btn-ghost" onclick="cerrarModal('modal-global')">Cerrar</button>
+      <button type="button" class="btn btn-verde btn-sm" onclick="exportarSesiones()">📥 Excel completo</button>
+      <button type="button" class="btn btn-primary" onclick="generarPDFGlobal()">📄 Generar PDF global</button>
     </div>
   </div>
 </div>
@@ -653,7 +653,7 @@ function nav(p){
   });
   document.querySelectorAll('.nitem').forEach(function(n){n.classList.remove('active');});
   var t=document.getElementById('pg-'+p); if(t) t.classList.remove('hidden');
-  var ni=document.querySelector('[onclick*="nav(\''+p+'\')"]'); if(ni) ni.classList.add('active');
+  var ni=document.querySelector('#sidebar [onclick*="nav(\''+p+'\')"]'); if(ni) ni.classList.add('active');
   if(p==='sesiones')      renderSesiones(SESIONES);
   if(p==='nueva-evaluacion') initFormEval();
   if(p==='participantes') renderParticipantes();
@@ -705,9 +705,9 @@ function renderSesiones(lista){
       '<td style="text-align:center"><strong>'+s.pruebas.length+'</strong></td>'+
       '<td>'+nivelBadge(ng)+'</td>'+
       '<td><div style="display:flex;gap:4px">'+
-        '<button class="btn btn-ghost btn-xs" onclick="verSesion('+s.id+')">Ver</button>'+
-        '<button class="btn btn-sm btn-xs" style="background:var(--azul);color:#fff" onclick="exportarSesionPDF('+s.id+')">📄</button>'+
-        '<button class="btn btn-primary btn-xs" onclick="exportarSesionExcel('+s.id+')">📥</button>'+
+        '<button type="button" class="btn btn-ghost btn-xs" onclick="verSesion('+s.id+')">Ver</button>'+
+        '<button type="button" class="btn btn-sm btn-xs" style="background:var(--azul);color:#fff" onclick="exportarSesionPDF('+s.id+')">📄</button>'+
+        '<button type="button" class="btn btn-primary btn-xs" onclick="exportarSesionExcel('+s.id+')">📥</button>'+
       '</div></td>'+
     '</tr>';
   }).join('');
@@ -965,8 +965,8 @@ function renderParticipantes(){
       '<td style="color:var(--texto-g)">'+s.empresa+'</td>'+
       '<td>'+nivelBadge(nivelGlobal(s))+'</td>'+
       '<td style="display:flex;gap:4px">'+
-        '<button class="btn btn-ghost btn-xs" onclick="verSesion('+s.id+')">Ver</button>'+
-        '<button class="btn btn-xs" style="background:var(--azul);color:#fff" onclick="exportarSesionPDF('+s.id+')">📄 PDF</button>'+
+        '<button type="button" class="btn btn-ghost btn-xs" onclick="verSesion('+s.id+')">Ver</button>'+
+        '<button type="button" class="btn btn-xs" style="background:var(--azul);color:#fff" onclick="exportarSesionPDF('+s.id+')">📄 PDF</button>'+
       '</td>'+
     '</tr>';
   }).join('');
@@ -1806,9 +1806,9 @@ function renderAuth(user){
     var av=document.getElementById('sav');
     av.innerHTML=user.imageUrl?'<img src="'+user.imageUrl+'"/>':ini;
     area.innerHTML='<span style="color:rgba(255,255,255,.8);font-size:13px">'+nombre+'</span>'+
-      '<button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.signOut().then(function(){window.location.href=\'interno.html\'})">Salir</button>';
+      '<button type="button" class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.signOut().then(function(){window.location.href=\'interno.html\'})">Salir</button>';
   } else {
-    area.innerHTML='<button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>';
+    area.innerHTML='<button type="button" class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>';
   }
 }
 
@@ -1825,6 +1825,17 @@ window.addEventListener('load',function(){
     });
   }
 });
+
+// Prevenir que Enter en inputs cause navegación o submit no deseado
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Enter'){
+    var t = e.target;
+    if(t.tagName === 'INPUT' && t.type !== 'submit' && t.type !== 'button'){
+      var pg = t.closest('[id^="pg-"]');
+      if(pg){ e.preventDefault(); e.stopPropagation(); }
+    }
+  }
+}, true);
 </script>
 </body>
 </html>

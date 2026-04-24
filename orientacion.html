@@ -213,13 +213,13 @@
   <main id="main">
 
     <!-- DASHBOARD -->
-    <div id="pg-dashboard">
+    <div id="pg-dashboard" onclick="event.stopPropagation()">
       <div class="ph">
         <div>
           <div class="ptitle">🎯 SOY talento — Orientación Laboral</div>
           <p class="psub">Programa de orientación ocupacional · Comfenalco Antioquia · Agencia de Empleo</p>
         </div>
-        <button class="btn btn-teal" onclick="nav('nueva-cita')">+ Nueva cita</button>
+        <button type="button" class="btn btn-teal" onclick="nav('nueva-cita')">+ Nueva cita</button>
       </div>
       <div class="stats-row" id="dash-stats"></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
@@ -235,10 +235,10 @@
     </div>
 
     <!-- PERSONAS EN RUTA -->
-    <div id="pg-candidatos-ruta" class="hidden">
+    <div id="pg-candidatos-ruta" class="hidden" onclick="event.stopPropagation()">
       <div class="ph">
         <div><div class="ptitle">👥 Personas en ruta de empleabilidad</div><p class="psub">Seguimiento del proceso SOY talento por persona</p></div>
-        <button class="btn btn-teal" onclick="nav('nueva-cita')">+ Iniciar ruta</button>
+        <button type="button" class="btn btn-teal" onclick="nav('nueva-cita')">+ Iniciar ruta</button>
       </div>
       <div class="filtros">
         <input class="finput" type="text" id="rq" placeholder="🔍 Nombre o documento..." style="flex:1;min-width:160px" oninput="filtrarRuta()"/>
@@ -261,7 +261,7 @@
     </div>
 
     <!-- NUEVA CITA -->
-    <div id="pg-nueva-cita" class="hidden">
+    <div id="pg-nueva-cita" class="hidden" onclick="event.stopPropagation()">
       <div class="ptitle">📅 Agendar cita de orientación</div>
       <p class="psub">Primera cita del programa SOY talento</p>
       <div class="card cita-form">
@@ -290,14 +290,14 @@
           <div class="fgroup" style="grid-column:1/-1"><label class="flabel">Observaciones previas</label><textarea class="fval" id="cita-obs" rows="2" placeholder="Contexto, necesidades especiales, condición..."></textarea></div>
         </div>
         <div style="display:flex;gap:12px;margin-top:20px">
-          <button class="btn btn-teal btn-lg" onclick="agendarCita()">📅 Confirmar cita</button>
-          <button class="btn btn-ghost" onclick="nav('candidatos-ruta')">Cancelar</button>
+          <button type="button" class="btn btn-teal btn-lg" onclick="agendarCita()">📅 Confirmar cita</button>
+          <button type="button" class="btn btn-ghost" onclick="nav('candidatos-ruta')">Cancelar</button>
         </div>
       </div>
     </div>
 
     <!-- SESIÓN SOY TALENTO -->
-    <div id="pg-sesion" class="hidden">
+    <div id="pg-sesion" class="hidden" onclick="event.stopPropagation()">
       <div class="ph">
         <div><div class="ptitle">🧠 Ejecutar sesión SOY talento</div><p class="psub">Registra la sesión de orientación e insignias del candidato</p></div>
       </div>
@@ -349,7 +349,7 @@
               <select class="fval" id="curso-sel" style="flex:1">
                 <option value="">Selecciona un curso...</option>
               </select>
-              <button class="btn btn-teal btn-sm" onclick="agregarCurso()">+ Agregar</button>
+              <button type="button" class="btn btn-teal btn-sm" onclick="agregarCurso()">+ Agregar</button>
             </div>
             <div id="cursos-asignados"></div>
           </div>
@@ -361,15 +361,15 @@
           </div>
 
           <div style="display:flex;gap:12px">
-            <button class="btn btn-teal btn-lg" onclick="guardarSesion()">💾 Guardar sesión</button>
-            <button class="btn btn-ghost" onclick="nav('candidatos-ruta')">Cancelar</button>
+            <button type="button" class="btn btn-teal btn-lg" onclick="guardarSesion()">💾 Guardar sesión</button>
+            <button type="button" class="btn btn-ghost" onclick="nav('candidatos-ruta')">Cancelar</button>
           </div>
         </div>
       </div>
     </div>
 
     <!-- INSIGNIAS -->
-    <div id="pg-insignias" class="hidden">
+    <div id="pg-insignias" class="hidden" onclick="event.stopPropagation()">
       <div class="ptitle">🏅 Insignias del programa SOY talento</div>
       <p class="psub">Registro de insignias otorgadas — se actualiza anualmente</p>
       <div class="filtros">
@@ -395,7 +395,7 @@
     </div>
 
     <!-- CURSOS -->
-    <div id="pg-cursos" class="hidden">
+    <div id="pg-cursos" class="hidden" onclick="event.stopPropagation()">
       <div class="ptitle">📚 Cursos Comfenalco en HV</div>
       <p class="psub">Los cursos completados se agregan automáticamente a la hoja de vida del candidato</p>
       <div class="filtros">
@@ -414,7 +414,7 @@
     </div>
 
     <!-- RESULTADOS PRUEBAS -->
-    <div id="pg-pruebas-orient" class="hidden">
+    <div id="pg-pruebas-orient" class="hidden" onclick="event.stopPropagation()">
       <div class="ptitle">🔬 Resultados de pruebas</div>
       <p class="psub">Resultados de laboratorio de empleo y pruebas psicotécnicas vinculados a la ruta</p>
       <div id="lista-pruebas-orient"></div>
@@ -428,13 +428,13 @@
   <div class="modal" style="width:min(860px,95vw)">
     <div class="modal-head">
       <div class="modal-title" id="mr-title">Ruta de empleabilidad</div>
-      <button class="modal-close" onclick="cerrarModal('modal-ruta')">✕</button>
+      <button type="button" class="modal-close" onclick="cerrarModal('modal-ruta')">✕</button>
     </div>
     <div class="modal-body" id="mr-body"></div>
     <div class="modal-foot">
-      <button class="btn btn-ghost" onclick="cerrarModal('modal-ruta')">Cerrar</button>
-      <button class="btn btn-ghost btn-sm" onclick="exportarHVConInsignias()">📄 HV + Insignias PDF</button>
-      <button class="btn btn-teal btn-sm" onclick="nav('sesion')">🧠 Nueva sesión</button>
+      <button type="button" class="btn btn-ghost" onclick="cerrarModal('modal-ruta')">Cerrar</button>
+      <button type="button" class="btn btn-ghost btn-sm" onclick="exportarHVConInsignias()">📄 HV + Insignias PDF</button>
+      <button type="button" class="btn btn-teal btn-sm" onclick="nav('sesion')">🧠 Nueva sesión</button>
     </div>
   </div>
 </div>
@@ -550,7 +550,7 @@ function nav(p){
   PAGS.forEach(function(x){var el=document.getElementById('pg-'+x);if(el)el.classList.add('hidden');});
   document.querySelectorAll('.nitem').forEach(function(n){n.classList.remove('active');});
   var t=document.getElementById('pg-'+p);if(t)t.classList.remove('hidden');
-  var ni=document.querySelector('[onclick*="nav(\''+p+'\')"]');if(ni)ni.classList.add('active');
+  var ni=document.querySelector('#sidebar [onclick*="nav(\''+p+'\')"]');if(ni)ni.classList.add('active');
   if(p==='dashboard')      renderDash();
   if(p==='candidatos-ruta') renderRuta(RUTAS);
   if(p==='sesion')         initSesion();
@@ -902,7 +902,7 @@ function renderCursosEnSesion(){
         '<option value="en_curso"'+(cu.estado==='en_curso'?' selected':'')+'>En curso</option>'+
         '<option value="completado"'+(cu.estado==='completado'?' selected':'')+'>Completado ✓</option>'+
       '</select>'+
-      '<button onclick="quitarCurso('+cu.id+')" style="background:var(--rojo);color:#fff;border:none;border-radius:6px;padding:2px 8px;cursor:pointer;font-size:11px">✕</button>'+
+      '<button type="button" onclick="quitarCurso('+cu.id+')" style="background:var(--rojo);color:#fff;border:none;border-radius:6px;padding:2px 8px;cursor:pointer;font-size:11px">✕</button>'+
     '</div>';
   }).join('');
 }
@@ -991,7 +991,7 @@ function renderInsignias(lista){
       '<td>'+(skHtml||'—')+'</td>'+
       '<td><span style="font-weight:700">'+r.vigencia+'</span></td>'+
       '<td style="color:var(--texto-g)">'+r.orientador+'</td>'+
-      '<td><button class="btn btn-ghost btn-xs" onclick="verRutaDetalle('+r.id+')">Ver ruta</button></td>'+
+      '<td><button type="button" class="btn btn-ghost btn-xs" onclick="verRutaDetalle('+r.id+')">Ver ruta</button></td>'+
     '</tr>';
   }).join('');
 }
@@ -1122,10 +1122,10 @@ function renderAuth(user){
     var av=document.getElementById('sav');
     av.innerHTML=user.imageUrl?'<img src="'+user.imageUrl+'"/>':ini;
     area.innerHTML='<span style="color:rgba(255,255,255,.8);font-size:13px">'+nombre+'</span>'+
-      '<button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.signOut().then(function(){window.location.href=\'interno.html\'})">Salir</button>';
+      '<button type="button" class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.signOut().then(function(){window.location.href=\'interno.html\'})">Salir</button>';
     nav('dashboard');
   } else {
-    area.innerHTML='<button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>';
+    area.innerHTML='<button type="button" class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>';
     nav('dashboard');
   }
 }
@@ -1140,6 +1140,17 @@ window.addEventListener('load',function(){
     });
   }
 });
+
+// Prevenir que Enter en inputs cause navegación o submit no deseado
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Enter'){
+    var t = e.target;
+    if(t.tagName === 'INPUT' && t.type !== 'submit' && t.type !== 'button'){
+      var pg = t.closest('[id^="pg-"]');
+      if(pg){ e.preventDefault(); e.stopPropagation(); }
+    }
+  }
+}, true);
 </script>
 </body>
 </html>

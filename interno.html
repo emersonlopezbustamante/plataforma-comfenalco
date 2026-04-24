@@ -293,12 +293,12 @@
   <main id="main">
 
     <!-- ACCESO RESTRINGIDO -->
-    <div id="pg-acceso" class="hidden">
+    <div id="pg-acceso" class="hidden" onclick="event.stopPropagation()">
       <div class="acc-card">
         <div class="acc-icon">🛡️</div>
         <div class="acc-title">Acceso restringido</div>
         <p class="acc-sub">Este panel es exclusivo para el equipo de Comfenalco Antioquia. Inicia sesión con tu cuenta institucional.</p>
-        <button class="btn btn-primary btn-lg" onclick="window.Clerk.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>
+        <button type="button" class="btn btn-primary btn-lg" onclick="window.Clerk.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>
       </div>
     </div>
 
@@ -334,7 +334,7 @@
       <p class="psub">Banco de hojas de vida registradas</p>
       <div class="twrap">
         <div class="ttbar"><span class="ttitle">Candidatos registrados (0)</span>
-          <button class="btn btn-primary btn-sm">+ Registrar candidato</button></div>
+          <button type="button" class="btn btn-primary btn-sm">+ Registrar candidato</button></div>
         <div style="padding:24px;color:var(--texto-g)">Aún no hay candidatos registrados. Cuando se registren aparecerán aquí.</div>
       </div>
     </div>
@@ -343,7 +343,7 @@
     <div id="pg-empresas" class="hidden" onclick="event.stopPropagation()">
       <div class="ph">
         <div><div class="ptitle">🏢 Empresas</div><p class="psub">Directorio de empresas aliadas registradas</p></div>
-        <button class="btn btn-primary" onclick="abrirModalEmpresa()">+ Registrar empresa</button>
+        <button type="button" class="btn btn-primary" onclick="abrirModalEmpresa()">+ Registrar empresa</button>
       </div>
       <div class="filtros-bar">
         <input class="finput" type="text" id="fe-q" placeholder="🔍 Buscar empresa..." style="flex:1;min-width:160px" oninput="filtrarEmpresas()"/>
@@ -381,8 +381,8 @@
           <p class="psub">Publica, edita y gestiona todas las vacantes de la agencia</p>
         </div>
         <div style="display:flex;gap:10px">
-          <button class="btn btn-primary" onclick="abrirModalVacante('normal')">+ Nueva vacante</button>
-          <button class="btn btn-naranja" onclick="abrirModalVacante('hidrocarburos')">⚡ Vacante Hidrocarburos</button>
+          <button type="button" class="btn btn-primary" onclick="abrirModalVacante('normal')">+ Nueva vacante</button>
+          <button type="button" class="btn btn-naranja" onclick="abrirModalVacante('hidrocarburos')">⚡ Vacante Hidrocarburos</button>
         </div>
       </div>
 
@@ -414,14 +414,14 @@
         <select class="finput" id="fv-mpio" onchange="filtrarVacantes()">
           <option value="">Todos los municipios</option>
         </select>
-        <button class="btn btn-ghost btn-sm" onclick="limpiarFiltrosV()">✕ Limpiar</button>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="limpiarFiltrosV()">✕ Limpiar</button>
       </div>
 
       <!-- Tabla vacantes -->
       <div class="twrap">
         <div class="ttbar">
           <span class="ttitle" id="vac-count">10 vacantes</span>
-          <button class="btn btn-ghost btn-sm" onclick="exportarVacantes()">📥 Exportar</button>
+          <button type="button" class="btn btn-ghost btn-sm" onclick="exportarVacantes()">📥 Exportar</button>
         </div>
         <table>
           <thead>
@@ -443,27 +443,27 @@
     </div>
 
     <!-- INTERMEDIACIÓN -->
-    <div id="pg-intermediacion" class="hidden">
+    <div id="pg-intermediacion" class="hidden" onclick="event.stopPropagation()">
       <div class="ptitle">🔗 Intermediación laboral</div>
       <p class="psub">Revisión de postulados y match candidato-vacante</p>
       <div class="card"><p style="color:var(--texto-g)">Módulo en desarrollo — próximamente disponible.</p></div>
     </div>
 
     <!-- BANCO HV -->
-    <div id="pg-banco-hv" class="hidden">
+    <div id="pg-banco-hv" class="hidden" onclick="event.stopPropagation()">
       <div class="ptitle">🗄️ Banco de hojas de vida</div>
       <p class="psub">Búsqueda avanzada de candidatos</p>
       <div class="card"><p style="color:var(--texto-g)">Módulo en desarrollo — próximamente disponible.</p></div>
     </div>
 
     <!-- PRUEBAS -->
-    <div id="pg-pruebas" class="hidden">
+    <div id="pg-pruebas" class="hidden" onclick="event.stopPropagation()">
       <div class="ptitle">🧪 Pruebas psicotécnicas — Fase 2</div>
       <div class="card"><p style="color:var(--texto-g)">Disponible en la Fase 2.</p></div>
     </div>
 
     <!-- DIAGNÓSTICOS -->
-    <div id="pg-diagnosticos" class="hidden">
+    <div id="pg-diagnosticos" class="hidden" onclick="event.stopPropagation()">
       <div class="ptitle">📋 Diagnósticos organizacionales — Fase 2</div>
       <div class="card"><p style="color:var(--texto-g)">Disponible en la Fase 2.</p></div>
     </div>
@@ -504,7 +504,7 @@
           <option>Coordinación Valle de Aburrá</option><option>Coordinación Oriente</option>
           <option>Coordinación Norte</option><option>Coordinación Urabá</option>
         </select>
-        <button class="btn btn-ghost btn-sm" onclick="resetFiltrosRep();event.stopPropagation()">↺ Limpiar filtros</button>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="resetFiltrosRep();event.stopPropagation()">↺ Limpiar filtros</button>
       </div>
 
       <!-- TABS DE BLOQUES -->
@@ -530,13 +530,13 @@
         <p class="psub">Importa bases de datos externas de candidatos y empresas desde Excel o CSV</p>
       </div>
       <div style="display:flex;gap:8px">
-        <button class="btn btn-ghost btn-sm" onclick="descargarPlantilla('candidatos')">⬇️ Plantilla candidatos</button>
-        <button class="btn btn-ghost btn-sm" onclick="descargarPlantilla('empresas')">⬇️ Plantilla empresas</button>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="descargarPlantilla('candidatos')">⬇️ Plantilla candidatos</button>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="descargarPlantilla('empresas')">⬇️ Plantilla empresas</button>
       </div>
     </div>
     <div style="display:flex;gap:4px;margin-bottom:0;border-bottom:2px solid var(--borde)">
-      <button class="tab-btn active" id="tab-cand" onclick="switchTab('candidatos')">👤 Candidatos</button>
-      <button class="tab-btn" id="tab-emp" onclick="switchTab('empresas')">🏢 Empresas</button>
+      <button type="button" class="tab-btn active" id="tab-cand" onclick="switchTab('candidatos')">👤 Candidatos</button>
+      <button type="button" class="tab-btn" id="tab-emp" onclick="switchTab('empresas')">🏢 Empresas</button>
     </div>
     <!-- CANDIDATOS -->
     <div id="tab-pane-candidatos" style="padding-top:20px">
@@ -575,14 +575,14 @@
           <div class="preview-bar">📋 Vista previa del archivo <span id="nombre-archivo-cand" style="opacity:.7;font-weight:400;font-size:12px"></span></div>
           <div class="preview-stats" id="stats-cand"></div>
           <div style="display:flex;gap:6px;padding:10px 16px;background:#fff;border-bottom:1px solid var(--borde);flex-wrap:wrap">
-            <button class="btn btn-ghost btn-xs active" id="fp-cand-todos" onclick="filtrarPreview('cand','todos')">Todos</button>
-            <button class="btn btn-ghost btn-xs" id="fp-cand-ok" onclick="filtrarPreview('cand','ok')">✅ Válidos</button>
-            <button class="btn btn-ghost btn-xs" id="fp-cand-err" onclick="filtrarPreview('cand','err')">❌ Errores</button>
-            <button class="btn btn-ghost btn-xs" id="fp-cand-dup" onclick="filtrarPreview('cand','dup')">🔁 Duplicados</button>
-            <button class="btn btn-ghost btn-xs" id="fp-cand-warn" onclick="filtrarPreview('cand','warn')">⚠️ Advertencias</button>
+            <button type="button" class="btn btn-ghost btn-xs active" id="fp-cand-todos" onclick="filtrarPreview('cand','todos')">Todos</button>
+            <button type="button" class="btn btn-ghost btn-xs" id="fp-cand-ok" onclick="filtrarPreview('cand','ok')">✅ Válidos</button>
+            <button type="button" class="btn btn-ghost btn-xs" id="fp-cand-err" onclick="filtrarPreview('cand','err')">❌ Errores</button>
+            <button type="button" class="btn btn-ghost btn-xs" id="fp-cand-dup" onclick="filtrarPreview('cand','dup')">🔁 Duplicados</button>
+            <button type="button" class="btn btn-ghost btn-xs" id="fp-cand-warn" onclick="filtrarPreview('cand','warn')">⚠️ Advertencias</button>
             <div style="margin-left:auto;display:flex;gap:6px">
-              <button class="btn btn-ghost btn-sm" onclick="exportarErrores('candidatos')">📥 Reporte errores</button>
-              <button class="btn btn-primary btn-sm" onclick="importarValidos('candidatos')">✅ Importar válidos</button>
+              <button type="button" class="btn btn-ghost btn-sm" onclick="exportarErrores('candidatos')">📥 Reporte errores</button>
+              <button type="button" class="btn btn-primary btn-sm" onclick="importarValidos('candidatos')">✅ Importar válidos</button>
             </div>
           </div>
           <div class="preview-table-wrap">
@@ -628,13 +628,13 @@
           <div class="preview-bar">📋 Vista previa del archivo <span id="nombre-archivo-emp" style="opacity:.7;font-weight:400;font-size:12px"></span></div>
           <div class="preview-stats" id="stats-emp"></div>
           <div style="display:flex;gap:6px;padding:10px 16px;background:#fff;border-bottom:1px solid var(--borde);flex-wrap:wrap">
-            <button class="btn btn-ghost btn-xs" id="fp-emp-todos" onclick="filtrarPreview('emp','todos')">Todos</button>
-            <button class="btn btn-ghost btn-xs" id="fp-emp-ok" onclick="filtrarPreview('emp','ok')">✅ Válidos</button>
-            <button class="btn btn-ghost btn-xs" id="fp-emp-err" onclick="filtrarPreview('emp','err')">❌ Errores</button>
-            <button class="btn btn-ghost btn-xs" id="fp-emp-dup" onclick="filtrarPreview('emp','dup')">🔁 Duplicados</button>
+            <button type="button" class="btn btn-ghost btn-xs" id="fp-emp-todos" onclick="filtrarPreview('emp','todos')">Todos</button>
+            <button type="button" class="btn btn-ghost btn-xs" id="fp-emp-ok" onclick="filtrarPreview('emp','ok')">✅ Válidos</button>
+            <button type="button" class="btn btn-ghost btn-xs" id="fp-emp-err" onclick="filtrarPreview('emp','err')">❌ Errores</button>
+            <button type="button" class="btn btn-ghost btn-xs" id="fp-emp-dup" onclick="filtrarPreview('emp','dup')">🔁 Duplicados</button>
             <div style="margin-left:auto;display:flex;gap:6px">
-              <button class="btn btn-ghost btn-sm" onclick="exportarErrores('empresas')">📥 Reporte errores</button>
-              <button class="btn btn-primary btn-sm" onclick="importarValidos('empresas')">✅ Importar válidas</button>
+              <button type="button" class="btn btn-ghost btn-sm" onclick="exportarErrores('empresas')">📥 Reporte errores</button>
+              <button type="button" class="btn btn-primary btn-sm" onclick="importarValidos('empresas')">✅ Importar válidas</button>
             </div>
           </div>
           <div class="preview-table-wrap">
@@ -658,7 +658,7 @@
   <div class="modal">
     <div class="modal-head">
       <div class="modal-title" id="mv-title">Nueva vacante</div>
-      <button class="modal-close" onclick="cerrarModal('modal-vac')">✕</button>
+      <button type="button" class="modal-close" onclick="cerrarModal('modal-vac')">✕</button>
     </div>
     <div class="modal-body">
 
@@ -831,8 +831,8 @@
 
     </div>
     <div class="modal-foot">
-      <button class="btn btn-ghost" onclick="cerrarModal('modal-vac')">Cancelar</button>
-      <button class="btn btn-primary" onclick="guardarVacante()">💾 Guardar vacante</button>
+      <button type="button" class="btn btn-ghost" onclick="cerrarModal('modal-vac')">Cancelar</button>
+      <button type="button" class="btn btn-primary" onclick="guardarVacante()">💾 Guardar vacante</button>
     </div>
   </div>
 </div>
@@ -842,13 +842,13 @@
   <div class="modal">
     <div class="modal-head">
       <div class="modal-title">Detalle de vacante</div>
-      <button class="modal-close" onclick="cerrarModal('modal-det')">✕</button>
+      <button type="button" class="modal-close" onclick="cerrarModal('modal-det')">✕</button>
     </div>
     <div class="modal-body" id="det-body"></div>
     <div class="modal-foot">
-      <button class="btn btn-ghost" onclick="cerrarModal('modal-det')">Cerrar</button>
-      <button class="btn btn-outline btn-sm" onclick="cerrarModal('modal-det')">✏️ Editar</button>
-      <button class="btn btn-primary btn-sm">👥 Ver postulados</button>
+      <button type="button" class="btn btn-ghost" onclick="cerrarModal('modal-det')">Cerrar</button>
+      <button type="button" class="btn btn-outline btn-sm" onclick="cerrarModal('modal-det')">✏️ Editar</button>
+      <button type="button" class="btn btn-primary btn-sm">👥 Ver postulados</button>
     </div>
   </div>
 </div>
@@ -858,7 +858,7 @@
   <div class="modal">
     <div class="modal-head">
       <div class="modal-title">Registrar empresa</div>
-      <button class="modal-close" onclick="cerrarModal('modal-emp')">✕</button>
+      <button type="button" class="modal-close" onclick="cerrarModal('modal-emp')">✕</button>
     </div>
     <div class="modal-body">
       <div class="fgrid">
@@ -882,8 +882,8 @@
       </div>
     </div>
     <div class="modal-foot">
-      <button class="btn btn-ghost" onclick="cerrarModal('modal-emp')">Cancelar</button>
-      <button class="btn btn-primary" onclick="guardarEmpresa()">💾 Guardar empresa</button>
+      <button type="button" class="btn btn-ghost" onclick="cerrarModal('modal-emp')">Cancelar</button>
+      <button type="button" class="btn btn-primary" onclick="guardarEmpresa()">💾 Guardar empresa</button>
     </div>
   </div>
 </div>
@@ -1014,8 +1014,8 @@ function renderEmpresas(lista){
       '<td><span class="badge '+(e.estado==='verificada'?'b-activa':'b-normal')+'">'+e.estado+'</span></td>'+
       '<td style="text-align:center"><strong>'+e.vacantes+'</strong></td>'+
       '<td><div class="td-actions">'+
-        '<button class="btn btn-ghost btn-xs" onclick="verEmpresa('+e.id+')">Ver</button>'+
-        '<button class="btn btn-primary btn-xs" onclick="abrirModalVacante(\'normal\')">+ Vacante</button>'+
+        '<button type="button" class="btn btn-ghost btn-xs" onclick="verEmpresa('+e.id+')">Ver</button>'+
+        '<button type="button" class="btn btn-primary btn-xs" onclick="abrirModalVacante(\'normal\')">+ Vacante</button>'+
       '</div></td>'+
     '</tr>';
   }).join('');
@@ -1128,10 +1128,10 @@ function renderVacantes(lista){
       '<td style="text-align:center"><strong style="color:var(--verde)">'+v.postulados+'</strong></td>'+
       '<td style="text-align:center;font-size:13px">'+diasCell+'</td>'+
       '<td><div class="td-actions">'+
-        '<button class="btn btn-ghost btn-xs" onclick="verVacante('+v.id+')">Ver</button>'+
-        '<button class="btn btn-primary btn-xs" onclick="cambiarEstado('+v.id+')">Estado</button>'+
-        '<button class="btn btn-verde btn-xs" onclick="abrirEcard('+v.id+')">🎨 E-Card</button>'+
-        (v.tipo==='hidrocarburos'?'<button class="btn btn-naranja btn-xs" onclick="reporteHidro('+v.id+')">📄 Reporte</button>':'')+
+        '<button type="button" class="btn btn-ghost btn-xs" onclick="verVacante('+v.id+')">Ver</button>'+
+        '<button type="button" class="btn btn-primary btn-xs" onclick="cambiarEstado('+v.id+')">Estado</button>'+
+        '<button type="button" class="btn btn-verde btn-xs" onclick="abrirEcard('+v.id+')">🎨 E-Card</button>'+
+        (v.tipo==='hidrocarburos'?'<button type="button" class="btn btn-naranja btn-xs" onclick="reporteHidro('+v.id+')">📄 Reporte</button>':'')+
       '</div></td>'+
     '</tr>';
   }).join('');
@@ -1442,11 +1442,11 @@ function renderAuth(user){
     av.innerHTML = user.imageUrl ? '<img src="'+user.imageUrl+'"/>' : ini;
     area.innerHTML =
       '<span style="color:rgba(255,255,255,.8);font-size:13px">'+nombre+'</span>'+
-      '<button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.signOut().then(function(){window.location.href=\'index.html\'})">Salir</button>';
+      '<button type="button" class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.signOut().then(function(){window.location.href=\'index.html\'})">Salir</button>';
     document.getElementById('sidebar').style.display = 'flex';
     nav('dashboard');
   } else {
-    area.innerHTML = '<button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>';
+    area.innerHTML = '<button type="button" class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>';
     document.getElementById('sidebar').style.display = 'none';
     document.getElementById('pg-acceso').classList.remove('hidden');
   }
@@ -2405,6 +2405,17 @@ function exportarReportesPDF() {
 }
 // ════════════════════════════════════════════════════════════
 </script>
-  <script src="cno2025.js" defer></script>
+  <script src="cno2025.js" defer>
+// Prevenir que Enter en inputs cause navegación o submit no deseado
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Enter'){
+    var t = e.target;
+    if(t.tagName === 'INPUT' && t.type !== 'submit' && t.type !== 'button'){
+      var pg = t.closest('[id^="pg-"]');
+      if(pg){ e.preventDefault(); e.stopPropagation(); }
+    }
+  }
+}, true);
+</script>
 </body>
 </html>

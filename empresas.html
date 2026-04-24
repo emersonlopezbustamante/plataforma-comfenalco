@@ -84,17 +84,17 @@
 
   <main id="main">
 
-    <div id="pg-acceso" class="hidden">
+    <div id="pg-acceso" class="hidden" onclick="event.stopPropagation()">
       <div class="acc-card">
         <div class="acc-icon">🏢</div>
         <div class="acc-title">Portal de Empresas</div>
         <p class="acc-sub">Inicia sesión con tu cuenta empresarial para acceder al banco de candidatos y gestionar tus vacantes.</p>
-        <button class="btn btn-outline btn-lg" onclick="window.Clerk.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>
+        <button type="button" class="btn btn-outline btn-lg" onclick="window.Clerk.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>
         <p style="margin-top:20px;font-size:13px;color:var(--texto-g)">¿Tu empresa aún no está registrada? Contáctanos en la Agencia.</p>
       </div>
     </div>
 
-    <div id="pg-resumen" class="hidden">
+    <div id="pg-resumen" class="hidden" onclick="event.stopPropagation()">
       <div class="ptitle">📊 Resumen</div>
       <p class="psub">Vista general de tu empresa en la plataforma</p>
       <div class="stats-row">
@@ -108,19 +108,19 @@
       </div>
     </div>
 
-    <div id="pg-postulados" class="hidden">
+    <div id="pg-postulados" class="hidden" onclick="event.stopPropagation()">
       <div class="ptitle">👥 Candidatos postulados</div>
       <p class="psub">Personas postuladas a tus vacantes</p>
       <div class="card"><p style="color:var(--texto-g)">No hay postulaciones activas aún. El equipo de Comfenalco te notificará cuando haya candidatos para revisar.</p></div>
     </div>
 
-    <div id="pg-mis-vacantes" class="hidden">
+    <div id="pg-mis-vacantes" class="hidden" onclick="event.stopPropagation()">
       <div class="ptitle">💼 Mis vacantes</div>
       <p class="psub">Vacantes activas de tu empresa</p>
       <div class="card"><p style="color:var(--texto-g)">Las vacantes son publicadas por el equipo asesor de Comfenalco. Contáctalos para registrar nuevas oportunidades.</p></div>
     </div>
 
-    <div id="pg-diagnosticos" class="hidden">
+    <div id="pg-diagnosticos" class="hidden" onclick="event.stopPropagation()">
       <div class="ptitle">📋 Diagnósticos organizacionales</div>
       <p class="psub">Clima organizacional y diagnóstico de talento — Fase 2</p>
       <div class="card"><p style="color:var(--texto-g)">Esta funcionalidad estará disponible en la Fase 2 del proyecto.</p></div>
@@ -144,11 +144,11 @@ function renderAuth(user){
     var nombre=((user.firstName||'')+' '+(user.lastName||'')).trim()||'Usuario';
     document.getElementById('enombre').textContent=nombre;
     area.innerHTML='<span style="color:rgba(255,255,255,.8);font-size:13px">'+nombre+'</span>'+
-      '<button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.signOut().then(function(){location.reload()})">Salir</button>';
+      '<button type="button" class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.signOut().then(function(){location.reload()})">Salir</button>';
     document.getElementById('sidebar').style.display='flex';
     nav('resumen');
   } else {
-    area.innerHTML='<button class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>';
+    area.innerHTML='<button type="button" class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>';
     document.getElementById('sidebar').style.display='none';
     document.getElementById('pg-acceso').classList.remove('hidden');
   }
@@ -162,6 +162,17 @@ window.addEventListener('load',function(){
     });
   }
 });
+
+// Prevenir que Enter en inputs cause navegación o submit no deseado
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Enter'){
+    var t = e.target;
+    if(t.tagName === 'INPUT' && t.type !== 'submit' && t.type !== 'button'){
+      var pg = t.closest('[id^="pg-"]');
+      if(pg){ e.preventDefault(); e.stopPropagation(); }
+    }
+  }
+}, true);
 </script>
 </body>
 </html>
