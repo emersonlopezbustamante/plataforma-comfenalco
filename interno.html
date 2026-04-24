@@ -1906,43 +1906,366 @@ window.addEventListener('load', function(){
 // ════════════════════════════════════════════════════
 
 // Mapas de columnas — nombres alternativos aceptados
-var MAP_CAND = {
-  nombre1:     ['primer nombre','nombre1','nombres','nombre','first name','p_nombre','pnombre'],
-  nombre2:     ['segundo nombre','nombre2','segundo_nombre'],
-  apell1:      ['primer apellido','apell1','apellidos','apellido','last name','p_apellido'],
-  apell2:      ['segundo apellido','apell2','segundo_apellido'],
-  tdoc:        ['tipo documento','tipo_doc','tipo de documento','tipo_documento'],
-  doc:         ['documento','cedula','cédula','numero documento','número documento','nro_doc','identificacion','identificación','cc'],
-  celular:     ['celular','telefono','teléfono','movil','móvil','tel','phone','celular_1'],
-  correo:      ['correo','email','e-mail','correo electronico','correo electrónico'],
-  fnac:        ['fecha nacimiento','fecha_nacimiento','nacimiento','fecha de nacimiento','fec_nac'],
-  municipio:   ['municipio','ciudad','localidad','city'],
-  region:      ['region','región','subregion','subregión','subregion'],
-  area_interes:['area interes','área interés','area_interes','area de interes','área de interés','cargo_deseado'],
-  edu:         ['educacion','educación','nivel educativo','nivel_edu','nivel','education'],
-  exp_meses:   ['meses experiencia','experiencia','meses_exp','exp_meses','meses de experiencia','experiencia meses'],
-  condicion:   ['condicion','condición','condicion especial','condición especial','poblacion','población'],
-  pretension:  ['pretension','pretensión','salario esperado','expectativa salarial','pretension_salarial'],
-  perfil:      ['perfil','descripcion','descripción','resumen','profile']
-};
+function semaforo(val, meta) {
+  if (!meta) return '';
+  var pct = (val / meta) * 100;
+  var cls = pct >= 95 ? 'sem-verde' : pct >= 75 ? 'sem-amarillo' : 'sem-rojo';
+  var lbl = pct >= 95 ? '✅ En meta' : pct >= 75 ? '⚠️ En riesgo' : '🔴 Bajo meta';
+  return '<div class="kpi-semaforo ' + cls + '" title="' + lbl + ' (' + Math.round(pct) + '% de la meta ' + meta + ')"></div>';
+}
 
-var MAP_EMP = {
-  nombre:      ['razon social','razón social','empresa','nombre empresa','company','nombre_empresa','razon_social'],
-  nit:         ['nit','rut','numero identificacion','número identificación','nit_empresa'],
-  sector:      ['sector','industria','actividad','actividad economica','actividad económica'],
-  municipio:   ['municipio','ciudad','localidad'],
-  region:      ['region','región','subregion','zona'],
-  direccion:   ['direccion','dirección','address','sede'],
-  telefono:    ['telefono','teléfono','tel','phone','contacto_tel'],
-  correo_sel:  ['correo seleccion','correo selección','email seleccion','correo_seleccion','email rrhh','correo rrhh','seleccion'],
-  contacto:    ['contacto rrhh','contacto','nombre contacto','responsable rrhh','contacto_rrhh'],
-  tamano:      ['tamaño','tamano','size','empleados','num empleados'],
-  tipo:        ['tipo empresa','tipo_empresa','tipo de empresa','naturaleza']
-};
+function metaBarHtml(val, meta, color) {
+  if (!meta) return '';
+  var pct = Math.min(Math.round((val / meta) * 100), 100);
+  var cls = pct >= 95 ? 'meta-ok' : pct >= 75 ? 'meta-warn' : 'meta-low';
+  return '<div class="meta-bar"><div class="meta-fill ' + (color || cls) + '" style="width:' + pct + '%"></div></div>' +
+         '<div style="font-size:10px;color:var(--texto-g);margin-top:2px">' + pct + '% de meta ' + meta.toLocaleString() + '</div>';
+}
 
-var datosImportados = { candidatos: [], empresas: [] };
-var filtroActivo = { cand: 'todos', emp: 'todos' };
+function kpiCard(ico, val, lbl, sub, meta, color) {
+  var col = color || 'kc-pist';
+  return '<div class="kpi-card ' + col + '">' +
+    semaforo(val, meta) +
+    '<div class="kpi-ico">' + ico + '</div>' +
+    '<div class="kpi-val">' + (typeof val === 'number' && val % 1 !== 0 ? val.toFixed(1) : val.toLocaleString()) + '</div>' +
+    '<div class="kpi-lbl">' + lbl + '</div>' +
+    (sub ? '<div class="kpi-sub">' + sub + '</div>' : '') +
+    (meta ? metaBarHtml(val, meta) : '') +
+    '</div>';
+}
 
+function barChart(titulo, datos, color, total) {
+  var maxVal = Math.max.apply(null, datos.map(function(d) { return d.n || d.val || 0; }));
+  var barras = datos.map(function(d) {
+    var v = d.n || d.val || 0;
+    var pct = maxVal > 0 ? Math.round((v / maxVal) * 100) : 0;
+    var label = d.r || d.s || d.nombre || d.sector || '—';
+    return '<div class="bar-row">' +
+      '<div class="bar-label">' + label + '</div>' +
+      '<div class="bar-track"><div class="bar-fill" style="width:' + pct + '%;background:' + (color || 'var(--verde)') + '">' + (pct > 20 ? v.toLocaleString() : '') + '</div></div>' +
+      '<div class="bar-val">' + v.toLocaleString() + '</div>' +
+    '</div>';
+  }).join('');
+  return '<div class="rep-chart-wrap"><div class="rep-chart-title">' + titulo +
+    (total ? '<span style="font-size:11px;color:var(--texto-g)">Total: ' + total.toLocaleString() + '</span>' : '') +
+    '</div><div class="bar-chart">' + barras + '</div></div>';
+}
+
+function variacion(actual, prev) {
+  if (!prev) return '';
+  var diff = actual - prev;
+  var pct = Math.round((diff / prev) * 100);
+  var color = diff >= 0 ? '#27ae60' : 'var(--rojo)';
+  var ico = diff >= 0 ? '↑' : '↓';
+  return '<span style="font-size:10px;color:' + color + ';font-weight:700">' + ico + ' ' + Math.abs(diff) + ' vs período anterior (' + (diff >= 0 ? '+' : '') + pct + '%)</span>';
+}
+
+// ── BLOQUES ──────────────────────────────────────────────────
+
+var bloqueActual = 'todos';
+function renderReportes() {
+  var contenido = document.getElementById('rep-contenido');
+  if (!contenido) return;
+  switch(bloqueActual) {
+    case 'todos':          contenido.innerHTML = renderResumenGeneral(); break;
+    case 'intermediacion': contenido.innerHTML = renderIntermediacion(); break;
+    case 'empresas':       contenido.innerHTML = renderEmpresas_rep(); break;
+    case 'inclusion':      contenido.innerHTML = renderInclusion(); break;
+    case 'orientacion':    contenido.innerHTML = renderOrientacion(); break;
+    case 'pruebas':        contenido.innerHTML = renderPruebas(); break;
+    case 'jornadas':       contenido.innerHTML = renderJornadas(); break;
+    case 'capacitacion':   contenido.innerHTML = renderCapacitacion(); break;
+    default:               contenido.innerHTML = renderResumenGeneral();
+  }
+}
+function verBloque(bloque, btn) {
+  bloqueActual = bloque;
+  document.querySelectorAll('.rep-tab').forEach(function(b){b.classList.remove('active');});
+  if (btn) btn.classList.add('active');
+  renderReportes();
+}
+
+function renderResumenGeneral() {
+  var d = REP_DATA;
+  return '<div class="rep-titulo-bloque">🏆 KPIs principales del período</div>' +
+    '<div class="kpi-grid">' +
+      kpiCard('💼', d.vacantes_publicadas.val, 'Vacantes publicadas', variacion(d.vacantes_publicadas.val, d.vacantes_publicadas.prev), d.vacantes_publicadas.meta, 'kc-verde') +
+      kpiCard('📤', d.remitidos.val, 'Remitidos a empresas', variacion(d.remitidos.val, d.remitidos.prev), d.remitidos.meta, 'kc-azul') +
+      kpiCard('✅', d.colocados.val, 'Colocados (puestos de trabajo)', variacion(d.colocados.val, d.colocados.prev), d.colocados.meta, 'kc-verde') +
+      kpiCard('📊', d.tasa_intermediacion.val + '%', 'Tasa de intermediación', 'Colocados / Remitidos', null, 'kc-teal') +
+      kpiCard('🏢', d.emp_registradas.val, 'Empresas registradas', variacion(d.emp_registradas.val, d.emp_registradas.prev), d.emp_registradas.meta, 'kc-azul') +
+      kpiCard('🆕', d.emp_nuevas.val, 'Empresas nuevas', 'Primera vez en el período', d.emp_nuevas.meta, '') +
+      kpiCard('♿', d.col_inclusion_total.val, 'Colocados — inclusión', d.pct_inclusion.val + '% del total colocados', d.col_inclusion_total.meta, 'kc-morado') +
+      kpiCard('🎯', d.orientaciones.val, 'Orientaciones realizadas', variacion(d.orientaciones.val, d.orientaciones.prev), d.orientaciones.meta, 'kc-naranja') +
+      kpiCard('🔬', d.candidatos_evaluados.val, 'Candidatos evaluados en lab.', d.pruebas_total.val.toLocaleString() + ' pruebas aplicadas', d.candidatos_evaluados.meta, 'kc-teal') +
+      kpiCard('📍', d.jornadas_moviles.val, 'Jornadas móviles', d.municipios_visitados.val + ' municipios visitados', d.jornadas_moviles.meta, 'kc-naranja') +
+      kpiCard('🎓', d.personas_capacitadas.val, 'Personas capacitadas', d.cursos_ejecutados.val + ' cursos ejecutados', d.personas_capacitadas.meta, 'kc-verde') +
+      kpiCard('⏱️', d.tiempo_cierre_prom.val + ' días', 'Tiempo promedio de cierre', 'Meta: ' + d.tiempo_cierre_prom.meta + ' días', null, 'kc-rojo') +
+    '</div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:4px">' +
+      barChart('Colocados por región', d.colocados_por_region, 'var(--verde)', d.colocados.val) +
+      barChart('Vacantes por sector productivo', d.vacantes_por_sector, 'var(--azul)', d.vacantes_publicadas.val) +
+    '</div>';
+}
+
+function renderIntermediacion() {
+  var d = REP_DATA;
+  return '<div class="rep-titulo-bloque">💼 Intermediación laboral</div>' +
+    '<div class="kpi-grid">' +
+      kpiCard('💼', d.vacantes_publicadas.val, 'Vacantes publicadas', variacion(d.vacantes_publicadas.val, d.vacantes_publicadas.prev), d.vacantes_publicadas.meta, 'kc-verde') +
+      kpiCard('✅', d.vacantes_activas.val, 'Vacantes activas', null, d.vacantes_activas.meta, '') +
+      kpiCard('🔒', d.vacantes_cerradas.val, 'Vacantes cerradas / cubiertas', null, d.vacantes_cerradas.meta, 'kc-azul') +
+      kpiCard('📤', d.remitidos.val, 'Remitidos a empresas', variacion(d.remitidos.val, d.remitidos.prev), d.remitidos.meta, 'kc-azul') +
+      kpiCard('🏆', d.colocados.val, 'Colocados', variacion(d.colocados.val, d.colocados.prev), d.colocados.meta, 'kc-verde') +
+      kpiCard('👷', d.puestos_generados.val, 'Puestos de trabajo generados', d.puestos_hombres.val + ' hombres · ' + d.puestos_mujeres.val + ' mujeres', d.puestos_generados.meta, 'kc-verde') +
+      kpiCard('📊', d.tasa_intermediacion.val + '%', 'Tasa de intermediación', 'Meta: ' + d.tasa_intermediacion.meta + '%', null, 'kc-teal') +
+      kpiCard('⏱️', d.tiempo_cierre_prom.val + ' días', 'Tiempo promedio cierre', 'Meta: ≤ ' + d.tiempo_cierre_prom.meta + ' días', null, 'kc-rojo') +
+    '</div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px">' +
+      barChart('Colocados por región', d.colocados_por_region, 'var(--verde)', d.colocados.val) +
+      barChart('Vacantes por sector', d.vacantes_por_sector, '#2d4a6b', d.vacantes_publicadas.val) +
+    '</div>' +
+    '<div class="rep-chart-wrap"><div class="rep-chart-title">Embudo de intermediación</div>' +
+      '<div style="display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap">' +
+        embudo([
+          {label:'Vacantes publicadas', n: d.vacantes_publicadas.val, color:'#094a4b'},
+          {label:'Remitidos', n: d.remitidos.val, color:'#2d4a6b'},
+          {label:'En proceso empresa', n: Math.round(d.remitidos.val * 0.45), color:'#a8c94e'},
+          {label:'Entrevistados', n: Math.round(d.remitidos.val * 0.28), color:'#e67e22'},
+          {label:'Colocados', n: d.colocados.val, color:'#27ae60'}
+        ]) +
+      '</div>' +
+    '</div>';
+}
+
+function embudo(etapas) {
+  var maxN = etapas[0].n;
+  return etapas.map(function(e, i) {
+    var w = Math.max(30, Math.round((e.n / maxN) * 100));
+    return '<div style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:110px">' +
+      '<div style="width:' + w + '%;min-width:80px;background:' + e.color + ';color:#fff;font-weight:700;font-size:18px;font-family:Nunito;padding:10px;border-radius:6px;text-align:center">' + e.n.toLocaleString() + '</div>' +
+      '<div style="font-size:10px;color:var(--texto-g);font-weight:600;text-align:center">' + e.label + '</div>' +
+      (i < etapas.length - 1 ? '<div style="font-size:18px;color:var(--borde)">↓</div>' : '') +
+    '</div>';
+  }).join('');
+}
+
+function renderEmpresas_rep() {
+  var d = REP_DATA;
+  return '<div class="rep-titulo-bloque">🏢 Empresas</div>' +
+    '<div class="kpi-grid">' +
+      kpiCard('🏢', d.emp_registradas.val, 'Empresas registradas', variacion(d.emp_registradas.val, d.emp_registradas.prev), d.emp_registradas.meta, 'kc-azul') +
+      kpiCard('🆕', d.emp_nuevas.val, 'Empresas nuevas en el período', 'Primera vinculación con la Agencia', d.emp_nuevas.meta, '') +
+      kpiCard('🤝', d.emp_acompanadas_anual.val, 'Acompañadas al menos 1 vez/año', 'Con servicio activo en el período', d.emp_acompanadas_anual.meta, 'kc-verde') +
+      kpiCard('💼', d.emp_con_vacantes.val, 'Con vacantes activas', 'Tienen al menos 1 vacante vigente', d.emp_con_vacantes.meta, 'kc-teal') +
+      kpiCard('🔄', d.emp_retenidas.val, 'Empresas retenidas', 'Activas de años anteriores', null, 'kc-naranja') +
+    '</div>' +
+    barChart('Colocados por región (aporte empresarial)', d.colocados_por_region, '#2d4a6b', d.colocados.val) +
+    '<div class="rep-tabla"><table>' +
+      '<thead><tr><th>Empresa</th><th>Sector</th><th>Municipio</th><th>Estado</th><th>Vacantes</th></tr></thead>' +
+      '<tbody>' + empresasActuales.slice(0,8).map(function(e) {
+        return '<tr><td><strong>' + e.nombre + '</strong></td><td>' + e.sector + '</td><td>' + (e.municipio||'—') + '</td>' +
+          '<td><span style="background:' + (e.estado==='verificada'?'#d4edda':'var(--suave)') + ';color:' + (e.estado==='verificada'?'#155724':'var(--texto-g)') + ';padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700">' + e.estado + '</span></td>' +
+          '<td style="font-weight:700;color:var(--verde)">' + (e.vacantes||0) + '</td></tr>';
+      }).join('') +
+      '</tbody></table></div>';
+}
+
+function renderInclusion() {
+  var d = REP_DATA;
+  var poblaciones = [
+    {ico:'♿', label:'Discapacidad', n: d.col_discapacidad.val, meta: d.col_discapacidad.meta},
+    {ico:'🕊️', label:'Víctimas conflicto armado', n: d.col_victimas.val, meta: d.col_victimas.meta},
+    {ico:'🌎', label:'Personas migrantes', n: d.col_migrantes.val, meta: d.col_migrantes.meta},
+    {ico:'🧑', label:'Jóvenes (Periscopio)', n: d.col_jovenes.val, meta: d.col_jovenes.meta},
+    {ico:'👴', label:'Adultos mayores +50 años', n: d.col_adulto_mayor.val, meta: d.col_adulto_mayor.meta},
+    {ico:'🏳️‍🌈', label:'Personas LGBTIQ+', n: d.col_lgbtiq.val, meta: null},
+    {ico:'🌿', label:'Grupos étnicos', n: d.col_etnicos.val, meta: null}
+  ];
+  return '<div class="rep-titulo-bloque">♿ Inclusión laboral</div>' +
+    '<div class="kpi-grid">' +
+      kpiCard('♿', d.col_inclusion_total.val, 'Colocados con enfoque diferencial', variacion(d.col_inclusion_total.val, d.col_inclusion_total.prev), d.col_inclusion_total.meta, 'kc-morado') +
+      kpiCard('📊', d.pct_inclusion.val + '%', '% de colocaciones incluyentes', 'Meta: ' + d.pct_inclusion.meta + '%', null, 'kc-morado') +
+    '</div>' +
+    '<div class="rep-chart-wrap"><div class="rep-chart-title">Colocados por población — enfoque diferencial <span style="font-size:11px;color:var(--texto-g)">Total: ' + d.col_inclusion_total.val + '</span></div>' +
+    '<div class="bar-chart">' +
+    poblaciones.map(function(p) {
+      var pct = Math.round((p.n / d.col_inclusion_total.val) * 100);
+      return '<div class="bar-row">' +
+        '<div class="bar-label">' + p.ico + ' ' + p.label + '</div>' +
+        '<div class="bar-track"><div class="bar-fill" style="width:' + pct + '%;background:#7c3aed">' + (pct > 15 ? p.n : '') + '</div></div>' +
+        '<div class="bar-val">' + p.n + (p.meta ? '<div style="font-size:10px;color:var(--texto-g)">meta ' + p.meta + '</div>' : '') + '</div>' +
+      '</div>';
+    }).join('') +
+    '</div></div>';
+}
+
+function renderOrientacion() {
+  var d = REP_DATA;
+  return '<div class="rep-titulo-bloque">🎯 Orientación laboral — SOY talento</div>' +
+    '<div class="kpi-grid">' +
+      kpiCard('🎯', d.orientaciones.val, 'Orientaciones realizadas', variacion(d.orientaciones.val, d.orientaciones.prev), d.orientaciones.meta, 'kc-naranja') +
+      kpiCard('📅', d.citas_agendadas.val, 'Citas agendadas', d.citas_ejecutadas.val + ' ejecutadas (' + Math.round((d.citas_ejecutadas.val/d.citas_agendadas.val)*100) + '%)', d.citas_agendadas.meta, '') +
+      kpiCard('🧠', d.soy_talento_activos.val, 'Personas en ruta SOY talento', 'Activas en el período', d.soy_talento_activos.meta, 'kc-naranja') +
+      kpiCard('🏆', d.soy_talento_completos.val, 'SOY talento completados', variacion(d.soy_talento_completos.val, d.soy_talento_completos.prev), d.soy_talento_completos.meta, 'kc-verde') +
+      kpiCard('📋', d.pid_elaborados.val, 'PID elaborados', 'Plan Individual de Desarrollo', d.pid_elaborados.meta, 'kc-azul') +
+      kpiCard('🏅', d.insignias_otorgadas.val, 'Insignias otorgadas', 'Buscadores + Emprendedores + Power skills', d.insignias_otorgadas.meta, 'kc-morado') +
+      kpiCard('🔭', d.periscopio_inscritos.val, 'Periscopio — inscritos', d.periscopio_completados.val + ' completados · ' + d.periscopio_municipios.val + ' municipios', d.periscopio_inscritos.meta, 'kc-teal') +
+    '</div>' +
+    '<div class="rep-chart-wrap"><div class="rep-chart-title">Embudo SOY talento</div>' +
+    '<div style="display:flex;gap:16px;align-items:flex-end;justify-content:center;flex-wrap:wrap;padding:12px 0">' +
+    [
+      {l:'Citas agendadas', n: d.citas_agendadas.val, c:'#094a4b'},
+      {l:'Citas ejecutadas', n: d.citas_ejecutadas.val, c:'#2d4a6b'},
+      {l:'En ruta activa', n: d.soy_talento_activos.val, c:'#e67e22'},
+      {l:'PID elaborados', n: d.pid_elaborados.val, c:'#a8c94e'},
+      {l:'SOY talento completo', n: d.soy_talento_completos.val, c:'#27ae60'}
+    ].map(function(e) {
+      var maxH = 120;
+      var h = Math.max(20, Math.round((e.n / d.citas_agendadas.val) * maxH));
+      return '<div style="display:flex;flex-direction:column;align-items:center;gap:6px">' +
+        '<div style="font-weight:800;font-size:16px;font-family:Nunito;color:var(--negro)">' + e.n + '</div>' +
+        '<div style="width:60px;height:' + h + 'px;background:' + e.c + ';border-radius:6px 6px 0 0"></div>' +
+        '<div style="font-size:10px;color:var(--texto-g);font-weight:600;text-align:center;max-width:70px">' + e.l + '</div>' +
+      '</div>';
+    }).join('') +
+    '</div></div>';
+}
+
+function renderPruebas() {
+  var d = REP_DATA;
+  var totalPruebas = d.pruebas_desglose.reduce(function(a, p) { return a + p.n; }, 0);
+  return '<div class="rep-titulo-bloque">🔬 Laboratorios de empleo y pruebas psicotécnicas</div>' +
+    '<div class="kpi-grid">' +
+      kpiCard('🏭', d.laboratorios_ejecutados.val, 'Laboratorios ejecutados', d.laboratorios_moviles.val + ' móviles · ' + (d.laboratorios_ejecutados.val - d.laboratorios_moviles.val) + ' fijos', d.laboratorios_ejecutados.meta, 'kc-teal') +
+      kpiCard('👤', d.candidatos_evaluados.val, 'Candidatos evaluados', variacion(d.candidatos_evaluados.val, d.candidatos_evaluados.prev), d.candidatos_evaluados.meta, 'kc-verde') +
+      kpiCard('📋', d.pruebas_total.val, 'Pruebas aplicadas (total)', variacion(d.pruebas_total.val, d.pruebas_total.prev), d.pruebas_total.meta, 'kc-azul') +
+      kpiCard('🏢', d.emp_atendidas_lab.val, 'Empresas atendidas en Lab.', null, d.emp_atendidas_lab.meta, 'kc-naranja') +
+      kpiCard('📊', Math.round(d.pruebas_total.val / d.candidatos_evaluados.val * 10) / 10, 'Pruebas por candidato (prom.)', null, null, '') +
+    '</div>' +
+    barChart('Pruebas aplicadas por tipo', d.pruebas_desglose, '#009688', totalPruebas);
+}
+
+function renderJornadas() {
+  var d = REP_DATA;
+  return '<div class="rep-titulo-bloque">📍 Jornadas móviles y eventos</div>' +
+    '<div class="kpi-grid">' +
+      kpiCard('🚌', d.jornadas_moviles.val, 'Jornadas móviles realizadas', variacion(d.jornadas_moviles.val, d.jornadas_moviles.prev), d.jornadas_moviles.meta, 'kc-naranja') +
+      kpiCard('📍', d.municipios_visitados.val, 'Municipios visitados', 'Con presencia de la Unidad Móvil', d.municipios_visitados.meta, 'kc-verde') +
+      kpiCard('👥', d.participantes_jornadas.val, 'Participantes en jornadas', variacion(d.participantes_jornadas.val, d.participantes_jornadas.prev), d.participantes_jornadas.meta, 'kc-azul') +
+      kpiCard('🎪', d.eventos_empleo.val, 'Eventos de empleo', null, d.eventos_empleo.meta, '') +
+      kpiCard('🤝', d.macroruedas.val, 'Macroruedas de negocios', null, d.macroruedas.meta, 'kc-morado') +
+      kpiCard('👨‍👩‍👧‍👦', d.eventos_participantes.val, 'Participantes en eventos', null, null, 'kc-teal') +
+    '</div>' +
+    barChart('Municipios visitados por región', d.colocados_por_region, 'var(--naranja)', d.municipios_visitados.val);
+}
+
+function renderCapacitacion() {
+  var d = REP_DATA;
+  return '<div class="rep-titulo-bloque">🎓 Capacitación</div>' +
+    '<div class="kpi-grid">' +
+      kpiCard('👥', d.personas_capacitadas.val, 'Personas capacitadas', variacion(d.personas_capacitadas.val, d.personas_capacitadas.prev), d.personas_capacitadas.meta, 'kc-verde') +
+      kpiCard('📚', d.cursos_ejecutados.val, 'Cursos ejecutados', null, d.cursos_ejecutados.meta, 'kc-azul') +
+      kpiCard('🏢', d.grupos_cerrados.val, 'Grupos cerrados para empresas', null, d.grupos_cerrados.meta, 'kc-naranja') +
+      kpiCard('⏰', d.horas_formacion.val, 'Horas de formación entregadas', variacion(d.horas_formacion.val, d.horas_formacion.prev), d.horas_formacion.meta, 'kc-teal') +
+      kpiCard('📊', Math.round(d.horas_formacion.val / d.personas_capacitadas.val * 10) / 10, 'Horas por persona (prom.)', null, null, '') +
+    '</div>' +
+    barChart('Personas capacitadas por sector', d.sectores_cap, 'var(--verde)', d.personas_capacitadas.val);
+}
+
+// ── EXPORTAR ─────────────────────────────────────────────────
+function exportarReportesExcel() {
+  if (typeof XLSX === 'undefined') { toast('Cargando librería...', 'warn'); return; }
+  var wb = XLSX.utils.book_new();
+  var d = REP_DATA;
+  var filas = [
+    ['REPORTE AGENCIA DE EMPLEO Y EMPRENDIMIENTO — COMFENALCO ANTIOQUIA'],
+    ['Período', document.getElementById('rep-periodo').value, 'Región', document.getElementById('rep-region').value || 'Todas'],
+    [],
+    ['INDICADOR', 'VALOR', 'META', '% CUMPLIMIENTO', 'PERÍODO ANTERIOR', 'VARIACIÓN'],
+    // Intermediación
+    ['== INTERMEDIACIÓN LABORAL =='],
+    ['Vacantes publicadas', d.vacantes_publicadas.val, d.vacantes_publicadas.meta, Math.round(d.vacantes_publicadas.val/d.vacantes_publicadas.meta*100)+'%', d.vacantes_publicadas.prev, d.vacantes_publicadas.val - d.vacantes_publicadas.prev],
+    ['Remitidos a empresas', d.remitidos.val, d.remitidos.meta, Math.round(d.remitidos.val/d.remitidos.meta*100)+'%', d.remitidos.prev, d.remitidos.val - d.remitidos.prev],
+    ['Colocados (puestos de trabajo)', d.colocados.val, d.colocados.meta, Math.round(d.colocados.val/d.colocados.meta*100)+'%', d.colocados.prev, d.colocados.val - d.colocados.prev],
+    ['Tasa de intermediación (%)', d.tasa_intermediacion.val, d.tasa_intermediacion.meta, '', d.tasa_intermediacion.prev, ''],
+    ['Tiempo promedio cierre (días)', d.tiempo_cierre_prom.val, d.tiempo_cierre_prom.meta, '', d.tiempo_cierre_prom.prev, ''],
+    // Empresas
+    ['== EMPRESAS =='],
+    ['Empresas registradas', d.emp_registradas.val, d.emp_registradas.meta, Math.round(d.emp_registradas.val/d.emp_registradas.meta*100)+'%', d.emp_registradas.prev, d.emp_registradas.val - d.emp_registradas.prev],
+    ['Empresas nuevas', d.emp_nuevas.val, d.emp_nuevas.meta, Math.round(d.emp_nuevas.val/d.emp_nuevas.meta*100)+'%', d.emp_nuevas.prev, d.emp_nuevas.val - d.emp_nuevas.prev],
+    ['Empresas acompañadas (≥1 vez/año)', d.emp_acompanadas_anual.val, d.emp_acompanadas_anual.meta, Math.round(d.emp_acompanadas_anual.val/d.emp_acompanadas_anual.meta*100)+'%', d.emp_acompanadas_anual.prev, ''],
+    // Inclusión
+    ['== INCLUSIÓN LABORAL =='],
+    ['Colocados enfoque diferencial', d.col_inclusion_total.val, d.col_inclusion_total.meta, Math.round(d.col_inclusion_total.val/d.col_inclusion_total.meta*100)+'%', d.col_inclusion_total.prev, ''],
+    ['% colocaciones incluyentes', d.pct_inclusion.val, d.pct_inclusion.meta, '', d.pct_inclusion.prev, ''],
+    ['Discapacidad', d.col_discapacidad.val, d.col_discapacidad.meta, '', d.col_discapacidad.prev, ''],
+    ['Víctimas', d.col_victimas.val, d.col_victimas.meta, '', d.col_victimas.prev, ''],
+    ['Migrantes', d.col_migrantes.val, d.col_migrantes.meta, '', d.col_migrantes.prev, ''],
+    ['Jóvenes Periscopio', d.col_jovenes.val, d.col_jovenes.meta, '', d.col_jovenes.prev, ''],
+    ['Adultos mayores +50', d.col_adulto_mayor.val, d.col_adulto_mayor.meta, '', d.col_adulto_mayor.prev, ''],
+    // Orientación
+    ['== ORIENTACIÓN / SOY TALENTO =='],
+    ['Orientaciones realizadas', d.orientaciones.val, d.orientaciones.meta, Math.round(d.orientaciones.val/d.orientaciones.meta*100)+'%', d.orientaciones.prev, ''],
+    ['SOY talento activos', d.soy_talento_activos.val, d.soy_talento_activos.meta, '', d.soy_talento_activos.prev, ''],
+    ['SOY talento completados', d.soy_talento_completos.val, d.soy_talento_completos.meta, '', d.soy_talento_completos.prev, ''],
+    ['Citas agendadas', d.citas_agendadas.val, d.citas_agendadas.meta, '', d.citas_agendadas.prev, ''],
+    ['Citas ejecutadas', d.citas_ejecutadas.val, '', '', d.citas_ejecutadas.prev, ''],
+    ['PID elaborados', d.pid_elaborados.val, d.pid_elaborados.meta, '', d.pid_elaborados.prev, ''],
+    ['Insignias otorgadas', d.insignias_otorgadas.val, d.insignias_otorgadas.meta, '', d.insignias_otorgadas.prev, ''],
+    ['Periscopio inscritos', d.periscopio_inscritos.val, d.periscopio_inscritos.meta, '', d.periscopio_inscritos.prev, ''],
+    ['Periscopio completados', d.periscopio_completados.val, d.periscopio_completados.meta, '', d.periscopio_completados.prev, ''],
+    // Pruebas
+    ['== LABORATORIOS Y PRUEBAS =='],
+    ['Laboratorios ejecutados (total)', d.laboratorios_ejecutados.val, d.laboratorios_ejecutados.meta, '', d.laboratorios_ejecutados.prev, ''],
+    ['Laboratorios móviles', d.laboratorios_moviles.val, d.laboratorios_moviles.meta, '', d.laboratorios_moviles.prev, ''],
+    ['Candidatos evaluados', d.candidatos_evaluados.val, d.candidatos_evaluados.meta, '', d.candidatos_evaluados.prev, ''],
+    ['Pruebas aplicadas (total)', d.pruebas_total.val, d.pruebas_total.meta, '', d.pruebas_total.prev, ''],
+    ['Empresas atendidas en Lab.', d.emp_atendidas_lab.val, d.emp_atendidas_lab.meta, '', d.emp_atendidas_lab.prev, ''],
+    // Jornadas
+    ['== JORNADAS Y EVENTOS =='],
+    ['Jornadas móviles', d.jornadas_moviles.val, d.jornadas_moviles.meta, '', d.jornadas_moviles.prev, ''],
+    ['Municipios visitados', d.municipios_visitados.val, d.municipios_visitados.meta, '', d.municipios_visitados.prev, ''],
+    ['Participantes en jornadas', d.participantes_jornadas.val, d.participantes_jornadas.meta, '', d.participantes_jornadas.prev, ''],
+    ['Eventos de empleo', d.eventos_empleo.val, d.eventos_empleo.meta, '', d.eventos_empleo.prev, ''],
+    ['Macroruedas de negocios', d.macroruedas.val, d.macroruedas.meta, '', d.macroruedas.prev, ''],
+    // Capacitación
+    ['== CAPACITACIÓN =='],
+    ['Personas capacitadas', d.personas_capacitadas.val, d.personas_capacitadas.meta, Math.round(d.personas_capacitadas.val/d.personas_capacitadas.meta*100)+'%', d.personas_capacitadas.prev, ''],
+    ['Cursos ejecutados', d.cursos_ejecutados.val, d.cursos_ejecutados.meta, '', d.cursos_ejecutados.prev, ''],
+    ['Grupos cerrados para empresas', d.grupos_cerrados.val, d.grupos_cerrados.meta, '', d.grupos_cerrados.prev, ''],
+    ['Horas de formación', d.horas_formacion.val, d.horas_formacion.meta, '', d.horas_formacion.prev, '']
+  ];
+  var ws = XLSX.utils.aoa_to_sheet(filas);
+  ws['!cols'] = [{wch:40},{wch:14},{wch:12},{wch:16},{wch:18},{wch:12}];
+  XLSX.utils.book_append_sheet(wb, ws, 'Indicadores');
+
+  // Hoja desglose pruebas
+  var ws2 = XLSX.utils.aoa_to_sheet([
+    ['Prueba','Cantidad aplicada'],
+    ...d.pruebas_desglose.map(function(p){ return [p.nombre, p.n]; })
+  ]);
+  XLSX.utils.book_append_sheet(wb, ws2, 'Desglose pruebas');
+
+  // Hoja sectores capacitación
+  var ws3 = XLSX.utils.aoa_to_sheet([
+    ['Sector','Personas capacitadas'],
+    ...d.sectores_cap.map(function(s){ return [s.nombre, s.n]; })
+  ]);
+  XLSX.utils.book_append_sheet(wb, ws3, 'Capacitación por sector');
+
+  XLSX.writeFile(wb, 'reportes_agencia_empleo_' + document.getElementById('rep-periodo').value + '.xlsx');
+  toast('Reporte Excel exportado');
+}
+
+function exportarReportesPDF() {
+  toast('Generando PDF...', 'warn');
+  setTimeout(function() { window.print(); }, 200);
+}
+// ════════════════════════════════════════════════════════════
+</script>
+  <script src="cno2025.js" defer></script>
+<script>
 // ═══════════════════════════════════════════════════════════════════
 // CARGUE MASIVO — CANDIDATOS Y EMPRESAS (formato SISE)
 // ═══════════════════════════════════════════════════════════════════
@@ -2409,376 +2732,6 @@ function badge(txt, bg, color) {
 }
 
 
-
-function resetFiltrosRep() {
-  document.getElementById('rep-periodo').value = '2025';
-  document.getElementById('rep-region').value = '';
-  document.getElementById('rep-coordinador').value = '';
-  renderReportes();
-}
-
-// ── HELPERS ──────────────────────────────────────────────────
-
-function semaforo(val, meta) {
-  if (!meta) return '';
-  var pct = (val / meta) * 100;
-  var cls = pct >= 95 ? 'sem-verde' : pct >= 75 ? 'sem-amarillo' : 'sem-rojo';
-  var lbl = pct >= 95 ? '✅ En meta' : pct >= 75 ? '⚠️ En riesgo' : '🔴 Bajo meta';
-  return '<div class="kpi-semaforo ' + cls + '" title="' + lbl + ' (' + Math.round(pct) + '% de la meta ' + meta + ')"></div>';
-}
-
-function metaBarHtml(val, meta, color) {
-  if (!meta) return '';
-  var pct = Math.min(Math.round((val / meta) * 100), 100);
-  var cls = pct >= 95 ? 'meta-ok' : pct >= 75 ? 'meta-warn' : 'meta-low';
-  return '<div class="meta-bar"><div class="meta-fill ' + (color || cls) + '" style="width:' + pct + '%"></div></div>' +
-         '<div style="font-size:10px;color:var(--texto-g);margin-top:2px">' + pct + '% de meta ' + meta.toLocaleString() + '</div>';
-}
-
-function kpiCard(ico, val, lbl, sub, meta, color) {
-  var col = color || 'kc-pist';
-  return '<div class="kpi-card ' + col + '">' +
-    semaforo(val, meta) +
-    '<div class="kpi-ico">' + ico + '</div>' +
-    '<div class="kpi-val">' + (typeof val === 'number' && val % 1 !== 0 ? val.toFixed(1) : val.toLocaleString()) + '</div>' +
-    '<div class="kpi-lbl">' + lbl + '</div>' +
-    (sub ? '<div class="kpi-sub">' + sub + '</div>' : '') +
-    (meta ? metaBarHtml(val, meta) : '') +
-    '</div>';
-}
-
-function barChart(titulo, datos, color, total) {
-  var maxVal = Math.max.apply(null, datos.map(function(d) { return d.n || d.val || 0; }));
-  var barras = datos.map(function(d) {
-    var v = d.n || d.val || 0;
-    var pct = maxVal > 0 ? Math.round((v / maxVal) * 100) : 0;
-    var label = d.r || d.s || d.nombre || d.sector || '—';
-    return '<div class="bar-row">' +
-      '<div class="bar-label">' + label + '</div>' +
-      '<div class="bar-track"><div class="bar-fill" style="width:' + pct + '%;background:' + (color || 'var(--verde)') + '">' + (pct > 20 ? v.toLocaleString() : '') + '</div></div>' +
-      '<div class="bar-val">' + v.toLocaleString() + '</div>' +
-    '</div>';
-  }).join('');
-  return '<div class="rep-chart-wrap"><div class="rep-chart-title">' + titulo +
-    (total ? '<span style="font-size:11px;color:var(--texto-g)">Total: ' + total.toLocaleString() + '</span>' : '') +
-    '</div><div class="bar-chart">' + barras + '</div></div>';
-}
-
-function variacion(actual, prev) {
-  if (!prev) return '';
-  var diff = actual - prev;
-  var pct = Math.round((diff / prev) * 100);
-  var color = diff >= 0 ? '#27ae60' : 'var(--rojo)';
-  var ico = diff >= 0 ? '↑' : '↓';
-  return '<span style="font-size:10px;color:' + color + ';font-weight:700">' + ico + ' ' + Math.abs(diff) + ' vs período anterior (' + (diff >= 0 ? '+' : '') + pct + '%)</span>';
-}
-
-// ── BLOQUES ──────────────────────────────────────────────────
-
-var bloqueActual = 'todos';
-function renderReportes() {
-  var contenido = document.getElementById('rep-contenido');
-  if (!contenido) return;
-  switch(bloqueActual) {
-    case 'todos':          contenido.innerHTML = renderResumenGeneral(); break;
-    case 'intermediacion': contenido.innerHTML = renderIntermediacion(); break;
-    case 'empresas':       contenido.innerHTML = renderEmpresas_rep(); break;
-    case 'inclusion':      contenido.innerHTML = renderInclusion(); break;
-    case 'orientacion':    contenido.innerHTML = renderOrientacion(); break;
-    case 'pruebas':        contenido.innerHTML = renderPruebas(); break;
-    case 'jornadas':       contenido.innerHTML = renderJornadas(); break;
-    case 'capacitacion':   contenido.innerHTML = renderCapacitacion(); break;
-    default:               contenido.innerHTML = renderResumenGeneral();
-  }
-}
-function verBloque(bloque, btn) {
-  bloqueActual = bloque;
-  document.querySelectorAll('.rep-tab').forEach(function(b){b.classList.remove('active');});
-  if (btn) btn.classList.add('active');
-  renderReportes();
-}
-
-function renderResumenGeneral() {
-  var d = REP_DATA;
-  return '<div class="rep-titulo-bloque">🏆 KPIs principales del período</div>' +
-    '<div class="kpi-grid">' +
-      kpiCard('💼', d.vacantes_publicadas.val, 'Vacantes publicadas', variacion(d.vacantes_publicadas.val, d.vacantes_publicadas.prev), d.vacantes_publicadas.meta, 'kc-verde') +
-      kpiCard('📤', d.remitidos.val, 'Remitidos a empresas', variacion(d.remitidos.val, d.remitidos.prev), d.remitidos.meta, 'kc-azul') +
-      kpiCard('✅', d.colocados.val, 'Colocados (puestos de trabajo)', variacion(d.colocados.val, d.colocados.prev), d.colocados.meta, 'kc-verde') +
-      kpiCard('📊', d.tasa_intermediacion.val + '%', 'Tasa de intermediación', 'Colocados / Remitidos', null, 'kc-teal') +
-      kpiCard('🏢', d.emp_registradas.val, 'Empresas registradas', variacion(d.emp_registradas.val, d.emp_registradas.prev), d.emp_registradas.meta, 'kc-azul') +
-      kpiCard('🆕', d.emp_nuevas.val, 'Empresas nuevas', 'Primera vez en el período', d.emp_nuevas.meta, '') +
-      kpiCard('♿', d.col_inclusion_total.val, 'Colocados — inclusión', d.pct_inclusion.val + '% del total colocados', d.col_inclusion_total.meta, 'kc-morado') +
-      kpiCard('🎯', d.orientaciones.val, 'Orientaciones realizadas', variacion(d.orientaciones.val, d.orientaciones.prev), d.orientaciones.meta, 'kc-naranja') +
-      kpiCard('🔬', d.candidatos_evaluados.val, 'Candidatos evaluados en lab.', d.pruebas_total.val.toLocaleString() + ' pruebas aplicadas', d.candidatos_evaluados.meta, 'kc-teal') +
-      kpiCard('📍', d.jornadas_moviles.val, 'Jornadas móviles', d.municipios_visitados.val + ' municipios visitados', d.jornadas_moviles.meta, 'kc-naranja') +
-      kpiCard('🎓', d.personas_capacitadas.val, 'Personas capacitadas', d.cursos_ejecutados.val + ' cursos ejecutados', d.personas_capacitadas.meta, 'kc-verde') +
-      kpiCard('⏱️', d.tiempo_cierre_prom.val + ' días', 'Tiempo promedio de cierre', 'Meta: ' + d.tiempo_cierre_prom.meta + ' días', null, 'kc-rojo') +
-    '</div>' +
-    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:4px">' +
-      barChart('Colocados por región', d.colocados_por_region, 'var(--verde)', d.colocados.val) +
-      barChart('Vacantes por sector productivo', d.vacantes_por_sector, 'var(--azul)', d.vacantes_publicadas.val) +
-    '</div>';
-}
-
-function renderIntermediacion() {
-  var d = REP_DATA;
-  return '<div class="rep-titulo-bloque">💼 Intermediación laboral</div>' +
-    '<div class="kpi-grid">' +
-      kpiCard('💼', d.vacantes_publicadas.val, 'Vacantes publicadas', variacion(d.vacantes_publicadas.val, d.vacantes_publicadas.prev), d.vacantes_publicadas.meta, 'kc-verde') +
-      kpiCard('✅', d.vacantes_activas.val, 'Vacantes activas', null, d.vacantes_activas.meta, '') +
-      kpiCard('🔒', d.vacantes_cerradas.val, 'Vacantes cerradas / cubiertas', null, d.vacantes_cerradas.meta, 'kc-azul') +
-      kpiCard('📤', d.remitidos.val, 'Remitidos a empresas', variacion(d.remitidos.val, d.remitidos.prev), d.remitidos.meta, 'kc-azul') +
-      kpiCard('🏆', d.colocados.val, 'Colocados', variacion(d.colocados.val, d.colocados.prev), d.colocados.meta, 'kc-verde') +
-      kpiCard('👷', d.puestos_generados.val, 'Puestos de trabajo generados', d.puestos_hombres.val + ' hombres · ' + d.puestos_mujeres.val + ' mujeres', d.puestos_generados.meta, 'kc-verde') +
-      kpiCard('📊', d.tasa_intermediacion.val + '%', 'Tasa de intermediación', 'Meta: ' + d.tasa_intermediacion.meta + '%', null, 'kc-teal') +
-      kpiCard('⏱️', d.tiempo_cierre_prom.val + ' días', 'Tiempo promedio cierre', 'Meta: ≤ ' + d.tiempo_cierre_prom.meta + ' días', null, 'kc-rojo') +
-    '</div>' +
-    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px">' +
-      barChart('Colocados por región', d.colocados_por_region, 'var(--verde)', d.colocados.val) +
-      barChart('Vacantes por sector', d.vacantes_por_sector, '#2d4a6b', d.vacantes_publicadas.val) +
-    '</div>' +
-    '<div class="rep-chart-wrap"><div class="rep-chart-title">Embudo de intermediación</div>' +
-      '<div style="display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap">' +
-        embudo([
-          {label:'Vacantes publicadas', n: d.vacantes_publicadas.val, color:'#094a4b'},
-          {label:'Remitidos', n: d.remitidos.val, color:'#2d4a6b'},
-          {label:'En proceso empresa', n: Math.round(d.remitidos.val * 0.45), color:'#a8c94e'},
-          {label:'Entrevistados', n: Math.round(d.remitidos.val * 0.28), color:'#e67e22'},
-          {label:'Colocados', n: d.colocados.val, color:'#27ae60'}
-        ]) +
-      '</div>' +
-    '</div>';
-}
-
-function embudo(etapas) {
-  var maxN = etapas[0].n;
-  return etapas.map(function(e, i) {
-    var w = Math.max(30, Math.round((e.n / maxN) * 100));
-    return '<div style="display:flex;flex-direction:column;align-items:center;gap:4px;min-width:110px">' +
-      '<div style="width:' + w + '%;min-width:80px;background:' + e.color + ';color:#fff;font-weight:700;font-size:18px;font-family:Nunito;padding:10px;border-radius:6px;text-align:center">' + e.n.toLocaleString() + '</div>' +
-      '<div style="font-size:10px;color:var(--texto-g);font-weight:600;text-align:center">' + e.label + '</div>' +
-      (i < etapas.length - 1 ? '<div style="font-size:18px;color:var(--borde)">↓</div>' : '') +
-    '</div>';
-  }).join('');
-}
-
-function renderEmpresas_rep() {
-  var d = REP_DATA;
-  return '<div class="rep-titulo-bloque">🏢 Empresas</div>' +
-    '<div class="kpi-grid">' +
-      kpiCard('🏢', d.emp_registradas.val, 'Empresas registradas', variacion(d.emp_registradas.val, d.emp_registradas.prev), d.emp_registradas.meta, 'kc-azul') +
-      kpiCard('🆕', d.emp_nuevas.val, 'Empresas nuevas en el período', 'Primera vinculación con la Agencia', d.emp_nuevas.meta, '') +
-      kpiCard('🤝', d.emp_acompanadas_anual.val, 'Acompañadas al menos 1 vez/año', 'Con servicio activo en el período', d.emp_acompanadas_anual.meta, 'kc-verde') +
-      kpiCard('💼', d.emp_con_vacantes.val, 'Con vacantes activas', 'Tienen al menos 1 vacante vigente', d.emp_con_vacantes.meta, 'kc-teal') +
-      kpiCard('🔄', d.emp_retenidas.val, 'Empresas retenidas', 'Activas de años anteriores', null, 'kc-naranja') +
-    '</div>' +
-    barChart('Colocados por región (aporte empresarial)', d.colocados_por_region, '#2d4a6b', d.colocados.val) +
-    '<div class="rep-tabla"><table>' +
-      '<thead><tr><th>Empresa</th><th>Sector</th><th>Municipio</th><th>Estado</th><th>Vacantes</th></tr></thead>' +
-      '<tbody>' + empresasActuales.slice(0,8).map(function(e) {
-        return '<tr><td><strong>' + e.nombre + '</strong></td><td>' + e.sector + '</td><td>' + (e.municipio||'—') + '</td>' +
-          '<td><span style="background:' + (e.estado==='verificada'?'#d4edda':'var(--suave)') + ';color:' + (e.estado==='verificada'?'#155724':'var(--texto-g)') + ';padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700">' + e.estado + '</span></td>' +
-          '<td style="font-weight:700;color:var(--verde)">' + (e.vacantes||0) + '</td></tr>';
-      }).join('') +
-      '</tbody></table></div>';
-}
-
-function renderInclusion() {
-  var d = REP_DATA;
-  var poblaciones = [
-    {ico:'♿', label:'Discapacidad', n: d.col_discapacidad.val, meta: d.col_discapacidad.meta},
-    {ico:'🕊️', label:'Víctimas conflicto armado', n: d.col_victimas.val, meta: d.col_victimas.meta},
-    {ico:'🌎', label:'Personas migrantes', n: d.col_migrantes.val, meta: d.col_migrantes.meta},
-    {ico:'🧑', label:'Jóvenes (Periscopio)', n: d.col_jovenes.val, meta: d.col_jovenes.meta},
-    {ico:'👴', label:'Adultos mayores +50 años', n: d.col_adulto_mayor.val, meta: d.col_adulto_mayor.meta},
-    {ico:'🏳️‍🌈', label:'Personas LGBTIQ+', n: d.col_lgbtiq.val, meta: null},
-    {ico:'🌿', label:'Grupos étnicos', n: d.col_etnicos.val, meta: null}
-  ];
-  return '<div class="rep-titulo-bloque">♿ Inclusión laboral</div>' +
-    '<div class="kpi-grid">' +
-      kpiCard('♿', d.col_inclusion_total.val, 'Colocados con enfoque diferencial', variacion(d.col_inclusion_total.val, d.col_inclusion_total.prev), d.col_inclusion_total.meta, 'kc-morado') +
-      kpiCard('📊', d.pct_inclusion.val + '%', '% de colocaciones incluyentes', 'Meta: ' + d.pct_inclusion.meta + '%', null, 'kc-morado') +
-    '</div>' +
-    '<div class="rep-chart-wrap"><div class="rep-chart-title">Colocados por población — enfoque diferencial <span style="font-size:11px;color:var(--texto-g)">Total: ' + d.col_inclusion_total.val + '</span></div>' +
-    '<div class="bar-chart">' +
-    poblaciones.map(function(p) {
-      var pct = Math.round((p.n / d.col_inclusion_total.val) * 100);
-      return '<div class="bar-row">' +
-        '<div class="bar-label">' + p.ico + ' ' + p.label + '</div>' +
-        '<div class="bar-track"><div class="bar-fill" style="width:' + pct + '%;background:#7c3aed">' + (pct > 15 ? p.n : '') + '</div></div>' +
-        '<div class="bar-val">' + p.n + (p.meta ? '<div style="font-size:10px;color:var(--texto-g)">meta ' + p.meta + '</div>' : '') + '</div>' +
-      '</div>';
-    }).join('') +
-    '</div></div>';
-}
-
-function renderOrientacion() {
-  var d = REP_DATA;
-  return '<div class="rep-titulo-bloque">🎯 Orientación laboral — SOY talento</div>' +
-    '<div class="kpi-grid">' +
-      kpiCard('🎯', d.orientaciones.val, 'Orientaciones realizadas', variacion(d.orientaciones.val, d.orientaciones.prev), d.orientaciones.meta, 'kc-naranja') +
-      kpiCard('📅', d.citas_agendadas.val, 'Citas agendadas', d.citas_ejecutadas.val + ' ejecutadas (' + Math.round((d.citas_ejecutadas.val/d.citas_agendadas.val)*100) + '%)', d.citas_agendadas.meta, '') +
-      kpiCard('🧠', d.soy_talento_activos.val, 'Personas en ruta SOY talento', 'Activas en el período', d.soy_talento_activos.meta, 'kc-naranja') +
-      kpiCard('🏆', d.soy_talento_completos.val, 'SOY talento completados', variacion(d.soy_talento_completos.val, d.soy_talento_completos.prev), d.soy_talento_completos.meta, 'kc-verde') +
-      kpiCard('📋', d.pid_elaborados.val, 'PID elaborados', 'Plan Individual de Desarrollo', d.pid_elaborados.meta, 'kc-azul') +
-      kpiCard('🏅', d.insignias_otorgadas.val, 'Insignias otorgadas', 'Buscadores + Emprendedores + Power skills', d.insignias_otorgadas.meta, 'kc-morado') +
-      kpiCard('🔭', d.periscopio_inscritos.val, 'Periscopio — inscritos', d.periscopio_completados.val + ' completados · ' + d.periscopio_municipios.val + ' municipios', d.periscopio_inscritos.meta, 'kc-teal') +
-    '</div>' +
-    '<div class="rep-chart-wrap"><div class="rep-chart-title">Embudo SOY talento</div>' +
-    '<div style="display:flex;gap:16px;align-items:flex-end;justify-content:center;flex-wrap:wrap;padding:12px 0">' +
-    [
-      {l:'Citas agendadas', n: d.citas_agendadas.val, c:'#094a4b'},
-      {l:'Citas ejecutadas', n: d.citas_ejecutadas.val, c:'#2d4a6b'},
-      {l:'En ruta activa', n: d.soy_talento_activos.val, c:'#e67e22'},
-      {l:'PID elaborados', n: d.pid_elaborados.val, c:'#a8c94e'},
-      {l:'SOY talento completo', n: d.soy_talento_completos.val, c:'#27ae60'}
-    ].map(function(e) {
-      var maxH = 120;
-      var h = Math.max(20, Math.round((e.n / d.citas_agendadas.val) * maxH));
-      return '<div style="display:flex;flex-direction:column;align-items:center;gap:6px">' +
-        '<div style="font-weight:800;font-size:16px;font-family:Nunito;color:var(--negro)">' + e.n + '</div>' +
-        '<div style="width:60px;height:' + h + 'px;background:' + e.c + ';border-radius:6px 6px 0 0"></div>' +
-        '<div style="font-size:10px;color:var(--texto-g);font-weight:600;text-align:center;max-width:70px">' + e.l + '</div>' +
-      '</div>';
-    }).join('') +
-    '</div></div>';
-}
-
-function renderPruebas() {
-  var d = REP_DATA;
-  var totalPruebas = d.pruebas_desglose.reduce(function(a, p) { return a + p.n; }, 0);
-  return '<div class="rep-titulo-bloque">🔬 Laboratorios de empleo y pruebas psicotécnicas</div>' +
-    '<div class="kpi-grid">' +
-      kpiCard('🏭', d.laboratorios_ejecutados.val, 'Laboratorios ejecutados', d.laboratorios_moviles.val + ' móviles · ' + (d.laboratorios_ejecutados.val - d.laboratorios_moviles.val) + ' fijos', d.laboratorios_ejecutados.meta, 'kc-teal') +
-      kpiCard('👤', d.candidatos_evaluados.val, 'Candidatos evaluados', variacion(d.candidatos_evaluados.val, d.candidatos_evaluados.prev), d.candidatos_evaluados.meta, 'kc-verde') +
-      kpiCard('📋', d.pruebas_total.val, 'Pruebas aplicadas (total)', variacion(d.pruebas_total.val, d.pruebas_total.prev), d.pruebas_total.meta, 'kc-azul') +
-      kpiCard('🏢', d.emp_atendidas_lab.val, 'Empresas atendidas en Lab.', null, d.emp_atendidas_lab.meta, 'kc-naranja') +
-      kpiCard('📊', Math.round(d.pruebas_total.val / d.candidatos_evaluados.val * 10) / 10, 'Pruebas por candidato (prom.)', null, null, '') +
-    '</div>' +
-    barChart('Pruebas aplicadas por tipo', d.pruebas_desglose, '#009688', totalPruebas);
-}
-
-function renderJornadas() {
-  var d = REP_DATA;
-  return '<div class="rep-titulo-bloque">📍 Jornadas móviles y eventos</div>' +
-    '<div class="kpi-grid">' +
-      kpiCard('🚌', d.jornadas_moviles.val, 'Jornadas móviles realizadas', variacion(d.jornadas_moviles.val, d.jornadas_moviles.prev), d.jornadas_moviles.meta, 'kc-naranja') +
-      kpiCard('📍', d.municipios_visitados.val, 'Municipios visitados', 'Con presencia de la Unidad Móvil', d.municipios_visitados.meta, 'kc-verde') +
-      kpiCard('👥', d.participantes_jornadas.val, 'Participantes en jornadas', variacion(d.participantes_jornadas.val, d.participantes_jornadas.prev), d.participantes_jornadas.meta, 'kc-azul') +
-      kpiCard('🎪', d.eventos_empleo.val, 'Eventos de empleo', null, d.eventos_empleo.meta, '') +
-      kpiCard('🤝', d.macroruedas.val, 'Macroruedas de negocios', null, d.macroruedas.meta, 'kc-morado') +
-      kpiCard('👨‍👩‍👧‍👦', d.eventos_participantes.val, 'Participantes en eventos', null, null, 'kc-teal') +
-    '</div>' +
-    barChart('Municipios visitados por región', d.colocados_por_region, 'var(--naranja)', d.municipios_visitados.val);
-}
-
-function renderCapacitacion() {
-  var d = REP_DATA;
-  return '<div class="rep-titulo-bloque">🎓 Capacitación</div>' +
-    '<div class="kpi-grid">' +
-      kpiCard('👥', d.personas_capacitadas.val, 'Personas capacitadas', variacion(d.personas_capacitadas.val, d.personas_capacitadas.prev), d.personas_capacitadas.meta, 'kc-verde') +
-      kpiCard('📚', d.cursos_ejecutados.val, 'Cursos ejecutados', null, d.cursos_ejecutados.meta, 'kc-azul') +
-      kpiCard('🏢', d.grupos_cerrados.val, 'Grupos cerrados para empresas', null, d.grupos_cerrados.meta, 'kc-naranja') +
-      kpiCard('⏰', d.horas_formacion.val, 'Horas de formación entregadas', variacion(d.horas_formacion.val, d.horas_formacion.prev), d.horas_formacion.meta, 'kc-teal') +
-      kpiCard('📊', Math.round(d.horas_formacion.val / d.personas_capacitadas.val * 10) / 10, 'Horas por persona (prom.)', null, null, '') +
-    '</div>' +
-    barChart('Personas capacitadas por sector', d.sectores_cap, 'var(--verde)', d.personas_capacitadas.val);
-}
-
-// ── EXPORTAR ─────────────────────────────────────────────────
-function exportarReportesExcel() {
-  if (typeof XLSX === 'undefined') { toast('Cargando librería...', 'warn'); return; }
-  var wb = XLSX.utils.book_new();
-  var d = REP_DATA;
-  var filas = [
-    ['REPORTE AGENCIA DE EMPLEO Y EMPRENDIMIENTO — COMFENALCO ANTIOQUIA'],
-    ['Período', document.getElementById('rep-periodo').value, 'Región', document.getElementById('rep-region').value || 'Todas'],
-    [],
-    ['INDICADOR', 'VALOR', 'META', '% CUMPLIMIENTO', 'PERÍODO ANTERIOR', 'VARIACIÓN'],
-    // Intermediación
-    ['== INTERMEDIACIÓN LABORAL =='],
-    ['Vacantes publicadas', d.vacantes_publicadas.val, d.vacantes_publicadas.meta, Math.round(d.vacantes_publicadas.val/d.vacantes_publicadas.meta*100)+'%', d.vacantes_publicadas.prev, d.vacantes_publicadas.val - d.vacantes_publicadas.prev],
-    ['Remitidos a empresas', d.remitidos.val, d.remitidos.meta, Math.round(d.remitidos.val/d.remitidos.meta*100)+'%', d.remitidos.prev, d.remitidos.val - d.remitidos.prev],
-    ['Colocados (puestos de trabajo)', d.colocados.val, d.colocados.meta, Math.round(d.colocados.val/d.colocados.meta*100)+'%', d.colocados.prev, d.colocados.val - d.colocados.prev],
-    ['Tasa de intermediación (%)', d.tasa_intermediacion.val, d.tasa_intermediacion.meta, '', d.tasa_intermediacion.prev, ''],
-    ['Tiempo promedio cierre (días)', d.tiempo_cierre_prom.val, d.tiempo_cierre_prom.meta, '', d.tiempo_cierre_prom.prev, ''],
-    // Empresas
-    ['== EMPRESAS =='],
-    ['Empresas registradas', d.emp_registradas.val, d.emp_registradas.meta, Math.round(d.emp_registradas.val/d.emp_registradas.meta*100)+'%', d.emp_registradas.prev, d.emp_registradas.val - d.emp_registradas.prev],
-    ['Empresas nuevas', d.emp_nuevas.val, d.emp_nuevas.meta, Math.round(d.emp_nuevas.val/d.emp_nuevas.meta*100)+'%', d.emp_nuevas.prev, d.emp_nuevas.val - d.emp_nuevas.prev],
-    ['Empresas acompañadas (≥1 vez/año)', d.emp_acompanadas_anual.val, d.emp_acompanadas_anual.meta, Math.round(d.emp_acompanadas_anual.val/d.emp_acompanadas_anual.meta*100)+'%', d.emp_acompanadas_anual.prev, ''],
-    // Inclusión
-    ['== INCLUSIÓN LABORAL =='],
-    ['Colocados enfoque diferencial', d.col_inclusion_total.val, d.col_inclusion_total.meta, Math.round(d.col_inclusion_total.val/d.col_inclusion_total.meta*100)+'%', d.col_inclusion_total.prev, ''],
-    ['% colocaciones incluyentes', d.pct_inclusion.val, d.pct_inclusion.meta, '', d.pct_inclusion.prev, ''],
-    ['Discapacidad', d.col_discapacidad.val, d.col_discapacidad.meta, '', d.col_discapacidad.prev, ''],
-    ['Víctimas', d.col_victimas.val, d.col_victimas.meta, '', d.col_victimas.prev, ''],
-    ['Migrantes', d.col_migrantes.val, d.col_migrantes.meta, '', d.col_migrantes.prev, ''],
-    ['Jóvenes Periscopio', d.col_jovenes.val, d.col_jovenes.meta, '', d.col_jovenes.prev, ''],
-    ['Adultos mayores +50', d.col_adulto_mayor.val, d.col_adulto_mayor.meta, '', d.col_adulto_mayor.prev, ''],
-    // Orientación
-    ['== ORIENTACIÓN / SOY TALENTO =='],
-    ['Orientaciones realizadas', d.orientaciones.val, d.orientaciones.meta, Math.round(d.orientaciones.val/d.orientaciones.meta*100)+'%', d.orientaciones.prev, ''],
-    ['SOY talento activos', d.soy_talento_activos.val, d.soy_talento_activos.meta, '', d.soy_talento_activos.prev, ''],
-    ['SOY talento completados', d.soy_talento_completos.val, d.soy_talento_completos.meta, '', d.soy_talento_completos.prev, ''],
-    ['Citas agendadas', d.citas_agendadas.val, d.citas_agendadas.meta, '', d.citas_agendadas.prev, ''],
-    ['Citas ejecutadas', d.citas_ejecutadas.val, '', '', d.citas_ejecutadas.prev, ''],
-    ['PID elaborados', d.pid_elaborados.val, d.pid_elaborados.meta, '', d.pid_elaborados.prev, ''],
-    ['Insignias otorgadas', d.insignias_otorgadas.val, d.insignias_otorgadas.meta, '', d.insignias_otorgadas.prev, ''],
-    ['Periscopio inscritos', d.periscopio_inscritos.val, d.periscopio_inscritos.meta, '', d.periscopio_inscritos.prev, ''],
-    ['Periscopio completados', d.periscopio_completados.val, d.periscopio_completados.meta, '', d.periscopio_completados.prev, ''],
-    // Pruebas
-    ['== LABORATORIOS Y PRUEBAS =='],
-    ['Laboratorios ejecutados (total)', d.laboratorios_ejecutados.val, d.laboratorios_ejecutados.meta, '', d.laboratorios_ejecutados.prev, ''],
-    ['Laboratorios móviles', d.laboratorios_moviles.val, d.laboratorios_moviles.meta, '', d.laboratorios_moviles.prev, ''],
-    ['Candidatos evaluados', d.candidatos_evaluados.val, d.candidatos_evaluados.meta, '', d.candidatos_evaluados.prev, ''],
-    ['Pruebas aplicadas (total)', d.pruebas_total.val, d.pruebas_total.meta, '', d.pruebas_total.prev, ''],
-    ['Empresas atendidas en Lab.', d.emp_atendidas_lab.val, d.emp_atendidas_lab.meta, '', d.emp_atendidas_lab.prev, ''],
-    // Jornadas
-    ['== JORNADAS Y EVENTOS =='],
-    ['Jornadas móviles', d.jornadas_moviles.val, d.jornadas_moviles.meta, '', d.jornadas_moviles.prev, ''],
-    ['Municipios visitados', d.municipios_visitados.val, d.municipios_visitados.meta, '', d.municipios_visitados.prev, ''],
-    ['Participantes en jornadas', d.participantes_jornadas.val, d.participantes_jornadas.meta, '', d.participantes_jornadas.prev, ''],
-    ['Eventos de empleo', d.eventos_empleo.val, d.eventos_empleo.meta, '', d.eventos_empleo.prev, ''],
-    ['Macroruedas de negocios', d.macroruedas.val, d.macroruedas.meta, '', d.macroruedas.prev, ''],
-    // Capacitación
-    ['== CAPACITACIÓN =='],
-    ['Personas capacitadas', d.personas_capacitadas.val, d.personas_capacitadas.meta, Math.round(d.personas_capacitadas.val/d.personas_capacitadas.meta*100)+'%', d.personas_capacitadas.prev, ''],
-    ['Cursos ejecutados', d.cursos_ejecutados.val, d.cursos_ejecutados.meta, '', d.cursos_ejecutados.prev, ''],
-    ['Grupos cerrados para empresas', d.grupos_cerrados.val, d.grupos_cerrados.meta, '', d.grupos_cerrados.prev, ''],
-    ['Horas de formación', d.horas_formacion.val, d.horas_formacion.meta, '', d.horas_formacion.prev, '']
-  ];
-  var ws = XLSX.utils.aoa_to_sheet(filas);
-  ws['!cols'] = [{wch:40},{wch:14},{wch:12},{wch:16},{wch:18},{wch:12}];
-  XLSX.utils.book_append_sheet(wb, ws, 'Indicadores');
-
-  // Hoja desglose pruebas
-  var ws2 = XLSX.utils.aoa_to_sheet([
-    ['Prueba','Cantidad aplicada'],
-    ...d.pruebas_desglose.map(function(p){ return [p.nombre, p.n]; })
-  ]);
-  XLSX.utils.book_append_sheet(wb, ws2, 'Desglose pruebas');
-
-  // Hoja sectores capacitación
-  var ws3 = XLSX.utils.aoa_to_sheet([
-    ['Sector','Personas capacitadas'],
-    ...d.sectores_cap.map(function(s){ return [s.nombre, s.n]; })
-  ]);
-  XLSX.utils.book_append_sheet(wb, ws3, 'Capacitación por sector');
-
-  XLSX.writeFile(wb, 'reportes_agencia_empleo_' + document.getElementById('rep-periodo').value + '.xlsx');
-  toast('Reporte Excel exportado');
-}
-
-function exportarReportesPDF() {
-  toast('Generando PDF...', 'warn');
-  setTimeout(function() { window.print(); }, 200);
-}
-// ════════════════════════════════════════════════════════════
-</script>
-  <script src="cno2025.js" defer></script>
-<script>
 // ═══════════════════════════════════════════════════════════════════
 // MÓDULO CAPACITACIONES
 // ═══════════════════════════════════════════════════════════════════
