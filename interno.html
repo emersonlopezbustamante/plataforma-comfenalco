@@ -627,6 +627,9 @@
               placeholder="Nombre de la empresa (nueva o existente)"
               oninput="diagCargarEmpresas();diagGenerarLink();event.stopPropagation()"/>
             <datalist id="diag-empresas-list"></datalist>
+            <button type="button" class="btn-copy-diag" style="background:var(--azul)" 
+              onclick="diagRecargarEmpresas();event.stopPropagation()" 
+              title="Recargar empresas desde Supabase">🔄 Actualizar</button>
             <button type="button" class="btn-borrar-emp" onclick="diagConfirmarBorrar();event.stopPropagation()">🗑 Eliminar empresa</button>
           </div>
 
@@ -2513,6 +2516,17 @@ function initDiagnosticos() {
   diagTab('admin', document.querySelector('.diag-tab'));
 }
 
+async function diagRecargarEmpresas() {
+  var btn = event && event.target;
+  if (btn) { btn.textContent = '⏳'; btn.disabled = true; }
+  await diagCargarListaEmpresas();
+  // Si ya hay empresa escrita, recargar sus resultados
+  var emp = (document.getElementById('diag-sel-empresa')||{}).value || '';
+  if (emp) await diagCargarDiagnosticos(emp);
+  if (btn) { btn.textContent = '🔄 Actualizar'; btn.disabled = false; }
+  toast('✅ Datos actualizados desde Supabase');
+}
+
 // ── TABS ─────────────────────────────────────────────────────────
 function diagTab(panel, btn) {
   document.getElementById('diag-panel-admin').style.display = panel === 'admin' ? 'block' : 'none';
@@ -2536,12 +2550,17 @@ async function diagCargarListaEmpresas() {
         return '<option value="'+escDiag(e)+'">'; 
       }).join('');
     }
-    // Si hay empresas, cargar la primera automáticamente
-    if (empresas.length > 0 && sel) {
-      sel.value = empresas[0];
-      diagEmpresaActual = empresas[0];
-      diagGenerarLinkEmpresa(empresas[0]);
-      await diagCargarDiagnosticos(empresas[0]);
+    // Auto-seleccionar: si hay empresas y el campo está vacío, cargar la primera
+    var campoActual = sel ? sel.value.trim() : '';
+    if (empresas.length > 0) {
+      // Si el campo está vacío o tiene una empresa de la lista, actualizar
+      var empACargar = campoActual && empresas.indexOf(campoActual) > -1
+        ? campoActual   // mantener la que ya estaba escrita
+        : empresas[0];  // tomar la primera
+      if (sel) sel.value = empACargar;
+      diagEmpresaActual = empACargar;
+      diagGenerarLinkEmpresa(empACargar);
+      await diagCargarDiagnosticos(empACargar);
     }
   } catch(e) {
     console.warn('diagCargarListaEmpresas error:', e);
