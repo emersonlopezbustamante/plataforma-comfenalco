@@ -8,6 +8,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="api.js"></script>
   <script async crossorigin="anonymous"
     data-clerk-publishable-key="pk_test_bGlrZWQtYmlzb24tNTEuY2xlcmsuYWNjb3VudHMuZGV2JA"
     src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@5/dist/clerk.browser.js"
@@ -1436,8 +1437,22 @@ function nav(p){
   var t = document.getElementById('pg-'+p); if(t) t.classList.remove('hidden');
   var ni = document.querySelector('#sidebar [onclick*="nav(\''+p+'\')"]'); if(ni) ni.classList.add('active');
   if(p==='dashboard')  cargarDash();
-  if(p==='empresas')   renderEmpresas(empresasActuales);
-  if(p==='vacantes')   renderVacantes(vacantesActuales);
+  if(p==='empresas'){
+    if(empresasActuales.length === 0){
+      API.empresas.listar({}).then(function(rows){
+        if(rows && rows.length){ empresasActuales = rows; }
+        renderEmpresas(empresasActuales);
+      }).catch(function(){ renderEmpresas(empresasActuales); });
+    } else { renderEmpresas(empresasActuales); }
+  }
+  if(p==='vacantes'){
+    if(vacantesActuales.length === 0){
+      API.vacantes.listar({estado:'Activa'}).then(function(rows){
+        if(rows && rows.length){ vacantesActuales = rows; }
+        renderVacantes(vacantesActuales);
+      }).catch(function(){ renderVacantes(vacantesActuales); });
+    } else { renderVacantes(vacantesActuales); }
+  }
   if(p==='cargue')     iniciarCargue();
   if(p==='reportes')    renderReportes();
   if(p==='diagnosticos') initDiagnosticos();
@@ -1449,21 +1464,49 @@ function iniciarCargue(){ /* módulo cargue listo */ }
 // ═══════════════════════════════════════════════════════
 // DASHBOARD
 // ═══════════════════════════════════════════════════════
-function cargarDash(){
-  var hidro = vacantesActuales.filter(function(v){ return v.tipo==='hidrocarburos'; }).length;
-  var dv = document.getElementById('d-v'); if(dv) dv.textContent = vacantesActuales.filter(function(v){ return v.estado==='activa'; }).length;
-  var dh = document.getElementById('d-h'); if(dh) dh.textContent = hidro;
-  var bv = document.getElementById('bv'); if(bv) bv.textContent = vacantesActuales.length;
-
-  var eb = document.getElementById('dash-emp');
-  if(eb) eb.innerHTML = empresasActuales.slice(0,5).map(function(e){
-    return '<tr><td><strong>'+e.nombre+'</strong></td><td style="color:var(--texto-g)">'+e.sector+'</td><td><span class="badge '+(e.estado==='verificada'?'b-activa':'b-normal')+'">'+e.estado+'</span></td></tr>';
-  }).join('');
-
-  var vb = document.getElementById('dash-vac');
-  if(vb) vb.innerHTML = vacantesActuales.slice(0,5).map(function(v){
-    return '<tr><td><strong>'+v.cargo+'</strong></td><td style="color:var(--texto-g)">'+v.municipio+'</td><td>'+badgeTipo(v.tipo)+'</td></tr>';
-  }).join('');
+async function cargarDash(){
+  // Cargar datos reales desde Supabase
+  try {
+    var stats = await API.stats();
+    // KPIs
+    var dv = document.getElementById('d-v'); if(dv) dv.textContent = stats.vacantes || 0;
+    var bv = document.getElementById('bv'); if(bv) bv.textContent = stats.vacantes || 0;
+    var dc = document.getElementById('d-c'); if(dc) dc.textContent = stats.candidatos || 0;
+    var bc = document.getElementById('bc'); if(bc) bc.textContent = stats.candidatos || 0;
+    var de = document.getElementById('d-e'); if(de) de.textContent = stats.empresas || 0;
+    var dh = document.getElementById('d-h'); if(dh) dh.textContent = stats.colocados || 0;
+  } catch(e) {
+    console.warn('cargarDash Supabase error:', e.message);
+    // Fallback con datos en memoria
+    var dv = document.getElementById('d-v'); if(dv) dv.textContent = vacantesActuales.filter(function(v){return v.estado==='activa';}).length;
+    var bv = document.getElementById('bv'); if(bv) bv.textContent = vacantesActuales.length;
+  }
+  try {
+    // Empresas recientes
+    var emps = await API.empresas.listar({});
+    var eb = document.getElementById('dash-emp');
+    if(eb && emps && emps.length) {
+      eb.innerHTML = emps.slice(0,5).map(function(e){
+        return '<tr><td><strong>'+(e.razon_social||e.nombre||'')+'</strong></td>'+
+          '<td style="color:var(--texto-g)">'+(e.actividad_economica||e.sector||'')+'</td>'+
+          '<td><span class="badge '+(e.estado==='Activo'?'b-activa':'b-normal')+'">'+(e.estado||'')+'</span></td></tr>';
+      }).join('');
+      empresasActuales = emps;
+    }
+  } catch(e) { console.warn('dash empresas:', e.message); }
+  try {
+    // Vacantes recientes
+    var vacs = await API.vacantes.listar({estado:'Activa'});
+    var vb = document.getElementById('dash-vac');
+    if(vb && vacs && vacs.length) {
+      vb.innerHTML = vacs.slice(0,5).map(function(v){
+        return '<tr><td><strong>'+(v.titulo||v.cargo||'')+'</strong></td>'+
+          '<td style="color:var(--texto-g)">'+(v.municipio||'')+'</td>'+
+          '<td>'+badgeTipo(v.tipo_especial||v.tipo||'normal')+'</td></tr>';
+      }).join('');
+      vacantesActuales = vacs;
+    }
+  } catch(e) { console.warn('dash vacantes:', e.message); }
 }
 
 // ═══════════════════════════════════════════════════════
@@ -2457,9 +2500,7 @@ var diagChartRadar = null;
 
 // ── INIT ─────────────────────────────────────────────────────────
 function initDiagnosticos() {
-  if (!diagSupabase) {
-    diagSupabase = supabase.createClient(DIAG_SUPABASE_URL, DIAG_SUPABASE_KEY);
-  }
+  // Usa API.diagnosticos (mismo Supabase, cliente unificado)
   diagCargarListaEmpresas();
   diagTab('admin', document.querySelector('.diag-tab'));
 }
@@ -2475,13 +2516,11 @@ function diagTab(panel, btn) {
 
 // ── CARGAR LISTA DE EMPRESAS ─────────────────────────────────────
 async function diagCargarListaEmpresas() {
-  if (!diagSupabase) diagSupabase = supabase.createClient(DIAG_SUPABASE_URL, DIAG_SUPABASE_KEY);
   var sel = document.getElementById('diag-sel-empresa');
   if (!sel) return;
   try {
-    var resp = await diagSupabase.from('diagnosticos_empresariales').select('nombre_empresa');
-    var data = resp.data || [];
-    var empresas = [...new Set(data.map(function(r){ return r.nombre_empresa; }).filter(Boolean))].sort();
+    var data = await API.diagnosticos.listarEmpresas();
+    var empresas = [...new Set((data||[]).map(function(r){ return r.nombre_empresa; }).filter(Boolean))].sort();
     var opts = '<option value="">— Seleccione una empresa —</option>' +
       empresas.map(function(e){ return '<option value="'+escDiag(e)+'">'+escDiag(e)+'</option>'; }).join('');
     sel.innerHTML = opts;
@@ -2568,13 +2607,7 @@ async function diagCargarDiagnosticos(empresa) {
   if (diagWrap) diagWrap.style.display = 'none';
 
   try {
-    var resp = await diagSupabase
-      .from('diagnosticos_empresariales')
-      .select('*')
-      .eq('nombre_empresa', empresa)
-      .order('fecha', { ascending: false });
-    
-    var data = resp.data || [];
+    var data = await API.diagnosticos.listar(empresa);
     diagDatosActuales = data;
 
     if (data.length === 0) {
@@ -2824,8 +2857,7 @@ function diagCalcNivel(row) {
 async function diagBorrarRegistro(id) {
   if (!confirm('¿Eliminar este diagnóstico? Esta acción no se puede deshacer.')) return;
   try {
-    var resp = await diagSupabase.from('diagnosticos_empresariales').delete().eq('id', id);
-    if (resp.error) throw resp.error;
+    await API.diagnosticos.eliminar(id);
     toast('✅ Diagnóstico eliminado');
     if (diagEmpresaActual) await diagCargarDiagnosticos(diagEmpresaActual);
   } catch(e) {
@@ -2838,8 +2870,7 @@ async function diagConfirmarBorrar() {
   if (!emp) { toast('Selecciona una empresa primero'); return; }
   if (!confirm('¿Eliminar TODOS los diagnósticos de "' + emp + '"? Esta acción no se puede deshacer.')) return;
   try {
-    var resp = await diagSupabase.from('diagnosticos_empresariales').delete().eq('nombre_empresa', emp);
-    if (resp.error) throw resp.error;
+    await API.diagnosticos.eliminarEmpresa(emp);
     toast('✅ Empresa y diagnósticos eliminados');
     await diagCargarListaEmpresas();
   } catch(e) {
@@ -3339,19 +3370,29 @@ function actualizarCampoEmp(id, campo, valor) {
 }
 
 // ── IMPORTAR ───────────────────────────────────────────────────────────
-function importarCandidatos() {
+async function importarCandidatos() {
   if (!datosImportadosCand.length) { toast('No hay candidatos válidos para importar'); return; }
-  // En producción → POST a Supabase/API
-  // Por ahora: añadir a CANDIDATOS en memoria si existe
-  toast('✅ ' + datosImportadosCand.length + ' candidatos importados correctamente');
-  if (typeof actualizarBadgesCandidatos === 'function') actualizarBadgesCandidatos();
+  toast('⏳ Importando ' + datosImportadosCand.length + ' candidatos a Supabase...');
+  try {
+    var result = await API.candidatos.bulk(datosImportadosCand);
+    toast('✅ ' + result.insertados + ' candidatos importados' + (result.errores > 0 ? ' · ' + result.errores + ' errores' : ''));
+    candidatosActuales = datosImportadosCand.slice();
+  } catch(e) {
+    toast('Error al importar: ' + e.message);
+  }
 }
 
-function importarEmpresas() {
+async function importarEmpresas() {
   if (!datosImportadosEmp.length) { toast('No hay empresas válidas para importar'); return; }
-  // En producción → POST a Supabase/API
-  toast('✅ ' + datosImportadosEmp.length + ' empresas importadas. Código CRM y Afiliación guardados.');
-  if (typeof renderTablaEmpresas === 'function') renderTablaEmpresas();
+  toast('⏳ Importando ' + datosImportadosEmp.length + ' empresas a Supabase...');
+  try {
+    var result = await API.empresas.bulk(datosImportadosEmp);
+    toast('✅ ' + result.insertados + ' empresas importadas' + (result.errores > 0 ? ' · ' + result.errores + ' errores' : ''));
+    empresasActuales = datosImportadosEmp.slice();
+    if (typeof renderTablaEmpresas === 'function') renderTablaEmpresas();
+  } catch(e) {
+    toast('Error al importar: ' + e.message);
+  }
 }
 
 // ── EXPORTAR ────────────────────────────────────────────────────────────
