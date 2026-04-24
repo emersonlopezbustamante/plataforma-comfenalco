@@ -1,169 +1,3 @@
-    <div id="pg-cargue" class="hidden" onclick="event.stopPropagation()">
-    <div class="ph">
-      <div>
-        <div class="ptitle">📤 Cargue masivo</div>
-        <p class="psub">Importa registros del SISE de candidatos y empresas. Soporta el formato oficial de la Agencia.</p>
-      </div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button type="button" class="btn btn-ghost btn-sm" onclick="descargarPlantilla('candidatos');event.stopPropagation()">⬇️ Plantilla candidatos</button>
-        <button type="button" class="btn btn-ghost btn-sm" onclick="descargarPlantilla('empresas');event.stopPropagation()">⬇️ Plantilla empresas</button>
-      </div>
-    </div>
-
-    <div style="display:flex;gap:4px;margin-bottom:0;border-bottom:2px solid var(--borde)">
-      <button type="button" class="tab-btn active" id="tab-cand" onclick="switchTab('candidatos');event.stopPropagation()">👤 Candidatos / Oferentes</button>
-      <button type="button" class="tab-btn" id="tab-emp" onclick="switchTab('empresas');event.stopPropagation()">🏢 Empresas demandantes</button>
-    </div>
-
-    <!-- ═══ TAB CANDIDATOS ═══ -->
-    <div id="tab-pane-candidatos" style="padding-top:20px">
-      <div class="card" style="padding:14px 18px;margin-bottom:14px">
-        <div class="ctitle" style="font-size:13px;margin-bottom:8px">📋 Columnas reconocidas del SISE (Detalle Total Oferentes)</div>
-        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px">
-          <span style="background:#d4edda;color:#155724;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700">Tipo Documento *</span>
-          <span style="background:#d4edda;color:#155724;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700">Número Documento *</span>
-          <span style="background:#d4edda;color:#155724;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700">Nombres *</span>
-          <span style="background:#d4edda;color:#155724;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700">Apellidos *</span>
-          <span style="background:var(--suave);color:var(--texto-g);padding:2px 9px;border-radius:20px;font-size:11px">Celular</span>
-          <span style="background:var(--suave);color:var(--texto-g);padding:2px 9px;border-radius:20px;font-size:11px">Teléfono</span>
-          <span style="background:var(--suave);color:var(--texto-g);padding:2px 9px;border-radius:20px;font-size:11px">Canal de Registro</span>
-          <span style="background:var(--suave);color:var(--texto-g);padding:2px 9px;border-radius:20px;font-size:11px">Edad</span>
-          <span style="background:var(--suave);color:var(--texto-g);padding:2px 9px;border-radius:20px;font-size:11px">Género</span>
-          <span style="background:var(--suave);color:var(--texto-g);padding:2px 9px;border-radius:20px;font-size:11px">Nivel de Estudio</span>
-          <span style="background:var(--suave);color:var(--texto-g);padding:2px 9px;border-radius:20px;font-size:11px">Título Homologado</span>
-          <span style="background:var(--suave);color:var(--texto-g);padding:2px 9px;border-radius:20px;font-size:11px">Ciudad de Residencia</span>
-          <span style="background:var(--suave);color:var(--texto-g);padding:2px 9px;border-radius:20px;font-size:11px">Email</span>
-          <span style="background:var(--suave);color:var(--texto-g);padding:2px 9px;border-radius:20px;font-size:11px">Fecha Registro</span>
-          <span style="background:var(--suave);color:var(--texto-g);padding:2px 9px;border-radius:20px;font-size:11px">Programa de Gobierno</span>
-          <span style="background:#fff3cd;color:#856404;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700">Condiciones Especiales ⚠️</span>
-          <span style="background:#fff3cd;color:#856404;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700">Detalle Discapacidades ⚠️</span>
-          <span style="background:var(--suave);color:var(--texto-g);padding:2px 9px;border-radius:20px;font-size:11px">Situación Laboral</span>
-          <span style="background:var(--suave);color:var(--texto-g);padding:2px 9px;border-radius:20px;font-size:11px">Agente Registra</span>
-          <span style="background:var(--suave);color:var(--texto-g);padding:2px 9px;border-radius:20px;font-size:11px">% Hoja Vida</span>
-          <span style="background:var(--suave);color:var(--texto-g);padding:2px 9px;border-radius:20px;font-size:11px">Pertenece A</span>
-          <span style="background:var(--suave);color:var(--texto-g);padding:2px 9px;border-radius:20px;font-size:11px">Orientacion_Sexual</span>
-          <span style="background:var(--suave);color:var(--texto-g);padding:2px 9px;border-radius:20px;font-size:11px">Genero_Identifica</span>
-        </div>
-        <p style="font-size:11px;color:var(--texto-g)">* Obligatorios · ⚠️ Datos sensibles — se tratan con confidencialidad (Ley 1581/2012) · Acepta .xlsx .xls .csv</p>
-      </div>
-      <div class="card" style="padding:20px">
-        <div id="drop-cand" style="border:2px dashed var(--borde);border-radius:10px;padding:36px;text-align:center;cursor:pointer;transition:all .22s" onclick="document.getElementById('file-cand').click()" ondragover="ev.preventDefault()" ondrop="soltarArchivo(event,'candidatos')">
-          <div style="font-size:36px;margin-bottom:8px">📂</div>
-          <div style="font-weight:700;color:var(--negro);margin-bottom:4px">Arrastra el archivo aquí o haz clic para seleccionar</div>
-          <div style="font-size:12px;color:var(--texto-g)">Soporta el formato oficial SISE: <strong>Detalle_Total_Oferentes.xlsx</strong> · También .xls y .csv</div>
-          <input type="file" id="file-cand" accept=".xlsx,.xls,.csv" style="display:none" onchange="cargarArchivo(event,'candidatos')"/>
-        </div>
-        <div id="cand-progreso" style="display:none;margin-top:16px">
-          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
-            <span id="cand-status">Procesando...</span>
-            <span id="cand-pct">0%</span>
-          </div>
-          <div style="height:8px;background:var(--borde);border-radius:4px;overflow:hidden">
-            <div id="cand-bar" style="height:100%;background:var(--pist);border-radius:4px;width:0%;transition:width .3s"></div>
-          </div>
-        </div>
-        <div id="cand-preview" style="display:none;margin-top:16px">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-            <div style="font-weight:700;font-size:14px" id="cand-preview-titulo">Vista previa</div>
-            <div style="display:flex;gap:8px">
-              <button type="button" class="btn btn-ghost btn-sm" onclick="exportarErroresCand();event.stopPropagation()">⚠️ Exportar errores</button>
-              <button type="button" class="btn btn-primary btn-sm" onclick="importarCandidatos();event.stopPropagation()">✅ Importar válidos</button>
-            </div>
-          </div>
-          <div id="cand-resumen" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px"></div>
-          <div style="overflow-x:auto;max-height:400px;overflow-y:auto">
-            <table class="tabla-cap" id="tabla-preview-cand">
-              <thead id="thead-cand"></thead>
-              <tbody id="tbody-cand"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ═══ TAB EMPRESAS ═══ -->
-    <div id="tab-pane-empresas" style="padding-top:20px;display:none">
-      <div class="card" style="padding:14px 18px;margin-bottom:14px">
-        <div class="ctitle" style="font-size:13px;margin-bottom:8px">📋 Columnas reconocidas del SISE (Reporte Empresas Demandantes) + campos adicionales Comfenalco</div>
-        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px">
-          <span style="background:#d4edda;color:#155724;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700">NIT *</span>
-          <span style="background:#d4edda;color:#155724;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700">Razón Social *</span>
-          <span style="background:var(--suave);color:var(--texto-g);padding:2px 9px;border-radius:20px;font-size:11px">Nombre Sede</span>
-          <span style="background:var(--suave);color:var(--texto-g);padding:2px 9px;border-radius:20px;font-size:11px">Id Sede</span>
-          <span style="background:var(--suave);color:var(--texto-g);padding:2px 9px;border-radius:20px;font-size:11px">Ciudad</span>
-          <span style="background:var(--suave);color:var(--texto-g);padding:2px 9px;border-radius:20px;font-size:11px">Departamento</span>
-          <span style="background:var(--suave);color:var(--texto-g);padding:2px 9px;border-radius:20px;font-size:11px">Dirección</span>
-          <span style="background:var(--suave);color:var(--texto-g);padding:2px 9px;border-radius:20px;font-size:11px">Teléfono</span>
-          <span style="background:var(--suave);color:var(--texto-g);padding:2px 9px;border-radius:20px;font-size:11px">Nombre Administrador</span>
-          <span style="background:var(--suave);color:var(--texto-g);padding:2px 9px;border-radius:20px;font-size:11px">Email Administrador</span>
-          <span style="background:var(--suave);color:var(--texto-g);padding:2px 9px;border-radius:20px;font-size:11px">Act. Económica</span>
-          <span style="background:var(--suave);color:var(--texto-g);padding:2px 9px;border-radius:20px;font-size:11px">Fecha Registro</span>
-          <span style="background:var(--suave);color:var(--texto-g);padding:2px 9px;border-radius:20px;font-size:11px">Canal de Registro</span>
-          <span style="background:var(--suave);color:var(--texto-g);padding:2px 9px;border-radius:20px;font-size:11px">Agente Registra</span>
-          <span style="background:var(--suave);color:var(--texto-g);padding:2px 9px;border-radius:20px;font-size:11px">Prestador Anterior</span>
-          <span style="background:var(--suave);color:var(--texto-g);padding:2px 9px;border-radius:20px;font-size:11px">Tamaño de la empresa</span>
-          <span style="background:var(--suave);color:var(--texto-g);padding:2px 9px;border-radius:20px;font-size:11px">Estado Sede</span>
-          <span style="background:#cce5ff;color:#004085;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700">Código CRM ➕</span>
-          <span style="background:#cce5ff;color:#004085;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700">Afiliada Comfenalco ➕</span>
-        </div>
-        <p style="font-size:11px;color:var(--texto-g)">* Obligatorios · ➕ Columnas adicionales Comfenalco — si el archivo no las trae quedan en blanco y se ajustan en la tabla · Acepta .xlsx .xls .csv</p>
-      </div>
-      <div class="card" style="padding:20px">
-        <div id="drop-emp" style="border:2px dashed var(--borde);border-radius:10px;padding:36px;text-align:center;cursor:pointer;transition:all .22s" onclick="document.getElementById('file-emp').click()">
-          <div style="font-size:36px;margin-bottom:8px">🏢</div>
-          <div style="font-weight:700;color:var(--negro);margin-bottom:4px">Arrastra el archivo aquí o haz clic para seleccionar</div>
-          <div style="font-size:12px;color:var(--texto-g)">Soporta el formato oficial SISE: <strong>Reporte_EMPRESAS_Demandantes_registrados_en_la_Agencia.xls/.xlsx</strong></div>
-          <input type="file" id="file-emp" accept=".xlsx,.xls,.csv" style="display:none" onchange="cargarArchivo(event,'empresas')"/>
-        </div>
-        <div id="emp-progreso" style="display:none;margin-top:16px">
-          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
-            <span id="emp-status">Procesando...</span>
-            <span id="emp-pct">0%</span>
-          </div>
-          <div style="height:8px;background:var(--borde);border-radius:4px;overflow:hidden">
-            <div id="emp-bar" style="height:100%;background:var(--azul);border-radius:4px;width:0%;transition:width .3s"></div>
-          </div>
-        </div>
-        <div id="emp-preview" style="display:none;margin-top:16px">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
-            <div style="font-weight:700;font-size:14px" id="emp-preview-titulo">Vista previa</div>
-            <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <button type="button" class="btn btn-ghost btn-sm" onclick="exportarErroresEmp();event.stopPropagation()">⚠️ Exportar errores</button>
-              <button type="button" class="btn btn-ghost btn-sm" onclick="exportarTablaEmpresas();event.stopPropagation()">📥 Exportar tabla completa</button>
-              <button type="button" class="btn btn-primary btn-sm" onclick="importarEmpresas();event.stopPropagation()">✅ Importar empresas</button>
-            </div>
-          </div>
-          <div id="emp-resumen" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px"></div>
-          <!-- TABLA EDITABLE DE EMPRESAS -->
-          <div style="overflow-x:auto;max-height:500px;overflow-y:auto">
-            <table class="tabla-cap" id="tabla-preview-emp" style="min-width:1400px">
-              <thead>
-                <tr>
-                  <th style="width:40px">#</th>
-                  <th>NIT</th>
-                  <th style="min-width:200px">Razón Social</th>
-                  <th>Ciudad</th>
-                  <th>Act. Económica</th>
-                  <th>Tamaño</th>
-                  <th>Contacto</th>
-                  <th>Email</th>
-                  <th>Fecha Registro</th>
-                  <th>Canal</th>
-                  <th>Agente</th>
-                  <th>Estado</th>
-                  <th style="min-width:130px;background:#e8f4fd;color:#004085">Código CRM</th>
-                  <th style="min-width:150px;background:#e8f4fd;color:#004085">Afiliada Comfenalco</th>
-                  <th>Estado cargue</th>
-                </tr>
-              </thead>
-              <tbody id="tbody-emp"></tbody>
-            </table>
-          </div>
-          <p style="font-size:11px;color:var(--texto-g);margin-top:8px">💡 Las columnas <strong style="color:#004085">Código CRM</strong> y <strong style="color:#004085">Afiliada Comfenalco</strong> son editables directamente en la tabla. Haz clic en cualquier celda para ajustar el valor antes de importar.</p>
-        </div>
-      </div>
-    </div>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -1409,6 +1243,8 @@ function nav(p){
   if(p==='capacitaciones') initCapacitaciones();
 }
 
+function iniciarCargue(){ /* módulo cargue listo */ }
+
 // ═══════════════════════════════════════════════════════
 // DASHBOARD
 // ═══════════════════════════════════════════════════════
@@ -1891,15 +1727,32 @@ function renderAuth(user){
 window.addEventListener('load', function(){
   // Llenar municipios en filtro vacantes
   var selM = document.getElementById('fv-mpio');
-  MUNICIPIOS.forEach(function(m){ var o=document.createElement('option'); o.value=m.n; o.textContent=m.n; selM.appendChild(o); });
+  if(selM && typeof MUNICIPIOS !== 'undefined'){
+    MUNICIPIOS.forEach(function(m){ var o=document.createElement('option'); o.value=m.n; o.textContent=m.n; selM.appendChild(o); });
+  }
 
-  // Clerk
+  // Clerk auth
   if(window.Clerk){
     window.Clerk.load().then(function(){
       renderAuth(window.Clerk.user);
       window.Clerk.addListener(function(e){ renderAuth(e.user); });
+    }).catch(function(){
+      // Clerk falló — mostrar panel sin auth
+      nav('dashboard');
     });
+  } else {
+    // Clerk no disponible (local/dev) — mostrar panel directamente
+    nav('dashboard');
   }
+
+  // Fallback: si después de 4s nada se muestra, forzar dashboard
+  setTimeout(function(){
+    var visible = false;
+    document.querySelectorAll('[id^="pg-"]').forEach(function(el){
+      if(!el.classList.contains('hidden')) visible = true;
+    });
+    if(!visible) nav('dashboard');
+  }, 4000);
 });
 // ════════════════════════════════════════════════════
 // CARGUE MASIVO — CANDIDATOS Y EMPRESAS
