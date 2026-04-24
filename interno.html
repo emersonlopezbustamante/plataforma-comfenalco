@@ -2031,6 +2031,110 @@ function variacion(actual, prev) {
 
 // ── BLOQUES ──────────────────────────────────────────────────
 
+// ── DATOS SEED MÓDULO REPORTES ────────────────────────────────────
+var REP_DATA = {
+  // Intermediación
+  vacantes_publicadas:    { val: 312,  prev: 287,  meta: 350 },
+  vacantes_activas:       { val: 128,  prev: 114,  meta: 150 },
+  vacantes_cerradas:      { val: 184,  prev: 173,  meta: 200 },
+  remitidos:              { val: 1847, prev: 1623,  meta: 2000 },
+  colocados:              { val: 643,  prev: 581,   meta: 700 },
+  puestos_generados:      { val: 643,  prev: 581,   meta: 700 },
+  puestos_hombres:        { val: 312,  prev: 290,   meta: null },
+  puestos_mujeres:        { val: 331,  prev: 291,   meta: null },
+  tasa_intermediacion:    { val: 34.8, prev: 35.8,  meta: null },
+  tiempo_cierre_prom:     { val: 18,   prev: 21,    meta: 20 },
+
+  // Empresas
+  emp_registradas:        { val: 487,  prev: 431,   meta: 500 },
+  emp_nuevas:             { val: 56,   prev: 48,    meta: 60 },
+  emp_con_vacantes:       { val: 134,  prev: 121,   meta: 150 },
+  emp_acompanadas_anual:  { val: 312,  prev: 278,   meta: 350 },
+  emp_retenidas:          { val: 38,   prev: 29,    meta: 40 },
+  emp_atendidas_lab:      { val: 74,   prev: 61,    meta: 80 },
+  macroruedas:            { val: 4,    prev: 3,     meta: 6 },
+
+  // Inclusión
+  col_inclusion_total:    { val: 187,  prev: 162,   meta: 200 },
+  pct_inclusion:          { val: 29.1, prev: 27.9,  meta: null },
+  col_discapacidad:       { val: 42,   prev: 38,    meta: 45 },
+  col_victimas:           { val: 51,   prev: 44,    meta: 55 },
+  col_jovenes:            { val: 38,   prev: 33,    meta: 40 },
+  col_adulto_mayor:       { val: 18,   prev: 15,    meta: 20 },
+  col_migrantes:          { val: 22,   prev: 19,    meta: 25 },
+  col_etnicos:            { val: 11,   prev: 9,     meta: 12 },
+  col_lgbtiq:             { val: 5,    prev: 4,     meta: null },
+
+  // Orientación / SOY talento
+  orientaciones:          { val: 2341, prev: 2187,  meta: 2500 },
+  citas_agendadas:        { val: 1823, prev: 1654,  meta: 2000 },
+  citas_ejecutadas:       { val: 1689, prev: 1521,  meta: 1800 },
+  pid_elaborados:         { val: 843,  prev: 778,   meta: 900 },
+  soy_talento_inscritos:  { val: 312,  prev: 287,   meta: 350 },
+  soy_talento_activos:    { val: 198,  prev: 176,   meta: 220 },
+  soy_talento_completos:  { val: 134,  prev: 119,   meta: 150 },
+  insignias_otorgadas:    { val: 267,  prev: 234,   meta: 300 },
+  periscopio_inscritos:   { val: 143,  prev: 121,   meta: 160 },
+  periscopio_completados: { val: 98,   prev: 84,    meta: 110 },
+  periscopio_municipios:  { val: 12,   prev: 9,     meta: 15 },
+
+  // Pruebas y laboratorio
+  candidatos_evaluados:   { val: 487,  prev: 421,   meta: 520 },
+  pruebas_total:          { val: 1943, prev: 1687,  meta: 2100 },
+  laboratorios_ejecutados:{ val: 28,   prev: 24,    meta: 30 },
+  laboratorios_moviles:   { val: 8,    prev: 6,     meta: 10 },
+  grupos_cerrados:        { val: 34,   prev: 29,    meta: 36 },
+
+  // Jornadas y eventos
+  jornadas_moviles:       { val: 42,   prev: 38,    meta: 48 },
+  municipios_visitados:   { val: 27,   prev: 24,    meta: 30 },
+  eventos_empleo:         { val: 18,   prev: 15,    meta: 20 },
+  eventos_participantes:  { val: 3240, prev: 2890,  meta: 3500 },
+  participantes_jornadas: { val: 3240, prev: 2890,  meta: 3500 },
+
+  // Capacitación
+  personas_capacitadas:   { val: 423,  prev: 387,   meta: 450 },
+  cursos_ejecutados:      { val: 18,   prev: 15,    meta: 20 },
+  horas_formacion:        { val: 1240, prev: 1080,  meta: 1400 },
+
+  // Listas para gráficas de barras
+  colocados_por_region: [
+    { r: 'Valle de Aburrá', n: 287 },
+    { r: 'Oriente',         n: 98  },
+    { r: 'Norte',           n: 67  },
+    { r: 'Urabá',           n: 54  },
+    { r: 'Bajo Cauca',      n: 48  },
+    { r: 'Occidente',       n: 39  },
+    { r: 'Suroeste',        n: 28  },
+    { r: 'Nordeste',        n: 14  },
+    { r: 'Magdalena Medio', n: 8   }
+  ],
+  vacantes_por_sector: [
+    { s: 'Comercio y servicios',  n: 98  },
+    { s: 'Manufactura',           n: 72  },
+    { s: 'Logística/Transporte',  n: 54  },
+    { s: 'Construcción',          n: 41  },
+    { s: 'Tecnología',            n: 28  },
+    { s: 'Salud',                 n: 19  },
+    { s: 'Agroindustria',         n: 14  }
+  ],
+  pruebas_desglose: [
+    { nombre: 'Físico-funcional',   val: 487  },
+    { nombre: 'Competencias',       val: 312  },
+    { nombre: 'Fuerza y flexib.',   val: 421  },
+    { nombre: 'Resistencia cardio', val: 398  },
+    { nombre: 'Movilidad/postural', val: 325  }
+  ],
+  sectores_cap: [
+    { s: 'Logística',       n: 87  },
+    { s: 'Tecnología',      n: 68  },
+    { s: 'Comercio',        n: 94  },
+    { s: 'Gastronomía',     n: 72  },
+    { s: 'Emprendimiento',  n: 54  },
+    { s: 'Habilidades',     n: 48  }
+  ]
+};
+
 var bloqueActual = 'todos';
 function renderReportes() {
   var contenido = document.getElementById('rep-contenido');
