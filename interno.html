@@ -2511,7 +2511,13 @@ var diagChartRadar = null;
 
 // ── INIT ─────────────────────────────────────────────────────────
 function initDiagnosticos() {
-  // Usa API.diagnosticos (mismo Supabase, cliente unificado)
+  // Crear cliente supabase-js (más robusto que fetch directo para CORS)
+  if (!window._diagSupa) {
+    window._diagSupa = supabase.createClient(
+      "https://mhiwvjermmmicuxwdghn.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1oaXd2amVybW1taWN1eHdkZ2huIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwMTQ3MzUsImV4cCI6MjA5MTU5MDczNX0.nIrq4t-GQPMbpsS8KSaPI5J6NDNLmuQnk5van8dlg78"
+    );
+  }
   diagCargarListaEmpresas();
   diagTab('admin', document.querySelector('.diag-tab'));
 }
@@ -2541,7 +2547,11 @@ async function diagCargarListaEmpresas() {
   var sel = document.getElementById('diag-sel-empresa');
   if (!sel) return;
   try {
-    var data = await API.diagnosticos.listarEmpresas();
+    var resp = await window._diagSupa
+      .from('diagnosticos_empresariales')
+      .select('nombre_empresa')
+      .order('nombre_empresa', {ascending: true});
+    var data = resp.data || [];
     var empresas = [...new Set((data||[]).map(function(r){ return r.nombre_empresa; }).filter(Boolean))].sort();
     // Poblar datalist con empresas existentes
     var dl = document.getElementById('diag-empresas-list');
@@ -2641,7 +2651,13 @@ async function diagCargarDiagnosticos(empresa) {
   if (diagWrap) diagWrap.style.display = 'none';
 
   try {
-    var data = await API.diagnosticos.listar(empresa);
+    var resp = await window._diagSupa
+      .from('diagnosticos_empresariales')
+      .select('*')
+      .eq('nombre_empresa', empresa)
+      .order('fecha', {ascending: false});
+    var data = resp.data || [];
+    if (resp.error) throw resp.error;
     diagDatosActuales = data;
 
     if (data.length === 0) {
@@ -2891,7 +2907,11 @@ function diagCalcNivel(row) {
 async function diagBorrarRegistro(id) {
   if (!confirm('¿Eliminar este diagnóstico? Esta acción no se puede deshacer.')) return;
   try {
-    await API.diagnosticos.eliminar(id);
+    var r = await window._diagSupa
+      .from('diagnosticos_empresariales')
+      .delete()
+      .eq('id', id);
+    if (r.error) throw r.error;
     toast('✅ Diagnóstico eliminado');
     if (diagEmpresaActual) await diagCargarDiagnosticos(diagEmpresaActual);
   } catch(e) {
@@ -2904,7 +2924,11 @@ async function diagConfirmarBorrar() {
   if (!emp) { toast('Selecciona una empresa primero'); return; }
   if (!confirm('¿Eliminar TODOS los diagnósticos de "' + emp + '"? Esta acción no se puede deshacer.')) return;
   try {
-    await API.diagnosticos.eliminarEmpresa(emp);
+    var r = await window._diagSupa
+      .from('diagnosticos_empresariales')
+      .delete()
+      .eq('nombre_empresa', emp);
+    if (r.error) throw r.error;
     toast('✅ Empresa y diagnósticos eliminados');
     await diagCargarListaEmpresas();
   } catch(e) {
