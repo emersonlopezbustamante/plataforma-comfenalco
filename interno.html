@@ -622,9 +622,11 @@
         <div class="diag-admin-wrap">
           <div class="diag-selector-card">
             <label>🏢 Empresa:</label>
-            <select id="diag-sel-empresa" class="finput" style="flex:1;min-width:200px" onchange="diagCargarEmpresas();event.stopPropagation()">
-              <option value="">— Seleccione una empresa —</option>
-            </select>
+            <input type="text" id="diag-sel-empresa" class="finput" 
+              list="diag-empresas-list" style="flex:1;min-width:200px" 
+              placeholder="Nombre de la empresa (nueva o existente)"
+              oninput="diagCargarEmpresas();diagGenerarLink();event.stopPropagation()"/>
+            <datalist id="diag-empresas-list"></datalist>
             <button type="button" class="btn-borrar-emp" onclick="diagConfirmarBorrar();event.stopPropagation()">🗑 Eliminar empresa</button>
           </div>
 
@@ -701,19 +703,25 @@
         </div><!-- /diag-admin-wrap -->
       </div><!-- /diag-panel-admin -->
 
-      <!-- ── PANEL FORMULARIO (preview embed) ───────────────────── -->
+      <!-- ── PANEL FORMULARIO ────────────────────────────────────── -->
       <div id="diag-panel-form" style="display:none">
-        <div class="card" style="padding:16px;margin-bottom:16px;background:linear-gradient(135deg,#094a4b,#0a5c5d);color:#fff;border-radius:var(--rc)">
-          <div style="font-family:'Nunito';font-size:15px;font-weight:800;margin-bottom:4px">📝 Formulario de Diagnóstico</div>
-          <p style="font-size:13px;opacity:.85">Vista previa del formulario que recibirán las empresas. Para enviar el diagnóstico usa el tab Administrador.</p>
+        <div class="diag-send-card">
+          <div>
+            <h3>📝 Formulario de Diagnóstico</h3>
+            <p>Abre el formulario en una nueva pestaña para completarlo o para enviarlo a la empresa</p>
+          </div>
+          <button type="button" class="btn-send-diag" onclick="diagAbrirFormularioNuevaPestana();event.stopPropagation()">🚀 Abrir formulario</button>
         </div>
-        <div class="card" style="padding:0;overflow:hidden;border-radius:var(--rc)">
-          <iframe id="diag-iframe" src="" style="width:100%;height:70vh;border:none;display:none"></iframe>
-          <div id="diag-iframe-placeholder" style="padding:40px;text-align:center;color:var(--texto-g)">
-            <div style="font-size:40px;margin-bottom:12px">📋</div>
-            <div style="font-weight:700;margin-bottom:8px">Vista previa del formulario</div>
-            <div style="font-size:13px;margin-bottom:20px">El formulario se abrirá aquí o en una nueva pestaña</div>
-            <button type="button" class="btn btn-primary" onclick="diagAbrirFormularioNuevaPestana();event.stopPropagation()">🚀 Abrir formulario completo</button>
+        <div class="card" style="padding:24px;text-align:center">
+          <div style="font-size:48px;margin-bottom:16px">📋</div>
+          <div style="font-family:'Nunito';font-size:16px;font-weight:800;color:var(--verde);margin-bottom:8px">Diagnóstico Empresarial Integral</div>
+          <p style="font-size:13px;color:var(--texto-g);margin-bottom:20px">El formulario se abre en una pestaña nueva para que la empresa pueda completarlo cómodamente.</p>
+          <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+            <button type="button" class="btn btn-primary" onclick="diagAbrirFormularioNuevaPestana();event.stopPropagation()">🚀 Abrir formulario ahora</button>
+            <button type="button" class="btn btn-ghost" onclick="diagCopiarLink();event.stopPropagation()">📋 Copiar enlace</button>
+          </div>
+          <div style="margin-top:20px;padding:12px;background:var(--suave);border-radius:10px;font-size:12px;color:var(--texto-g)">
+            💡 Para enviar a la empresa: copia el enlace del tab <strong>Administrador</strong> y envíalo por correo o WhatsApp
           </div>
         </div>
       </div>
@@ -2521,12 +2529,18 @@ async function diagCargarListaEmpresas() {
   try {
     var data = await API.diagnosticos.listarEmpresas();
     var empresas = [...new Set((data||[]).map(function(r){ return r.nombre_empresa; }).filter(Boolean))].sort();
-    var opts = '<option value="">— Seleccione una empresa —</option>' +
-      empresas.map(function(e){ return '<option value="'+escDiag(e)+'">'+escDiag(e)+'</option>'; }).join('');
-    sel.innerHTML = opts;
-    if (empresas.length > 0) {
-      diagEmpresaActual = empresas[0];
+    // Poblar datalist con empresas existentes
+    var dl = document.getElementById('diag-empresas-list');
+    if (dl) {
+      dl.innerHTML = empresas.map(function(e){ 
+        return '<option value="'+escDiag(e)+'">'; 
+      }).join('');
+    }
+    // Si hay empresas, cargar la primera automáticamente
+    if (empresas.length > 0 && sel) {
       sel.value = empresas[0];
+      diagEmpresaActual = empresas[0];
+      diagGenerarLinkEmpresa(empresas[0]);
       await diagCargarDiagnosticos(empresas[0]);
     }
   } catch(e) {
@@ -2535,8 +2549,8 @@ async function diagCargarListaEmpresas() {
 }
 
 async function diagCargarEmpresas() {
-  var sel = document.getElementById('diag-sel-empresa');
-  var emp = sel ? sel.value : '';
+  var el = document.getElementById('diag-sel-empresa');
+  var emp = el ? el.value.trim() : '';
   if (!emp) return;
   diagEmpresaActual = emp;
   diagGenerarLinkEmpresa(emp);
@@ -2545,8 +2559,9 @@ async function diagCargarEmpresas() {
 
 // ── GENERAR LINK ─────────────────────────────────────────────────
 function diagGenerarLink() {
-  var emp = document.getElementById('diag-sel-empresa') ? document.getElementById('diag-sel-empresa').value : '';
-  if (!emp) { toast('Selecciona una empresa primero'); return; }
+  var el = document.getElementById('diag-sel-empresa');
+  var emp = el ? el.value.trim() : '';
+  if (!emp) { toast('Escribe el nombre de la empresa primero'); return; }
   diagEmpresaActual = emp;
   diagGenerarLinkEmpresa(emp);
 }
