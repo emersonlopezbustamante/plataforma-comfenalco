@@ -197,6 +197,56 @@
   .import-progress{height:6px;background:var(--borde);border-radius:3px;overflow:hidden;margin:8px 0}
   .import-progress-fill{height:100%;background:var(--pist);border-radius:3px;transition:width .3s}
 
+  /* ══ MÓDULO CAPACITACIONES ════════════════════════ */
+  .cap-tabs{display:flex;gap:4px;margin-bottom:20px;background:#fff;border-radius:10px;padding:5px;box-shadow:0 2px 10px rgba(9,74,75,.07);flex-wrap:wrap}
+  .cap-tab{padding:8px 16px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;transition:all var(--t);color:var(--texto-g);border:none;background:transparent;font-family:inherit}
+  .cap-tab.active{background:var(--verde);color:#fff}
+  .cap-tab:hover:not(.active){background:var(--suave)}
+  .cap-panel{display:none}.cap-panel.active{display:block}
+  .curso-card{background:#fff;border-radius:var(--rc);box-shadow:0 2px 14px rgba(9,74,75,.07);padding:20px;border-left:4px solid var(--pist);margin-bottom:14px;display:flex;align-items:flex-start;gap:16px;transition:box-shadow var(--t)}
+  .curso-card:hover{box-shadow:0 4px 22px rgba(9,74,75,.12)}
+  .curso-ico{width:48px;height:48px;border-radius:10px;background:var(--suave);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+  .curso-body{flex:1}
+  .curso-nombre{font-weight:700;font-size:15px;color:var(--negro);margin-bottom:4px}
+  .curso-meta{font-size:12px;color:var(--texto-g);display:flex;gap:16px;flex-wrap:wrap;margin-bottom:8px}
+  .curso-meta span{display:flex;align-items:center;gap:4px}
+  .curso-tags{display:flex;gap:6px;flex-wrap:wrap}
+  .curso-tag{font-size:11px;padding:2px 8px;border-radius:20px;font-weight:700}
+  .tag-verde{background:rgba(9,74,75,.1);color:var(--verde)}
+  .tag-naranja{background:rgba(230,126,34,.1);color:var(--naranja)}
+  .tag-azul{background:rgba(45,74,107,.1);color:var(--azul)}
+  .tag-rojo{background:rgba(231,76,60,.1);color:#c0392b}
+  .tag-pist{background:rgba(168,201,78,.2);color:#5a7a1a}
+  .prog-bar{height:8px;background:var(--borde);border-radius:4px;overflow:hidden;margin-top:8px}
+  .prog-fill{height:100%;border-radius:4px;background:var(--pist);transition:width .6s}
+  .tabla-cap{width:100%;border-collapse:collapse;font-size:13px}
+  .tabla-cap th{background:var(--verde);color:#fff;padding:10px 12px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em;font-weight:700}
+  .tabla-cap td{padding:9px 12px;border-bottom:1px solid var(--borde);vertical-align:middle}
+  .tabla-cap tbody tr:hover{background:rgba(9,74,75,.02)}
+  .tabla-cap tbody tr:last-child td{border-bottom:none}
+  .estado-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+  .estado-prereg{background:#fff3cd;color:#856404}
+  .estado-inscrito{background:#d1ecf1;color:#0c5460}
+  .estado-cursando{background:rgba(168,201,78,.2);color:#4a6a1a}
+  .estado-terminado{background:#d4edda;color:#155724}
+  .estado-desertor{background:#f8d7da;color:#721c24}
+  .informe-bloque{background:#fff;border-radius:var(--rc);box-shadow:0 2px 14px rgba(9,74,75,.07);padding:20px;margin-bottom:16px}
+  .informe-titulo{font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;color:var(--verde);border-left:4px solid var(--pist);padding-left:10px;margin-bottom:14px}
+  .region-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--borde)}
+  .region-row:last-child{border-bottom:none}
+  .region-nombre{min-width:180px;font-weight:600;font-size:13px;color:var(--negro)}
+  .region-bar{flex:1;height:20px;background:var(--suave);border-radius:4px;overflow:hidden}
+  .region-fill{height:100%;background:var(--verde);border-radius:4px;display:flex;align-items:center;padding-left:8px;font-size:11px;color:#fff;font-weight:700;transition:width .6s}
+  .region-val{min-width:80px;text-align:right;font-size:13px;font-weight:700;color:var(--negro)}
+  .costo-resumen{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:20px}
+  .costo-card{background:var(--verde);color:#fff;border-radius:12px;padding:18px;text-align:center}
+  .costo-num{font-family:'Nunito',sans-serif;font-size:28px;font-weight:900;color:var(--pist)}
+  .costo-lbl{font-size:12px;opacity:.8;margin-top:4px}
+  .modal-cap{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center}
+  .modal-cap.open{display:flex}
+  .modal-cap-box{background:#fff;border-radius:var(--rc);padding:28px;width:90%;max-width:680px;max-height:85vh;overflow-y:auto}
+  .modal-cap-box .modal-close{position:absolute;top:12px;right:16px;cursor:pointer;font-size:20px;color:var(--texto-g)}
+
   /* ══ MÓDULO REPORTES ══════════════════════════════ */
   .rep-filtros{background:#fff;border-radius:var(--rc);box-shadow:0 2px 12px rgba(9,74,75,.07);padding:16px 20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:20px}
   .rep-titulo-bloque{font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;color:var(--verde);border-left:4px solid var(--pist);padding-left:10px;margin:24px 0 12px}
@@ -276,6 +326,7 @@
     <div class="nitem" onclick="nav('banco-hv')"><span class="nico">🗄️</span> Banco de HV</div>
     <div class="sdiv"></div>
     <div class="nitem" onclick="window.location.href='orientacion.html'"><span class="nico">🎯</span> SOY talento</div>
+    <div class="nitem" onclick="nav('capacitaciones')"><span class="nico">🎓</span> Capacitaciones</div>
     <div class="nitem" onclick="nav('cargue')"><span class="nico">📤</span> Cargue masivo</div>
     <div class="nitem" onclick="window.location.href='auditoria.html'"><span class="nico">🔍</span> Auditoría interna</div>
     <div class="nitem" onclick="window.location.href='eventos.html'"><span class="nico">🗓️</span> Eventos y jornadas</div>
@@ -650,6 +701,221 @@
     </div>
   </div>
 
+    <!-- ══ CAPACITACIONES ════════════════════════════════════════ -->
+    <div id="pg-capacitaciones" class="hidden" onclick="event.stopPropagation()">
+      <div class="ph">
+        <div>
+          <div class="ptitle">🎓 Capacitaciones</div>
+          <p class="psub">Pre-registro, inscripción, seguimiento y costos por curso, municipio, subregión y departamento</p>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button type="button" class="btn btn-primary btn-sm" onclick="abrirModalCurso();event.stopPropagation()">+ Nuevo curso</button>
+          <button type="button" class="btn btn-ghost btn-sm" onclick="exportarCapacitacionesExcel();event.stopPropagation()">📥 Exportar Excel</button>
+        </div>
+      </div>
+
+      <!-- Tabs principales -->
+      <div class="cap-tabs">
+        <button type="button" class="cap-tab active" onclick="capTab('cursos',this);event.stopPropagation()">📚 Cursos</button>
+        <button type="button" class="cap-tab" onclick="capTab('preregistro',this);event.stopPropagation()">📝 Pre-registros</button>
+        <button type="button" class="cap-tab" onclick="capTab('inscritos',this);event.stopPropagation()">✅ Inscritos</button>
+        <button type="button" class="cap-tab" onclick="capTab('seguimiento',this);event.stopPropagation()">📊 Seguimiento</button>
+        <button type="button" class="cap-tab" onclick="capTab('informe',this);event.stopPropagation()">📋 Informe final</button>
+      </div>
+
+      <!-- PANEL: CURSOS -->
+      <div id="cap-panel-cursos" class="cap-panel active">
+        <div class="card" style="padding:14px 18px;margin-bottom:16px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <input type="text" class="finput" id="cap-buscar-curso" placeholder="🔍 Buscar curso..." style="flex:1;min-width:180px" oninput="renderCursos();event.stopPropagation()"/>
+          <select class="finput" id="cap-filtro-sector" onchange="renderCursos();event.stopPropagation()" style="min-width:160px">
+            <option value="">Todos los sectores</option>
+            <option>Logística y transporte</option><option>Tecnología</option>
+            <option>Comercio</option><option>Salud y bienestar</option>
+            <option>Construcción</option><option>Turismo y gastronomía</option>
+            <option>Emprendimiento</option><option>Habilidades siglo XXI</option>
+            <option>Agroindustria</option><option>Moda y confección</option>
+          </select>
+          <select class="finput" id="cap-filtro-estado" onchange="renderCursos();event.stopPropagation()" style="min-width:140px">
+            <option value="">Todos los estados</option>
+            <option>Abierto pre-registro</option><option>Inscripción abierta</option>
+            <option>En curso</option><option>Finalizado</option>
+          </select>
+        </div>
+        <div id="cap-lista-cursos"></div>
+      </div>
+
+      <!-- PANEL: PRE-REGISTROS -->
+      <div id="cap-panel-preregistro" class="cap-panel">
+        <div class="card" style="padding:14px 18px;margin-bottom:16px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <select class="finput" id="cap-curso-prereg" onchange="renderPreregistros();event.stopPropagation()" style="flex:2;min-width:220px">
+            <option value="">Selecciona un curso...</option>
+          </select>
+          <select class="finput" id="cap-filtro-muni-prereg" onchange="renderPreregistros();event.stopPropagation()" style="min-width:160px">
+            <option value="">Todos los municipios</option>
+          </select>
+          <button type="button" class="btn btn-primary btn-sm" onclick="inscribirSeleccionados();event.stopPropagation()">✅ Inscribir seleccionados</button>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="tabla-cap" id="tabla-preregistros">
+            <thead><tr>
+              <th style="width:32px"><input type="checkbox" id="chk-all-prereg" onchange="toggleAllPrereg(this)"/></th>
+              <th>Candidato</th><th>Municipio</th><th>Subregión</th>
+              <th>Fecha pre-reg.</th><th>Estado</th><th>Acciones</th>
+            </tr></thead>
+            <tbody id="tbody-preregistros"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PANEL: INSCRITOS -->
+      <div id="cap-panel-inscritos" class="cap-panel">
+        <div class="card" style="padding:14px 18px;margin-bottom:16px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <select class="finput" id="cap-curso-inscritos" onchange="renderInscritos();event.stopPropagation()" style="flex:2;min-width:220px">
+            <option value="">Selecciona un curso...</option>
+          </select>
+          <select class="finput" id="cap-filtro-subreg" onchange="renderInscritos();event.stopPropagation()" style="min-width:160px">
+            <option value="">Todas las subregiones</option>
+            <option>Valle de Aburrá</option><option>Oriente</option><option>Norte</option>
+            <option>Occidente</option><option>Suroeste</option><option>Bajo Cauca</option>
+            <option>Nordeste</option><option>Magdalena Medio</option><option>Urabá</option>
+          </select>
+          <button type="button" class="btn btn-ghost btn-sm" onclick="marcarTerminadosSeleccionados();event.stopPropagation()">🏆 Marcar como terminados</button>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="tabla-cap" id="tabla-inscritos">
+            <thead><tr>
+              <th style="width:32px"><input type="checkbox" id="chk-all-ins" onchange="toggleAllInscritos(this)"/></th>
+              <th>Candidato</th><th>Municipio</th><th>Subregión</th>
+              <th>Fecha inscripción</th><th>Estado</th><th>Costo/persona</th><th>Acciones</th>
+            </tr></thead>
+            <tbody id="tbody-inscritos"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PANEL: SEGUIMIENTO -->
+      <div id="cap-panel-seguimiento" class="cap-panel">
+        <div id="cap-seguimiento-content"></div>
+      </div>
+
+      <!-- PANEL: INFORME FINAL -->
+      <div id="cap-panel-informe" class="cap-panel">
+        <div id="cap-informe-content"></div>
+      </div>
+
+    </div><!-- fin pg-capacitaciones -->
+
+    <!-- MODAL NUEVO CURSO -->
+    <div id="modal-curso" class="modal-cap" onclick="cerrarModalCurso()">
+      <div class="modal-cap-box" onclick="event.stopPropagation()">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+          <div style="font-family:'Nunito';font-size:18px;font-weight:800;color:var(--negro)" id="modal-curso-titulo">Nuevo curso</div>
+          <span style="cursor:pointer;font-size:20px;color:var(--texto-g)" onclick="cerrarModalCurso()">✕</span>
+        </div>
+        <div class="fgrid">
+          <div class="fgroup"><label class="flabel">Nombre del curso *</label><input type="text" class="finput" id="mc-nombre" placeholder="Ej: Técnicas de ventas B2B"/></div>
+          <div class="fgroup"><label class="flabel">Sector</label>
+            <select class="finput" id="mc-sector">
+              <option>Logística y transporte</option><option>Tecnología</option>
+              <option>Comercio</option><option>Salud y bienestar</option>
+              <option>Construcción</option><option>Turismo y gastronomía</option>
+              <option>Emprendimiento</option><option>Habilidades siglo XXI</option>
+              <option>Agroindustria</option><option>Moda y confección</option>
+            </select>
+          </div>
+        </div>
+        <div class="fgrid">
+          <div class="fgroup"><label class="flabel">Modalidad</label>
+            <select class="finput" id="mc-modalidad">
+              <option>Presencial</option><option>Virtual</option><option>Híbrida</option>
+            </select>
+          </div>
+          <div class="fgroup"><label class="flabel">Intensidad (horas)</label>
+            <input type="number" class="finput" id="mc-horas" placeholder="40" min="1"/>
+          </div>
+        </div>
+        <div class="fgrid">
+          <div class="fgroup"><label class="flabel">Costo por persona (COP) *</label>
+            <input type="number" class="finput" id="mc-costo" placeholder="150000" min="0"/>
+          </div>
+          <div class="fgroup"><label class="flabel">Cupo máximo</label>
+            <input type="number" class="finput" id="mc-cupo" placeholder="30" min="1"/>
+          </div>
+        </div>
+        <div class="fgrid">
+          <div class="fgroup"><label class="flabel">Fecha inicio</label>
+            <input type="date" class="finput" id="mc-fecha-ini"/>
+          </div>
+          <div class="fgroup"><label class="flabel">Fecha fin</label>
+            <input type="date" class="finput" id="mc-fecha-fin"/>
+          </div>
+        </div>
+        <div class="fgrid">
+          <div class="fgroup"><label class="flabel">Municipio sede</label>
+            <input type="text" class="finput" id="mc-municipio" placeholder="Medellín"/>
+          </div>
+          <div class="fgroup"><label class="flabel">Subregión</label>
+            <select class="finput" id="mc-subreg">
+              <option>Valle de Aburrá</option><option>Oriente</option><option>Norte</option>
+              <option>Occidente</option><option>Suroeste</option><option>Bajo Cauca</option>
+              <option>Nordeste</option><option>Magdalena Medio</option><option>Urabá</option>
+            </select>
+          </div>
+        </div>
+        <div class="fgrid one">
+          <div class="fgroup"><label class="flabel">Estado del curso</label>
+            <select class="finput" id="mc-estado">
+              <option>Abierto pre-registro</option><option>Inscripción abierta</option>
+              <option>En curso</option><option>Finalizado</option>
+            </select>
+          </div>
+        </div>
+        <div class="fgrid one">
+          <div class="fgroup"><label class="flabel">Descripción / Objetivo</label>
+            <textarea class="finput" id="mc-desc" rows="3" placeholder="Objetivos del curso, contenido, certificación..."></textarea>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px">
+          <button type="button" class="btn btn-ghost" onclick="cerrarModalCurso()">Cancelar</button>
+          <button type="button" class="btn btn-primary" onclick="guardarCurso()">Guardar curso</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL PREREGISTRAR PERSONA -->
+    <div id="modal-prereg" class="modal-cap" onclick="cerrarModalPrereg()">
+      <div class="modal-cap-box" onclick="event.stopPropagation()" style="max-width:560px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+          <div style="font-family:'Nunito';font-size:17px;font-weight:800;color:var(--negro)">Pre-registrar persona</div>
+          <span style="cursor:pointer;font-size:20px;color:var(--texto-g)" onclick="cerrarModalPrereg()">✕</span>
+        </div>
+        <p style="font-size:13px;color:var(--texto-g);margin-bottom:16px" id="prereg-curso-nombre"></p>
+        <div class="fgrid">
+          <div class="fgroup"><label class="flabel">Nombre completo *</label><input type="text" class="finput" id="pr-nombre" placeholder="Juan Camilo García"/></div>
+          <div class="fgroup"><label class="flabel">Documento *</label><input type="text" class="finput" id="pr-doc" placeholder="1.234.567.890"/></div>
+        </div>
+        <div class="fgrid">
+          <div class="fgroup"><label class="flabel">Celular</label><input type="text" class="finput" id="pr-cel" placeholder="310 000 0000"/></div>
+          <div class="fgroup"><label class="flabel">Correo</label><input type="email" class="finput" id="pr-correo" placeholder="correo@ejemplo.com"/></div>
+        </div>
+        <div class="fgrid">
+          <div class="fgroup"><label class="flabel">Municipio *</label><input type="text" class="finput" id="pr-municipio" placeholder="Medellín"/></div>
+          <div class="fgroup"><label class="flabel">Subregión *</label>
+            <select class="finput" id="pr-subreg">
+              <option>Valle de Aburrá</option><option>Oriente</option><option>Norte</option>
+              <option>Occidente</option><option>Suroeste</option><option>Bajo Cauca</option>
+              <option>Nordeste</option><option>Magdalena Medio</option><option>Urabá</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px">
+          <button type="button" class="btn btn-ghost" onclick="cerrarModalPrereg()">Cancelar</button>
+          <button type="button" class="btn btn-primary" onclick="guardarPreregistro()">Pre-registrar</button>
+        </div>
+      </div>
+    </div>
+
+
   </main>
 </div>
 
@@ -936,7 +1202,7 @@ var VACANTES=[
 var vacantesActuales = VACANTES.slice();
 var empresasActuales = EMPRESAS.slice();
 var tipoModalVacante = 'normal';
-var PAGS = ['acceso','dashboard','candidatos','empresas','vacantes','cargue','intermediacion','banco-hv','pruebas','diagnosticos','reportes'];
+var PAGS = ['acceso','dashboard','candidatos','empresas','vacantes','cargue','intermediacion','banco-hv','pruebas','diagnosticos','reportes','capacitaciones'];
 
 // ═══════════════════════════════════════════════════════
 // UTILIDADES
@@ -974,6 +1240,7 @@ function nav(p){
   if(p==='vacantes')   renderVacantes(vacantesActuales);
   if(p==='cargue')     iniciarCargue();
   if(p==='reportes')    renderReportes();
+  if(p==='capacitaciones') initCapacitaciones();
 }
 
 // ═══════════════════════════════════════════════════════
@@ -2406,6 +2673,559 @@ function exportarReportesPDF() {
 // ════════════════════════════════════════════════════════════
 </script>
   <script src="cno2025.js" defer>
+// ═══════════════════════════════════════════════════════════════════
+// MÓDULO CAPACITACIONES
+// ═══════════════════════════════════════════════════════════════════
+
+// ── DATOS SEED ──────────────────────────────────────────────────────
+var CURSOS_CAP = [
+  {id:'C001',nombre:'Técnicas de ventas y servicio al cliente',sector:'Comercio',modalidad:'Presencial',horas:40,costo:180000,cupo:30,inscritos:0,municipio:'Medellín',subreg:'Valle de Aburrá',estado:'Inscripción abierta',fechaIni:'2026-05-05',fechaFin:'2026-05-30',desc:'Estrategias de ventas, manejo de objeciones y fidelización de clientes.'},
+  {id:'C002',nombre:'Excel avanzado para gestión empresarial',sector:'Tecnología',modalidad:'Virtual',horas:24,costo:120000,cupo:40,inscritos:0,municipio:'Rionegro',subreg:'Oriente',estado:'Abierto pre-registro',fechaIni:'2026-06-02',fechaFin:'2026-06-20',desc:'Tablas dinámicas, macros básicas, Power Query y análisis de datos.'},
+  {id:'C003',nombre:'Manipulación higiénica de alimentos',sector:'Turismo y gastronomía',modalidad:'Presencial',horas:16,costo:0,cupo:25,inscritos:0,municipio:'Apartadó',subreg:'Urabá',estado:'En curso',fechaIni:'2026-04-15',fechaFin:'2026-04-30',desc:'Buenas prácticas de manufactura, decreto 3075 y certificación INVIMA.'},
+  {id:'C004',nombre:'Emprendimiento digital y redes sociales',sector:'Emprendimiento',modalidad:'Híbrida',horas:32,costo:90000,cupo:35,inscritos:0,municipio:'Caucasia',subreg:'Bajo Cauca',estado:'Abierto pre-registro',fechaIni:'2026-06-10',fechaFin:'2026-07-05',desc:'Marketing digital, creación de contenido, e-commerce y monetización.'},
+  {id:'C005',nombre:'Operación de montacargas – certificación SENA',sector:'Logística y transporte',modalidad:'Presencial',horas:48,costo:250000,cupo:15,inscritos:0,municipio:'Itagüí',subreg:'Valle de Aburrá',estado:'Finalizado',fechaIni:'2026-02-03',fechaFin:'2026-03-14',desc:'Operación segura de montacargas, normas OSHA, certificación oficial SENA.'},
+  {id:'C006',nombre:'Habilidades blandas para el trabajo',sector:'Habilidades siglo XXI',modalidad:'Virtual',horas:20,costo:0,cupo:50,inscritos:0,municipio:'Yarumal',subreg:'Norte',estado:'Inscripción abierta',fechaIni:'2026-05-12',fechaFin:'2026-05-30',desc:'Comunicación efectiva, trabajo en equipo, liderazgo y resolución de conflictos.'},
+];
+
+var PARTICIPANTES_CAP = [
+  {id:'P001',cursoId:'C001',nombre:'Ana Sofía Restrepo',doc:'1.001.234.567',cel:'3001234567',correo:'ana@ejemplo.com',municipio:'Medellín',subreg:'Valle de Aburrá',estado:'inscrito',fechaPrereg:'2026-04-10',fechaIns:'2026-04-15',costo:180000},
+  {id:'P002',cursoId:'C001',nombre:'Carlos Iván Pérez',doc:'1.002.345.678',cel:'3012345678',correo:'carlos@ejemplo.com',municipio:'Bello',subreg:'Valle de Aburrá',estado:'inscrito',fechaPrereg:'2026-04-11',fechaIns:'2026-04-16',costo:180000},
+  {id:'P003',cursoId:'C001',nombre:'Luz Marina Gómez',doc:'43.234.567',cel:'3023456789',correo:'luz@ejemplo.com',municipio:'Envigado',subreg:'Valle de Aburrá',estado:'cursando',fechaPrereg:'2026-04-12',fechaIns:'2026-04-16',costo:180000},
+  {id:'P004',cursoId:'C002',nombre:'Sebastián Torres',doc:'1.003.456.789',cel:'3034567890',correo:'seba@ejemplo.com',municipio:'Rionegro',subreg:'Oriente',estado:'prereg',fechaPrereg:'2026-04-18',fechaIns:null,costo:0},
+  {id:'P005',cursoId:'C002',nombre:'Valentina Ríos',doc:'1.004.567.890',cel:'3045678901',correo:'valen@ejemplo.com',municipio:'La Ceja',subreg:'Oriente',estado:'prereg',fechaPrereg:'2026-04-19',fechaIns:null,costo:0},
+  {id:'P006',cursoId:'C003',nombre:'Jaime Andrés Herrera',doc:'71.234.567',cel:'3056789012',correo:'jaime@ejemplo.com',municipio:'Apartadó',subreg:'Urabá',estado:'terminado',fechaPrereg:'2026-04-01',fechaIns:'2026-04-05',costo:0},
+  {id:'P007',cursoId:'C003',nombre:'Rosa Elena Martínez',doc:'43.345.678',cel:'3067890123',correo:'rosa@ejemplo.com',municipio:'Turbo',subreg:'Urabá',estado:'terminado',fechaPrereg:'2026-04-01',fechaIns:'2026-04-05',costo:0},
+  {id:'P008',cursoId:'C003',nombre:'Freddy Ospina',doc:'1.005.678.901',cel:'3078901234',correo:'freddy@ejemplo.com',municipio:'Apartadó',subreg:'Urabá',estado:'desertor',fechaPrereg:'2026-04-01',fechaIns:'2026-04-05',costo:0},
+  {id:'P009',cursoId:'C005',nombre:'Nelson Caro',doc:'80.123.456',cel:'3089012345',correo:'nelson@ejemplo.com',municipio:'Itagüí',subreg:'Valle de Aburrá',estado:'terminado',fechaPrereg:'2026-01-20',fechaIns:'2026-01-25',costo:250000},
+  {id:'P010',cursoId:'C005',nombre:'Mauricio Salcedo',doc:'1.006.789.012',cel:'3090123456',correo:'mauricio@ejemplo.com',municipio:'Medellín',subreg:'Valle de Aburrá',estado:'terminado',fechaPrereg:'2026-01-21',fechaIns:'2026-01-25',costo:250000},
+  {id:'P011',cursoId:'C005',nombre:'Gloria Amparo Zuluaga',doc:'43.456.789',cel:'3101234567',correo:'gloria@ejemplo.com',municipio:'Sabaneta',subreg:'Valle de Aburrá',estado:'terminado',fechaPrereg:'2026-01-22',fechaIns:'2026-01-25',costo:250000},
+];
+
+var cursoEditandoId = null;
+
+// ── INIT ────────────────────────────────────────────────────────────
+function initCapacitaciones(){
+  // Actualizar conteo de inscritos en los cursos
+  CURSOS_CAP.forEach(function(cur){
+    cur.inscritos = PARTICIPANTES_CAP.filter(function(p){ return p.cursoId===cur.id && p.estado!=='prereg'; }).length;
+  });
+  poblarSelectsCursos();
+  renderCursos();
+  capTab('cursos', document.querySelector('.cap-tab'));
+}
+
+function poblarSelectsCursos(){
+  var opts = '<option value="">Selecciona un curso...</option>' +
+    CURSOS_CAP.map(function(c){ return '<option value="'+c.id+'">'+c.nombre+' ('+c.estado+')</option>'; }).join('');
+  ['cap-curso-prereg','cap-curso-inscritos'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(el) el.innerHTML=opts;
+  });
+}
+
+// ── TABS ────────────────────────────────────────────────────────────
+function capTab(panel, btn){
+  document.querySelectorAll('.cap-panel').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.cap-tab').forEach(function(b){ b.classList.remove('active'); });
+  var el=document.getElementById('cap-panel-'+panel);
+  if(el) el.classList.add('active');
+  if(btn) btn.classList.add('active');
+  if(panel==='seguimiento') renderSeguimiento();
+  if(panel==='informe') renderInformeFinal();
+  if(panel==='preregistro') renderPreregistros();
+  if(panel==='inscritos') renderInscritos();
+}
+
+// ── RENDER CURSOS ────────────────────────────────────────────────────
+function renderCursos(){
+  var q=(document.getElementById('cap-buscar-curso')||{}).value||'';
+  var sect=(document.getElementById('cap-filtro-sector')||{}).value||'';
+  var est=(document.getElementById('cap-filtro-estado')||{}).value||'';
+  var lista=CURSOS_CAP.filter(function(c){
+    return (!q||c.nombre.toLowerCase().indexOf(q.toLowerCase())>-1) &&
+           (!sect||c.sector===sect) && (!est||c.estado===est);
+  });
+  var cont=document.getElementById('cap-lista-cursos');
+  if(!cont) return;
+  if(!lista.length){ cont.innerHTML='<div class="card" style="text-align:center;color:var(--texto-g);padding:32px">No se encontraron cursos con esos filtros.</div>'; return; }
+  
+  var colorEstado={'Abierto pre-registro':'tag-naranja','Inscripción abierta':'tag-azul','En curso':'tag-pist','Finalizado':'tag-verde'};
+  cont.innerHTML=lista.map(function(cur){
+    var totalPersonas=PARTICIPANTES_CAP.filter(function(p){return p.cursoId===cur.id;}).length;
+    var terminados=PARTICIPANTES_CAP.filter(function(p){return p.cursoId===cur.id&&p.estado==='terminado';}).length;
+    var pct=cur.cupo>0?Math.min(Math.round((totalPersonas/cur.cupo)*100),100):0;
+    var costoTotal=PARTICIPANTES_CAP.filter(function(p){return p.cursoId===cur.id&&p.estado!=='prereg';}).reduce(function(a,p){return a+p.costo;},0);
+    return '<div class="curso-card">'+
+      '<div class="curso-ico">'+(cur.modalidad==='Virtual'?'💻':cur.modalidad==='Híbrida'?'🔀':'🏫')+'</div>'+
+      '<div class="curso-body">'+
+        '<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px">'+
+          '<div class="curso-nombre">'+cur.nombre+'</div>'+
+          '<div style="display:flex;gap:6px">'+
+            '<button type="button" class="btn btn-ghost btn-sm" style="padding:5px 12px;font-size:11px" onclick="abrirModalPreregCurso(\''+cur.id+'\');event.stopPropagation()">+ Pre-registrar</button>'+
+            '<button type="button" class="btn btn-ghost btn-sm" style="padding:5px 12px;font-size:11px" onclick="editarCurso(\''+cur.id+'\');event.stopPropagation()">✏️ Editar</button>'+
+          '</div>'+
+        '</div>'+
+        '<div class="curso-meta">'+
+          '<span>📁 '+cur.sector+'</span>'+
+          '<span>📍 '+cur.municipio+' · '+cur.subreg+'</span>'+
+          '<span>⏱️ '+cur.horas+'h</span>'+
+          '<span>👥 '+totalPersonas+'/'+cur.cupo+' cupos</span>'+
+          '<span>💰 '+(cur.costo>0?'$'+cur.costo.toLocaleString():'Gratuito')+'</span>'+
+          '<span>🗓️ '+cur.fechaIni+' → '+cur.fechaFin+'</span>'+
+        '</div>'+
+        '<div class="curso-tags">'+
+          '<span class="curso-tag '+(colorEstado[cur.estado]||'tag-verde')+'">'+cur.estado+'</span>'+
+          '<span class="curso-tag tag-verde">'+terminados+' terminados</span>'+
+          (costoTotal>0?'<span class="curso-tag tag-azul">Costo total: $'+costoTotal.toLocaleString()+'</span>':'')+
+        '</div>'+
+        '<div class="prog-bar"><div class="prog-fill" style="width:'+pct+'%"></div></div>'+
+        '<div style="font-size:10px;color:var(--texto-g);margin-top:3px">'+pct+'% del cupo ocupado</div>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+// ── PREREGISTROS ─────────────────────────────────────────────────────
+function renderPreregistros(){
+  var cursoId=(document.getElementById('cap-curso-prereg')||{}).value||'';
+  var muni=(document.getElementById('cap-filtro-muni-prereg')||{}).value||'';
+  var lista=PARTICIPANTES_CAP.filter(function(p){
+    return (!cursoId||p.cursoId===cursoId) && (p.estado==='prereg') && (!muni||p.municipio===muni);
+  });
+  // Poblar select municipios
+  var municipios=[...new Set(PARTICIPANTES_CAP.filter(function(p){return p.estado==='prereg';}).map(function(p){return p.municipio;}))];
+  var sel=document.getElementById('cap-filtro-muni-prereg');
+  if(sel){
+    sel.innerHTML='<option value="">Todos los municipios</option>'+municipios.map(function(m){return '<option>'+m+'</option>';}).join('');
+  }
+  var tbody=document.getElementById('tbody-preregistros');
+  if(!tbody) return;
+  if(!lista.length){ tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--texto-g)">No hay pre-registros'+(cursoId?' para este curso':'')+'. <button type="button" class="btn btn-ghost btn-sm" onclick="abrirModalPreregCurso(\''+cursoId+'\')">+ Pre-registrar persona</button></td></tr>'; return; }
+  tbody.innerHTML=lista.map(function(p){
+    return '<tr>'+
+      '<td><input type="checkbox" class="chk-prereg" value="'+p.id+'"/></td>'+
+      '<td><strong>'+p.nombre+'</strong><br/><span style="font-size:11px;color:var(--texto-g)">'+p.doc+'</span></td>'+
+      '<td>'+p.municipio+'</td><td>'+p.subreg+'</td>'+
+      '<td>'+p.fechaPrereg+'</td>'+
+      '<td><span class="estado-badge estado-prereg">Pre-registrado</span></td>'+
+      '<td><button type="button" class="btn btn-ghost btn-sm" style="font-size:11px;padding:4px 10px" onclick="inscribirUno(\''+p.id+'\');event.stopPropagation()">✅ Inscribir</button> '+
+      '<button type="button" class="btn btn-sm" style="font-size:11px;padding:4px 10px;background:#f8d7da;color:#721c24" onclick="eliminarParticipante(\''+p.id+'\');event.stopPropagation()">✕</button></td>'+
+    '</tr>';
+  }).join('');
+}
+
+function toggleAllPrereg(chk){
+  document.querySelectorAll('.chk-prereg').forEach(function(c){ c.checked=chk.checked; });
+}
+
+function inscribirSeleccionados(){
+  var ids=[...document.querySelectorAll('.chk-prereg:checked')].map(function(c){return c.value;});
+  if(!ids.length){ toast('Selecciona al menos un pre-registrado'); return; }
+  var curso=CURSOS_CAP.find(function(c){return c.id===(document.getElementById('cap-curso-prereg')||{}).value;});
+  ids.forEach(function(id){
+    var p=PARTICIPANTES_CAP.find(function(x){return x.id===id;});
+    if(p){
+      p.estado='inscrito';
+      p.fechaIns=new Date().toISOString().split('T')[0];
+      if(curso) p.costo=curso.costo;
+    }
+  });
+  toast('✅ '+ids.length+' persona(s) inscrita(s) al curso');
+  renderPreregistros();
+  renderCursos();
+}
+
+function inscribirUno(id){
+  var p=PARTICIPANTES_CAP.find(function(x){return x.id===id;});
+  if(!p) return;
+  var curso=CURSOS_CAP.find(function(c){return c.id===p.cursoId;});
+  p.estado='inscrito';
+  p.fechaIns=new Date().toISOString().split('T')[0];
+  if(curso) p.costo=curso.costo;
+  toast('✅ '+p.nombre+' inscrito correctamente');
+  renderPreregistros();
+  renderCursos();
+}
+
+function eliminarParticipante(id){
+  var idx=PARTICIPANTES_CAP.findIndex(function(x){return x.id===id;});
+  if(idx>-1){ PARTICIPANTES_CAP.splice(idx,1); renderPreregistros(); renderCursos(); toast('Registro eliminado'); }
+}
+
+// ── INSCRITOS ─────────────────────────────────────────────────────────
+function renderInscritos(){
+  var cursoId=(document.getElementById('cap-curso-inscritos')||{}).value||'';
+  var subreg=(document.getElementById('cap-filtro-subreg')||{}).value||'';
+  var estados=['inscrito','cursando','terminado','desertor'];
+  var lista=PARTICIPANTES_CAP.filter(function(p){
+    return estados.indexOf(p.estado)>-1 &&
+           (!cursoId||p.cursoId===cursoId) && (!subreg||p.subreg===subreg);
+  });
+  var estadoCls={inscrito:'estado-inscrito',cursando:'estado-cursando',terminado:'estado-terminado',desertor:'estado-desertor'};
+  var estadoLbl={inscrito:'Inscrito',cursando:'Cursando',terminado:'Terminado ✓',desertor:'Desertor'};
+  var tbody=document.getElementById('tbody-inscritos');
+  if(!tbody) return;
+  if(!lista.length){ tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--texto-g)">Sin inscritos con esos filtros.</td></tr>'; return; }
+  tbody.innerHTML=lista.map(function(p){
+    return '<tr>'+
+      '<td><input type="checkbox" class="chk-ins" value="'+p.id+'"/></td>'+
+      '<td><strong>'+p.nombre+'</strong><br/><span style="font-size:11px;color:var(--texto-g)">'+p.doc+'</span></td>'+
+      '<td>'+p.municipio+'</td><td>'+p.subreg+'</td>'+
+      '<td>'+(p.fechaIns||'—')+'</td>'+
+      '<td><span class="estado-badge '+(estadoCls[p.estado]||'')+'">'+estadoLbl[p.estado]+'</span></td>'+
+      '<td><strong>'+(p.costo>0?'$'+p.costo.toLocaleString():'Gratuito')+'</strong></td>'+
+      '<td style="display:flex;gap:4px;flex-wrap:wrap">'+
+        '<button type="button" class="btn btn-ghost btn-sm" style="font-size:11px;padding:4px 8px" onclick="cambiarEstadoParticipante(\''+p.id+'\',\'cursando\');event.stopPropagation()">▶ Cursando</button>'+
+        '<button type="button" class="btn btn-ghost btn-sm" style="font-size:11px;padding:4px 8px;background:#d4edda;color:#155724" onclick="cambiarEstadoParticipante(\''+p.id+'\',\'terminado\');event.stopPropagation()">✓ Terminó</button>'+
+        '<button type="button" class="btn btn-sm" style="font-size:11px;padding:4px 8px;background:#f8d7da;color:#721c24" onclick="cambiarEstadoParticipante(\''+p.id+'\',\'desertor\');event.stopPropagation()">✕ Deserta</button>'+
+      '</td>'+
+    '</tr>';
+  }).join('');
+}
+
+function toggleAllInscritos(chk){
+  document.querySelectorAll('.chk-ins').forEach(function(c){ c.checked=chk.checked; });
+}
+
+function marcarTerminadosSeleccionados(){
+  var ids=[...document.querySelectorAll('.chk-ins:checked')].map(function(c){return c.value;});
+  if(!ids.length){ toast('Selecciona al menos un inscrito'); return; }
+  ids.forEach(function(id){
+    var p=PARTICIPANTES_CAP.find(function(x){return x.id===id;});
+    if(p) p.estado='terminado';
+  });
+  toast('🏆 '+ids.length+' persona(s) marcadas como terminadas');
+  renderInscritos();
+  renderCursos();
+}
+
+function cambiarEstadoParticipante(id, nuevoEstado){
+  var p=PARTICIPANTES_CAP.find(function(x){return x.id===id;});
+  if(p){ p.estado=nuevoEstado; renderInscritos(); renderCursos(); toast('Estado actualizado: '+nuevoEstado); }
+}
+
+// ── SEGUIMIENTO ───────────────────────────────────────────────────────
+function renderSeguimiento(){
+  var cont=document.getElementById('cap-seguimiento-content');
+  if(!cont) return;
+  var html='<div class="stats-row" style="margin-bottom:20px">';
+  var totPrereg=PARTICIPANTES_CAP.filter(function(p){return p.estado==='prereg';}).length;
+  var totIns=PARTICIPANTES_CAP.filter(function(p){return p.estado==='inscrito';}).length;
+  var totCursando=PARTICIPANTES_CAP.filter(function(p){return p.estado==='cursando';}).length;
+  var totTerm=PARTICIPANTES_CAP.filter(function(p){return p.estado==='terminado';}).length;
+  var totDesertor=PARTICIPANTES_CAP.filter(function(p){return p.estado==='desertor';}).length;
+  var totInscritos=totIns+totCursando+totTerm+totDesertor;
+  var costoTotal=PARTICIPANTES_CAP.filter(function(p){return p.estado!=='prereg';}).reduce(function(a,p){return a+p.costo;},0);
+  var tasaEfect=totInscritos>0?Math.round((totTerm/totInscritos)*100):0;
+  
+  html+='<div class="scard"><div class="sico">📝</div><div><div class="snum">'+totPrereg+'</div><div class="slbl">Pre-registros activos</div></div></div>';
+  html+='<div class="scard"><div class="sico">✅</div><div><div class="snum">'+totInscritos+'</div><div class="slbl">Total inscritos</div></div></div>';
+  html+='<div class="scard"><div class="sico">🏆</div><div><div class="snum">'+totTerm+'</div><div class="slbl">Terminados</div></div></div>';
+  html+='<div class="scard"><div class="sico">📊</div><div><div class="snum">'+tasaEfect+'%</div><div class="slbl">Tasa de efectividad</div></div></div>';
+  html+='<div class="scard"><div class="sico">💰</div><div><div class="snum">$'+costoTotal.toLocaleString()+'</div><div class="slbl">Costo total ejecutado</div></div></div>';
+  html+='</div>';
+
+  // Tabla resumen por curso
+  html+='<div class="informe-bloque"><div class="informe-titulo">📚 Estado por curso</div>';
+  html+='<div style="overflow-x:auto"><table class="tabla-cap"><thead><tr>';
+  html+='<th>Curso</th><th>Sector</th><th>Municipio</th><th>Subregión</th>';
+  html+='<th>Pre-reg.</th><th>Inscritos</th><th>Cursando</th><th>Terminados</th><th>Desertores</th>';
+  html+='<th>Costo/persona</th><th>Costo total</th></tr></thead><tbody>';
+  CURSOS_CAP.forEach(function(cur){
+    var pr=PARTICIPANTES_CAP.filter(function(p){return p.cursoId===cur.id&&p.estado==='prereg';}).length;
+    var ins=PARTICIPANTES_CAP.filter(function(p){return p.cursoId===cur.id&&p.estado==='inscrito';}).length;
+    var cur2=PARTICIPANTES_CAP.filter(function(p){return p.cursoId===cur.id&&p.estado==='cursando';}).length;
+    var ter=PARTICIPANTES_CAP.filter(function(p){return p.cursoId===cur.id&&p.estado==='terminado';}).length;
+    var des=PARTICIPANTES_CAP.filter(function(p){return p.cursoId===cur.id&&p.estado==='desertor';}).length;
+    var ctotal=PARTICIPANTES_CAP.filter(function(p){return p.cursoId===cur.id&&p.estado!=='prereg';}).reduce(function(a,p){return a+p.costo;},0);
+    html+='<tr>';
+    html+='<td><strong>'+cur.nombre+'</strong></td>';
+    html+='<td>'+cur.sector+'</td><td>'+cur.municipio+'</td><td>'+cur.subreg+'</td>';
+    html+='<td>'+pr+'</td><td>'+(ins+cur2+ter+des)+'</td>';
+    html+='<td>'+cur2+'</td>';
+    html+='<td><strong style="color:var(--verde)">'+ter+'</strong></td>';
+    html+='<td style="color:#c0392b">'+des+'</td>';
+    html+='<td>'+(cur.costo>0?'$'+cur.costo.toLocaleString():'Gratuito')+'</td>';
+    html+='<td><strong>'+(ctotal>0?'$'+ctotal.toLocaleString():'—')+'</strong></td>';
+    html+='</tr>';
+  });
+  html+='</tbody></table></div></div>';
+  cont.innerHTML=html;
+}
+
+// ── INFORME FINAL ─────────────────────────────────────────────────────
+function renderInformeFinal(){
+  var cont=document.getElementById('cap-informe-content');
+  if(!cont) return;
+  
+  // ── Resumen ejecutivo ──
+  var totTerm=PARTICIPANTES_CAP.filter(function(p){return p.estado==='terminado';}).length;
+  var totCap=PARTICIPANTES_CAP.filter(function(p){return p.estado!=='prereg';}).length;
+  var costoTotal=PARTICIPANTES_CAP.filter(function(p){return p.estado!=='prereg';}).reduce(function(a,p){return a+p.costo;},0);
+  var costoProm=totCap>0?Math.round(costoTotal/totCap):0;
+  var cursosEjec=CURSOS_CAP.filter(function(c){return c.estado==='En curso'||c.estado==='Finalizado';}).length;
+  var tasaComp=totCap>0?Math.round((totTerm/totCap)*100):0;
+  
+  var html='<div class="costo-resumen">';
+  html+='<div class="costo-card"><div class="costo-num">'+totCap+'</div><div class="costo-lbl">Total personas capacitadas</div></div>';
+  html+='<div class="costo-card"><div class="costo-num">'+totTerm+'</div><div class="costo-lbl">Certificados / terminados</div></div>';
+  html+='<div class="costo-card"><div class="costo-num">'+tasaComp+'%</div><div class="costo-lbl">Tasa de completación</div></div>';
+  html+='<div class="costo-card"><div class="costo-num">'+cursosEjec+'</div><div class="costo-lbl">Cursos ejecutados</div></div>';
+  html+='<div class="costo-card"><div class="costo-num">$'+costoTotal.toLocaleString()+'</div><div class="costo-lbl">Costo total ejecutado COP</div></div>';
+  html+='<div class="costo-card"><div class="costo-num">$'+costoProm.toLocaleString()+'</div><div class="costo-lbl">Costo promedio por persona</div></div>';
+  html+='</div>';
+
+  // ── Por subregión ──
+  var SUBREGS=['Valle de Aburrá','Oriente','Norte','Occidente','Suroeste','Bajo Cauca','Nordeste','Magdalena Medio','Urabá'];
+  var maxTerm=Math.max.apply(null, SUBREGS.map(function(sr){
+    return PARTICIPANTES_CAP.filter(function(p){return p.subreg===sr&&p.estado==='terminado';}).length;
+  }));
+  
+  html+='<div class="informe-bloque"><div class="informe-titulo">🗺️ Terminados por subregión — Antioquia</div>';
+  SUBREGS.forEach(function(sr){
+    var ter=PARTICIPANTES_CAP.filter(function(p){return p.subreg===sr&&p.estado==='terminado';}).length;
+    var ins=PARTICIPANTES_CAP.filter(function(p){return p.subreg===sr&&p.estado!=='prereg';}).length;
+    var costSr=PARTICIPANTES_CAP.filter(function(p){return p.subreg===sr&&p.estado!=='prereg';}).reduce(function(a,p){return a+p.costo;},0);
+    var pct=maxTerm>0?Math.round((ter/maxTerm)*100):0;
+    html+='<div class="region-row">'+
+      '<div class="region-nombre">'+sr+'</div>'+
+      '<div class="region-bar"><div class="region-fill" style="width:'+pct+'%">'+(pct>15?ter:'')+'</div></div>'+
+      '<div class="region-val">'+ter+' term. / '+ins+' insc.'+(costSr>0?' · $'+costSr.toLocaleString():'')+'</div>'+
+    '</div>';
+  });
+  html+='</div>';
+
+  // ── Por municipio (top 10 con terminados) ──
+  var munis={};
+  PARTICIPANTES_CAP.filter(function(p){return p.estado==='terminado';}).forEach(function(p){
+    if(!munis[p.municipio]) munis[p.municipio]={nombre:p.municipio,subreg:p.subreg,ter:0,ins:0,costo:0};
+    munis[p.municipio].ter++;
+  });
+  PARTICIPANTES_CAP.filter(function(p){return p.estado!=='prereg';}).forEach(function(p){
+    if(!munis[p.municipio]) munis[p.municipio]={nombre:p.municipio,subreg:p.subreg,ter:0,ins:0,costo:0};
+    munis[p.municipio].ins++;
+    munis[p.municipio].costo+=p.costo;
+  });
+  var arrMunis=Object.values(munis).sort(function(a,b){return b.ter-a.ter;}).slice(0,15);
+  
+  html+='<div class="informe-bloque"><div class="informe-titulo">📍 Terminados por municipio (top 15)</div>';
+  html+='<div style="overflow-x:auto"><table class="tabla-cap"><thead><tr>';
+  html+='<th>Municipio</th><th>Subregión</th><th>Inscritos</th><th>Terminados</th><th>Desertores</th><th>Costo total</th><th>Costo/persona</th></tr></thead><tbody>';
+  arrMunis.forEach(function(m){
+    var des=PARTICIPANTES_CAP.filter(function(p){return p.municipio===m.nombre&&p.estado==='desertor';}).length;
+    html+='<tr>'+
+      '<td><strong>'+m.nombre+'</strong></td>'+
+      '<td>'+m.subreg+'</td>'+
+      '<td>'+m.ins+'</td>'+
+      '<td><strong style="color:var(--verde)">'+m.ter+'</strong></td>'+
+      '<td style="color:#c0392b">'+des+'</td>'+
+      '<td>'+(m.costo>0?'$'+m.costo.toLocaleString():'Gratuito')+'</td>'+
+      '<td>'+(m.ins>0&&m.costo>0?'$'+Math.round(m.costo/m.ins).toLocaleString():'—')+'</td>'+
+    '</tr>';
+  });
+  html+='</tbody></table></div></div>';
+
+  // ── Costo por curso ──
+  html+='<div class="informe-bloque"><div class="informe-titulo">💰 Costo total por curso</div>';
+  html+='<div style="overflow-x:auto"><table class="tabla-cap"><thead><tr>';
+  html+='<th>Curso</th><th>Subregión</th><th>Costo/persona</th><th>Personas inscritas</th><th>Terminados</th><th>Costo total curso</th></tr></thead><tbody>';
+  var totalFinalCursos=0;
+  CURSOS_CAP.forEach(function(cur){
+    var pins=PARTICIPANTES_CAP.filter(function(p){return p.cursoId===cur.id&&p.estado!=='prereg';}).length;
+    var pter=PARTICIPANTES_CAP.filter(function(p){return p.cursoId===cur.id&&p.estado==='terminado';}).length;
+    var ct=PARTICIPANTES_CAP.filter(function(p){return p.cursoId===cur.id&&p.estado!=='prereg';}).reduce(function(a,p){return a+p.costo;},0);
+    totalFinalCursos+=ct;
+    html+='<tr>'+
+      '<td><strong>'+cur.nombre+'</strong></td>'+
+      '<td>'+cur.subreg+'</td>'+
+      '<td>'+(cur.costo>0?'$'+cur.costo.toLocaleString():'Gratuito')+'</td>'+
+      '<td>'+pins+'</td>'+
+      '<td><strong>'+pter+'</strong></td>'+
+      '<td><strong style="color:var(--verde)">'+(ct>0?'$'+ct.toLocaleString():'Gratuito')+'</strong></td>'+
+    '</tr>';
+  });
+  html+='<tr style="background:var(--suave)">'+
+    '<td colspan="5"><strong>TOTAL DEPARTAMENTO ANTIOQUIA</strong></td>'+
+    '<td><strong style="font-size:15px;color:var(--verde)">$'+totalFinalCursos.toLocaleString()+'</strong></td>'+
+  '</tr>';
+  html+='</tbody></table></div>';
+  html+='<div style="text-align:right;margin-top:12px">'+
+    '<button type="button" class="btn btn-ghost btn-sm" onclick="exportarInformeCapacitaciones();event.stopPropagation()">📥 Exportar informe Excel</button>'+
+  '</div></div>';
+  
+  cont.innerHTML=html;
+}
+
+// ── MODALES ────────────────────────────────────────────────────────────
+var cursoPreregActual=null;
+function abrirModalCurso(){ cursoEditandoId=null; document.getElementById('modal-curso-titulo').textContent='Nuevo curso'; limpiarFormCurso(); document.getElementById('modal-curso').classList.add('open'); }
+function editarCurso(id){
+  cursoEditandoId=id;
+  var cur=CURSOS_CAP.find(function(c){return c.id===id;});
+  if(!cur) return;
+  document.getElementById('modal-curso-titulo').textContent='Editar curso: '+cur.nombre;
+  document.getElementById('mc-nombre').value=cur.nombre;
+  document.getElementById('mc-sector').value=cur.sector;
+  document.getElementById('mc-modalidad').value=cur.modalidad;
+  document.getElementById('mc-horas').value=cur.horas;
+  document.getElementById('mc-costo').value=cur.costo;
+  document.getElementById('mc-cupo').value=cur.cupo;
+  document.getElementById('mc-fecha-ini').value=cur.fechaIni;
+  document.getElementById('mc-fecha-fin').value=cur.fechaFin;
+  document.getElementById('mc-municipio').value=cur.municipio;
+  document.getElementById('mc-subreg').value=cur.subreg;
+  document.getElementById('mc-estado').value=cur.estado;
+  document.getElementById('mc-desc').value=cur.desc||'';
+  document.getElementById('modal-curso').classList.add('open');
+}
+function cerrarModalCurso(){ document.getElementById('modal-curso').classList.remove('open'); cursoEditandoId=null; }
+function limpiarFormCurso(){
+  ['mc-nombre','mc-horas','mc-costo','mc-cupo','mc-fecha-ini','mc-fecha-fin','mc-municipio','mc-desc'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.value='';
+  });
+}
+function guardarCurso(){
+  var nombre=document.getElementById('mc-nombre').value.trim();
+  var costo=parseInt(document.getElementById('mc-costo').value)||0;
+  var cupo=parseInt(document.getElementById('mc-cupo').value)||0;
+  if(!nombre){ toast('El nombre del curso es obligatorio'); return; }
+  var datos={
+    nombre:nombre,
+    sector:document.getElementById('mc-sector').value,
+    modalidad:document.getElementById('mc-modalidad').value,
+    horas:parseInt(document.getElementById('mc-horas').value)||0,
+    costo:costo, cupo:cupo,
+    fechaIni:document.getElementById('mc-fecha-ini').value,
+    fechaFin:document.getElementById('mc-fecha-fin').value,
+    municipio:document.getElementById('mc-municipio').value,
+    subreg:document.getElementById('mc-subreg').value,
+    estado:document.getElementById('mc-estado').value,
+    desc:document.getElementById('mc-desc').value
+  };
+  if(cursoEditandoId){
+    var idx=CURSOS_CAP.findIndex(function(c){return c.id===cursoEditandoId;});
+    if(idx>-1){ Object.assign(CURSOS_CAP[idx],datos); toast('Curso actualizado ✅'); }
+  } else {
+    datos.id='C'+String(CURSOS_CAP.length+1).padStart(3,'0');
+    datos.inscritos=0;
+    CURSOS_CAP.push(datos);
+    toast('Curso creado ✅');
+  }
+  cerrarModalCurso();
+  poblarSelectsCursos();
+  renderCursos();
+}
+
+function abrirModalPreregCurso(cursoId){
+  cursoPreregActual=cursoId;
+  var cur=CURSOS_CAP.find(function(c){return c.id===cursoId;});
+  var el=document.getElementById('prereg-curso-nombre');
+  if(el&&cur) el.textContent='Curso: '+cur.nombre+' · '+cur.municipio+' · '+cur.subreg;
+  ['pr-nombre','pr-doc','pr-cel','pr-correo','pr-municipio'].forEach(function(id){
+    var e=document.getElementById(id); if(e) e.value='';
+  });
+  document.getElementById('modal-prereg').classList.add('open');
+}
+function cerrarModalPrereg(){ document.getElementById('modal-prereg').classList.remove('open'); }
+function guardarPreregistro(){
+  var nombre=document.getElementById('pr-nombre').value.trim();
+  var doc=document.getElementById('pr-doc').value.trim();
+  if(!nombre||!doc){ toast('Nombre y documento son obligatorios'); return; }
+  if(!cursoPreregActual){ toast('Selecciona un curso primero'); return; }
+  var nuevo={
+    id:'P'+String(PARTICIPANTES_CAP.length+1).padStart(3,'0'),
+    cursoId:cursoPreregActual,
+    nombre:nombre, doc:doc,
+    cel:document.getElementById('pr-cel').value,
+    correo:document.getElementById('pr-correo').value,
+    municipio:document.getElementById('pr-municipio').value||'—',
+    subreg:document.getElementById('pr-subreg').value,
+    estado:'prereg',
+    fechaPrereg:new Date().toISOString().split('T')[0],
+    fechaIns:null, costo:0
+  };
+  PARTICIPANTES_CAP.push(nuevo);
+  toast('✅ '+nombre+' pre-registrado correctamente');
+  cerrarModalPrereg();
+  renderCursos();
+  renderPreregistros();
+}
+
+// ── EXPORTAR ──────────────────────────────────────────────────────────
+function exportarCapacitacionesExcel(){
+  if(typeof XLSX==='undefined'){ toast('Cargando...'); return; }
+  var wb=XLSX.utils.book_new();
+  var filas=[['Nombre','Documento','Municipio','Subregión','Curso','Estado','Fecha Pre-reg','Fecha Inscripción','Costo persona']];
+  PARTICIPANTES_CAP.forEach(function(p){
+    var cur=CURSOS_CAP.find(function(c){return c.id===p.cursoId;});
+    filas.push([p.nombre,p.doc,p.municipio,p.subreg,cur?cur.nombre:'—',p.estado,p.fechaPrereg,p.fechaIns||'—',p.costo]);
+  });
+  var ws=XLSX.utils.aoa_to_sheet(filas);
+  ws['!cols']=[{wch:30},{wch:16},{wch:16},{wch:20},{wch:40},{wch:12},{wch:14},{wch:14},{wch:14}];
+  XLSX.utils.book_append_sheet(wb,ws,'Participantes');
+  // Hoja cursos
+  var fc=[['ID','Nombre','Sector','Municipio','Subregión','Costo/persona','Cupo','Inscritos','Terminados','Costo total']];
+  CURSOS_CAP.forEach(function(cur){
+    var ter=PARTICIPANTES_CAP.filter(function(p){return p.cursoId===cur.id&&p.estado==='terminado';}).length;
+    var ins=PARTICIPANTES_CAP.filter(function(p){return p.cursoId===cur.id&&p.estado!=='prereg';}).length;
+    var ct=PARTICIPANTES_CAP.filter(function(p){return p.cursoId===cur.id&&p.estado!=='prereg';}).reduce(function(a,p){return a+p.costo;},0);
+    fc.push([cur.id,cur.nombre,cur.sector,cur.municipio,cur.subreg,cur.costo,cur.cupo,ins,ter,ct]);
+  });
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(fc),'Cursos');
+  XLSX.writeFile(wb,'capacitaciones_agencia_'+new Date().toISOString().split('T')[0]+'.xlsx');
+  toast('Excel exportado');
+}
+
+function exportarInformeCapacitaciones(){
+  if(typeof XLSX==='undefined'){ toast('Cargando...'); return; }
+  var wb=XLSX.utils.book_new();
+  // Hoja resumen por subregión
+  var SUBREGS=['Valle de Aburrá','Oriente','Norte','Occidente','Suroeste','Bajo Cauca','Nordeste','Magdalena Medio','Urabá'];
+  var fs=[['INFORME CAPACITACIONES — AGENCIA DE EMPLEO Y EMPRENDIMIENTO COMFENALCO ANTIOQUIA'],['Generado: '+new Date().toLocaleDateString('es-CO')],[],
+    ['Subregión','Inscritos','Cursando','Terminados','Desertores','Costo total subregión','Costo promedio/persona']];
+  var totIns2=0,totTer2=0,totCost2=0;
+  SUBREGS.forEach(function(sr){
+    var ins=PARTICIPANTES_CAP.filter(function(p){return p.subreg===sr&&p.estado!=='prereg';}).length;
+    var cur=PARTICIPANTES_CAP.filter(function(p){return p.subreg===sr&&p.estado==='cursando';}).length;
+    var ter=PARTICIPANTES_CAP.filter(function(p){return p.subreg===sr&&p.estado==='terminado';}).length;
+    var des=PARTICIPANTES_CAP.filter(function(p){return p.subreg===sr&&p.estado==='desertor';}).length;
+    var cost=PARTICIPANTES_CAP.filter(function(p){return p.subreg===sr&&p.estado!=='prereg';}).reduce(function(a,p){return a+p.costo;},0);
+    totIns2+=ins; totTer2+=ter; totCost2+=cost;
+    fs.push([sr,ins,cur,ter,des,cost,ins>0?Math.round(cost/ins):0]);
+  });
+  fs.push(['TOTAL ANTIOQUIA',totIns2,'',totTer2,'',totCost2,totIns2>0?Math.round(totCost2/totIns2):0]);
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(fs),'Por subregión');
+  // Hoja por municipio
+  var munis2={};
+  PARTICIPANTES_CAP.filter(function(p){return p.estado!=='prereg';}).forEach(function(p){
+    if(!munis2[p.municipio]) munis2[p.municipio]={nombre:p.municipio,subreg:p.subreg,ins:0,ter:0,des:0,costo:0};
+    munis2[p.municipio].ins++;
+    if(p.estado==='terminado') munis2[p.municipio].ter++;
+    if(p.estado==='desertor') munis2[p.municipio].des++;
+    munis2[p.municipio].costo+=p.costo;
+  });
+  var fm=[['Municipio','Subregión','Inscritos','Terminados','Desertores','Costo total','Costo promedio/persona']];
+  Object.values(munis2).sort(function(a,b){return b.ter-a.ter;}).forEach(function(m){
+    fm.push([m.nombre,m.subreg,m.ins,m.ter,m.des,m.costo,m.ins>0?Math.round(m.costo/m.ins):0]);
+  });
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(fm),'Por municipio');
+  // Hoja por curso
+  exportarCapacitacionesExcel._cursos=true;
+  var fc2=[['Curso','Sector','Municipio','Subregión','Costo/persona','Inscritos','Terminados','Costo total curso']];
+  var totalDpto=0;
+  CURSOS_CAP.forEach(function(cur){
+    var ins=PARTICIPANTES_CAP.filter(function(p){return p.cursoId===cur.id&&p.estado!=='prereg';}).length;
+    var ter=PARTICIPANTES_CAP.filter(function(p){return p.cursoId===cur.id&&p.estado==='terminado';}).length;
+    var ct=PARTICIPANTES_CAP.filter(function(p){return p.cursoId===cur.id&&p.estado!=='prereg';}).reduce(function(a,p){return a+p.costo;},0);
+    totalDpto+=ct;
+    fc2.push([cur.nombre,cur.sector,cur.municipio,cur.subreg,cur.costo,ins,ter,ct]);
+  });
+  fc2.push(['TOTAL DEPARTAMENTO','','','','','','',totalDpto]);
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(fc2),'Por curso');
+  XLSX.writeFile(wb,'informe_capacitaciones_'+new Date().toISOString().split('T')[0]+'.xlsx');
+  toast('Informe Excel exportado (3 hojas)');
+}
+
 // Prevenir que Enter en inputs cause navegación o submit no deseado
 document.addEventListener('keydown', function(e){
   if(e.key === 'Enter'){
