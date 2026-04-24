@@ -1900,6 +1900,9 @@ function guardarVacante(){
 // ═══════════════════════════════════════════════════════
 // AUTH
 // ═══════════════════════════════════════════════════════
+// Flag para saber si ya se hizo la navegación inicial
+var _authInicializado = false;
+
 function renderAuth(user){
   var area = document.getElementById('auth-area');
   if(user){
@@ -1908,17 +1911,29 @@ function renderAuth(user){
     var rol    = (user.publicMetadata&&user.publicMetadata.rol)||'asesor_empresarial';
     document.getElementById('snombre').textContent = nombre;
     document.getElementById('srol').textContent    = rol.replace(/_/g,' ');
+    localStorage.setItem('comfenalco_usuario', nombre);
+    localStorage.setItem('comfenalco_rol', rol);
     var av = document.getElementById('sav');
-    av.innerHTML = user.imageUrl ? '<img src="'+user.imageUrl+'"/>' : ini;
+    if(av) av.innerHTML = user.imageUrl ? '<img src="'+user.imageUrl+'"/>' : ini;
     area.innerHTML =
       '<span style="color:rgba(255,255,255,.8);font-size:13px">'+nombre+'</span>'+
       '<button type="button" class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.signOut().then(function(){window.location.href=\'index.html\'})">Salir</button>';
     document.getElementById('sidebar').style.display = 'flex';
-    nav('dashboard');
+    // nav('dashboard') SOLO la primera vez — no en cada refresh de token
+    if(!_authInicializado){
+      _authInicializado = true;
+      nav('dashboard');
+    }
   } else {
-    area.innerHTML = '<button type="button" class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>';
-    document.getElementById('sidebar').style.display = 'none';
-    document.getElementById('pg-acceso').classList.remove('hidden');
+    // Solo ocultar si realmente no hay sesión (no durante refresh temporal)
+    // Esperar 2s antes de mostrar pantalla de acceso por si es un refresh
+    setTimeout(function(){
+      if(window.Clerk && window.Clerk.user) return; // ya hay usuario de nuevo
+      area.innerHTML = '<button type="button" class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>';
+      document.getElementById('sidebar').style.display = 'none';
+      document.getElementById('pg-acceso').classList.remove('hidden');
+      _authInicializado = false;
+    }, 2000);
   }
 }
 
