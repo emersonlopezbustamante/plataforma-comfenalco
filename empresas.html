@@ -4,10 +4,6 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Portal Empresas — Comfenalco Antioquia</title>
-  <script async crossorigin="anonymous"
-    data-clerk-publishable-key="pk_test_bGlrZWQtYmlzb24tNTEuY2xlcmsuYWNjb3VudHMuZGV2JA"
-    src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@5/dist/clerk.browser.js"
-    type="text/javascript"></script>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
   <style>
     :root{--verde:#094a4b;--pist:#a8c94e;--blanco:#fff;--fondo:#f4f6f4;--borde:#d8e2d8;--texto-g:#4a5a4a;--suave:#e8efe8;--negro:#1a2a1a;--r:8px;--rc:14px;--t:.22s ease}
@@ -139,28 +135,26 @@ function nav(p){
 }
 
 function renderAuth(user){
-  var area=document.getElementById('auth-area');
-  if(user){
-    var nombre=((user.firstName||'')+' '+(user.lastName||'')).trim()||'Usuario';
-    document.getElementById('enombre').textContent=nombre;
-    area.innerHTML='<span style="color:rgba(255,255,255,.8);font-size:13px">'+nombre+'</span>'+
-      '<button type="button" class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.signOut().then(function(){location.reload()})">Salir</button>';
-    document.getElementById('sidebar').style.display='flex';
-    nav('resumen');
-  } else {
-    area.innerHTML='<button type="button" class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>';
-    document.getElementById('sidebar').style.display='none';
-    document.getElementById('pg-acceso').classList.remove('hidden');
-  }
+  // Auth manejado por interno.html — aquí solo mostramos info del localStorage
+  var nombre = (user && ((user.firstName||'')+' '+(user.lastName||'')).trim()) 
+               || localStorage.getItem('comfenalco_usuario') || 'Usuario';
+  var rol    = (user && user.publicMetadata && user.publicMetadata.rol)
+               || localStorage.getItem('comfenalco_rol') || '';
+  var snombre = document.getElementById('snombre');
+  var srol    = document.getElementById('srol');
+  if (snombre) snombre.textContent = nombre;
+  if (srol)    srol.textContent    = rol.replace(/_/g,' ');
+  var area = document.getElementById('auth-area');
+  if (area) area.innerHTML = '<span style="color:rgba(255,255,255,.8);font-size:13px">'+nombre+'</span>';
 }
 
-window.addEventListener('load',function(){
-  if(window.Clerk){
-    window.Clerk.load().then(function(){
-      renderAuth(window.Clerk.user);
-      window.Clerk.addListener(function(e){renderAuth(e.user);});
-    });
-  }
+window.addEventListener('load', function(){
+  var nombre = localStorage.getItem('comfenalco_usuario') || '';
+  var rol    = localStorage.getItem('comfenalco_rol')     || '';
+  var sn = document.getElementById('snombre');
+  var sr = document.getElementById('srol');
+  if(sn && nombre) sn.textContent = nombre;
+  if(sr && rol)    sr.textContent = rol.replace(/_/g,' ');
 });
 
 // Prevenir que Enter en inputs cause navegación o submit no deseado

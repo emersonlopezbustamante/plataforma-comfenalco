@@ -1193,17 +1193,14 @@ function renderAuth(user){
 // INIT
 // ═══════════════════════════════════════════════════
 window.addEventListener('load', function(){
-  // Mostrar nombre de usuario desde localStorage (guardado por interno.html)
   var nombre = localStorage.getItem('comfenalco_usuario') || '';
   var rol    = localStorage.getItem('comfenalco_rol')     || '';
-  var snombre = document.getElementById('snombre');
-  var srol    = document.getElementById('srol');
-  if (snombre && nombre) snombre.textContent = nombre;
-  if (srol    && rol)    srol.textContent    = rol.replace(/_/g,' ');
+  var sn = document.getElementById('snombre');
+  var sr = document.getElementById('srol');
+  if(sn && nombre) sn.textContent = nombre;
+  if(sr && rol)    sr.textContent = rol.replace(/_/g,' ');
   renderDashboard();
-  renderAuth(window.Clerk.user);
-  renderAuth(e.user);
-}););
+});
 
 // Prevenir que Enter en inputs cause navegación o submit no deseado
 document.addEventListener('keydown', function(e){

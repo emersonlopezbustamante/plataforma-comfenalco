@@ -4,10 +4,6 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Gestión de Eventos — Comfenalco Antioquia</title>
-  <script async crossorigin="anonymous"
-    data-clerk-publishable-key="pk_test_bGlrZWQtYmlzb24tNTEuY2xlcmsuYWNjb3VudHMuZGV2JA"
-    src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@5/dist/clerk.browser.js"
-    type="text/javascript"></script>
   <!-- SheetJS para exportar/importar Excel -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
@@ -1161,33 +1157,30 @@ function subirPDF(input){
 // AUTH
 // ═══════════════════════════════════════════════════
 function renderAuth(user){
-  var area=document.getElementById('auth-area');
-  if(user){
-    var nombre=((user.firstName||'')+' '+(user.lastName||'')).trim()||'Usuario';
-    var ini=((user.firstName||'')[0]||'').toUpperCase()+((user.lastName||'')[0]||'').toUpperCase()||'U';
-    document.getElementById('snombre').textContent=nombre;
-    document.getElementById('srol').textContent=((user.publicMetadata&&user.publicMetadata.rol)||'asesor').replace(/_/g,' ');
-    var av=document.getElementById('sav');
-    av.innerHTML=user.imageUrl?'<img src="'+user.imageUrl+'"/>':ini;
-    area.innerHTML='<span style="color:rgba(255,255,255,.8);font-size:13px">'+nombre+'</span>'+
-      '<button type="button" class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.signOut().then(function(){window.location.href=\'interno.html\'})">Salir</button>';
-  } else {
-    area.innerHTML='<button type="button" class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.openSignIn({afterSignInUrl:window.location.href})">Iniciar sesión</button>';
-  }
+  // Auth manejado por interno.html — aquí solo mostramos info del localStorage
+  var nombre = (user && ((user.firstName||'')+' '+(user.lastName||'')).trim()) 
+               || localStorage.getItem('comfenalco_usuario') || 'Usuario';
+  var rol    = (user && user.publicMetadata && user.publicMetadata.rol)
+               || localStorage.getItem('comfenalco_rol') || '';
+  var snombre = document.getElementById('snombre');
+  var srol    = document.getElementById('srol');
+  if (snombre) snombre.textContent = nombre;
+  if (srol)    srol.textContent    = rol.replace(/_/g,' ');
+  var area = document.getElementById('auth-area');
+  if (area) area.innerHTML = '<span style="color:rgba(255,255,255,.8);font-size:13px">'+nombre+'</span>';
 }
 
 // ═══════════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════════
-window.addEventListener('load',function(){
-  actualizarStats();
+window.addEventListener('load', function(){
+  var nombre = localStorage.getItem('comfenalco_usuario') || '';
+  var rol    = localStorage.getItem('comfenalco_rol')     || '';
+  var sn = document.getElementById('snombre');
+  var sr = document.getElementById('srol');
+  if(sn && nombre) sn.textContent = nombre;
+  if(sr && rol)    sr.textContent = rol.replace(/_/g,' ');
   renderEventos(EVENTOS);
-  if(window.Clerk){
-    window.Clerk.load().then(function(){
-      renderAuth(window.Clerk.user);
-      window.Clerk.addListener(function(e){ renderAuth(e.user); });
-    });
-  }
 });
 
 // Prevenir que Enter en inputs cause navegación o submit no deseado
