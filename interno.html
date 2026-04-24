@@ -4,6 +4,9 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Panel Interno — Comfenalco Antioquia</title>
+  
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script async crossorigin="anonymous"
     data-clerk-publishable-key="pk_test_bGlrZWQtYmlzb24tNTEuY2xlcmsuYWNjb3VudHMuZGV2JA"
@@ -290,6 +293,79 @@
   .rep-tab.active{background:var(--verde);color:#fff}
   .rep-tab:hover:not(.active){background:var(--suave)}
   .export-bar{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+
+  /* ══ MÓDULO DIAGNÓSTICOS ════════════════════════════════ */
+  .diag-tabs{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap}
+  .diag-tab{padding:9px 20px;border:none;border-radius:30px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;background:var(--suave);color:var(--texto-g);transition:all var(--t)}
+  .diag-tab.active,.diag-tab:hover{background:var(--verde);color:#fff}
+
+  /* Panel Admin dentro del módulo */
+  .diag-admin-wrap{background:#fff;border-radius:var(--rc);padding:24px;box-shadow:0 2px 16px rgba(9,74,75,.08)}
+  .diag-selector-card{background:var(--suave);border-radius:10px;padding:14px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+  .diag-selector-card label{font-weight:700;font-size:13px;color:var(--verde)}
+  .diag-link-card{background:#f0f7f7;border:1.5px solid var(--borde);border-radius:10px;padding:12px 16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:20px}
+  .diag-link-card .link-label{font-size:13px;font-weight:600;color:var(--verde);white-space:nowrap}
+  .diag-link-card input{flex:1;min-width:200px;padding:9px 12px;border:1.5px solid var(--borde);border-radius:8px;font-size:12px;font-family:inherit;background:#fff;color:var(--negro)}
+  .btn-copy-diag{padding:9px 18px;background:var(--verde);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;transition:all var(--t);white-space:nowrap}
+  .btn-copy-diag:hover{background:#073536}
+  .btn-borrar-emp{padding:9px 18px;background:#f8d7da;color:#721c24;border:none;border-radius:8px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;transition:all var(--t)}
+
+  /* Stats del admin */
+  .diag-stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:20px}
+  .diag-stat-card{background:var(--verde);color:#fff;border-radius:12px;padding:16px;text-align:center}
+  .diag-stat-num{font-family:'Nunito',sans-serif;font-size:26px;font-weight:900;color:var(--pist)}
+  .diag-stat-lbl{font-size:11px;opacity:.85;margin-top:3px}
+
+  /* Tabla diagnósticos */
+  .diag-table{width:100%;border-collapse:collapse;font-size:12px}
+  .diag-table th{background:var(--verde);color:#fff;padding:9px 12px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+  .diag-table td{padding:8px 12px;border-bottom:1px solid var(--borde);vertical-align:middle}
+  .diag-table tbody tr:hover{background:rgba(9,74,75,.02)}
+
+  /* Niveles */
+  .nivel-basico{background:#fce4ec;color:#c62828;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;display:inline-block}
+  .nivel-medio{background:#fff8e1;color:#f57f17;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;display:inline-block}
+  .nivel-alto{background:#e8f5e9;color:#2e7d32;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;display:inline-block}
+
+  /* Gráficas diagnóstico */
+  .diag-charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+  .diag-chart-card{background:var(--suave);border-radius:12px;padding:16px}
+  .diag-chart-card h4{color:var(--verde);font-size:13px;font-weight:700;margin-bottom:12px}
+  .diag-chart-card.full{grid-column:1/-1}
+  .diag-barras-area canvas{max-height:220px}
+  .diag-dona-radar-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .diag-chart-square{background:#fff;border-radius:10px;padding:12px;position:relative}
+  .diag-chart-square canvas{max-height:200px}
+  .diag-detalle-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-top:14px}
+  .diag-detalle-bloque{background:#fff;border-radius:10px;padding:14px;border-left:4px solid var(--pist)}
+  .diag-detalle-bloque h5{color:var(--verde);font-size:13px;font-weight:700;margin-bottom:8px}
+  .dim-table{width:100%;border-collapse:collapse;font-size:12px}
+  .dim-table th{background:var(--suave);color:var(--verde);padding:8px 12px;text-align:left;font-weight:700}
+  .dim-table td{padding:7px 12px;border-bottom:1px solid var(--borde)}
+  .rec-bloque{background:var(--suave);border-radius:10px;padding:14px;margin-bottom:10px}
+  .rec-bloque h4{color:var(--verde);font-size:13px;font-weight:700;margin-bottom:6px}
+  .rec-bloque p{font-size:12.5px;color:var(--texto-g);line-height:1.5}
+  .no-data-diag{background:#fff3cd;border-radius:10px;padding:16px;color:#856404;font-size:13px;text-align:center;margin:12px 0}
+
+  /* Panel de envío del formulario */
+  .diag-send-card{background:linear-gradient(135deg,#094a4b,#0a5c5d);border-radius:var(--rc);padding:24px;color:#fff;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+  .diag-send-card h3{font-family:'Nunito',sans-serif;font-size:17px;font-weight:800;margin-bottom:4px}
+  .diag-send-card p{font-size:13px;opacity:.85}
+  .btn-send-diag{padding:12px 24px;background:var(--pist);color:var(--negro);border:none;border-radius:10px;font-size:14px;font-weight:800;font-family:inherit;cursor:pointer;transition:all var(--t);white-space:nowrap}
+  .btn-send-diag:hover{background:#8fb53a;transform:translateY(-1px)}
+  .btn-dl-pdf{padding:10px 20px;background:var(--rojo,#c0392b);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;margin-right:8px}
+  .btn-dl-excel{padding:10px 20px;background:#1d6f42;color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer}
+
+  /* Modal diagnóstico embed */
+  .modal-diag-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:2000;align-items:center;justify-content:center}
+  .modal-diag-overlay.open{display:flex}
+  .modal-diag-box{background:#fff;border-radius:var(--rc);width:94%;max-width:860px;max-height:92vh;overflow-y:auto;padding:0;position:relative}
+  .modal-diag-header{background:linear-gradient(90deg,#fff 0%,#e8f4ef 60%,#094a4b 100%);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid var(--pist);position:sticky;top:0;z-index:10}
+  .modal-diag-header h3{font-family:'Playfair Display',serif;font-size:16px;color:var(--verde)}
+  .modal-diag-close{cursor:pointer;font-size:22px;color:var(--texto-g);background:none;border:none;font-family:inherit}
+  .modal-diag-body{padding:20px}
+
+  @media(max-width:640px){.diag-charts-grid,.diag-dona-radar-grid{grid-template-columns:1fr}.diag-chart-card.full{grid-column:1}}
 </style>
 </head>
 <body>
@@ -514,10 +590,134 @@
     </div>
 
     <!-- DIAGNÓSTICOS -->
+    <!-- ══ DIAGNÓSTICOS ══════════════════════════════════════════ -->
     <div id="pg-diagnosticos" class="hidden" onclick="event.stopPropagation()">
-      <div class="ptitle">📋 Diagnósticos organizacionales — Fase 2</div>
-      <div class="card"><p style="color:var(--texto-g)">Disponible en la Fase 2.</p></div>
-    </div>
+      <div class="ph">
+        <div>
+          <div class="ptitle">📋 Diagnóstico Empresarial</div>
+          <p class="psub">Envía el formulario a empresas, consulta resultados y descarga informes PDF y Excel</p>
+        </div>
+      </div>
+
+      <!-- TABS -->
+      <div class="diag-tabs">
+        <button type="button" class="diag-tab active" onclick="diagTab('admin',this);event.stopPropagation()">🔧 Administrador</button>
+        <button type="button" class="diag-tab" onclick="diagTab('form',this);event.stopPropagation()">📝 Ver formulario</button>
+      </div>
+
+      <!-- ── PANEL ADMINISTRADOR ─────────────────────────────────── -->
+      <div id="diag-panel-admin">
+
+        <!-- Tarjeta de envío -->
+        <div class="diag-send-card">
+          <div>
+            <h3>🏭 Diagnóstico Empresarial Integral</h3>
+            <p>Genera y envía el enlace del formulario a la empresa seleccionada</p>
+          </div>
+          <button type="button" class="btn-send-diag" onclick="diagGenerarLink();event.stopPropagation()">🔗 Generar enlace</button>
+        </div>
+
+        <!-- Selector de empresa -->
+        <div class="diag-admin-wrap">
+          <div class="diag-selector-card">
+            <label>🏢 Empresa:</label>
+            <select id="diag-sel-empresa" class="finput" style="flex:1;min-width:200px" onchange="diagCargarEmpresas();event.stopPropagation()">
+              <option value="">— Seleccione una empresa —</option>
+            </select>
+            <button type="button" class="btn-borrar-emp" onclick="diagConfirmarBorrar();event.stopPropagation()">🗑 Eliminar empresa</button>
+          </div>
+
+          <!-- Link del diagnóstico -->
+          <div class="diag-link-card">
+            <span class="link-label">🔗 Enlace diagnóstico:</span>
+            <input type="text" id="diag-link-input" readonly placeholder="Seleccione una empresa para generar el enlace"/>
+            <button type="button" class="btn-copy-diag" onclick="diagCopiarLink();event.stopPropagation()">📋 Copiar</button>
+            <button type="button" class="btn-copy-diag" style="background:var(--pist);color:var(--negro)" onclick="diagAbrirFormulario();event.stopPropagation()">🚀 Abrir</button>
+          </div>
+
+          <!-- Sin datos -->
+          <div id="diag-no-data" class="no-data-diag" style="display:none">
+            No hay diagnósticos registrados para esta empresa todavía.
+          </div>
+
+          <!-- Resultados -->
+          <div id="diag-wrap" style="display:none">
+
+            <!-- Stats -->
+            <div class="diag-stats-row" id="diag-stats-row"></div>
+
+            <!-- Tabla de registros -->
+            <div class="card" style="padding:18px;margin-bottom:16px">
+              <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:14px">
+                <div style="font-family:'Nunito';font-size:15px;font-weight:800;color:var(--verde)">🏭 Diagnósticos Registrados</div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap">
+                  <button type="button" class="btn-dl-excel" onclick="diagDescargarExcel();event.stopPropagation()">⬇ Excel</button>
+                  <button type="button" class="btn-dl-pdf" onclick="diagGenerarPDF();event.stopPropagation()">⬇ PDF</button>
+                </div>
+              </div>
+              <div id="diag-listado" style="overflow-x:auto"></div>
+            </div>
+
+            <!-- Gráficas -->
+            <div class="card" style="padding:18px;margin-bottom:16px">
+              <div style="font-family:'Nunito';font-size:15px;font-weight:800;color:var(--verde);margin-bottom:14px">📊 Resultados Visuales</div>
+              <div style="background:var(--suave);border-radius:10px;padding:14px;margin-bottom:12px">
+                <h4 style="color:var(--verde);font-size:13px;margin-bottom:10px">Nivel por Área (%)</h4>
+                <div style="position:relative;height:200px">
+                  <canvas id="diag-chart-barras"></canvas>
+                </div>
+              </div>
+              <div class="diag-dona-radar-grid">
+                <div class="diag-chart-square">
+                  <h4 style="color:var(--verde);font-size:12px;margin-bottom:8px">Distribución niveles</h4>
+                  <canvas id="diag-chart-dona" style="max-height:180px"></canvas>
+                </div>
+                <div class="diag-chart-square">
+                  <h4 style="color:var(--verde);font-size:12px;margin-bottom:8px">Radar de áreas</h4>
+                  <canvas id="diag-chart-radar" style="max-height:180px"></canvas>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tabla por dimensión -->
+            <div class="card" style="padding:18px;margin-bottom:16px">
+              <div style="font-family:'Nunito';font-size:14px;font-weight:800;color:var(--verde);margin-bottom:12px">📋 Detalle por Dimensión</div>
+              <div style="overflow-x:auto">
+                <table class="dim-table" id="diag-dim-table">
+                  <thead><tr><th>Dimensión</th><th>Prom. Puntaje</th><th>Prom. %</th><th>Nivel</th><th>Máximo posible</th></tr></thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Recomendaciones -->
+            <div class="card" style="padding:18px">
+              <div style="font-family:'Nunito';font-size:14px;font-weight:800;color:var(--verde);margin-bottom:12px">💡 Análisis y Recomendaciones</div>
+              <div id="diag-recomendaciones"></div>
+            </div>
+
+          </div><!-- /diag-wrap -->
+        </div><!-- /diag-admin-wrap -->
+      </div><!-- /diag-panel-admin -->
+
+      <!-- ── PANEL FORMULARIO (preview embed) ───────────────────── -->
+      <div id="diag-panel-form" style="display:none">
+        <div class="card" style="padding:16px;margin-bottom:16px;background:linear-gradient(135deg,#094a4b,#0a5c5d);color:#fff;border-radius:var(--rc)">
+          <div style="font-family:'Nunito';font-size:15px;font-weight:800;margin-bottom:4px">📝 Formulario de Diagnóstico</div>
+          <p style="font-size:13px;opacity:.85">Vista previa del formulario que recibirán las empresas. Para enviar el diagnóstico usa el tab Administrador.</p>
+        </div>
+        <div class="card" style="padding:0;overflow:hidden;border-radius:var(--rc)">
+          <iframe id="diag-iframe" src="" style="width:100%;height:70vh;border:none;display:none"></iframe>
+          <div id="diag-iframe-placeholder" style="padding:40px;text-align:center;color:var(--texto-g)">
+            <div style="font-size:40px;margin-bottom:12px">📋</div>
+            <div style="font-weight:700;margin-bottom:8px">Vista previa del formulario</div>
+            <div style="font-size:13px;margin-bottom:20px">El formulario se abrirá aquí o en una nueva pestaña</div>
+            <button type="button" class="btn btn-primary" onclick="diagAbrirFormularioNuevaPestana();event.stopPropagation()">🚀 Abrir formulario completo</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /pg-diagnosticos -->
 
     <!-- REPORTES -->
     <div id="pg-reportes" class="hidden" onclick="event.stopPropagation()">
@@ -1240,6 +1440,7 @@ function nav(p){
   if(p==='vacantes')   renderVacantes(vacantesActuales);
   if(p==='cargue')     iniciarCargue();
   if(p==='reportes')    renderReportes();
+  if(p==='diagnosticos') initDiagnosticos();
   if(p==='capacitaciones') initCapacitaciones();
 }
 
@@ -2119,6 +2320,536 @@ function exportarReportesPDF() {
 </script>
   <script src="cno2025.js" defer></script>
 <script>
+// ═══════════════════════════════════════════════════════════════════
+// MÓDULO DIAGNÓSTICOS EMPRESARIALES
+// Integra admin.html + diagnostico_empresarial.html en interno.html
+// Supabase: https://mhiwvjermmmicuxwdghn.supabase.co
+// ═══════════════════════════════════════════════════════════════════
+
+// ── CONFIG SUPABASE ──────────────────────────────────────────────
+var DIAG_SUPABASE_URL = "https://mhiwvjermmmicuxwdghn.supabase.co";
+var DIAG_SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1oaXd2amVybW1taWN1eHdkZ2huIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwMTQ3MzUsImV4cCI6MjA5MTU5MDczNX0.nIrq4t-GQPMbpsS8KSaPI5J6NDNLmuQnk5van8dlg78";
+var diagSupabase = null;
+var diagEmpresaActual = null;
+var diagDatosActuales = [];
+var diagChartBarras = null;
+var diagChartDona = null;
+var diagChartRadar = null;
+
+// ── INIT ─────────────────────────────────────────────────────────
+function initDiagnosticos() {
+  if (!diagSupabase) {
+    diagSupabase = supabase.createClient(DIAG_SUPABASE_URL, DIAG_SUPABASE_KEY);
+  }
+  diagCargarListaEmpresas();
+  diagTab('admin', document.querySelector('.diag-tab'));
+}
+
+// ── TABS ─────────────────────────────────────────────────────────
+function diagTab(panel, btn) {
+  document.getElementById('diag-panel-admin').style.display = panel === 'admin' ? 'block' : 'none';
+  document.getElementById('diag-panel-form').style.display  = panel === 'form'  ? 'block' : 'none';
+  document.querySelectorAll('.diag-tab').forEach(function(b){ b.classList.remove('active'); });
+  if (btn) btn.classList.add('active');
+  if (panel === 'form') diagMostrarIframe();
+}
+
+// ── CARGAR LISTA DE EMPRESAS ─────────────────────────────────────
+async function diagCargarListaEmpresas() {
+  if (!diagSupabase) diagSupabase = supabase.createClient(DIAG_SUPABASE_URL, DIAG_SUPABASE_KEY);
+  var sel = document.getElementById('diag-sel-empresa');
+  if (!sel) return;
+  try {
+    var resp = await diagSupabase.from('diagnosticos_empresariales').select('nombre_empresa');
+    var data = resp.data || [];
+    var empresas = [...new Set(data.map(function(r){ return r.nombre_empresa; }).filter(Boolean))].sort();
+    var opts = '<option value="">— Seleccione una empresa —</option>' +
+      empresas.map(function(e){ return '<option value="'+escDiag(e)+'">'+escDiag(e)+'</option>'; }).join('');
+    sel.innerHTML = opts;
+    if (empresas.length > 0) {
+      diagEmpresaActual = empresas[0];
+      sel.value = empresas[0];
+      await diagCargarDiagnosticos(empresas[0]);
+    }
+  } catch(e) {
+    console.warn('diagCargarListaEmpresas error:', e);
+  }
+}
+
+async function diagCargarEmpresas() {
+  var sel = document.getElementById('diag-sel-empresa');
+  var emp = sel ? sel.value : '';
+  if (!emp) return;
+  diagEmpresaActual = emp;
+  diagGenerarLinkEmpresa(emp);
+  await diagCargarDiagnosticos(emp);
+}
+
+// ── GENERAR LINK ─────────────────────────────────────────────────
+function diagGenerarLink() {
+  var emp = document.getElementById('diag-sel-empresa') ? document.getElementById('diag-sel-empresa').value : '';
+  if (!emp) { toast('Selecciona una empresa primero'); return; }
+  diagEmpresaActual = emp;
+  diagGenerarLinkEmpresa(emp);
+}
+
+function diagGenerarLinkEmpresa(emp) {
+  var base = window.location.href.replace(/\/[^/]*$/, '');
+  var link = base + '/diagnostico_empresarial.html?empresa=' + encodeURIComponent(emp);
+  var inp = document.getElementById('diag-link-input');
+  if (inp) inp.value = link;
+}
+
+function diagCopiarLink() {
+  var inp = document.getElementById('diag-link-input');
+  if (!inp || !inp.value) { toast('Genera el enlace primero'); return; }
+  navigator.clipboard.writeText(inp.value).then(function(){
+    toast('✅ Enlace copiado al portapapeles');
+  }).catch(function(){
+    inp.select();
+    document.execCommand('copy');
+    toast('✅ Enlace copiado');
+  });
+}
+
+function diagAbrirFormulario() {
+  var inp = document.getElementById('diag-link-input');
+  if (inp && inp.value) {
+    window.open(inp.value, '_blank');
+  } else {
+    diagAbrirFormularioNuevaPestana();
+  }
+}
+
+function diagAbrirFormularioNuevaPestana() {
+  var emp = diagEmpresaActual || '';
+  var base = window.location.href.replace(/\/[^/]*$/, '');
+  window.open(base + '/diagnostico_empresarial.html' + (emp ? '?empresa='+encodeURIComponent(emp) : ''), '_blank');
+}
+
+function diagMostrarIframe() {
+  var emp = diagEmpresaActual || '';
+  var base = window.location.href.replace(/\/[^/]*$/, '');
+  var src = base + '/diagnostico_empresarial.html' + (emp ? '?empresa='+encodeURIComponent(emp) : '');
+  var iframe = document.getElementById('diag-iframe');
+  var placeholder = document.getElementById('diag-iframe-placeholder');
+  if (iframe) {
+    iframe.src = src;
+    iframe.style.display = 'block';
+    if (placeholder) placeholder.style.display = 'none';
+  }
+}
+
+// ── CARGAR DATOS DE LA EMPRESA ──────────────────────────────────
+async function diagCargarDiagnosticos(empresa) {
+  if (!diagSupabase) diagSupabase = supabase.createClient(DIAG_SUPABASE_URL, DIAG_SUPABASE_KEY);
+  var noData = document.getElementById('diag-no-data');
+  var diagWrap = document.getElementById('diag-wrap');
+  if (noData) noData.style.display = 'none';
+  if (diagWrap) diagWrap.style.display = 'none';
+
+  try {
+    var resp = await diagSupabase
+      .from('diagnosticos_empresariales')
+      .select('*')
+      .eq('nombre_empresa', empresa)
+      .order('fecha', { ascending: false });
+    
+    var data = resp.data || [];
+    diagDatosActuales = data;
+
+    if (data.length === 0) {
+      if (noData) noData.style.display = 'block';
+      return;
+    }
+
+    if (diagWrap) diagWrap.style.display = 'block';
+    diagRenderStats(data);
+    diagRenderTabla(data);
+    diagRenderGraficas(data);
+    diagRenderDetalle(data);
+    diagRenderRecomendaciones(data);
+    diagGenerarLinkEmpresa(empresa);
+  } catch(e) {
+    console.warn('diagCargarDiagnosticos error:', e);
+    if (noData) { noData.style.display = 'block'; noData.textContent = 'Error al cargar datos: ' + e.message; }
+  }
+}
+
+// ── RENDER STATS ─────────────────────────────────────────────────
+function diagRenderStats(data) {
+  var cont = document.getElementById('diag-stats-row');
+  if (!cont) return;
+
+  var total = data.length;
+  var scores = data.map(function(r){ return diagCalcNivel(r); });
+  var prom = scores.length > 0 ? Math.round(scores.reduce(function(a,b){return a+b;},0)/scores.length) : 0;
+  var altos = scores.filter(function(s){return s>=70;}).length;
+  var fecha = data[0] ? (data[0].fecha||'').substring(0,10) : '—';
+
+  cont.innerHTML =
+    '<div class="diag-stat-card"><div class="diag-stat-num">'+total+'</div><div class="diag-stat-lbl">Diagnósticos registrados</div></div>' +
+    '<div class="diag-stat-card"><div class="diag-stat-num">'+prom+'%</div><div class="diag-stat-lbl">Puntaje promedio general</div></div>' +
+    '<div class="diag-stat-card"><div class="diag-stat-num">'+altos+'</div><div class="diag-stat-lbl">En nivel alto (≥70%)</div></div>' +
+    '<div class="diag-stat-card"><div class="diag-stat-num">'+fecha+'</div><div class="diag-stat-lbl">Último diagnóstico</div></div>';
+}
+
+// ── RENDER TABLA ─────────────────────────────────────────────────
+function diagRenderTabla(data) {
+  var cont = document.getElementById('diag-listado');
+  if (!cont) return;
+  cont.innerHTML = '<table class="diag-table">' +
+    '<thead><tr><th>Fecha</th><th>Persona contacto</th><th>Cargo</th><th>Municipio</th><th>Nivel general</th><th>Acciones</th></tr></thead>' +
+    '<tbody>' + data.map(function(r, i) {
+      var nivel = diagCalcNivel(r);
+      var cls = nivel >= 70 ? 'nivel-alto' : nivel >= 40 ? 'nivel-medio' : 'nivel-basico';
+      var lbl = nivel >= 70 ? 'Alto' : nivel >= 40 ? 'Medio' : 'Básico';
+      var fecha = (r.fecha || '').substring(0, 10);
+      return '<tr>' +
+        '<td>'+escDiag(fecha)+'</td>' +
+        '<td><strong>'+escDiag(r.persona||'—')+'</strong></td>' +
+        '<td>'+escDiag(r.cargo||'—')+'</td>' +
+        '<td>'+escDiag(r.municipio||'—')+'</td>' +
+        '<td><span class="'+cls+'">'+nivel+'% · '+lbl+'</span></td>' +
+        '<td><button type="button" class="btn btn-ghost btn-sm" style="font-size:11px;padding:4px 10px" onclick="diagVerDetalle('+i+');event.stopPropagation()">Ver</button> '+
+        '<button type="button" class="btn btn-sm" style="font-size:11px;padding:4px 10px;background:#f8d7da;color:#721c24" onclick="diagBorrarRegistro(\''+r.id+'\');event.stopPropagation()">✕</button></td>' +
+      '</tr>';
+    }).join('') + '</tbody></table>';
+}
+
+// ── RENDER GRÁFICAS ──────────────────────────────────────────────
+function diagRenderGraficas(data) {
+  var DIMENSIONES = diagGetDimensiones();
+  var promedios = DIMENSIONES.map(function(dim) {
+    var vals = data.map(function(r){ return diagCalcDimension(r, dim.campos); }).filter(function(v){return v!==null;});
+    return vals.length > 0 ? Math.round(vals.reduce(function(a,b){return a+b;},0)/vals.length) : 0;
+  });
+  var labels = DIMENSIONES.map(function(d){ return d.nombre; });
+  var colors = ['#094a4b','#a8c94e','#2d4a6b','#e67e22','#8e44ad','#1abc9c','#e74c3c','#f39c12'];
+
+  // Barras
+  var ctxB = document.getElementById('diag-chart-barras');
+  if (ctxB) {
+    if (diagChartBarras) diagChartBarras.destroy();
+    diagChartBarras = new Chart(ctxB, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{ label: 'Nivel %', data: promedios, backgroundColor: colors, borderRadius: 6 }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false, indexAxis: 'y',
+        plugins: { legend: { display: false } },
+        scales: { x: { min: 0, max: 100, ticks: { callback: function(v){ return v+'%'; } } } }
+      }
+    });
+  }
+
+  // Dona
+  var ctxD = document.getElementById('diag-chart-dona');
+  if (ctxD) {
+    if (diagChartDona) diagChartDona.destroy();
+    var scores = data.map(function(r){ return diagCalcNivel(r); });
+    var altos = scores.filter(function(s){return s>=70;}).length;
+    var medios = scores.filter(function(s){return s>=40&&s<70;}).length;
+    var bajos = scores.filter(function(s){return s<40;}).length;
+    diagChartDona = new Chart(ctxD, {
+      type: 'doughnut',
+      data: {
+        labels: ['Alto','Medio','Básico'],
+        datasets: [{ data: [altos, medios, bajos], backgroundColor: ['#2e7d32','#f57f17','#c62828'] }]
+      },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } } }
+    });
+  }
+
+  // Radar
+  var ctxR = document.getElementById('diag-chart-radar');
+  if (ctxR) {
+    if (diagChartRadar) diagChartRadar.destroy();
+    diagChartRadar = new Chart(ctxR, {
+      type: 'radar',
+      data: {
+        labels: labels.map(function(l){ return l.length>8?l.substring(0,8)+'…':l; }),
+        datasets: [{ label: 'Promedio %', data: promedios, backgroundColor: 'rgba(9,74,75,.15)', borderColor: '#094a4b', pointBackgroundColor: '#a8c94e', borderWidth: 2 }]
+      },
+      options: { responsive: true, maintainAspectRatio: false, scales: { r: { min: 0, max: 100, ticks: { stepSize: 20, font: { size: 9 } } } }, plugins: { legend: { display: false } } }
+    });
+  }
+
+  // Tabla por dimensión
+  var tbody = document.querySelector('#diag-dim-table tbody');
+  if (tbody) {
+    tbody.innerHTML = DIMENSIONES.map(function(dim) {
+      var vals = data.map(function(r){ return diagCalcDimension(r, dim.campos); }).filter(function(v){return v!==null;});
+      var prom = vals.length > 0 ? Math.round(vals.reduce(function(a,b){return a+b;},0)/vals.length) : 0;
+      var maxP = dim.campos.length * 5;
+      var cls = prom >= 70 ? 'nivel-alto' : prom >= 40 ? 'nivel-medio' : 'nivel-basico';
+      var lbl = prom >= 70 ? 'Alto' : prom >= 40 ? 'Medio' : 'Básico';
+      return '<tr><td><strong>'+escDiag(dim.nombre)+'</strong></td>' +
+        '<td>'+(maxP>0?Math.round(prom*maxP/100):0)+' / '+maxP+'</td>' +
+        '<td>'+prom+'%</td>' +
+        '<td><span class="'+cls+'">'+lbl+'</span></td>' +
+        '<td>'+maxP+'</td></tr>';
+    }).join('');
+  }
+}
+
+// ── RENDER DETALLE POR BLOQUE ────────────────────────────────────
+function diagRenderDetalle(data) {
+  // El detalle se muestra dentro de la tabla y gráficas
+  // (la sección de detalle por registro la maneja diagVerDetalle)
+}
+
+function diagVerDetalle(idx) {
+  var r = diagDatosActuales[idx];
+  if (!r) return;
+  toast('Diagnóstico de ' + (r.persona||r.nombre_empresa||'empresa') + ' · ' + (r.fecha||'').substring(0,10));
+}
+
+// ── RENDER RECOMENDACIONES ───────────────────────────────────────
+function diagRenderRecomendaciones(data) {
+  var cont = document.getElementById('diag-recomendaciones');
+  if (!cont) return;
+  var DIMENSIONES = diagGetDimensiones();
+  var html = DIMENSIONES.map(function(dim) {
+    var vals = data.map(function(r){ return diagCalcDimension(r, dim.campos); }).filter(function(v){return v!==null;});
+    var prom = vals.length > 0 ? Math.round(vals.reduce(function(a,b){return a+b;},0)/vals.length) : 0;
+    var rec = diagGetRecomendacion(dim.id, prom);
+    var cls = prom >= 70 ? 'nivel-alto' : prom >= 40 ? 'nivel-medio' : 'nivel-basico';
+    return '<div class="rec-bloque">' +
+      '<h4><span class="'+cls+'">'+prom+'%</span> · '+escDiag(dim.nombre)+'</h4>' +
+      '<p>'+rec+'</p></div>';
+  }).join('');
+  cont.innerHTML = html;
+}
+
+// ── RECOMENDACIONES POR ÁREA ─────────────────────────────────────
+function diagGetRecomendacion(dimId, pct) {
+  var recs = {
+    sst: {
+      alto: 'La empresa muestra buenas prácticas en SST. Se recomienda mantener los programas actuales y explorar certificaciones como ISO 45001.',
+      medio: 'Hay oportunidades de mejora en seguridad y salud. Comfenalco ofrece asesoría en diseño e implementación del SG-SST.',
+      basico: 'Se detectan brechas críticas en SST. Es prioritario implementar el SG-SST con apoyo de Comfenalco Antioquia.'
+    },
+    psico: {
+      alto: 'El ambiente psicosocial es saludable. Continúe con estrategias de bienestar y reconocimiento al personal.',
+      medio: 'Se identifican factores de riesgo psicosocial moderados. Comfenalco ofrece programas de intervención y pausas activas.',
+      basico: 'Existen riesgos psicosociales relevantes. Se recomienda una evaluación profunda y plan de intervención urgente.'
+    },
+    admin: {
+      alto: 'La gestión administrativa es sólida. Considere herramientas digitales para optimizar procesos.',
+      medio: 'Se pueden fortalecer los procesos administrativos. Comfenalco ofrece asesoría empresarial y capacitación gerencial.',
+      basico: 'La estructura administrativa requiere fortalecimiento. Acceda a los programas de fomento empresarial de Comfenalco.'
+    },
+    ger: {
+      alto: 'El liderazgo gerencial es efectivo. Explore mentorías y programas de alta gerencia.',
+      medio: 'Hay áreas de mejora en gestión gerencial. Comfenalco ofrece talleres de liderazgo y gestión del cambio.',
+      basico: 'Se requiere fortalecer competencias gerenciales. Los programas +Competitivas de Comfenalco pueden apoyar esta área.'
+    },
+    leg: {
+      alto: 'La empresa cumple con los requisitos legales. Manténgase actualizado con los cambios normativos.',
+      medio: 'Existen gaps en cumplimiento normativo. Comfenalco asesora en obligaciones legales laborales y de seguridad social.',
+      basico: 'Se detectan incumplimientos normativos críticos. Es urgente una revisión legal integral con apoyo especializado.'
+    },
+    cli: {
+      alto: 'El clima organizacional es positivo. Continúe con actividades de integración y reconocimiento.',
+      medio: 'El clima laboral puede mejorar. Comfenalco ofrece programas de bienestar, recreación y cultura organizacional.',
+      basico: 'El clima organizacional requiere atención urgente. Implemente un plan de mejora con apoyo de Comfenalco.'
+    },
+    cap: {
+      alto: 'La empresa tiene una cultura de aprendizaje sólida. Explore alianzas con TEC Comfenalco para formación especializada.',
+      medio: 'La capacitación puede fortalecerse. Comfenalco ofrece más de 200 cursos técnicos y de gestión empresarial.',
+      basico: 'La empresa necesita un plan de capacitación estructurado. Acceda a la Agencia de Empleo y Emprendimiento de Comfenalco.'
+    },
+    tal: {
+      alto: 'La gestión del talento humano es eficiente. Considere estrategias de retención y planes de carrera.',
+      medio: 'Hay oportunidades en gestión de talento. Comfenalco apoya en procesos de selección, contratación y desarrollo.',
+      basico: 'La gestión del talento requiere estructura. La Agencia de Empleo de Comfenalco puede apoyar en esta área.'
+    }
+  };
+  var nivel = pct >= 70 ? 'alto' : pct >= 40 ? 'medio' : 'basico';
+  return (recs[dimId] && recs[dimId][nivel]) || 'Contacte a la Agencia de Empleo y Emprendimiento de Comfenalco Antioquia para recibir orientación personalizada.';
+}
+
+// ── CÁLCULOS ─────────────────────────────────────────────────────
+function diagGetDimensiones() {
+  return [
+    { id:'sst',   nombre:'SST',             campos:['sst_1','sst_2','sst_3','sst_4','sst_5'], max:25 },
+    { id:'psico', nombre:'Psicosocial',      campos:['psico_1','psico_1b','psico_2','psico_3','psico_4','psico_5'], max:30 },
+    { id:'admin', nombre:'Administrativo',   campos:['admin_1','admin_2','admin_3','admin_4'], max:20 },
+    { id:'ger',   nombre:'Gerencia',         campos:['ger_1','ger_2','ger_3'], max:15 },
+    { id:'leg',   nombre:'Legal',            campos:['leg_1','leg_2','leg_3','leg_4','leg_5'], max:25 },
+    { id:'cli',   nombre:'Clima/Bienestar',  campos:['cli_1','cli_1b','cli_2','cli_3'], max:20 },
+    { id:'cap',   nombre:'Capacitación',     campos:['cap_1','cap_2','cap_3','cap_4'], max:20 },
+    { id:'tal',   nombre:'Talento Humano',   campos:['tal_1','tal_2','tal_3','tal_4'], max:20 }
+  ];
+}
+
+function diagCalcDimension(row, campos) {
+  var vals = campos.map(function(c){ return row[c]; }).filter(function(v){ return v !== null && v !== undefined; });
+  if (vals.length === 0) return null;
+  var suma = vals.reduce(function(a,b){ return a + Number(b); }, 0);
+  var maxPosible = campos.length * 5;
+  return maxPosible > 0 ? Math.round((suma / maxPosible) * 100) : 0;
+}
+
+function diagCalcNivel(row) {
+  var DIMENSIONES = diagGetDimensiones();
+  var scores = DIMENSIONES.map(function(dim){ return diagCalcDimension(row, dim.campos); }).filter(function(v){return v!==null;});
+  if (scores.length === 0) return 0;
+  return Math.round(scores.reduce(function(a,b){return a+b;},0)/scores.length);
+}
+
+// ── BORRAR ────────────────────────────────────────────────────────
+async function diagBorrarRegistro(id) {
+  if (!confirm('¿Eliminar este diagnóstico? Esta acción no se puede deshacer.')) return;
+  try {
+    var resp = await diagSupabase.from('diagnosticos_empresariales').delete().eq('id', id);
+    if (resp.error) throw resp.error;
+    toast('✅ Diagnóstico eliminado');
+    if (diagEmpresaActual) await diagCargarDiagnosticos(diagEmpresaActual);
+  } catch(e) {
+    toast('Error al eliminar: ' + e.message);
+  }
+}
+
+async function diagConfirmarBorrar() {
+  var emp = diagEmpresaActual;
+  if (!emp) { toast('Selecciona una empresa primero'); return; }
+  if (!confirm('¿Eliminar TODOS los diagnósticos de "' + emp + '"? Esta acción no se puede deshacer.')) return;
+  try {
+    var resp = await diagSupabase.from('diagnosticos_empresariales').delete().eq('nombre_empresa', emp);
+    if (resp.error) throw resp.error;
+    toast('✅ Empresa y diagnósticos eliminados');
+    await diagCargarListaEmpresas();
+  } catch(e) {
+    toast('Error: ' + e.message);
+  }
+}
+
+// ── EXPORTAR EXCEL ────────────────────────────────────────────────
+function diagDescargarExcel() {
+  if (!diagDatosActuales.length) { toast('No hay datos para exportar'); return; }
+  if (typeof XLSX === 'undefined') { toast('Librería XLSX no cargada'); return; }
+  var DIMENSIONES = diagGetDimensiones();
+  var wb = XLSX.utils.book_new();
+
+  // Hoja 1: Datos completos
+  var headers = ['Fecha','Empresa','NIT','Municipio','Persona','Cargo','Tiempo','Nivel General (%)'];
+  DIMENSIONES.forEach(function(d){ headers.push(d.nombre + ' (%)'); });
+  var rows = [headers];
+  diagDatosActuales.forEach(function(r) {
+    var row = [
+      (r.fecha||'').substring(0,10), r.nombre_empresa||'', r.nit||'',
+      r.municipio||'', r.persona||'', r.cargo||'', r.tiempo||'',
+      diagCalcNivel(r)
+    ];
+    DIMENSIONES.forEach(function(d){ row.push(diagCalcDimension(r, d.campos) || 0); });
+    rows.push(row);
+  });
+  var ws1 = XLSX.utils.aoa_to_sheet(rows);
+  XLSX.utils.book_append_sheet(wb, ws1, 'Diagnósticos');
+
+  // Hoja 2: Resumen por dimensión
+  var rows2 = [['Dimensión','Promedio %','Nivel']];
+  DIMENSIONES.forEach(function(dim) {
+    var vals = diagDatosActuales.map(function(r){ return diagCalcDimension(r, dim.campos); }).filter(function(v){return v!==null;});
+    var prom = vals.length > 0 ? Math.round(vals.reduce(function(a,b){return a+b;},0)/vals.length) : 0;
+    var lbl = prom >= 70 ? 'Alto' : prom >= 40 ? 'Medio' : 'Básico';
+    rows2.push([dim.nombre, prom, lbl]);
+  });
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(rows2), 'Por dimensión');
+
+  XLSX.writeFile(wb, 'diagnosticos_' + (diagEmpresaActual||'empresa').replace(/[^a-z0-9]/gi,'_') + '_' + new Date().toISOString().split('T')[0] + '.xlsx');
+  toast('Excel exportado ✅');
+}
+
+// ── EXPORTAR PDF ──────────────────────────────────────────────────
+async function diagGenerarPDF() {
+  if (!diagDatosActuales.length) { toast('No hay datos para generar el PDF'); return; }
+  if (typeof window.jspdf === 'undefined') { window.open(document.getElementById('diag-link-input').value || '#', '_blank'); return; }
+  
+  var { jsPDF } = window.jspdf;
+  var doc = new jsPDF('p', 'mm', 'a4');
+  var DIMENSIONES = diagGetDimensiones();
+  var W = 210, pad = 15;
+
+  // Portada
+  doc.setFillColor(9, 74, 75);
+  doc.rect(0, 0, W, 40, 'F');
+  doc.setTextColor(168, 201, 78);
+  doc.setFontSize(18);
+  doc.setFont('helvetica','bold');
+  doc.text('Diagnóstico Empresarial Integral', pad, 18);
+  doc.setTextColor(255,255,255);
+  doc.setFontSize(12);
+  doc.setFont('helvetica','normal');
+  doc.text('Agencia de Empleo y Emprendimiento · Comfenalco Antioquia', pad, 28);
+  doc.setFontSize(10);
+  doc.text('Empresa: ' + (diagEmpresaActual||'—') + '   ·   Generado: ' + new Date().toLocaleDateString('es-CO'), pad, 36);
+
+  var y = 50;
+  // Resumen ejecutivo
+  doc.setTextColor(9, 74, 75);
+  doc.setFontSize(13);
+  doc.setFont('helvetica','bold');
+  doc.text('Resumen Ejecutivo', pad, y);
+  y += 8;
+
+  var scores = diagDatosActuales.map(function(r){ return diagCalcNivel(r); });
+  var promGen = scores.length > 0 ? Math.round(scores.reduce(function(a,b){return a+b;},0)/scores.length) : 0;
+  
+  doc.setTextColor(60,60,60);
+  doc.setFontSize(10);
+  doc.setFont('helvetica','normal');
+  var resumen = [
+    'Total diagnósticos registrados: ' + diagDatosActuales.length,
+    'Puntaje promedio general: ' + promGen + '%',
+    'Nivel general: ' + (promGen >= 70 ? 'ALTO' : promGen >= 40 ? 'MEDIO' : 'BÁSICO'),
+    'Último diagnóstico: ' + (diagDatosActuales[0] ? (diagDatosActuales[0].fecha||'').substring(0,10) : '—')
+  ];
+  resumen.forEach(function(txt) { doc.text(txt, pad, y); y += 6; });
+  y += 6;
+
+  // Tabla por dimensión
+  doc.setTextColor(9, 74, 75);
+  doc.setFontSize(12);
+  doc.setFont('helvetica','bold');
+  doc.text('Resultados por Dimensión', pad, y);
+  y += 6;
+
+  var tableData = DIMENSIONES.map(function(dim) {
+    var vals = diagDatosActuales.map(function(r){ return diagCalcDimension(r, dim.campos); }).filter(function(v){return v!==null;});
+    var prom = vals.length > 0 ? Math.round(vals.reduce(function(a,b){return a+b;},0)/vals.length) : 0;
+    var lbl = prom >= 70 ? 'Alto' : prom >= 40 ? 'Medio' : 'Básico';
+    return [dim.nombre, prom + '%', lbl, diagGetRecomendacion(dim.id, prom).substring(0, 60) + '...'];
+  });
+
+  if (typeof doc.autoTable === 'function') {
+    doc.autoTable({
+      startY: y,
+      head: [['Dimensión','Promedio','Nivel','Recomendación']],
+      body: tableData,
+      styles: { fontSize: 9, cellPadding: 3 },
+      headStyles: { fillColor: [9,74,75], textColor: 255, fontStyle: 'bold' },
+      alternateRowStyles: { fillColor: [240, 248, 240] },
+      margin: { left: pad, right: pad }
+    });
+    y = doc.lastAutoTable.finalY + 10;
+  }
+
+  doc.save('diagnostico_' + (diagEmpresaActual||'empresa').replace(/[^a-z0-9]/gi,'_') + '.pdf');
+  toast('PDF generado ✅');
+}
+
+// ── HELPER ───────────────────────────────────────────────────────
+function escDiag(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+
 // ═══════════════════════════════════════════════════════════════════
 // CARGUE MASIVO — CANDIDATOS Y EMPRESAS (formato SISE)
 // ═══════════════════════════════════════════════════════════════════
