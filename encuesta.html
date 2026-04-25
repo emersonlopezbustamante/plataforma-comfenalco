@@ -492,7 +492,8 @@ async function enviarTodo() {
     puntajes["dim_"+d.id] = total;
   });
   const {estudiando_actualmente: _est, ...datosSocioLimpio} = datosSocio;
-  const payloadRaw = {empresa, fecha: new Date().toISOString(), consentimiento: true, ...datosSocioLimpio, ...respuestasClima, ...puntajes};
+  // Excluir items individuales (beneficios_laborales_0, etc.) — solo enviar dim_X
+  const payloadRaw = {empresa, fecha: new Date().toISOString(), consentimiento: true, ...datosSocioLimpio, ...puntajes};
   // Convertir strings vacíos a null para evitar errores en columnas date/numeric
   const payload = Object.fromEntries(Object.entries(payloadRaw).map(([k,v]) => [k, v === "" ? null : v]));
   try {
