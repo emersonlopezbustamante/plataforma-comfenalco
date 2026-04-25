@@ -2923,8 +2923,8 @@ function exportarReportesPDF() {
 var _candSupa    = null;
 var _candDatos   = [];
 var _candFiltrados = [];
-var CAND_SUPA_URL = "https://wdyrgfejskyzyhrqifnr.supabase.co";
-var CAND_SUPA_KEY = "sb_publishable_j9HHnD1cYMaply1o6lS6sg_M0ckf0gh";
+var CAND_SUPA_URL = "https://dgecpttrvfbsuhsorxtm.supabase.co";
+var CAND_SUPA_KEY = "sb_publishable_1DWQpwxDAehdRRX994eNWA_IjBd3Sas";
 
 // ── INIT ─────────────────────────────────────────────────────────
 function initCandidatos() {
@@ -3199,11 +3199,11 @@ function candExportarExcel() {
 
 // ═══════════════════════════════════════════════════════════════════
 // MÓDULO CLIMA ORGANIZACIONAL — dentro de interno.html
-// Tabla: respuestas_clima | Supabase: wdyrgfejskyzyhrqifnr
+// Tabla: respuestas_clima | Supabase: dgecpttrvfbsuhsorxtm
 // ═══════════════════════════════════════════════════════════════════
 
-var CLIMA_URL = "https://wdyrgfejskyzyhrqifnr.supabase.co";
-var CLIMA_KEY = "sb_publishable_j9HHnD1cYMaply1o6lS6sg_M0ckf0gh";
+var CLIMA_URL = "https://dgecpttrvfbsuhsorxtm.supabase.co";
+var CLIMA_KEY = "sb_publishable_1DWQpwxDAehdRRX994eNWA_IjBd3Sas";
 var _climaSupa = null;
 var _climaDatos = [];
 var _climaEmp = '';
@@ -3508,12 +3508,12 @@ function climaGenerarPDF() {
 // ═══════════════════════════════════════════════════════════════════
 // MÓDULO DIAGNÓSTICOS EMPRESARIALES
 // Integra admin.html + diagnostico_empresarial.html en interno.html
-// Supabase: https://mhiwvjermmmicuxwdghn.supabase.co
+// Supabase: https://dgecpttrvfbsuhsorxtm.supabase.co
 // ═══════════════════════════════════════════════════════════════════
 
 // ── CONFIG SUPABASE ──────────────────────────────────────────────
-var DIAG_SUPABASE_URL = "https://mhiwvjermmmicuxwdghn.supabase.co";
-var DIAG_SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1oaXd2amVybW1taWN1eHdkZ2huIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwMTQ3MzUsImV4cCI6MjA5MTU5MDczNX0.nIrq4t-GQPMbpsS8KSaPI5J6NDNLmuQnk5van8dlg78";
+var DIAG_SUPABASE_URL = "https://dgecpttrvfbsuhsorxtm.supabase.co";
+var DIAG_SUPABASE_KEY = "sb_publishable_1DWQpwxDAehdRRX994eNWA_IjBd3Sas";
 var diagSupabase = null;
 var diagEmpresaActual = null;
 var diagDatosActuales = [];
@@ -3528,8 +3528,8 @@ function initDiagnosticos() {
   // Crear cliente supabase-js (más robusto que fetch directo para CORS)
   if (!window._diagSupa) {
     window._diagSupa = supabase.createClient(
-      "https://mhiwvjermmmicuxwdghn.supabase.co",
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1oaXd2amVybW1taWN1eHdkZ2huIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwMTQ3MzUsImV4cCI6MjA5MTU5MDczNX0.nIrq4t-GQPMbpsS8KSaPI5J6NDNLmuQnk5van8dlg78"
+      "https://dgecpttrvfbsuhsorxtm.supabase.co",
+      "sb_publishable_1DWQpwxDAehdRRX994eNWA_IjBd3Sas"
     );
   }
   diagCargarListaEmpresas();

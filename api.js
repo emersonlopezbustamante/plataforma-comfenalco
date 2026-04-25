@@ -12,8 +12,8 @@
  * ================================================================
  */
 
-const SUPA_URL = "https://mhiwvjermmmicuxwdghn.supabase.co";
-const SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1oaXd2amVybW1taWN1eHdkZ2huIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwMTQ3MzUsImV4cCI6MjA5MTU5MDczNX0.nIrq4t-GQPMbpsS8KSaPI5J6NDNLmuQnk5van8dlg78";
+const SUPA_URL = "https://dgecpttrvfbsuhsorxtm.supabase.co";
+const SUPA_KEY = "sb_publishable_1DWQpwxDAehdRRX994eNWA_IjBd3Sas";
 
 const API = (function() {
 
