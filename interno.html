@@ -367,6 +367,37 @@
   .modal-diag-body{padding:20px}
 
   @media(max-width:640px){.diag-charts-grid,.diag-dona-radar-grid{grid-template-columns:1fr}.diag-chart-card.full{grid-column:1}}
+
+  /* ══ MODAL CANDIDATOS ══════════════════════════════════════════ */
+  .form-seccion { margin-bottom: 24px; }
+  .form-seccion-titulo {
+    font-family:'Nunito',sans-serif; font-size:13px; font-weight:800;
+    color:var(--verde); text-transform:uppercase; letter-spacing:.06em;
+    padding: 8px 0; border-bottom: 2px solid var(--pist);
+    margin-bottom: 16px;
+  }
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+  }
+  .form-group { display:flex; flex-direction:column; gap:5px; }
+  .form-group.form-full { grid-column: 1 / -1; }
+  .flabel { font-size:12px; font-weight:700; color:var(--texto-g); }
+  .cand-check {
+    display:flex; align-items:center; gap:6px;
+    font-size:13px; cursor:pointer; padding:6px 12px;
+    border:1.5px solid var(--borde); border-radius:8px;
+    transition: all var(--t);
+  }
+  .cand-check:hover { border-color:var(--verde); background:var(--suave); }
+  .cand-check input { accent-color: var(--verde); cursor:pointer; }
+  .dtable { width:100%; border-collapse:collapse; font-size:13px; }
+  .dtable th { background:var(--verde); color:#fff; padding:10px 14px;
+    text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:.04em; }
+  .dtable td { padding:9px 14px; border-bottom:1px solid var(--borde); vertical-align:middle; }
+  .dtable tbody tr:hover { background:rgba(9,74,75,.02); }
+  @media(max-width:600px){ .form-grid { grid-template-columns:1fr; } }
 </style>
 </head>
 <body>
@@ -457,15 +488,391 @@
     </div>
 
     <!-- CANDIDATOS -->
+    <!-- ══ CANDIDATOS ══════════════════════════════════════════════ -->
     <div id="pg-candidatos" class="hidden" onclick="event.stopPropagation()">
-      <div class="ptitle">👤 Candidatos</div>
-      <p class="psub">Banco de hojas de vida registradas</p>
-      <div class="twrap">
-        <div class="ttbar"><span class="ttitle">Candidatos registrados (0)</span>
-          <button type="button" class="btn btn-primary btn-sm">+ Registrar candidato</button></div>
-        <div style="padding:24px;color:var(--texto-g)">Aún no hay candidatos registrados. Cuando se registren aparecerán aquí.</div>
+      <div class="ph">
+        <div>
+          <div class="ptitle">👤 Candidatos</div>
+          <p class="psub">Banco de hojas de vida registradas en la Agencia</p>
+        </div>
+        <button type="button" class="btn btn-primary" onclick="abrirModalCandidato();event.stopPropagation()">+ Nuevo candidato</button>
+      </div>
+
+      <!-- Buscador -->
+      <div class="card" style="padding:14px 18px;margin-bottom:16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <input type="text" id="cand-buscar" class="finput" style="flex:1;min-width:200px" placeholder="🔍 Buscar por nombre, documento o municipio..."
+          oninput="filtrarCandidatos();event.stopPropagation()"/>
+        <select id="cand-filtro-nivel" class="finput" style="width:180px" onchange="filtrarCandidatos();event.stopPropagation()">
+          <option value="">Todos los niveles</option>
+          <option>Primaria incompleta</option><option>Primaria completa</option>
+          <option>Bachillerato incompleto</option><option>Bachillerato completo</option>
+          <option>Técnico</option><option>Tecnológico</option>
+          <option>Profesional universitario</option><option>Especialización</option>
+          <option>Maestría</option><option>Doctorado</option>
+        </select>
+        <select id="cand-filtro-exp" class="finput" style="width:160px" onchange="filtrarCandidatos();event.stopPropagation()">
+          <option value="">Toda experiencia</option>
+          <option>Sin experiencia laboral</option><option>Menos de 1 año</option>
+          <option>Entre 1 y 3 años</option><option>Entre 3 y 5 años</option>
+          <option>Más de 5 años</option>
+        </select>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="candCargarLista();event.stopPropagation()">🔄 Actualizar</button>
+      </div>
+
+      <!-- Tabla -->
+      <div class="card" style="padding:0;overflow:hidden">
+        <div class="ttbar" style="padding:14px 18px">
+          <span class="ttitle" id="cand-count">Candidatos (0)</span>
+          <button type="button" class="btn btn-ghost btn-sm" onclick="candExportarExcel();event.stopPropagation()">⬇ Excel</button>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="dtable" id="cand-table">
+            <thead><tr>
+              <th>Documento</th><th>Nombre completo</th><th>Género</th>
+              <th>Municipio</th><th>Nivel educativo</th><th>Experiencia</th>
+              <th>Estado civil</th><th>Teléfono</th><th>Acciones</th>
+            </tr></thead>
+            <tbody id="cand-tbody">
+              <tr><td colspan="9" style="text-align:center;padding:24px;color:var(--texto-g)">
+                Haz clic en 🔄 Actualizar para cargar candidatos desde Supabase
+              </td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
+
+    <!-- ══ MODAL REGISTRO CANDIDATO ════════════════════════════════ -->
+    <div id="modal-cand" class="modal-diag-overlay" onclick="if(event.target===this)cerrarModalCandidato()">
+      <div class="modal-diag-box" style="max-width:780px" onclick="event.stopPropagation()">
+        <div class="modal-diag-header">
+          <h3 id="modal-cand-titulo">➕ Nuevo Candidato</h3>
+          <button type="button" class="modal-diag-close" onclick="cerrarModalCandidato()">✕</button>
+        </div>
+        <div class="modal-diag-body">
+
+          <!-- SECCIÓN 1: IDENTIFICACIÓN -->
+          <div class="form-seccion">
+            <div class="form-seccion-titulo">🪪 Identificación y datos personales</div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="flabel">Tipo de documento *</label>
+                <select id="c_tipo_doc" class="finput">
+                  <option value="">Seleccione...</option>
+                  <option>Cédula de ciudadanía</option>
+                  <option>Tarjeta de identidad</option>
+                  <option>Cédula de extranjería</option>
+                  <option>Pasaporte</option>
+                  <option>Permiso especial de permanencia (PEP)</option>
+                  <option>Otro</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="flabel">Número de documento *</label>
+                <input type="text" id="c_num_doc" class="finput" placeholder="Ej: 1234567890"/>
+              </div>
+              <div class="form-group form-full">
+                <label class="flabel">Nombres y apellidos completos *</label>
+                <input type="text" id="c_nombres" class="finput" placeholder="Ej: María Alejandra García López"/>
+              </div>
+              <div class="form-group">
+                <label class="flabel">Fecha de nacimiento</label>
+                <input type="date" id="c_fecha_nacimiento" class="finput"/>
+              </div>
+              <div class="form-group">
+                <label class="flabel">Género *</label>
+                <select id="c_genero" class="finput">
+                  <option value="">Seleccione...</option>
+                  <option>Masculino</option>
+                  <option>Femenino</option>
+                  <option>No binario</option>
+                  <option>Transgénero masculino</option>
+                  <option>Transgénero femenino</option>
+                  <option>Intersexual</option>
+                  <option>Género fluido</option>
+                  <option>Prefiero no decirlo</option>
+                  <option>Otro</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="flabel">Identidad de género</label>
+                <select id="c_genero_identifica" class="finput">
+                  <option value="">Seleccione...</option>
+                  <option>Cisgénero</option>
+                  <option>Transgénero</option>
+                  <option>No binario</option>
+                  <option>Género fluido</option>
+                  <option>Prefiero no decirlo</option>
+                  <option>Otro</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="flabel">Orientación sexual</label>
+                <select id="c_orientacion_sexual" class="finput">
+                  <option value="">Seleccione...</option>
+                  <option>Heterosexual</option>
+                  <option>Gay / Lesbiana</option>
+                  <option>Bisexual</option>
+                  <option>Pansexual</option>
+                  <option>Asexual</option>
+                  <option>Prefiero no decirlo</option>
+                  <option>Otro</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="flabel">Estado civil</label>
+                <select id="c_estado_civil" class="finput">
+                  <option value="">Seleccione...</option>
+                  <option>Soltero/a</option>
+                  <option>Casado/a</option>
+                  <option>Unión libre</option>
+                  <option>Separado/a</option>
+                  <option>Divorciado/a</option>
+                  <option>Viudo/a</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="flabel">Libreta militar</label>
+                <select id="c_libreta_militar" class="finput">
+                  <option value="">Seleccione...</option>
+                  <option>No aplica</option>
+                  <option>Primera clase</option>
+                  <option>Segunda clase</option>
+                  <option>Exento</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECCIÓN 2: CONTACTO Y UBICACIÓN -->
+          <div class="form-seccion">
+            <div class="form-seccion-titulo">📍 Contacto y lugar de residencia</div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="flabel">Celular / Teléfono *</label>
+                <input type="tel" id="c_celular" class="finput" placeholder="Ej: 3001234567"/>
+              </div>
+              <div class="form-group">
+                <label class="flabel">Correo electrónico</label>
+                <input type="email" id="c_correo" class="finput" placeholder="correo@ejemplo.com"/>
+              </div>
+              <div class="form-group">
+                <label class="flabel">Municipio de nacimiento</label>
+                <input type="text" id="c_lugar_nac_municipio" class="finput" placeholder="Ej: Medellín"/>
+              </div>
+              <div class="form-group">
+                <label class="flabel">Departamento de nacimiento</label>
+                <select id="c_lugar_nac_dpto" class="finput">
+                  <option value="">Seleccione...</option>
+                  <option>Antioquia</option><option>Atlántico</option><option>Bogotá D.C.</option>
+                  <option>Bolívar</option><option>Boyacá</option><option>Caldas</option>
+                  <option>Caquetá</option><option>Cauca</option><option>Cesar</option>
+                  <option>Chocó</option><option>Córdoba</option><option>Cundinamarca</option>
+                  <option>Huila</option><option>La Guajira</option><option>Magdalena</option>
+                  <option>Meta</option><option>Nariño</option><option>Norte de Santander</option>
+                  <option>Putumayo</option><option>Quindío</option><option>Risaralda</option>
+                  <option>San Andrés y Providencia</option><option>Santander</option>
+                  <option>Sucre</option><option>Tolima</option><option>Valle del Cauca</option>
+                  <option>Vaupés</option><option>Vichada</option><option>Otro país</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="flabel">Municipio de residencia *</label>
+                <input type="text" id="c_municipio" class="finput" placeholder="Ej: Medellín"/>
+              </div>
+              <div class="form-group">
+                <label class="flabel">Departamento de residencia</label>
+                <select id="c_dpto_residencia" class="finput">
+                  <option value="">Seleccione...</option>
+                  <option>Antioquia</option><option>Atlántico</option><option>Bogotá D.C.</option>
+                  <option>Bolívar</option><option>Boyacá</option><option>Caldas</option>
+                  <option>Cauca</option><option>Cesar</option><option>Chocó</option>
+                  <option>Córdoba</option><option>Cundinamarca</option><option>Huila</option>
+                  <option>La Guajira</option><option>Magdalena</option><option>Meta</option>
+                  <option>Nariño</option><option>Norte de Santander</option>
+                  <option>Quindío</option><option>Risaralda</option><option>Santander</option>
+                  <option>Sucre</option><option>Tolima</option><option>Valle del Cauca</option>
+                  <option>Otro</option>
+                </select>
+              </div>
+              <div class="form-group form-full">
+                <label class="flabel">Dirección, barrio o vereda</label>
+                <input type="text" id="c_direccion" class="finput" placeholder="Ej: Calle 50 # 40-20, Barrio El Poblado"/>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECCIÓN 3: EDUCACIÓN -->
+          <div class="form-seccion">
+            <div class="form-seccion-titulo">🎓 Educación</div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="flabel">Nivel educativo *</label>
+                <select id="c_nivel_estudio" class="finput" onchange="candToggleEducacion();event.stopPropagation()">
+                  <option value="">Seleccione...</option>
+                  <option>Primaria incompleta</option>
+                  <option>Primaria completa</option>
+                  <option>Bachillerato incompleto</option>
+                  <option>Bachillerato completo</option>
+                  <option>Técnico</option>
+                  <option>Tecnológico</option>
+                  <option>Profesional universitario</option>
+                  <option>Especialización</option>
+                  <option>Maestría</option>
+                  <option>Doctorado</option>
+                </select>
+              </div>
+              <div class="form-group" id="cand-edu-area">
+                <label class="flabel">Área de estudio</label>
+                <select id="c_area_estudio" class="finput">
+                  <option value="">Seleccione...</option>
+                  <option>Administración y negocios</option>
+                  <option>Agropecuaria y veterinaria</option>
+                  <option>Arte y diseño</option>
+                  <option>Ciencias básicas y matemáticas</option>
+                  <option>Ciencias de la salud</option>
+                  <option>Ciencias humanas y sociales</option>
+                  <option>Ciencias jurídicas y políticas</option>
+                  <option>Comunicación e información</option>
+                  <option>Economía y contaduría</option>
+                  <option>Educación</option>
+                  <option>Ingeniería y tecnología</option>
+                  <option>Logística y transporte</option>
+                  <option>Operaciones y manufactura</option>
+                  <option>Turismo y gastronomía</option>
+                  <option>Otro</option>
+                </select>
+              </div>
+              <div class="form-group" id="cand-edu-titulo">
+                <label class="flabel">Título obtenido</label>
+                <input type="text" id="c_titulo" class="finput" placeholder="Ej: Administrador de Empresas"/>
+              </div>
+              <div class="form-group" id="cand-edu-inst">
+                <label class="flabel">Institución educativa</label>
+                <input type="text" id="c_institucion" class="finput" placeholder="Ej: Universidad de Antioquia"/>
+              </div>
+              <div class="form-group" id="cand-edu-fecha">
+                <label class="flabel">Año de graduación</label>
+                <input type="number" id="c_fecha_graduacion" class="finput" placeholder="Ej: 2020" min="1970" max="2030"/>
+              </div>
+              <div class="form-group">
+                <label class="flabel">¿Está estudiando actualmente?</label>
+                <select id="c_estudiando" class="finput">
+                  <option value="">Seleccione...</option>
+                  <option value="si">Sí</option>
+                  <option value="no">No</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECCIÓN 4: EXPERIENCIA LABORAL -->
+          <div class="form-seccion">
+            <div class="form-seccion-titulo">💼 Experiencia laboral</div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="flabel">Tipo de experiencia *</label>
+                <select id="c_tipo_experiencia" class="finput" onchange="candToggleExperiencia();event.stopPropagation()">
+                  <option value="">Seleccione...</option>
+                  <option>Sin experiencia laboral</option>
+                  <option>Menos de 1 año</option>
+                  <option>Entre 1 y 3 años</option>
+                  <option>Entre 3 y 5 años</option>
+                  <option>Más de 5 años</option>
+                </select>
+              </div>
+              <div class="form-group" id="cand-exp-sector">
+                <label class="flabel">Sector de experiencia</label>
+                <select id="c_sector_exp" class="finput">
+                  <option value="">Seleccione...</option>
+                  <option>Manufactura e industria</option>
+                  <option>Comercio y ventas</option>
+                  <option>Logística y transporte</option>
+                  <option>Construcción</option>
+                  <option>Salud y bienestar</option>
+                  <option>Tecnología e informática</option>
+                  <option>Educación</option>
+                  <option>Agroindustria</option>
+                  <option>Turismo y gastronomía</option>
+                  <option>Servicios generales</option>
+                  <option>Administración y finanzas</option>
+                  <option>Seguridad y vigilancia</option>
+                  <option>Otro</option>
+                </select>
+              </div>
+              <div class="form-group" id="cand-exp-cargo">
+                <label class="flabel">Último cargo desempeñado</label>
+                <input type="text" id="c_cargo_exp" class="finput" placeholder="Ej: Auxiliar de bodega"/>
+              </div>
+              <div class="form-group" id="cand-exp-empresa">
+                <label class="flabel">Última empresa</label>
+                <input type="text" id="c_empresa_exp" class="finput" placeholder="Ej: Almacenes Éxito"/>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECCIÓN 5: CONDICIONES ESPECIALES -->
+          <div class="form-seccion">
+            <div class="form-seccion-titulo">♿ Condiciones especiales y pertenencia étnica</div>
+            <div class="form-grid">
+              <div class="form-group form-full">
+                <label class="flabel">¿Pertenece a algún grupo especial?</label>
+                <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:6px" id="cand-grupos">
+                  <label class="cand-check"><input type="checkbox" value="Víctimas del conflicto"> Víctimas del conflicto</label>
+                  <label class="cand-check"><input type="checkbox" value="Discapacidad"> Persona con discapacidad</label>
+                  <label class="cand-check"><input type="checkbox" value="Adulto mayor"> Adulto mayor</label>
+                  <label class="cand-check"><input type="checkbox" value="LGBTIQ+"> LGBTIQ+</label>
+                  <label class="cand-check"><input type="checkbox" value="Migrante"> Migrante / retornado</label>
+                  <label class="cand-check"><input type="checkbox" value="Joven"> Joven (14-28 años)</label>
+                  <label class="cand-check"><input type="checkbox" value="Comunidades étnicas"> Comunidades étnicas</label>
+                  <label class="cand-check"><input type="checkbox" value="Ninguno"> Ninguno</label>
+                </div>
+              </div>
+              <div class="form-group form-full" id="cand-discapacidad-wrap" style="display:none">
+                <label class="flabel">Tipo de discapacidad</label>
+                <select id="c_discapacidades" class="finput">
+                  <option value="">Seleccione...</option>
+                  <option>Visual</option>
+                  <option>Auditiva</option>
+                  <option>Física / motriz</option>
+                  <option>Cognitiva / intelectual</option>
+                  <option>Psicosocial / mental</option>
+                  <option>Múltiple</option>
+                  <option>Otra</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="flabel">Prestador anterior</label>
+                <input type="text" id="c_prestador_anterior" class="finput" placeholder="Nombre de la agencia anterior"/>
+              </div>
+              <div class="form-group">
+                <label class="flabel">Canal de atención</label>
+                <select id="c_canal" class="finput">
+                  <option value="">Seleccione...</option>
+                  <option>Presencial</option>
+                  <option>Virtual</option>
+                  <option>Telefónico</option>
+                  <option>Jornada móvil</option>
+                  <option>Empleador</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="flabel">Asesor/a responsable</label>
+                <input type="text" id="c_agente" class="finput" placeholder="Nombre del asesor"/>
+              </div>
+            </div>
+          </div>
+
+          <!-- ACCIONES -->
+          <div style="display:flex;justify-content:flex-end;gap:12px;padding-top:8px;border-top:1px solid var(--borde);margin-top:8px">
+            <button type="button" class="btn btn-ghost" onclick="cerrarModalCandidato()">Cancelar</button>
+            <button type="button" class="btn btn-primary" onclick="guardarCandidato();event.stopPropagation()">💾 Guardar candidato</button>
+          </div>
+
+        </div><!-- /modal-body -->
+      </div><!-- /modal-box -->
+    </div><!-- /modal-cand -->
+
 
     <!-- EMPRESAS -->
     <div id="pg-empresas" class="hidden" onclick="event.stopPropagation()">
@@ -1471,6 +1878,7 @@ function nav(p){
       }).catch(function(){ renderEmpresas(empresasActuales); });
     } else { renderEmpresas(empresasActuales); }
   }
+  if(p==='candidatos') { initCandidatos(); return; }
   if(p==='vacantes'){
     if(vacantesActuales.length === 0){
       API.vacantes.listar({estado:'Activa'}).then(function(rows){
@@ -2508,6 +2916,287 @@ function exportarReportesPDF() {
 </script>
   <script src="cno2025.js" defer></script>
 <script>
+// ═══════════════════════════════════════════════════════════════════
+// MÓDULO CANDIDATOS — registro, lista y exportación
+// ═══════════════════════════════════════════════════════════════════
+
+var _candSupa    = null;
+var _candDatos   = [];
+var _candFiltrados = [];
+var CAND_SUPA_URL = "https://wdyrgfejskyzyhrqifnr.supabase.co";
+var CAND_SUPA_KEY = "sb_publishable_j9HHnD1cYMaply1o6lS6sg_M0ckf0gh";
+
+// ── INIT ─────────────────────────────────────────────────────────
+function initCandidatos() {
+  if (!_candSupa) _candSupa = supabase.createClient(CAND_SUPA_URL, CAND_SUPA_KEY);
+  candCargarLista();
+}
+
+// ── CARGAR LISTA ─────────────────────────────────────────────────
+async function candCargarLista() {
+  var tbody = document.getElementById('cand-tbody');
+  var ct    = document.getElementById('cand-count');
+  if (tbody) tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:20px">⏳ Cargando...</td></tr>';
+  try {
+    if (!_candSupa) _candSupa = supabase.createClient(CAND_SUPA_URL, CAND_SUPA_KEY);
+    var resp = await _candSupa
+      .from('candidatos')
+      .select('*')
+      .eq('activo', true)
+      .order('fecha_creacion', { ascending: false })
+      .limit(500);
+    _candDatos = resp.data || [];
+    _candFiltrados = _candDatos.slice();
+    if (ct) ct.textContent = 'Candidatos (' + _candDatos.length + ')';
+    candRenderTabla(_candFiltrados);
+  } catch(e) {
+    if (tbody) tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:20px;color:#c62828">Error: '+e.message+'</td></tr>';
+  }
+}
+
+// ── FILTRAR ───────────────────────────────────────────────────────
+function filtrarCandidatos() {
+  var q     = (document.getElementById('cand-buscar')      || {}).value || '';
+  var nivel = (document.getElementById('cand-filtro-nivel') || {}).value || '';
+  var exp   = (document.getElementById('cand-filtro-exp')   || {}).value || '';
+  q = q.toLowerCase();
+  _candFiltrados = _candDatos.filter(function(r) {
+    var texto = ((r.nombres||'') + ' ' + (r.apellidos||'') + ' ' + (r.documento||'') + ' ' + (r.municipio||'')).toLowerCase();
+    var okQ     = !q     || texto.includes(q);
+    var okNivel = !nivel || (r.nivel_estudio || '') === nivel;
+    var okExp   = !exp   || (r.tipo_experiencia || r.situacion_laboral || '') === exp;
+    return okQ && okNivel && okExp;
+  });
+  var ct = document.getElementById('cand-count');
+  if (ct) ct.textContent = 'Candidatos (' + _candFiltrados.length + (q||nivel||exp?' filtrados de '+_candDatos.length:'') + ')';
+  candRenderTabla(_candFiltrados);
+}
+
+// ── RENDER TABLA ─────────────────────────────────────────────────
+function candRenderTabla(lista) {
+  var tbody = document.getElementById('cand-tbody');
+  if (!tbody) return;
+  if (!lista.length) {
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--texto-g)">Sin resultados</td></tr>';
+    return;
+  }
+  tbody.innerHTML = lista.map(function(r) {
+    var nombre = ((r.nombres||'') + (r.apellidos ? ' '+r.apellidos : '')).trim() || '—';
+    return '<tr>' +
+      '<td><strong>' + escDiag(r.documento||'—') + '</strong><br><small style="color:var(--texto-g)">' + escDiag(r.tipo_doc||'') + '</small></td>' +
+      '<td>' + escDiag(nombre) + '</td>' +
+      '<td>' + escDiag(r.genero||'—') + '</td>' +
+      '<td>' + escDiag(r.municipio||'—') + '</td>' +
+      '<td>' + escDiag(r.nivel_estudio||'—') + '</td>' +
+      '<td>' + escDiag(r.tipo_experiencia||r.situacion_laboral||'—') + '</td>' +
+      '<td>' + escDiag(r.estado_civil||'—') + '</td>' +
+      '<td>' + escDiag(r.celular||r.telefono||'—') + '</td>' +
+      '<td>' +
+        '<button type="button" class="btn btn-ghost btn-sm" style="font-size:11px;padding:3px 8px" ' +
+          'onclick="candVerDetalle(\'' + escDiag(r.documento) + '\');event.stopPropagation()">Ver</button> ' +
+        '<button type="button" class="btn btn-sm" style="font-size:11px;padding:3px 8px;background:#f8d7da;color:#721c24" ' +
+          'onclick="candEliminar(\'' + escDiag(r.documento) + '\');event.stopPropagation()">✕</button>' +
+      '</td></tr>';
+  }).join('');
+}
+
+// ── MODAL ─────────────────────────────────────────────────────────
+function abrirModalCandidato() {
+  document.getElementById('modal-cand').classList.add('open');
+  document.getElementById('modal-cand-titulo').textContent = '➕ Nuevo Candidato';
+  candLimpiarForm();
+}
+
+function cerrarModalCandidato() {
+  document.getElementById('modal-cand').classList.remove('open');
+}
+
+function candLimpiarForm() {
+  var ids = ['c_tipo_doc','c_num_doc','c_nombres','c_fecha_nacimiento','c_genero',
+    'c_genero_identifica','c_orientacion_sexual','c_estado_civil','c_libreta_militar',
+    'c_celular','c_correo','c_lugar_nac_municipio','c_lugar_nac_dpto',
+    'c_municipio','c_dpto_residencia','c_direccion',
+    'c_nivel_estudio','c_area_estudio','c_titulo','c_institucion','c_fecha_graduacion','c_estudiando',
+    'c_tipo_experiencia','c_sector_exp','c_cargo_exp','c_empresa_exp',
+    'c_discapacidades','c_prestador_anterior','c_canal','c_agente'];
+  ids.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.querySelectorAll('#cand-grupos input[type="checkbox"]').forEach(function(cb) {
+    cb.checked = false;
+  });
+  candToggleEducacion();
+  candToggleExperiencia();
+}
+
+// ── TOGGLES EDUCACIÓN/EXPERIENCIA ─────────────────────────────────
+function candToggleEducacion() {
+  var nivel = (document.getElementById('c_nivel_estudio')||{}).value || '';
+  var conTitulo = ['Técnico','Tecnológico','Profesional universitario','Especialización','Maestría','Doctorado'];
+  var mostrar   = nivel && nivel !== 'Primaria incompleta' && nivel !== 'Bachillerato incompleto';
+  var mostrarTit = conTitulo.indexOf(nivel) > -1;
+  var wrap = { 'cand-edu-area':mostrar, 'cand-edu-titulo':mostrarTit, 'cand-edu-inst':mostrarTit, 'cand-edu-fecha':mostrarTit };
+  Object.keys(wrap).forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.style.display = wrap[id] ? 'flex' : 'none';
+  });
+}
+
+function candToggleExperiencia() {
+  var exp = (document.getElementById('c_tipo_experiencia')||{}).value || '';
+  var mostrar = exp && exp !== 'Sin experiencia laboral';
+  ['cand-exp-sector','cand-exp-cargo','cand-exp-empresa'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.style.display = mostrar ? 'flex' : 'none';
+  });
+  // Mostrar discapacidad si marcó esa opción
+  var discap = false;
+  document.querySelectorAll('#cand-grupos input[type="checkbox"]').forEach(function(cb) {
+    if (cb.value === 'Discapacidad' && cb.checked) discap = true;
+  });
+  var dw = document.getElementById('cand-discapacidad-wrap');
+  if (dw) dw.style.display = discap ? 'block' : 'none';
+}
+
+// Observer para el checkbox de discapacidad
+document.addEventListener('change', function(e) {
+  if (e.target && e.target.closest && e.target.closest('#cand-grupos')) {
+    var dw = document.getElementById('cand-discapacidad-wrap');
+    if (dw) {
+      var marcada = Array.from(document.querySelectorAll('#cand-grupos input[type="checkbox"]'))
+        .some(function(cb){ return cb.value === 'Discapacidad' && cb.checked; });
+      dw.style.display = marcada ? 'block' : 'none';
+    }
+  }
+});
+
+// ── GUARDAR ───────────────────────────────────────────────────────
+async function guardarCandidato() {
+  var doc    = (document.getElementById('c_num_doc')  ||{}).value.trim();
+  var nombres = (document.getElementById('c_nombres') ||{}).value.trim();
+  var genero  = (document.getElementById('c_genero')  ||{}).value;
+  var celular = (document.getElementById('c_celular') ||{}).value.trim();
+  var municipio = (document.getElementById('c_municipio')||{}).value.trim();
+
+  if (!doc)     { toast('El número de documento es obligatorio'); return; }
+  if (!nombres) { toast('El nombre es obligatorio'); return; }
+  if (!genero)  { toast('Selecciona el género'); return; }
+  if (!celular) { toast('El celular es obligatorio'); return; }
+  if (!municipio){ toast('El municipio de residencia es obligatorio'); return; }
+
+  // Recoger grupos especiales
+  var grupos = Array.from(document.querySelectorAll('#cand-grupos input[type="checkbox"]:checked'))
+    .map(function(cb){ return cb.value; }).join(', ');
+
+  var payload = {
+    documento:           doc,
+    tipo_doc:            (document.getElementById('c_tipo_doc')||{}).value || '',
+    nombres:             nombres,
+    apellidos:           '',
+    celular:             celular,
+    correo:              (document.getElementById('c_correo')||{}).value || '',
+    municipio:           municipio,
+    genero:              genero,
+    genero_identifica:   (document.getElementById('c_genero_identifica')||{}).value || '',
+    orientacion_sexual:  (document.getElementById('c_orientacion_sexual')||{}).value || '',
+    estado_civil:        (document.getElementById('c_estado_civil')||{}).value || '',
+    libreta_militar:     (document.getElementById('c_libreta_militar')||{}).value || '',
+    fecha_nacimiento:    (document.getElementById('c_fecha_nacimiento')||{}).value || null,
+    lugar_nac_municipio: (document.getElementById('c_lugar_nac_municipio')||{}).value || '',
+    lugar_nac_dpto:      (document.getElementById('c_lugar_nac_dpto')||{}).value || '',
+    dpto_residencia:     (document.getElementById('c_dpto_residencia')||{}).value || '',
+    direccion:           (document.getElementById('c_direccion')||{}).value || '',
+    nivel_estudio:       (document.getElementById('c_nivel_estudio')||{}).value || '',
+    area_estudio:        (document.getElementById('c_area_estudio')||{}).value || '',
+    titulo:              (document.getElementById('c_titulo')||{}).value || '',
+    institucion:         (document.getElementById('c_institucion')||{}).value || '',
+    fecha_graduacion:    (document.getElementById('c_fecha_graduacion')||{}).value || '',
+    estudiando:          (document.getElementById('c_estudiando')||{}).value || '',
+    tipo_experiencia:    (document.getElementById('c_tipo_experiencia')||{}).value || '',
+    sector_exp:          (document.getElementById('c_sector_exp')||{}).value || '',
+    cargo:               (document.getElementById('c_cargo_exp')||{}).value || '',
+    empresa_exp:         (document.getElementById('c_empresa_exp')||{}).value || '',
+    discapacidades:      (document.getElementById('c_discapacidades')||{}).value || '',
+    condiciones_especiales: grupos,
+    prestador_anterior:  (document.getElementById('c_prestador_anterior')||{}).value || '',
+    canal:               (document.getElementById('c_canal')||{}).value || '',
+    agente:              (document.getElementById('c_agente')||{}).value || '',
+    fecha_registro:      new Date().toISOString().split('T')[0],
+    activo:              true
+  };
+
+  try {
+    if (!_candSupa) _candSupa = supabase.createClient(CAND_SUPA_URL, CAND_SUPA_KEY);
+    var resp = await _candSupa
+      .from('candidatos')
+      .upsert([payload], { onConflict: 'documento' });
+    if (resp.error) throw resp.error;
+    toast('✅ Candidato guardado correctamente');
+    cerrarModalCandidato();
+    candCargarLista();
+  } catch(e) {
+    toast('Error al guardar: ' + e.message);
+  }
+}
+
+// ── VER DETALLE ───────────────────────────────────────────────────
+function candVerDetalle(doc) {
+  var r = _candDatos.find(function(x){ return x.documento === doc; });
+  if (!r) return;
+  var nombre = ((r.nombres||'') + ' ' + (r.apellidos||'')).trim();
+  var info = [
+    '📋 ' + nombre,
+    'Documento: ' + (r.tipo_doc||'') + ' ' + r.documento,
+    'Género: ' + (r.genero||'—') + (r.genero_identifica?' · Identidad: '+r.genero_identifica:''),
+    'Nacimiento: ' + (r.fecha_nacimiento||'—') + ' · ' + (r.lugar_nac_municipio||'') + ', ' + (r.lugar_nac_dpto||''),
+    'Residencia: ' + (r.municipio||'—') + (r.dpto_residencia?', '+r.dpto_residencia:''),
+    'Estado civil: ' + (r.estado_civil||'—'),
+    'Tel: ' + (r.celular||r.telefono||'—') + ' · Email: ' + (r.correo||'—'),
+    '🎓 ' + (r.nivel_estudio||'—') + (r.titulo?' · '+r.titulo:'') + (r.institucion?' · '+r.institucion:''),
+    '💼 ' + (r.tipo_experiencia||r.situacion_laboral||'—') + (r.cargo?' · Cargo: '+r.cargo:''),
+    'Grupos: ' + (r.condiciones_especiales||'Ninguno'),
+    'Canal: ' + (r.canal||'—') + ' · Asesor: ' + (r.agente||'—'),
+  ].join('\n');
+  alert(info);
+}
+
+// ── ELIMINAR ──────────────────────────────────────────────────────
+async function candEliminar(doc) {
+  if (!confirm('¿Desactivar al candidato con documento ' + doc + '?')) return;
+  try {
+    if (!_candSupa) _candSupa = supabase.createClient(CAND_SUPA_URL, CAND_SUPA_KEY);
+    await _candSupa.from('candidatos').update({activo: false}).eq('documento', doc);
+    toast('Candidato desactivado');
+    candCargarLista();
+  } catch(e) { toast('Error: ' + e.message); }
+}
+
+// ── EXPORTAR EXCEL ────────────────────────────────────────────────
+function candExportarExcel() {
+  if (!_candFiltrados.length) { toast('No hay datos para exportar'); return; }
+  if (typeof XLSX === 'undefined') { toast('XLSX no cargado'); return; }
+  var campos = [
+    'documento','tipo_doc','nombres','apellidos','genero','genero_identifica',
+    'orientacion_sexual','estado_civil','libreta_militar','fecha_nacimiento',
+    'celular','correo','municipio','dpto_residencia','lugar_nac_municipio',
+    'lugar_nac_dpto','direccion','nivel_estudio','area_estudio','titulo',
+    'institucion','fecha_graduacion','estudiando','tipo_experiencia',
+    'sector_exp','cargo','condiciones_especiales','discapacidades',
+    'canal','agente','prestador_anterior','fecha_registro'
+  ];
+  var headers = campos.map(function(c){ return c.toUpperCase().replace(/_/g,' '); });
+  var rows = [headers];
+  _candFiltrados.forEach(function(r){
+    rows.push(campos.map(function(c){ return r[c]||''; }));
+  });
+  var wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(rows), 'Candidatos');
+  XLSX.writeFile(wb, 'candidatos_' + new Date().toISOString().split('T')[0] + '.xlsx');
+  toast('Excel exportado ✅');
+}
+
+
 // ═══════════════════════════════════════════════════════════════════
 // MÓDULO CLIMA ORGANIZACIONAL — dentro de interno.html
 // Tabla: respuestas_clima | Supabase: wdyrgfejskyzyhrqifnr
