@@ -595,21 +595,22 @@
     <div id="pg-diagnosticos" class="hidden" onclick="event.stopPropagation()">
       <div class="ph">
         <div>
-          <div class="ptitle">📋 Diagnóstico Empresarial</div>
-          <p class="psub">Envía el formulario a empresas, consulta resultados y descarga informes PDF y Excel</p>
+          <div class="ptitle">📋 Pruebas Empresariales</div>
+          <p class="psub">Diagnóstico Empresarial Integral · Clima Organizacional · Envía, consulta resultados y descarga informes</p>
         </div>
       </div>
 
-      <!-- TABS -->
+      <!-- TABS PRINCIPALES -->
       <div class="diag-tabs">
-        <button type="button" class="diag-tab active" onclick="diagTab('admin',this);event.stopPropagation()">🔧 Administrador</button>
-        <button type="button" class="diag-tab" onclick="diagTab('form',this);event.stopPropagation()">📝 Ver formulario</button>
+        <button type="button" class="diag-tab active" onclick="diagTab('diagnostico',this);event.stopPropagation()">📋 Diagnóstico Empresarial</button>
+        <button type="button" class="diag-tab" onclick="diagTab('clima',this);event.stopPropagation()">🌡️ Clima Organizacional</button>
       </div>
 
-      <!-- ── PANEL ADMINISTRADOR ─────────────────────────────────── -->
-      <div id="diag-panel-admin">
+      <!-- ══════════════════════════════════════════════════════ -->
+      <!-- PANEL DIAGNÓSTICO EMPRESARIAL                         -->
+      <!-- ══════════════════════════════════════════════════════ -->
+      <div id="diag-panel-diagnostico">
 
-        <!-- Tarjeta de envío -->
         <div class="diag-send-card">
           <div>
             <h3>🏭 Diagnóstico Empresarial Integral</h3>
@@ -618,22 +619,19 @@
           <button type="button" class="btn-send-diag" onclick="diagGenerarLink();event.stopPropagation()">🔗 Generar enlace</button>
         </div>
 
-        <!-- Selector de empresa -->
         <div class="diag-admin-wrap">
           <div class="diag-selector-card">
             <label>🏢 Empresa:</label>
-            <input type="text" id="diag-sel-empresa" class="finput" 
-              list="diag-empresas-list" style="flex:1;min-width:200px" 
+            <input type="text" id="diag-sel-empresa" class="finput"
+              list="diag-empresas-list" style="flex:1;min-width:200px"
               placeholder="Nombre de la empresa (nueva o existente)"
               oninput="diagCargarEmpresas();diagGenerarLink();event.stopPropagation()"/>
             <datalist id="diag-empresas-list"></datalist>
-            <button type="button" class="btn-copy-diag" style="background:var(--azul)" 
-              onclick="diagRecargarEmpresas();event.stopPropagation()" 
-              title="Recargar empresas desde Supabase">🔄 Actualizar</button>
-            <button type="button" class="btn-borrar-emp" onclick="diagConfirmarBorrar();event.stopPropagation()">🗑 Eliminar empresa</button>
+            <button type="button" class="btn-copy-diag" style="background:var(--azul)"
+              onclick="diagRecargarEmpresas();event.stopPropagation()">🔄 Actualizar</button>
+            <button type="button" class="btn-borrar-emp" onclick="diagConfirmarBorrar();event.stopPropagation()">🗑 Eliminar</button>
           </div>
 
-          <!-- Link del diagnóstico -->
           <div class="diag-link-card">
             <span class="link-label">🔗 Enlace diagnóstico:</span>
             <input type="text" id="diag-link-input" readonly placeholder="Seleccione una empresa para generar el enlace"/>
@@ -641,95 +639,112 @@
             <button type="button" class="btn-copy-diag" style="background:var(--pist);color:var(--negro)" onclick="diagAbrirFormulario();event.stopPropagation()">🚀 Abrir</button>
           </div>
 
-          <!-- Sin datos -->
-          <div id="diag-no-data" class="no-data-diag" style="display:none">
-            No hay diagnósticos registrados para esta empresa todavía.
-          </div>
+          <div id="diag-no-data" class="no-data-diag" style="display:none">No hay diagnósticos para esta empresa.</div>
 
-          <!-- Resultados -->
           <div id="diag-wrap" style="display:none">
-
-            <!-- Stats -->
             <div class="diag-stats-row" id="diag-stats-row"></div>
-
-            <!-- Tabla de registros -->
             <div class="card" style="padding:18px;margin-bottom:16px">
               <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:14px">
                 <div style="font-family:'Nunito';font-size:15px;font-weight:800;color:var(--verde)">🏭 Diagnósticos Registrados</div>
-                <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <div style="display:flex;gap:8px">
                   <button type="button" class="btn-dl-excel" onclick="diagDescargarExcel();event.stopPropagation()">⬇ Excel</button>
                   <button type="button" class="btn-dl-pdf" onclick="diagGenerarPDF();event.stopPropagation()">⬇ PDF</button>
                 </div>
               </div>
               <div id="diag-listado" style="overflow-x:auto"></div>
             </div>
-
-            <!-- Gráficas -->
             <div class="card" style="padding:18px;margin-bottom:16px">
-              <div style="font-family:'Nunito';font-size:15px;font-weight:800;color:var(--verde);margin-bottom:14px">📊 Resultados Visuales</div>
+              <div style="font-family:'Nunito';font-size:14px;font-weight:800;color:var(--verde);margin-bottom:12px">📊 Resultados Visuales</div>
               <div style="background:var(--suave);border-radius:10px;padding:14px;margin-bottom:12px">
                 <h4 style="color:var(--verde);font-size:13px;margin-bottom:10px">Nivel por Área (%)</h4>
-                <div style="position:relative;height:200px">
-                  <canvas id="diag-chart-barras"></canvas>
-                </div>
+                <div style="position:relative;height:200px"><canvas id="diag-chart-barras"></canvas></div>
               </div>
               <div class="diag-dona-radar-grid">
-                <div class="diag-chart-square">
-                  <h4 style="color:var(--verde);font-size:12px;margin-bottom:8px">Distribución niveles</h4>
-                  <canvas id="diag-chart-dona" style="max-height:180px"></canvas>
-                </div>
-                <div class="diag-chart-square">
-                  <h4 style="color:var(--verde);font-size:12px;margin-bottom:8px">Radar de áreas</h4>
-                  <canvas id="diag-chart-radar" style="max-height:180px"></canvas>
-                </div>
+                <div class="diag-chart-square"><h4 style="color:var(--verde);font-size:12px;margin-bottom:8px">Distribución niveles</h4><canvas id="diag-chart-dona" style="max-height:180px"></canvas></div>
+                <div class="diag-chart-square"><h4 style="color:var(--verde);font-size:12px;margin-bottom:8px">Radar de áreas</h4><canvas id="diag-chart-radar" style="max-height:180px"></canvas></div>
               </div>
             </div>
-
-            <!-- Tabla por dimensión -->
             <div class="card" style="padding:18px;margin-bottom:16px">
               <div style="font-family:'Nunito';font-size:14px;font-weight:800;color:var(--verde);margin-bottom:12px">📋 Detalle por Dimensión</div>
-              <div style="overflow-x:auto">
-                <table class="dim-table" id="diag-dim-table">
-                  <thead><tr><th>Dimensión</th><th>Prom. Puntaje</th><th>Prom. %</th><th>Nivel</th><th>Máximo posible</th></tr></thead>
-                  <tbody></tbody>
-                </table>
-              </div>
+              <div style="overflow-x:auto"><table class="dim-table" id="diag-dim-table">
+                <thead><tr><th>Dimensión</th><th>Prom. %</th><th>Nivel</th><th>Máx.</th></tr></thead>
+                <tbody></tbody>
+              </table></div>
             </div>
-
-            <!-- Recomendaciones -->
             <div class="card" style="padding:18px">
-              <div style="font-family:'Nunito';font-size:14px;font-weight:800;color:var(--verde);margin-bottom:12px">💡 Análisis y Recomendaciones</div>
+              <div style="font-family:'Nunito';font-size:14px;font-weight:800;color:var(--verde);margin-bottom:12px">💡 Recomendaciones</div>
               <div id="diag-recomendaciones"></div>
             </div>
+          </div>
+        </div>
+      </div><!-- /diag-panel-diagnostico -->
 
-          </div><!-- /diag-wrap -->
-        </div><!-- /diag-admin-wrap -->
-      </div><!-- /diag-panel-admin -->
+      <!-- ══════════════════════════════════════════════════════ -->
+      <!-- PANEL CLIMA ORGANIZACIONAL                            -->
+      <!-- ══════════════════════════════════════════════════════ -->
+      <div id="diag-panel-clima" style="display:none">
 
-      <!-- ── PANEL FORMULARIO ────────────────────────────────────── -->
-      <div id="diag-panel-form" style="display:none">
         <div class="diag-send-card">
           <div>
-            <h3>📝 Formulario de Diagnóstico</h3>
-            <p>Abre el formulario en una nueva pestaña para completarlo o para enviarlo a la empresa</p>
+            <h3>🌡️ Clima Organizacional</h3>
+            <p>Genera y envía el enlace de la encuesta de clima a la empresa seleccionada</p>
           </div>
-          <button type="button" class="btn-send-diag" onclick="diagAbrirFormularioNuevaPestana();event.stopPropagation()">🚀 Abrir formulario</button>
+          <button type="button" class="btn-send-diag" onclick="climaGenerarLink();event.stopPropagation()">🔗 Generar enlace</button>
         </div>
-        <div class="card" style="padding:24px;text-align:center">
-          <div style="font-size:48px;margin-bottom:16px">📋</div>
-          <div style="font-family:'Nunito';font-size:16px;font-weight:800;color:var(--verde);margin-bottom:8px">Diagnóstico Empresarial Integral</div>
-          <p style="font-size:13px;color:var(--texto-g);margin-bottom:20px">El formulario se abre en una pestaña nueva para que la empresa pueda completarlo cómodamente.</p>
-          <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
-            <button type="button" class="btn btn-primary" onclick="diagAbrirFormularioNuevaPestana();event.stopPropagation()">🚀 Abrir formulario ahora</button>
-            <button type="button" class="btn btn-ghost" onclick="diagCopiarLink();event.stopPropagation()">📋 Copiar enlace</button>
+
+        <div class="diag-admin-wrap">
+          <div class="diag-selector-card">
+            <label>🏢 Empresa:</label>
+            <select id="clima-sel-empresa" class="finput" style="flex:1;min-width:200px"
+              onchange="climaCargarEmpresas();event.stopPropagation()">
+              <option value="">— Seleccione una empresa —</option>
+            </select>
+            <button type="button" class="btn-copy-diag" style="background:var(--azul)"
+              onclick="climaRecargar();event.stopPropagation()">🔄 Actualizar</button>
+            <button type="button" class="btn-borrar-emp" onclick="climaBorrarEmpresa();event.stopPropagation()">🗑 Eliminar</button>
           </div>
-          <div style="margin-top:20px;padding:12px;background:var(--suave);border-radius:10px;font-size:12px;color:var(--texto-g)">
-            💡 Para enviar a la empresa: copia el enlace del tab <strong>Administrador</strong> y envíalo por correo o WhatsApp
+
+          <div class="diag-link-card">
+            <span class="link-label">🔗 Enlace encuesta:</span>
+            <input type="text" id="clima-link-input" readonly placeholder="Seleccione una empresa"/>
+            <button type="button" class="btn-copy-diag" onclick="climaCopiarLink();event.stopPropagation()">📋 Copiar</button>
+            <button type="button" class="btn-copy-diag" style="background:var(--pist);color:var(--negro)" onclick="climaAbrirEncuesta();event.stopPropagation()">🚀 Abrir</button>
+          </div>
+
+          <div id="clima-no-data" class="no-data-diag" style="display:none">No hay datos suficientes para esta empresa (mínimo 3 respuestas).</div>
+
+          <div id="clima-wrap" style="display:none">
+            <div class="diag-stats-row" id="clima-stats-row"></div>
+            <div class="card" style="padding:18px;margin-bottom:16px">
+              <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:14px">
+                <div style="font-family:'Nunito';font-size:15px;font-weight:800;color:var(--verde)">🌡️ Resultados Clima</div>
+                <div style="display:flex;gap:8px">
+                  <button type="button" class="btn-dl-excel" onclick="climaDescargarExcel();event.stopPropagation()">⬇ Excel sociodemográfico</button>
+                  <button type="button" class="btn-dl-pdf" onclick="climaGenerarPDF();event.stopPropagation()">⬇ PDF</button>
+                </div>
+              </div>
+              <div class="diag-dona-radar-grid" style="margin-bottom:12px">
+                <div class="diag-chart-square"><h4 style="color:var(--verde);font-size:12px;margin-bottom:8px">Barras por dimensión</h4><div style="height:220px"><canvas id="clima-chart-barras"></canvas></div></div>
+                <div class="diag-chart-square"><h4 style="color:var(--verde);font-size:12px;margin-bottom:8px">Radar de dimensiones</h4><canvas id="clima-chart-radar" style="max-height:220px"></canvas></div>
+              </div>
+            </div>
+            <div class="card" style="padding:18px;margin-bottom:16px">
+              <div style="font-family:'Nunito';font-size:14px;font-weight:800;color:var(--verde);margin-bottom:12px">📋 Detalle por Dimensión</div>
+              <div style="overflow-x:auto"><table class="dim-table" id="clima-dim-table">
+                <thead><tr><th>Dimensión</th><th>Promedio</th><th>%</th><th>Nivel</th></tr></thead>
+                <tbody></tbody>
+              </table></div>
+            </div>
+            <div class="card" style="padding:18px">
+              <div style="font-family:'Nunito';font-size:14px;font-weight:800;color:var(--verde);margin-bottom:12px">💡 Recomendaciones</div>
+              <div id="clima-recomendaciones"></div>
+            </div>
           </div>
         </div>
-      </div>
+      </div><!-- /diag-panel-clima -->
 
     </div><!-- /pg-diagnosticos -->
+
 
     <!-- REPORTES -->
     <div id="pg-reportes" class="hidden" onclick="event.stopPropagation()">
@@ -2494,6 +2509,314 @@ function exportarReportesPDF() {
   <script src="cno2025.js" defer></script>
 <script>
 // ═══════════════════════════════════════════════════════════════════
+// MÓDULO CLIMA ORGANIZACIONAL — dentro de interno.html
+// Tabla: respuestas_clima | Supabase: wdyrgfejskyzyhrqifnr
+// ═══════════════════════════════════════════════════════════════════
+
+var CLIMA_URL = "https://wdyrgfejskyzyhrqifnr.supabase.co";
+var CLIMA_KEY = "sb_publishable_j9HHnD1cYMaply1o6lS6sg_M0ckf0gh";
+var _climaSupa = null;
+var _climaDatos = [];
+var _climaEmp = '';
+var _climaChartB = null, _climaChartR = null;
+
+var CLIMA_DIMS = [
+  { id:'condiciones_fisicas',       label:'Condiciones Físicas',      max:25 },
+  { id:'beneficios_laborales',      label:'Beneficios Laborales',     max:20 },
+  { id:'politicas_administrativas', label:'Políticas Administrativas',max:25 },
+  { id:'relaciones_sociales',       label:'Relaciones Sociales',      max:20 },
+  { id:'desarrollo_personal',       label:'Desarrollo Personal',      max:30 },
+  { id:'desempeno_tareas',          label:'Desempeño de Tareas',      max:20 },
+  { id:'relacion_autoridad',        label:'Relación con la Autoridad',max:30 },
+];
+
+// ── INIT ─────────────────────────────────────────────────────────
+function initClima() {
+  if (!_climaSupa) _climaSupa = supabase.createClient(CLIMA_URL, CLIMA_KEY);
+  climaCargarListaEmpresas();
+}
+
+async function climaCargarListaEmpresas() {
+  if (!_climaSupa) _climaSupa = supabase.createClient(CLIMA_URL, CLIMA_KEY);
+  var sel = document.getElementById('clima-sel-empresa');
+  if (!sel) return;
+  try {
+    var resp = await _climaSupa.from('respuestas_clima').select('empresa').order('empresa');
+    var data = resp.data || [];
+    var emps = [...new Set(data.map(function(r){ return r.empresa; }).filter(Boolean))].sort();
+    sel.innerHTML = '<option value="">— Seleccione una empresa —</option>' +
+      emps.map(function(e){ return '<option value="'+escDiag(e)+'">'+escDiag(e)+'</option>'; }).join('');
+    if (emps.length > 0) {
+      sel.value = emps[0];
+      _climaEmp = emps[0];
+      climaGenerarLinkEmpresa(emps[0]);
+      await climaCargarDatos(emps[0]);
+    }
+  } catch(e) {
+    var nd = document.getElementById('clima-no-data');
+    if (nd) { nd.style.display='block'; nd.textContent='Error al conectar: '+e.message; }
+  }
+}
+
+async function climaCargarEmpresas() {
+  var emp = (document.getElementById('clima-sel-empresa')||{}).value || '';
+  if (!emp) return;
+  _climaEmp = emp;
+  climaGenerarLinkEmpresa(emp);
+  await climaCargarDatos(emp);
+}
+
+async function climaRecargar() {
+  await climaCargarListaEmpresas();
+  toast('✅ Datos de clima actualizados');
+}
+
+// ── LINK ─────────────────────────────────────────────────────────
+function climaGenerarLink() {
+  var sel = document.getElementById('clima-sel-empresa');
+  var emp = sel ? sel.value.trim() : '';
+  if (!emp) { toast('Selecciona una empresa primero'); return; }
+  climaGenerarLinkEmpresa(emp);
+}
+
+function climaGenerarLinkEmpresa(emp) {
+  var base = window.location.href.replace(/\/[^/]*$/, '');
+  var link = base + '/encuesta.html?empresa=' + encodeURIComponent(emp);
+  var inp = document.getElementById('clima-link-input');
+  if (inp) inp.value = link;
+}
+
+function climaCopiarLink() {
+  var inp = document.getElementById('clima-link-input');
+  if (!inp || !inp.value) { toast('Genera el enlace primero'); return; }
+  navigator.clipboard.writeText(inp.value).then(function(){ toast('✅ Enlace copiado'); });
+}
+
+function climaAbrirEncuesta() {
+  var inp = document.getElementById('clima-link-input');
+  if (inp && inp.value) window.open(inp.value, '_blank');
+}
+
+// ── CARGAR DATOS ──────────────────────────────────────────────────
+async function climaCargarDatos(empresa) {
+  if (!_climaSupa) _climaSupa = supabase.createClient(CLIMA_URL, CLIMA_KEY);
+  var noData = document.getElementById('clima-no-data');
+  var wrap   = document.getElementById('clima-wrap');
+  if (noData) noData.style.display = 'none';
+  if (wrap)   wrap.style.display   = 'none';
+  try {
+    var resp = await _climaSupa.from('respuestas_clima').select('*').eq('empresa', empresa);
+    var data = resp.data || [];
+    _climaDatos = data;
+    if (data.length < 3) {
+      if (noData) { noData.style.display='block'; noData.textContent='No hay datos suficientes ('+data.length+' respuestas). Mínimo 3.'; }
+      return;
+    }
+    if (wrap) wrap.style.display = 'block';
+    climaRenderStats(data);
+    climaRenderGraficas(data);
+    climaRenderTabla(data);
+    climaRenderRecs(data);
+  } catch(e) {
+    if (noData) { noData.style.display='block'; noData.textContent='Error: '+e.message; }
+  }
+}
+
+// ── RENDER STATS ─────────────────────────────────────────────────
+function climaRenderStats(data) {
+  var cont = document.getElementById('clima-stats-row');
+  if (!cont) return;
+  var n = data.length;
+  var global = climaCalcGlobal(data);
+  var niv = climaGetNivel(global);
+  var dimMin = climaGetDimMin(data);
+  var dimMax = climaGetDimMax(data);
+  cont.innerHTML =
+    '<div class="diag-stat-card"><div class="diag-stat-num">'+n+'</div><div class="diag-stat-lbl">Encuestas recibidas</div></div>' +
+    '<div class="diag-stat-card"><div class="diag-stat-num">'+global+'%</div><div class="diag-stat-lbl">Puntaje global</div></div>' +
+    '<div class="diag-stat-card"><div class="diag-stat-num" style="font-size:16px;color:'+niv.color+'">'+niv.label+'</div><div class="diag-stat-lbl">Nivel general</div></div>' +
+    '<div class="diag-stat-card"><div class="diag-stat-num" style="font-size:13px">'+dimMax+'</div><div class="diag-stat-lbl">Dimensión más alta</div></div>' +
+    '<div class="diag-stat-card"><div class="diag-stat-num" style="font-size:13px;color:#c62828">'+dimMin+'</div><div class="diag-stat-lbl">Dimensión más baja</div></div>';
+}
+
+function climaCalcGlobal(data) {
+  var promedios = CLIMA_DIMS.map(function(d){ return climaCalcDim(data, d); });
+  return Math.round(promedios.reduce(function(a,b){return a+b;},0)/promedios.length);
+}
+
+function climaCalcDim(data, dim) {
+  var col = 'dim_' + dim.id;
+  var vals = data.map(function(r){ return r[col]; }).filter(function(v){ return v!=null; });
+  if (!vals.length) return 0;
+  var avg = vals.reduce(function(a,b){return a+Number(b);},0)/vals.length;
+  return Math.round((avg/dim.max)*100);
+}
+
+function climaGetDimMin(data) {
+  var promedios = CLIMA_DIMS.map(function(d){ return {label:d.label, pct:climaCalcDim(data,d)}; });
+  return promedios.reduce(function(a,b){ return a.pct<b.pct?a:b; }).label;
+}
+function climaGetDimMax(data) {
+  var promedios = CLIMA_DIMS.map(function(d){ return {label:d.label, pct:climaCalcDim(data,d)}; });
+  return promedios.reduce(function(a,b){ return a.pct>b.pct?a:b; }).label;
+}
+
+function climaGetNivel(pct) {
+  if (pct >= 85) return { label:'Muy favorable', color:'#2e7d32' };
+  if (pct >= 70) return { label:'Favorable',     color:'#558b2f' };
+  if (pct >= 50) return { label:'Promedio',       color:'#f57f17' };
+  if (pct >= 35) return { label:'Insatisfecho',   color:'#c62828' };
+  return               { label:'Muy insatisfecho',color:'#6a1b9a' };
+}
+
+// ── RENDER GRÁFICAS ───────────────────────────────────────────────
+function climaRenderGraficas(data) {
+  var labels = CLIMA_DIMS.map(function(d){ return d.label; });
+  var promedios = CLIMA_DIMS.map(function(d){ return climaCalcDim(data,d); });
+  var colors = ['#094a4b','#a8c94e','#2d4a6b','#e67e22','#8e44ad','#1abc9c','#e74c3c'];
+
+  var ctxB = document.getElementById('clima-chart-barras');
+  if (ctxB) {
+    if (_climaChartB) _climaChartB.destroy();
+    _climaChartB = new Chart(ctxB, {
+      type:'bar',
+      data:{ labels:labels, datasets:[{ label:'%', data:promedios, backgroundColor:colors, borderRadius:6 }]},
+      options:{ responsive:true, maintainAspectRatio:false, indexAxis:'y',
+        plugins:{ legend:{ display:false } }, scales:{ x:{ min:0, max:100 } }
+      }
+    });
+  }
+  var ctxR = document.getElementById('clima-chart-radar');
+  if (ctxR) {
+    if (_climaChartR) _climaChartR.destroy();
+    _climaChartR = new Chart(ctxR, {
+      type:'radar',
+      data:{
+        labels: labels.map(function(l){ return l.length>10?l.substring(0,10)+'…':l; }),
+        datasets:[{ label:'%', data:promedios,
+          backgroundColor:'rgba(9,74,75,.15)', borderColor:'#094a4b',
+          pointBackgroundColor:'#a8c94e', borderWidth:2
+        }]
+      },
+      options:{ responsive:true, maintainAspectRatio:false,
+        scales:{ r:{ min:0, max:100, ticks:{ stepSize:20, font:{ size:9 } } } },
+        plugins:{ legend:{ display:false } }
+      }
+    });
+  }
+}
+
+// ── RENDER TABLA ─────────────────────────────────────────────────
+function climaRenderTabla(data) {
+  var tbody = document.querySelector('#clima-dim-table tbody');
+  if (!tbody) return;
+  tbody.innerHTML = CLIMA_DIMS.map(function(dim) {
+    var col = 'dim_' + dim.id;
+    var vals = data.map(function(r){ return r[col]; }).filter(function(v){ return v!=null; });
+    var avg = vals.length ? vals.reduce(function(a,b){return a+Number(b);},0)/vals.length : 0;
+    var pct = Math.round((avg/dim.max)*100);
+    var niv = climaGetNivel(pct);
+    return '<tr><td><strong>'+escDiag(dim.label)+'</strong></td>'+
+      '<td>'+Math.round(avg*10)/10+' / '+dim.max+'</td>'+
+      '<td>'+pct+'%</td>'+
+      '<td><span style="background:rgba(0,0,0,.05);padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;color:'+niv.color+'">'+niv.label+'</span></td></tr>';
+  }).join('');
+}
+
+// ── RENDER RECOMENDACIONES ────────────────────────────────────────
+function climaRenderRecs(data) {
+  var cont = document.getElementById('clima-recomendaciones');
+  if (!cont) return;
+  var global = climaCalcGlobal(data);
+  var niv = climaGetNivel(global);
+  var html = '';
+  CLIMA_DIMS.forEach(function(dim) {
+    var pct = climaCalcDim(data, dim);
+    var n   = climaGetNivel(pct);
+    var rec = pct >= 70
+      ? 'Esta dimensión muestra resultados favorables. Continúe con las prácticas actuales y refuerce mediante reconocimiento.'
+      : pct >= 50
+        ? 'Existe oportunidad de mejora. Comfenalco ofrece programas de bienestar y desarrollo para fortalecer esta área.'
+        : 'Se requiere atención prioritaria. Se recomienda un plan de intervención con apoyo de Comfenalco Antioquia.';
+    html += '<div class="rec-bloque"><h4><span style="color:'+n.color+'">'+pct+'%</span> · '+escDiag(dim.label)+'</h4><p>'+rec+'</p></div>';
+  });
+  cont.innerHTML = html;
+}
+
+// ── BORRAR ────────────────────────────────────────────────────────
+async function climaBorrarEmpresa() {
+  var emp = _climaEmp;
+  if (!emp) { toast('Selecciona una empresa primero'); return; }
+  if (!confirm('¿Eliminar TODOS los datos de clima de "'+emp+'"? No se puede deshacer.')) return;
+  try {
+    await _climaSupa.from('respuestas_clima').delete().eq('empresa', emp);
+    toast('✅ Empresa eliminada');
+    await climaCargarListaEmpresas();
+  } catch(e) { toast('Error: '+e.message); }
+}
+
+// ── EXCEL SOCIODEMOGRÁFICO ────────────────────────────────────────
+function climaDescargarExcel() {
+  if (!_climaDatos.length) { toast('No hay datos para exportar'); return; }
+  if (typeof XLSX === 'undefined') { toast('XLSX no cargado'); return; }
+  var wb = XLSX.utils.book_new();
+  var CAMPOS_SOCIO = ['empresa','fecha','nombres','tipo_id','num_doc','genero',
+    'estado_civil','libreta_militar','telefono','correo','fecha_nacimiento',
+    'lugar_nac_municipio','lugar_nac_dpto','municipio_residencia','dpto_residencia',
+    'direccion','nivel_educativo','area_estudio','institucion_educativa',
+    'fecha_graduacion','tipo_experiencia','nombre_empresa','cargo','fecha_inicio_laboral'];
+  var rows1 = [CAMPOS_SOCIO.map(function(c){ return c.toUpperCase(); })];
+  _climaDatos.forEach(function(r){ rows1.push(CAMPOS_SOCIO.map(function(c){ return r[c]||''; })); });
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(rows1), 'Sociodemográfico');
+
+  var CAMPOS_DIM = ['empresa'].concat(CLIMA_DIMS.map(function(d){ return 'dim_'+d.id; }));
+  var rows2 = [CAMPOS_DIM]; 
+  _climaDatos.forEach(function(r){ rows2.push(CAMPOS_DIM.map(function(c){ return r[c]||''; })); });
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(rows2), 'Por dimensión');
+
+  XLSX.writeFile(wb, 'clima_'+(_climaEmp||'empresa').replace(/[^a-z0-9]/gi,'_')+'_'+new Date().toISOString().split('T')[0]+'.xlsx');
+  toast('Excel exportado ✅');
+}
+
+// ── PDF ───────────────────────────────────────────────────────────
+function climaGenerarPDF() {
+  if (!_climaDatos.length) { toast('No hay datos'); return; }
+  if (typeof window.jspdf === 'undefined') { window.open(document.getElementById('clima-link-input').value||'#','_blank'); return; }
+  var jsPDF = window.jspdf.jsPDF;
+  var doc = new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  var VERDE=[9,74,75], W=210, PAD=18;
+  doc.setFillColor(...VERDE); doc.rect(0,0,W,38,'F');
+  doc.setTextColor(168,201,78); doc.setFontSize(17); doc.setFont('helvetica','bold');
+  doc.text('Clima Organizacional', PAD, 17);
+  doc.setTextColor(255,255,255); doc.setFontSize(11); doc.setFont('helvetica','normal');
+  doc.text('Agencia de Empleo y Emprendimiento · Comfenalco Antioquia', PAD, 26);
+  doc.text('Empresa: '+_climaEmp+'  ·  '+new Date().toLocaleDateString('es-CO'), PAD, 34);
+  var y=46;
+  var global = climaCalcGlobal(_climaDatos);
+  var niv = climaGetNivel(global);
+  doc.setTextColor(...VERDE); doc.setFontSize(13); doc.setFont('helvetica','bold');
+  doc.text('Resumen Ejecutivo', PAD, y); y+=7;
+  doc.setTextColor(60,60,60); doc.setFontSize(10); doc.setFont('helvetica','normal');
+  ['Encuestas recibidas: '+_climaDatos.length,
+   'Puntaje global: '+global+'%',
+   'Nivel: '+niv.label,
+   'Fecha: '+new Date().toLocaleDateString('es-CO')
+  ].forEach(function(t){ doc.text(t,PAD,y); y+=6; });
+  y+=4;
+  if (typeof doc.autoTable === 'function') {
+    var rows = CLIMA_DIMS.map(function(dim){
+      var pct=climaCalcDim(_climaDatos,dim);
+      return [dim.label, pct+'%', climaGetNivel(pct).label];
+    });
+    doc.autoTable({startY:y,head:[['Dimensión','%','Nivel']],body:rows,
+      styles:{fontSize:10},headStyles:{fillColor:VERDE,textColor:255},margin:{left:PAD,right:PAD}});
+  }
+  doc.save('clima_'+(_climaEmp||'empresa').replace(/[^a-z0-9]/gi,'_')+'.pdf');
+  toast('PDF generado ✅');
+}
+
+
+// ═══════════════════════════════════════════════════════════════════
 // MÓDULO DIAGNÓSTICOS EMPRESARIALES
 // Integra admin.html + diagnostico_empresarial.html en interno.html
 // Supabase: https://mhiwvjermmmicuxwdghn.supabase.co
@@ -2511,6 +2834,8 @@ var diagChartRadar = null;
 
 // ── INIT ─────────────────────────────────────────────────────────
 function initDiagnosticos() {
+  // Asegurar que supabase-js esté disponible
+  if (typeof supabase === 'undefined') { console.warn('supabase-js no cargado'); return; }
   // Crear cliente supabase-js (más robusto que fetch directo para CORS)
   if (!window._diagSupa) {
     window._diagSupa = supabase.createClient(
@@ -2535,11 +2860,14 @@ async function diagRecargarEmpresas() {
 
 // ── TABS ─────────────────────────────────────────────────────────
 function diagTab(panel, btn) {
-  document.getElementById('diag-panel-admin').style.display = panel === 'admin' ? 'block' : 'none';
-  document.getElementById('diag-panel-form').style.display  = panel === 'form'  ? 'block' : 'none';
+  var panels = ['diagnostico','clima'];
+  panels.forEach(function(p){
+    var el = document.getElementById('diag-panel-'+p);
+    if(el) el.style.display = panel===p ? 'block' : 'none';
+  });
   document.querySelectorAll('.diag-tab').forEach(function(b){ b.classList.remove('active'); });
   if (btn) btn.classList.add('active');
-  if (panel === 'form') diagMostrarIframe();
+  if (panel === 'clima' && !_climaSupa) initClima();
 }
 
 // ── CARGAR LISTA DE EMPRESAS ─────────────────────────────────────
@@ -2573,7 +2901,16 @@ async function diagCargarListaEmpresas() {
       await diagCargarDiagnosticos(empACargar);
     }
   } catch(e) {
-    console.warn('diagCargarListaEmpresas error:', e);
+    var noData = document.getElementById('diag-no-data');
+    if (noData) {
+      noData.style.display = 'block';
+      noData.innerHTML = '⚠️ No se pudo conectar a Supabase: <strong>' + e.message + '</strong><br>' +
+        '<small style="color:#856404">Posibles causas: (1) El proyecto Supabase está pausado — ve a supabase.com → tu proyecto → Restore. ' +
+        '(2) La tabla diagnosticos_empresariales no existe — ejecuta el SQL en el Editor de Supabase. ' +
+        '(3) Sin conexión a internet.</small><br>' +
+        '<button type="button" class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="initDiagnosticos()">🔄 Reintentar</button>';
+    }
+    console.warn('diagCargarListaEmpresas error:', e.message, e);
   }
 }
 
