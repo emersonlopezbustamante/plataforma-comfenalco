@@ -4672,7 +4672,7 @@ function diagGenerarPDF() {
   doc.setTextColor(...VERDE);
   doc.setFont("helvetica","bold");
   doc.setFontSize(13);
-  doc.text("Empresa: " + empresaActual, MARGIN+8, y+9);
+  doc.text("Empresa: " + diagEmpresaActual, MARGIN+8, y+9);
   doc.setFont("helvetica","normal");
   doc.setFontSize(10);
   doc.setTextColor(...GRIS);
@@ -5013,7 +5013,7 @@ function diagGenerarPDF() {
     doc.text(`Página ${i} de ${totalPags}`, W-MARGIN, 292, {align:"right"});
   }
 
-  doc.save(`ClimOrg_${empresaActual.replace(/\s/g,"_")}_${new Date().toISOString().slice(0,10)}.pdf`);
+  doc.save(`ClimOrg_${diagEmpresaActual.replace(/\s/g,"_")}_${new Date().toISOString().slice(0,10)}.pdf`);
 }
 
 
