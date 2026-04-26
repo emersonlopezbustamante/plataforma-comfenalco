@@ -1008,13 +1008,30 @@
           <p class="psub">Diagnóstico Empresarial · Clima Organizacional</p>
         </div>
       </div>
-      <div style="width:100%;height:85vh">
-        <iframe id="iframe-admin"
-          src=""
-          style="width:100%;height:100%;border:none;border-radius:12px"
-          allow="clipboard-write">
-        </iframe>
+
+      <div class="diag-tabs">
+        <button type="button" class="diag-tab active"
+          onclick="diagModuloTab('empresarial',this);event.stopPropagation()">
+          📋 Diagnóstico Empresarial
+        </button>
+        <button type="button" class="diag-tab"
+          onclick="diagModuloTab('clima',this);event.stopPropagation()">
+          🌡️ Clima Organizacional
+        </button>
       </div>
+
+      <div id="panel-empresarial" style="width:100%;height:85vh">
+        <iframe id="iframe-diagnostico" src=""
+          style="width:100%;height:100%;border:none;border-radius:12px"
+          allow="clipboard-write"></iframe>
+      </div>
+
+      <div id="panel-clima" style="display:none;width:100%;height:85vh">
+        <iframe id="iframe-clima" src=""
+          style="width:100%;height:100%;border:none;border-radius:12px"
+          allow="clipboard-write"></iframe>
+      </div>
+
     </div><!-- /pg-diagnosticos -->
 
     <!-- REPORTES -->
@@ -1757,13 +1774,27 @@ function nav(p){
   if(p==='capacitaciones') initCapacitaciones();
 }
 
+
+function diagModuloTab(panel, btn) {
+  document.getElementById('panel-empresarial').style.display = panel==='empresarial' ? 'block' : 'none';
+  document.getElementById('panel-clima').style.display       = panel==='clima'       ? 'block' : 'none';
+  document.querySelectorAll('.diag-tab').forEach(function(b){ b.classList.remove('active'); });
+  if (btn) btn.classList.add('active');
+}
+
 function initDiagnosticos() {
-  var ifr = document.getElementById('iframe-admin');
-  if (ifr && !ifr.getAttribute('data-loaded')) {
-    var base = window.location.href.replace(/\/[^\/]*$/, '');
-    ifr.src = base + '/admin.html?embedded=1';
-    ifr.setAttribute('data-loaded', '1');
+  var base = window.location.href.replace(/\/[^\/]*$/, '');
+  var ifrD = document.getElementById('iframe-diagnostico');
+  var ifrC = document.getElementById('iframe-clima');
+  if (ifrD && !ifrD.getAttribute('data-loaded')) {
+    ifrD.src = base + '/admin.html?embedded=1';
+    ifrD.setAttribute('data-loaded', '1');
   }
+  if (ifrC && !ifrC.getAttribute('data-loaded')) {
+    ifrC.src = base + '/admin_clima.html?embedded=1';
+    ifrC.setAttribute('data-loaded', '1');
+  }
+  diagModuloTab('empresarial', document.querySelector('.diag-tab'));
 }
 
 
