@@ -413,6 +413,33 @@ function login() {
     document.getElementById("loginWrap").style.display = "none";
     document.getElementById("mainWrap").style.display = "block";
     cargarEmpresas();
+    // Leer parámetros URL para auto-seleccionar tab y empresa
+    setTimeout(function() {
+      var params  = new URLSearchParams(window.location.search);
+      var tabParam = params.get('tab');
+      var empParam = params.get('empresa');
+      if (tabParam === 'diagnostico') {
+        var btn = document.getElementById('tab-diag-btn');
+        if (btn) switchModulo('diagnostico', btn);
+        if (empParam) {
+          var inp = document.getElementById('diagEmpresaInput');
+          if (inp) {
+            inp.value = decodeURIComponent(empParam);
+            diagCargarResultados();
+          }
+        }
+      } else if (tabParam === 'clima') {
+        var btn = document.getElementById('tab-clima-btn');
+        if (btn) switchModulo('clima', btn);
+        if (empParam) {
+          var sel = document.getElementById('selEmpresa');
+          if (sel) {
+            sel.value = decodeURIComponent(empParam);
+            cargarDatos();
+          }
+        }
+      }
+    }, 800);
   } else {
     document.getElementById("errLogin").style.display = "block";
   }
