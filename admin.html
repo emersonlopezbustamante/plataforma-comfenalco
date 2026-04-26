@@ -440,26 +440,6 @@ function login() {
     document.getElementById("loginWrap").style.display = "none";
     document.getElementById("mainWrap").style.display = "block";
     cargarEmpresas();
-    setTimeout(function() {
-      var params = new URLSearchParams(window.location.search);
-      var tabP   = params.get('tab');
-      var empP   = params.get('empresa');
-      if (tabP === 'clima') {
-        var btn = document.getElementById('tab-clima-btn');
-        if (btn) btn.click();
-        if (empP) setTimeout(function(){
-          var sel = document.getElementById('selEmpresa');
-          if (sel) { sel.value = decodeURIComponent(empP); cargarDatos(); }
-        }, 800);
-      } else if (tabP === 'diagnostico') {
-        var btn = document.getElementById('tab-diag-btn');
-        if (btn) btn.click();
-        if (empP) setTimeout(function(){
-          var inp = document.getElementById('diagEmpresaInput');
-          if (inp) { inp.value = decodeURIComponent(empP); diagCargarResultados(); }
-        }, 800);
-      }
-    }, 400);
   } else {
     console.log("Login fallido. Esperado:", ADMIN_USER, "/", ADMIN_PASS);
     const err = document.getElementById("errLogin");
@@ -1998,45 +1978,23 @@ function descargarExcelDiag() {
 
 
 
-// ── AUTO-LOGIN EN MODO EMBEBIDO ───────────────────────────────
+// ── MODO EMBEBIDO (para iframe en interno.html) ─────────────
 (function() {
-  var params  = new URLSearchParams(window.location.search);
+  var params   = new URLSearchParams(window.location.search);
   var embedded = params.get('embedded');
   var tabP     = params.get('tab');
-  var empP     = params.get('empresa');
 
   if (embedded === '1') {
-    // Ocultar el header de login para modo iframe
-    var style = document.createElement('style');
-    style.textContent = [
-      '#loginWrap { display:none !important; }',
-      '#mainWrap  { display:block !important; }',
-      'body { background: transparent; }',
-      '.header { position:sticky; top:0; z-index:100; }',
-    ].join('\n');
-    document.head.appendChild(style);
-
-    // Auto-inicializar
+    var st = document.createElement('style');
+    st.textContent = '#loginWrap{display:none!important}#mainWrap{display:block!important}body{background:transparent}';
+    document.head.appendChild(st);
     document.getElementById('mainWrap').style.display = 'block';
-
-    // Esperar a que cargue y cambiar tab + empresa
     setTimeout(function() {
       cargarEmpresas();
       if (tabP === 'clima') {
-        var btn = document.getElementById('tab-clima-btn');
-        if (btn) btn.click();
-        if (empP) setTimeout(function(){
-          var sel = document.getElementById('selEmpresa');
-          if (sel) { sel.value = decodeURIComponent(empP); cargarDatos(); }
-        }, 800);
+        cambiarTab('clima');
       } else {
-        // Diagnóstico por defecto
-        var btn = document.getElementById('tab-diag-btn');
-        if (btn) btn.click();
-        if (empP) setTimeout(function(){
-          var inp = document.getElementById('diagEmpresaInput');
-          if (inp) { inp.value = decodeURIComponent(empP); diagCargarResultados(); }
-        }, 800);
+        cambiarTab('diag');
       }
     }, 300);
   }
