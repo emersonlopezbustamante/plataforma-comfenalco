@@ -5004,31 +5004,9 @@ document.addEventListener('keydown', function(e){
   }
 }, true);
 
-function climaRenderRecsInner(){}
-function climaGenerarPDF(){
-  if (!_climaDatos || !_climaDatos.length) { toast('Carga primero los datos de la empresa'); return; }
-  if (window.__climaPDF) {
-    window.__climaPDF();
-  } else {
-    toast('⏳ Preparando PDF...');
-    var intentos = 0;
-    var espera = setInterval(function(){
-      intentos++;
-      if (window.__climaPDF) {
-        clearInterval(espera);
-        window.__climaPDF();
-      } else if (intentos >= 20) {
-        clearInterval(espera);
-        toast('Error: no se pudo cargar el generador de PDF. Recarga la página.');
-      }
-    }, 500);
-  }
-}
-function diagGenerarPDF(){
-  if (!diagDatosActuales || !diagDatosActuales.length) { toast('Carga primero los datos de la empresa'); return; }
-  if (window.__diagPDF) { window.__diagPDF(); }
-  else { toast('⏳ PDF preparando, intenta en 2 segundos'); }
-}</script>
+// climaRenderRecsInner definido en script 3
+// climaGenerarPDF definido en script 3
+// diagGenerarPDF definido en script 4</script>
 
 <script>
 function climaRenderRecsInner(promedios, globalPct) {
@@ -5646,7 +5624,6 @@ function climaGenerarPDF() {
 
   doc.save(`ClimOrg_${_climaEmp.replace(/\s/g,"_")}_${new Date().toISOString().slice(0,10)}.pdf`);
 }
-window.__climaPDF = climaGenerarPDF;
 </script>
 
 <script>
@@ -5791,5 +5768,4 @@ function diagGenerarPDF() {
   toast('✅ PDF generado');
 }
 
-window.__diagPDF = diagGenerarPDF;
 }
