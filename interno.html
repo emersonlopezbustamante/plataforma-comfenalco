@@ -1757,6 +1757,16 @@ function nav(p){
   if(p==='capacitaciones') initCapacitaciones();
 }
 
+function initDiagnosticos() {
+  var ifr = document.getElementById('iframe-admin');
+  if (ifr && !ifr.getAttribute('data-loaded')) {
+    var base = window.location.href.replace(/\/[^\/]*$/, '');
+    ifr.src = base + '/admin.html?embedded=1';
+    ifr.setAttribute('data-loaded', '1');
+  }
+}
+
+
 function iniciarCargue(){ /* módulo cargue listo */ }
 
 // ═══════════════════════════════════════════════════════
@@ -3068,14 +3078,7 @@ function candExportarExcel() {
 
 
 // ── MÓDULO DIAGNÓSTICOS — iframe del admin ──────────────────
-function initDiagnosticos() {
-  var ifr = document.getElementById('iframe-admin');
-  if (ifr && !ifr.getAttribute('data-loaded')) {
-    var base = window.location.href.replace(/\/[^\/]*$/, '');
-    ifr.src = base + '/admin.html?embedded=1';
-    ifr.setAttribute('data-loaded', '1');
-  }
-}
+
 
 function switchTab(tab) {
   document.getElementById('tab-pane-candidatos').style.display = tab === 'candidatos' ? 'block' : 'none';
