@@ -1987,7 +1987,7 @@ function descargarExcelDiag() {
 
   if (embedded === '1') {
     var st = document.createElement('style');
-    st.textContent = '#loginWrap{display:none!important}#mainWrap{display:block!important}body{background:transparent}';
+    st.textContent = '#loginWrap{display:none!important}#mainWrap{display:block!important}body{background:transparent}#tabClima,#tabDiag{display:none!important}#secDiag{display:block!important}#secClima{display:none!important}';
     document.head.appendChild(st);
     document.getElementById('mainWrap').style.display = 'block';
     // Esperar a que el DOM esté completo
