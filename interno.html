@@ -5005,7 +5005,11 @@ document.addEventListener('keydown', function(e){
 }, true);
 
 function climaRenderRecsInner(){} function climaGenerarPDF(){ window.__climaPDF && window.__climaPDF(); }
-function diagGenerarPDF(){ window.__diagPDF && window.__diagPDF(); }</script>
+function diagGenerarPDF(){
+  if (!diagDatosActuales || !diagDatosActuales.length) { toast('No hay datos para generar el PDF'); return; }
+  if (window.__diagPDF) { window.__diagPDF(); }
+  else { toast('⏳ PDF cargando, espera 2 segundos e intenta de nuevo'); }
+}</script>
 
 <script>
 function climaRenderRecsInner(promedios, globalPct) {
@@ -5661,6 +5665,7 @@ function diagRenderRecsInner(promedios, globalPct) {
 }
 
 function diagGenerarPDF() {
+  if (!diagDatosActuales || !diagDatosActuales.length) { toast('No hay datos de diagnóstico para generar el PDF'); return; }
   if (!window.jspdf || !window.jspdf.jsPDF) { toast("⏳ jsPDF cargando, intenta en 2 segundos"); return; }
   const { jsPDF } = window.jspdf;
 
