@@ -10,8 +10,8 @@
 <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.7.0/dist/jspdf.plugin.autotable.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const SUPABASE_URL = "https://mhiwvjermmmicuxwdghn.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1oaXd2amVybW1taWN1eHdkZ2huIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYwMTQ3MzUsImV4cCI6MjA5MTU5MDczNX0.nIrq4t-GQPMbpsS8KSaPI5J6NDNLmuQnk5van8dlg78";
+const SUPABASE_URL = "https://dgecpttrvfbsuhsorxtm.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_1DWQpwxDAehdRRX994eNWA_IjBd3Sas";
 </script>
 <style>
   :root {
@@ -249,7 +249,8 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 
     <!-- TABS -->
     <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
-      <button id="tabDiag" style="padding:10px 22px;border:none;border-radius:30px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;background:var(--verde);color:white;">🏭 Diagnósticos Empresariales</button>
+      <button id="tabClima" style="padding:10px 22px;border:none;border-radius:30px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;background:var(--verde);color:white;" onclick="cambiarTab('clima')">🌡️ Clima Organizacional</button>
+      <button id="tabDiag" style="padding:10px 22px;border:none;border-radius:30px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;background:#e0e0e0;color:#666;" onclick="cambiarTab('diag')">🏭 Diagnóstico Empresarial</button>
     </div>
 
     <!-- ══ TAB CLIMA ══ -->
@@ -1989,14 +1990,22 @@ function descargarExcelDiag() {
     st.textContent = '#loginWrap{display:none!important}#mainWrap{display:block!important}body{background:transparent}';
     document.head.appendChild(st);
     document.getElementById('mainWrap').style.display = 'block';
-    setTimeout(function() {
+    // Esperar a que el DOM esté completo
+    function initEmbedded() {
+      var secClima = document.getElementById('secClima');
+      var secDiag  = document.getElementById('secDiag');
+      if (!secClima && !secDiag) {
+        setTimeout(initEmbedded, 200);
+        return;
+      }
       cargarEmpresas();
       if (tabP === 'clima') {
-        cambiarTab('clima');
+        try { cambiarTab('clima'); } catch(e) { console.warn('cambiarTab clima:', e); }
       } else {
-        cambiarTab('diag');
+        try { cambiarTab('diag'); } catch(e) { console.warn('cambiarTab diag:', e); }
       }
-    }, 300);
+    }
+    setTimeout(initEmbedded, 500);
   }
 })();
 </script>
