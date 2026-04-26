@@ -439,7 +439,7 @@
     <div class="nitem" onclick="nav('capacitaciones')"><span class="nico">🎓</span> Capacitaciones</div>
     <div class="nitem" onclick="nav('cargue')"><span class="nico">📤</span> Cargue masivo</div>
     <div class="nitem" onclick="window.location.href='auditoria.html'"><span class="nico">🔍</span> Auditoría interna</div>
-    <div class="nitem" onclick="window.location.href='eventos.html'"><span class="nico">🗓️</span> Eventos y jornadas</div>
+    <div class="nitem" onclick="nav('eventos')"><span class="nico">🗓️</span> Eventos y jornadas</div>
     <div class="nitem" onclick="window.location.href='laboratorio.html'"><span class="nico">🔬</span> Laboratorios de empleo</div>
     <div class="slabel">Herramientas</div>
     <div class="nitem" onclick="nav('pruebas')"><span class="nico">🧪</span> Pruebas</div>
@@ -1035,6 +1035,21 @@
     </div><!-- /pg-diagnosticos -->
 
     <!-- REPORTES -->
+    <!-- ══ EVENTOS ═══════════════════════════════════════════════ -->
+    <div id="pg-eventos" class="hidden" onclick="event.stopPropagation()">
+      <div class="ph">
+        <div>
+          <div class="ptitle">🗓️ Eventos y Jornadas</div>
+          <p class="psub">Generador de eCards para jornadas de empleo</p>
+        </div>
+      </div>
+      <div style="width:100%;height:85vh">
+        <iframe id="iframe-eventos" src=""
+          style="width:100%;height:100%;border:none;border-radius:12px"
+          allow="clipboard-write"></iframe>
+      </div>
+    </div>
+
     <div id="pg-reportes" class="hidden" onclick="event.stopPropagation()">
       <div class="ph">
         <div>
@@ -1771,6 +1786,7 @@ function nav(p){
   if(p==='cargue')     iniciarCargue();
   if(p==='reportes')    renderReportes();
   if(p==='diagnosticos') initDiagnosticos();
+  if(p==='eventos') initEventos();
   if(p==='capacitaciones') initCapacitaciones();
 }
 
@@ -1780,6 +1796,15 @@ function diagModuloTab(panel, btn) {
   document.getElementById('panel-clima').style.display       = panel==='clima'       ? 'block' : 'none';
   document.querySelectorAll('.diag-tab').forEach(function(b){ b.classList.remove('active'); });
   if (btn) btn.classList.add('active');
+}
+
+function initEventos() {
+  var ifr = document.getElementById('iframe-eventos');
+  if (ifr && !ifr.getAttribute('data-loaded')) {
+    var base = window.location.href.replace(/\/[^\/]*$/, '');
+    ifr.src = base + '/generador_ecards.html';
+    ifr.setAttribute('data-loaded', '1');
+  }
 }
 
 function initDiagnosticos() {
