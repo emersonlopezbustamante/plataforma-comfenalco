@@ -1057,7 +1057,7 @@
                 <div style="font-family:'Nunito';font-size:15px;font-weight:800;color:var(--verde)">🏭 Diagnósticos Registrados</div>
                 <div style="display:flex;gap:8px">
                   <button type="button" class="btn-dl-excel" onclick="diagDescargarExcel();event.stopPropagation()">⬇ Excel</button>
-                  <button type="button" class="btn-dl-pdf" onclick="diagGenerarPDF();event.stopPropagation()">⬇ PDF</button>
+                  <button type="button" class="btn-dl-pdf" onclick="diagAbrirAdmin();event.stopPropagation()">⬇ PDF informe</button>
                 </div>
               </div>
               <div id="diag-listado" style="overflow-x:auto"></div>
@@ -1130,7 +1130,7 @@
                 <div style="font-family:'Nunito';font-size:15px;font-weight:800;color:var(--verde)">🌡️ Resultados Clima</div>
                 <div style="display:flex;gap:8px">
                   <button type="button" class="btn-dl-excel" onclick="climaDescargarExcel();event.stopPropagation()">⬇ Excel sociodemográfico</button>
-                  <button type="button" class="btn-dl-pdf" onclick="climaGenerarPDF();event.stopPropagation()">⬇ PDF</button>
+                  <button type="button" class="btn-dl-pdf" onclick="climaAbrirAdmin();event.stopPropagation()">⬇ PDF informe</button>
                 </div>
               </div>
               <div class="diag-dona-radar-grid" style="margin-bottom:12px">
@@ -6063,18 +6063,15 @@ document.addEventListener('keydown', function(e){
   }
 }, true);
 
-// ── ABRIR ADMIN PARA PDF PROFESIONAL ─────────────────────────
+
+// ── PDF: abrir admin con empresa preseleccionada ─────────────
 function diagAbrirAdmin() {
   var emp  = diagEmpresaActual || '';
   var base = window.location.href.replace(/\/[^\/]*$/, '');
-  var url  = base + '/admin.html?tab=diagnostico' + (emp ? '&empresa=' + encodeURIComponent(emp) : '');
-  window.open(url, '_blank');
+  window.open(base + '/admin.html?tab=diagnostico' + (emp ? '&empresa=' + encodeURIComponent(emp) : ''), '_blank');
 }
-
 function climaAbrirAdmin() {
   var emp  = _climaEmp || '';
   var base = window.location.href.replace(/\/[^\/]*$/, '');
-  var url  = base + '/admin.html?tab=clima' + (emp ? '&empresa=' + encodeURIComponent(emp) : '');
-  window.open(url, '_blank');
-}
-}
+  window.open(base + '/admin.html?tab=clima' + (emp ? '&empresa=' + encodeURIComponent(emp) : ''), '_blank');
+}}
