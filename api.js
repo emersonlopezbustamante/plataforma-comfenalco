@@ -123,7 +123,7 @@ const API = (function() {
   // ── STATS (via múltiples SELECTs) ─────────────────────────────
   async function getStats() {
     const [cands, emps, vacs, posts, diags, cursosList, parts] = await Promise.all([
-      supa('GET', 'candidatos',    null, { select: 'id', activo: 'eq.true',  limit: 1, 'count': 'exact' }),
+      supa('GET', 'candidatos',    null, { select: 'id', activo: 'eq.true',  limit: 1 }),
       supa('GET', 'empresas',      null, { select: 'id', activo: 'eq.true',  limit: 1 }),
       supa('GET', 'vacantes',      null, { select: 'id,sector,municipio', estado: 'eq.Activa', limit: 500 }),
       supa('GET', 'postulaciones', null, { select: 'estado', limit: 1000 }),
