@@ -401,7 +401,7 @@ async function cargarEmpresas() {
   });
   sel.onchange = () => {
     const emp = sel.value;
-    const base = window.location.href.replace("admin.html","").replace(/\/$/, "");
+    const base = window.location.href.replace(/\/[^\/]*$/, "");
     document.getElementById("linkEncuesta").value = emp
       ? `${base}/encuesta.html?empresa=${encodeURIComponent(emp)}`
       : "";
