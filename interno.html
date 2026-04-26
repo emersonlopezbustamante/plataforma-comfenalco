@@ -1,4 +1,36 @@
-<!DOCTYPE html>
+    <!-- ══ EVENTOS ═══════════════════════════════════════════════ -->
+    <div id="pg-eventos" class="hidden" onclick="event.stopPropagation()">
+      <div class="ph">
+        <div>
+          <div class="ptitle">🗓️ Eventos y Jornadas</div>
+          <p class="psub">Gestión de eventos · Generador de eCards</p>
+        </div>
+      </div>
+
+      <div class="diag-tabs">
+        <button type="button" class="diag-tab active"
+          onclick="eventosTab('gestion',this);event.stopPropagation()">
+          🗓️ Gestión de Eventos
+        </button>
+        <button type="button" class="diag-tab"
+          onclick="eventosTab('ecard',this);event.stopPropagation()">
+          🎨 eCard Jornadas
+        </button>
+      </div>
+
+      <div id="panel-eventos-gestion" style="width:100%;height:85vh">
+        <iframe id="iframe-eventos-gestion" src=""
+          style="width:100%;height:100%;border:none;border-radius:12px"
+          allow="clipboard-write"></iframe>
+      </div>
+
+      <div id="panel-eventos-ecard" style="display:none;width:100%;height:85vh">
+        <iframe id="iframe-eventos-ecard" src=""
+          style="width:100%;height:100%;border:none;border-radius:12px"
+          allow="clipboard-write"></iframe>
+      </div>
+
+    </div><!-- /pg-eventos --><!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8"/>
@@ -1039,8 +1071,8 @@
     <div id="pg-eventos" class="hidden" onclick="event.stopPropagation()">
       <div class="ph">
         <div>
-          <div class="ptitle">🗓️ Eventos y Jornadas</div>
-          <p class="psub">Generador de eCards para jornadas de empleo</p>
+          <div class="ptitle">🗓️ eCard Jornadas</div>
+          <p class="psub">Generador de eCards para jornadas de empleo y emprendimiento</p>
         </div>
       </div>
       <div style="width:100%;height:85vh">
@@ -1798,12 +1830,24 @@ function diagModuloTab(panel, btn) {
   if (btn) btn.classList.add('active');
 }
 
+function eventosTab(panel, btn) {
+  document.getElementById('panel-eventos-gestion').style.display = panel==='gestion' ? 'block' : 'none';
+  document.getElementById('panel-eventos-ecard').style.display   = panel==='ecard'   ? 'block' : 'none';
+  document.querySelectorAll('.diag-tab').forEach(function(b){ b.classList.remove('active'); });
+  if (btn) btn.classList.add('active');
+}
+
 function initEventos() {
-  var ifr = document.getElementById('iframe-eventos');
-  if (ifr && !ifr.getAttribute('data-loaded')) {
-    var base = window.location.href.replace(/\/[^\/]*$/, '');
-    ifr.src = base + '/generador_ecards.html';
-    ifr.setAttribute('data-loaded', '1');
+  var base = window.location.href.replace(/\/[^\/]*$/, '');
+  var ifr1 = document.getElementById('iframe-eventos-gestion');
+  var ifr2 = document.getElementById('iframe-eventos-ecard');
+  if (ifr1 && !ifr1.getAttribute('data-loaded')) {
+    ifr1.src = base + '/eventos.html';
+    ifr1.setAttribute('data-loaded', '1');
+  }
+  if (ifr2 && !ifr2.getAttribute('data-loaded')) {
+    ifr2.src = base + '/generador_ecards.html';
+    ifr2.setAttribute('data-loaded', '1');
   }
 }
 
