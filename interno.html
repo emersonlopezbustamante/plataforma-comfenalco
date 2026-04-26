@@ -5034,7 +5034,7 @@ function diagGenerarPDF(){
     var _diagEspera = setInterval(function(){
       _diagIntentos++;
       if (window.__diagPDF) { clearInterval(_diagEspera); window.__diagPDF(); }
-      else if (_diagIntentos >= 20) { clearInterval(_diagEspera); toast('Error cargando PDF. Recarga la página.'); }
+      else if (_diagIntentos >= 20) { clearInterval(_diagEspera); toast('Error PDF: ' + (window.__diagPDFError||'desconocido') + '. Abre consola F12.'); }
     }, 500);
   }
 }</script>
@@ -5659,6 +5659,7 @@ window.__climaPDF = climaGenerarPDF;
 </script>
 
 <script>
+try {
 var DIAG_DIMS_PDF = [
   {id:'sst',   label:'Seguridad y Salud (SST)',   campos:['sst_1','sst_2','sst_3','sst_4','sst_5'],             max:25},
   {id:'psico', label:'Psicosocial',               campos:['psico_1','psico_1b','psico_2','psico_3','psico_4','psico_5'], max:30},
@@ -6116,4 +6117,13 @@ function diagGenerarPDF() {
 
   doc.save(`DiagEmp_${diagEmpresaActual.replace(/\s/g,"_")}_${new Date().toISOString().slice(0,10)}.pdf`);
 }
-window.__diagPDF = diagGenerarPDF;}
+try {
+  window.__diagPDF = diagGenerarPDF;
+  console.log('✅ diagGenerarPDF listo');
+} catch(e) {
+  console.error('❌ Error asignando diagGenerarPDF:', e);
+}
+} catch(e) {
+  console.error("❌ Error en script 4 (diagPDF):", e.message, e);
+  window.__diagPDFError = e.message;
+}}
