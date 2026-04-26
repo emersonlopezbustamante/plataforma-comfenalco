@@ -209,6 +209,8 @@
     <div class="nitem" onclick="nav('activos')"><span class="nico">🟢</span> Activos <span class="nbadge" id="nb-activos">0</span></div>
     <div class="nitem" onclick="nav('planificados')"><span class="nico">📅</span> Planificados</div>
     <div class="nitem" onclick="nav('cerrados')"><span class="nico">🔒</span> Cerrados</div>
+    <div class="slabel">Herramientas</div>
+    <div class="nitem" onclick="mostrarEcard()" id="nitem-ecard"><span class="nico">🎨</span> eCard Jornadas</div>
     <div class="slabel">Tipos</div>
     <div class="nitem" onclick="filtrarTipo('Jornada de empleo')"><span class="nico">💼</span> Jornadas de empleo</div>
     <div class="nitem" onclick="filtrarTipo('Perioscópio')"><span class="nico">🔭</span> Perioscópios</div>
@@ -273,6 +275,12 @@
     </div>
 
   </main>
+
+<div id="panel-ecard" style="display:none;width:100%;height:calc(100vh - 60px);padding:0">
+  <iframe id="iframe-ecard" src=""
+    style="width:100%;height:100%;border:none"
+    allow="clipboard-write"></iframe>
+</div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════
@@ -1194,6 +1202,28 @@ document.addEventListener('keydown', function(e){
     }
   }
 }, true);
+
+
+function mostrarEcard() {
+  document.getElementById('main').style.display = 'none';
+  document.getElementById('panel-ecard').style.display = 'block';
+  var ifr = document.getElementById('iframe-ecard');
+  if (!ifr.getAttribute('data-loaded')) {
+    var base = window.location.href.replace(/\/[^\/]*$/, '');
+    ifr.src = base + '/generador_ecards.html';
+    ifr.setAttribute('data-loaded', '1');
+  }
+  document.querySelectorAll('.nitem').forEach(function(n){ n.classList.remove('active'); });
+  document.getElementById('nitem-ecard').classList.add('active');
+}
+
+// Modificar nav() para volver a eventos cuando se hace clic en otro item
+var _navOriginal = nav;
+nav = function(vista) {
+  document.getElementById('panel-ecard').style.display = 'none';
+  document.getElementById('main').style.display = 'block';
+  _navOriginal(vista);
+};
 </script>
 </body>
 </html>
