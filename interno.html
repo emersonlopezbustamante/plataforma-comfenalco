@@ -2121,18 +2121,8 @@ function cambiarEstado(id){
 }
 
 function abrirEcard(id){
-  var v = VACANTES.find(function(x){ return x.id===id; });
-  if(!v) return;
-  var params = new URLSearchParams({
-    codigo:   'VAC-' + String(id).padStart(6,'0'),
-    cargo:    v.cargo,
-    perfil:   v.desc || '',
-    lugar:    v.municipio + ' – Antioquia',
-    salario:  v.sal_min ? '$' + Number(v.sal_min).toLocaleString('es-CO') + (v.sal_max?' – $'+Number(v.sal_max).toLocaleString('es-CO'):'') : 'A convenir',
-    nbc:      v.edu || '',
-    tipo:     v.tipo || 'normal'
-  });
-  window.open('ecard.html?' + params.toString(), '_blank');
+  var base = window.location.href.replace(/\/[^\/]*$/, '');
+  window.open(base + '/generador_ecards_vacantes.html', '_blank');
 }
 
 function reporteHidro(id){
