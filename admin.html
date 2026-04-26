@@ -440,29 +440,25 @@ function login() {
     document.getElementById("loginWrap").style.display = "none";
     document.getElementById("mainWrap").style.display = "block";
     cargarEmpresas();
-    // Auto-seleccionar tab y empresa desde URL params
+    // Auto-abrir tab y empresa desde URL params (cuando viene de interno.html)
     setTimeout(function() {
-      var params  = new URLSearchParams(window.location.search);
-      var tabP    = params.get('tab');
-      var empP    = params.get('empresa');
+      var params = new URLSearchParams(window.location.search);
+      var tabP   = params.get('tab');
+      var empP   = params.get('empresa');
       if (tabP === 'diagnostico') {
         var btn = document.getElementById('tab-diag-btn');
-        if (btn) { btn.click(); }
-        if (empP) {
-          setTimeout(function(){
-            var inp = document.getElementById('diagEmpresaInput');
-            if (inp) { inp.value = decodeURIComponent(empP); diagCargarResultados(); }
-          }, 600);
-        }
+        if (btn) btn.click();
+        if (empP) setTimeout(function(){
+          var inp = document.getElementById('diagEmpresaInput');
+          if (inp) { inp.value = decodeURIComponent(empP); diagCargarResultados(); }
+        }, 600);
       } else if (tabP === 'clima') {
         var btn = document.getElementById('tab-clima-btn');
-        if (btn) { btn.click(); }
-        if (empP) {
-          setTimeout(function(){
-            var sel = document.getElementById('selEmpresa');
-            if (sel) { sel.value = decodeURIComponent(empP); cargarDatos(); }
-          }, 600);
-        }
+        if (btn) btn.click();
+        if (empP) setTimeout(function(){
+          var sel = document.getElementById('selEmpresa');
+          if (sel) { sel.value = decodeURIComponent(empP); cargarDatos(); }
+        }, 600);
       }
     }, 500);
   } else {
