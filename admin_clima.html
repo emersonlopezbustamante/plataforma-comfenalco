@@ -219,7 +219,7 @@ const SUPABASE_ANON_KEY = "sb_publishable_1DWQpwxDAehdRRX994eNWA_IjBd3Sas";
     <!-- SELECTOR -->
     <div class="selector-card">
       <label>🏢 Empresa:</label>
-      <select id="selEmpresa"><option value="">-- Seleccione una empresa --</option></select>
+      <input type="text" id="selEmpresa" list="empresas-list" placeholder="Escriba o seleccione una empresa" style="flex:1;min-width:200px;padding:10px 14px;border:2px solid #d0e8dc;border-radius:10px;font-size:14px;font-family:inherit;outline:none"/><datalist id="empresas-list"></datalist>
       <button class="btn-cargar" onclick="cargarDatos()">Cargar resultados</button>
       <button class="btn-borrar-empresa" onclick="confirmarBorrarEmpresa()" title="Eliminar empresa y todos sus datos">🗑 Eliminar empresa</button>
     </div>
@@ -388,23 +388,19 @@ async function confirmarBorrarEmpresa() {
 }
 
 async function cargarEmpresas() {
-  const { data, error } = await supabaseClient
+  const { data } = await supabaseClient
     .from("respuestas_clima").select("empresa");
-  if (error) { console.error(error); return; }
-  const empresas = [...new Set(data.map(r => r.empresa))].sort();
+  const empresas = [...new Set((data || []).map(r => r.empresa).filter(Boolean))].sort();
+  const dl = document.getElementById("empresas-list");
+  if (dl) dl.innerHTML = empresas.map(e => '<option value="' + e + '">').join('');
   const sel = document.getElementById("selEmpresa");
-  sel.innerHTML = '<option value="">-- Seleccione una empresa --</option>';
-  empresas.forEach(e => {
-    const o = document.createElement("option");
-    o.value = e; o.textContent = e;
-    sel.appendChild(o);
-  });
-  sel.onchange = () => {
-    const emp = sel.value;
-    const base = window.location.href.replace(/\/[^\/]*$/, "");
-    document.getElementById("linkEncuesta").value = emp
-      ? `${base}/encuesta.html?empresa=${encodeURIComponent(emp)}`
-      : "";
+  if (empresas.length > 0 && !sel.value) {
+    sel.value = empresas[0];
+    cargarDatos();
+  }
+  sel.oninput = function() {
+    var v = sel.value.trim();
+    if (v) cargarDatos();
   };
 }
 

@@ -505,20 +505,17 @@ async function cargarEmpresas() {
   const { data } = await supabaseClient
     .from("diagnosticos_empresariales").select("nombre_empresa");
   const empresas = [...new Set((data || []).map(r => r.nombre_empresa).filter(Boolean))].sort();
+  const dl = document.getElementById("empresas-list");
+  if (dl) dl.innerHTML = empresas.map(e => '<option value="' + e + '">').join('');
   const sel = document.getElementById("selEmpresa");
-  sel.innerHTML = '<option value="">-- Seleccione una empresa --</option>';
-  empresas.forEach(e => {
-    const o = document.createElement("option");
-    o.value = e; o.textContent = e;
-    sel.appendChild(o);
-  });
-  sel.onchange = () => {
-    const emp = sel.value;
-    const base = window.location.href.replace(/\/[^/]*$/, '');
-    document.getElementById("linkDiag").value = emp
-      ? `${base}/diagnostico_empresarial.html?empresa=${encodeURIComponent(emp)}`
-      : "";
-    if (emp) cargarDiagnosticos(emp);
+  if (empresas.length > 0 && !sel.value) {
+    sel.value = empresas[0];
+    cargarDatos();
+  }
+  // Auto-cargar al cambiar
+  sel.oninput = function() {
+    var v = sel.value.trim();
+    if (v) cargarDatos();
   };
 }
 
