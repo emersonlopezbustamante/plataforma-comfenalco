@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Redirigiendo...</title>
+<style>
+  body { margin:0; height:100vh; display:flex; align-items:center; justify-content:center; 
+    font-family:'Nunito',sans-serif; background:#f5f7f5; color:#094a4b; }
+  .card { text-align:center; padding:40px; background:white; border-radius:16px;
+    box-shadow:0 4px 20px rgba(9,74,75,.1); }
+  .icon { font-size:48px; margin-bottom:16px; }
+  h2 { margin:0 0 8px; }
+  p { color:#666; margin:0; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="icon">✅</div>
+  <h2>¡Bienvenido!</h2>
+  <p>Redirigiendo...</p>
+</div>
+<script>
+  // Detectar la base del sitio en GitHub Pages
+  var path = window.location.pathname;
+  var parts = path.split('/').filter(Boolean);
+  // El primer segmento es el repo name en GitHub Pages
+  var base = parts.length > 0 ? '/' + parts[0] + '/' : '/';
+  
+  if (path.indexOf('sign-in') > -1 || path.indexOf('sso') > -1 || 
+      path.indexOf('callback') > -1 || path.indexOf('verify') > -1) {
+    window.location.replace(base + 'interno.html');
+  } else {
+    window.location.replace(base + 'index.html');
+  }
+</script>
+</body>
+</html>
