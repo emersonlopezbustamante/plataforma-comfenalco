@@ -556,5 +556,28 @@ async function download(){
 
 render();
 </script>
+
+<script>
+// Auto-llenar desde URL params (cuando viene de una vacante)
+(function(){
+  var p = new URLSearchParams(window.location.search);
+  var campos = {
+    'f-codigo':  p.get('codigo'),
+    'f-nombre':  p.get('nombre'),
+    'f-perfil':  p.get('perfil'),
+    'f-lugar':   p.get('lugar'),
+    'f-salario': p.get('salario'),
+    'f-nbc':     p.get('nbc')
+  };
+  window.addEventListener('DOMContentLoaded', function(){
+    Object.keys(campos).forEach(function(id){
+      if (campos[id]) {
+        var el = document.getElementById(id);
+        if (el) { el.value = campos[id]; el.dispatchEvent(new Event('input')); }
+      }
+    });
+  });
+})();
+</script>
 </body>
 </html>

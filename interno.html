@@ -2121,8 +2121,18 @@ function cambiarEstado(id){
 }
 
 function abrirEcard(id){
+  var v = VACANTES.find(function(x){ return x.id===id; });
+  if(!v) return;
+  var params = new URLSearchParams({
+    codigo:   v.codigo || 'VAC-' + String(id).padStart(6,'0'),
+    nombre:   v.titulo || v.cargo || '',
+    perfil:   v.descripcion || v.desc || '',
+    lugar:    (v.municipio||'') + (v.region?' – '+v.region:''),
+    salario:  v.salario_min ? '$'+Number(v.salario_min).toLocaleString('es-CO')+(v.salario_max?' – $'+Number(v.salario_max).toLocaleString('es-CO'):'') : 'A convenir',
+    nbc:      v.nivel_estudio || v.edu || ''
+  });
   var base = window.location.href.replace(/\/[^\/]*$/, '');
-  window.open(base + '/generador_ecards_vacantes.html', '_blank');
+  window.open(base + '/generador_ecards_vacantes.html?' + params.toString(), '_blank');
 }
 
 function reporteHidro(id){
