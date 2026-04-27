@@ -1694,6 +1694,27 @@
 <div id="toasts"></div>
 
 <script>
+// ── CONTROL DE ACCESO — AGENCIA DE EMPLEO ─────────────────────
+// Dominios permitidos (cualquier correo de este dominio puede entrar)
+var DOMINIOS_PERMITIDOS = ['comfenalco.com', 'comfenalcoantioquia.com'];
+
+// Correos específicos permitidos (para personas sin correo institucional)
+var CORREOS_PERMITIDOS = [
+  // Agrega aquí los correos de los asesores que no tengan @comfenalco.com
+  // 'asesor1@gmail.com',
+  // 'asesor2@hotmail.com',
+];
+
+function verificarAcceso(email) {
+  if (!email) return false;
+  email = email.toLowerCase().trim();
+  // Verificar lista blanca de correos específicos
+  if (CORREOS_PERMITIDOS.some(function(e){ return e.toLowerCase() === email; })) return true;
+  // Verificar dominio
+  var dominio = email.split('@')[1] || '';
+  return DOMINIOS_PERMITIDOS.some(function(d){ return dominio === d; });
+}
+
 // ═══════════════════════════════════════════════════════
 // DATOS
 // ═══════════════════════════════════════════════════════
@@ -2334,6 +2355,24 @@ function renderAuth(user){
     area.innerHTML =
       '<span style="color:rgba(255,255,255,.8);font-size:13px">'+nombre+'</span>'+
       '<button type="button" class="btn btn-sm" style="background:rgba(255,255,255,.15);color:#fff" onclick="window.Clerk.signOut().then(function(){window.location.href=\'index.html\'})">Salir</button>';
+    // Verificar que el correo esté autorizado
+    var email = (user.emailAddresses && user.emailAddresses[0] && user.emailAddresses[0].emailAddress) || '';
+    if (!verificarAcceso(email)) {
+      area.innerHTML = '<span style="color:#ffcdd2;font-size:13px">⛔ No autorizado</span>';
+      document.getElementById('sidebar').style.display = 'none';
+      document.getElementById('pg-acceso').classList.remove('hidden');
+      var accCard = document.querySelector('.acc-card');
+      if (accCard) {
+        accCard.innerHTML =
+          '<div class="acc-icon">⛔</div>' +
+          '<div class="acc-title">Acceso denegado</div>' +
+          '<p class="acc-sub">El correo <strong>' + email + '</strong> no tiene acceso a este panel. ' +
+          'Solo el equipo de la Agencia de Empleo puede ingresar.</p>' +
+          '<button type="button" class="btn btn-primary btn-lg" ' +
+          'onclick="window.Clerk.signOut().then(function(){window.location.href=\'index.html\'})">Volver al inicio</button>';
+      }
+      return;
+    }
     document.getElementById('sidebar').style.display = 'flex';
     // nav('dashboard') SOLO la primera vez — no en cada refresh de token
     if(!_authInicializado){
