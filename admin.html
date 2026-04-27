@@ -242,7 +242,7 @@ const SUPABASE_ANON_KEY = "sb_publishable_1DWQpwxDAehdRRX994eNWA_IjBd3Sas";
     <!-- SELECTOR -->
     <div class="selector-card">
       <label>🏢 Empresa:</label>
-      <select id="selEmpresa"><option value="">-- Seleccione una empresa --</option></select>
+      <input type="text" id="selEmpresa" list="empresas-list" placeholder="Escriba o seleccione empresa" style="flex:1;min-width:200px;padding:10px 14px;border:2px solid #d0e8dc;border-radius:10px;font-size:14px;font-family:inherit;outline:none"/><datalist id="empresas-list"></datalist>
       <button class="btn-cargar" onclick="cargarDiagnosticosManual()" style="display:none"></button>
       <button class="btn-borrar-empresa" onclick="confirmarBorrarEmpresa()" title="Eliminar empresa y todos sus datos">🗑 Eliminar empresa</button>
     </div>
@@ -532,7 +532,7 @@ function copiarLink() {
 // ── CARGAR DATOS ───────────────────────────────────────────
 async function cargarDatos() {
   empresaActual = document.getElementById("selEmpresa").value;
-  if (!empresaActual) { alert("Seleccione una empresa."); return; }
+  if (!empresaActual) return;
   const base = window.location.href.replace(/\/[^/]*$/, '');
   document.getElementById("linkDiag").value = `${base}/diagnostico_empresarial.html?empresa=${encodeURIComponent(empresaActual)}`;
   cargarDiagnosticos(empresaActual);
