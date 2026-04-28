@@ -1996,6 +1996,26 @@ function renderAuth(user){
       return;
     }
     document.getElementById('sidebar').style.display = 'flex';
+    
+    // Obtener JWT de Clerk para autenticar con Supabase
+    try {
+      if (window.Clerk && window.Clerk.session) {
+        window.Clerk.session.getToken({ template: 'supabase' }).then(function(token) {
+          if (token && typeof API !== 'undefined' && API.setAuthToken) {
+            API.setAuthToken(token);
+          }
+          // Refrescar token cada 50 segundos (expira cada 60)
+          setInterval(function() {
+            if (window.Clerk && window.Clerk.session) {
+              window.Clerk.session.getToken({ template: 'supabase' }).then(function(t) {
+                if (t && typeof API !== 'undefined') API.setAuthToken(t);
+              });
+            }
+          }, 50000);
+        });
+      }
+    } catch(e) { console.warn('JWT Clerk:', e.message); }
+
     // nav('dashboard') SOLO la primera vez — no en cada refresh de token
     if(!_authInicializado){
       _authInicializado = true;

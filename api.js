@@ -17,12 +17,25 @@ const SUPA_KEY = "sb_publishable_1DWQpwxDAehdRRX994eNWA_IjBd3Sas";
 
 const API = (function() {
 
+  let _authToken = null;
+
   const HEADERS = {
     'Content-Type':  'application/json',
     'apikey':        SUPA_KEY,
     'Authorization': 'Bearer ' + SUPA_KEY,
     'Prefer':        'return=representation'
   };
+
+  // Establecer token JWT de Clerk para acceso autenticado
+  function setAuthToken(token) {
+    _authToken = token;
+    if (token) {
+      HEADERS['Authorization'] = 'Bearer ' + token;
+      console.log('🔐 API autenticada con JWT de Clerk');
+    } else {
+      HEADERS['Authorization'] = 'Bearer ' + SUPA_KEY;
+    }
+  }
 
   // ── REST helpers ───────────────────────────────────────────────
   async function supa(method, tabla, body, qs) {
@@ -117,7 +130,8 @@ const API = (function() {
         }
       }
     }
-    return { insertados, errores, total: rows.length };
+    return {
+    setAuthToken, insertados, errores, total: rows.length };
   }
 
   // ── STATS (via múltiples SELECTs) ─────────────────────────────
