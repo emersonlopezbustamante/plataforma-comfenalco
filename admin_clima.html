@@ -1158,6 +1158,7 @@ function descargarExcel() {
 
 // ── ENVIAR PDF POR CORREO ─────────────────────────────────────
 function enviarPDFClima() {
+  generarPDF(); // descargar PDF primero
   var emp = empresaActual || document.getElementById("selEmpresa").value || 'la empresa';
   var fecha = new Date().toLocaleDateString('es-CO');
   var asunto = 'Informe de Clima Organizacional - ' + emp + ' - ' + fecha;
@@ -1185,8 +1186,7 @@ function enviarPDFClima() {
     'Comfenalco Antioquia',
     'agenciaempleo@comfenalco.com',
   ].join('\n');
-  window.open('mailto:?subject=' + encodeURIComponent(asunto) + '&body=' + encodeURIComponent(cuerpo));
-  toast('📧 Se abrió tu correo. Recuerda adjuntar el PDF descargado.');
+  setTimeout(function(){ window.open('mailto:?subject=' + encodeURIComponent(asunto) + '&body=' + encodeURIComponent(cuerpo)); toast('📧 PDF descargado — adjúntalo al correo que se acaba de abrir'); }, 1500);
 }
 </script>
 </body>
