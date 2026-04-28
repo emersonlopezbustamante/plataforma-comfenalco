@@ -157,6 +157,7 @@
     @media(max-width:768px){#shell{grid-template-columns:1fr}#sidebar{display:none}#main{padding:16px}.fgrid,.fgrid.three{grid-template-columns:1fr}}
   </style>
   <script src="api.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -374,6 +375,99 @@
 <div id="toasts"></div>
 
 <script>
+// ── SUPABASE ─────────────────────────────────────────────────
+var SUPA_URL = "https://dgecpttrvfbsuhsorxtm.supabase.co";
+var SUPA_KEY = "sb_publishable_1DWQpwxDAehdRRX994eNWA_IjBd3Sas";
+var _supaHV  = null;
+function getSupaHV() {
+  if (!_supaHV) _supaHV = supabase.createClient(SUPA_URL, SUPA_KEY);
+  return _supaHV;
+}
+
+// Guardar HV en Supabase
+async function guardarHVEnBD(hv) {
+  try {
+    var payload = {
+      documento:       hv.doc || '',
+      tipo_doc:        hv.tipo_doc || 'CC',
+      nombres:         (hv.nombre1 || ''),
+      apellidos:       (hv.apell1 || ''),
+      genero:          hv.genero || '',
+      fecha_nacimiento: hv.fnac || null,
+      celular:         hv.celular || '',
+      correo:          hv.correo || '',
+      municipio:       hv.municipio || '',
+      nivel_estudio:   hv.edu || '',
+      area_estudio:    hv.area || '',
+      titulo:          hv.titulo || '',
+      institucion:     hv.institucion || '',
+      fecha_graduacion: hv.anio_grado || '',
+      tipo_experiencia: hv.exp_meses > 0 ? (hv.exp_meses >= 36 ? 'Entre 3 y 5 años' : hv.exp_meses >= 12 ? 'Entre 1 y 3 años' : 'Menos de 1 año') : 'Sin experiencia laboral',
+      cargo:           hv.cargo_exp || '',
+      empresa_exp:     hv.emp_exp || '',
+      condiciones_especiales: hv.condicion || '',
+      direccion:       '',
+      estudiando:      hv.edu_estado === 'En curso' ? 'si' : 'no',
+      perfil_desc:     hv.perfil || '',
+      pretension_sal:  hv.pretension || '',
+      idiomas:         hv.idiomas || '',
+      habilidades:     hv.habilidades || '',
+      competencias:    (hv.competencias || []).join(', '),
+      funciones_exp:   hv.funciones || '',
+      completitud:     hv.completitud || 0,
+      activo:          true,
+      fecha_registro:  new Date().toISOString().split('T')[0]
+    };
+    var client = getSupaHV();
+    var resp = await client.from('candidatos').upsert([payload], { onConflict: 'documento' });
+    if (resp.error) throw resp.error;
+    console.log('✅ HV guardada en BD');
+    return true;
+  } catch(e) {
+    console.error('Error guardando HV:', e.message);
+    return false;
+  }
+}
+
+// Cargar HV desde BD por documento
+async function cargarHVDeBD(doc) {
+  try {
+    var client = getSupaHV();
+    var resp = await client.from('candidatos').select('*').eq('documento', doc).eq('activo', true).limit(1);
+    if (resp.data && resp.data.length > 0) {
+      var r = resp.data[0];
+      return {
+        nombre1: r.nombres, apell1: r.apellidos, doc: r.documento,
+        tipo_doc: r.tipo_doc, celular: r.celular, correo: r.correo,
+        fnac: r.fecha_nacimiento, municipio: r.municipio,
+        genero: r.genero, condicion: r.condiciones_especiales,
+        pretension: r.pretension_sal, area: r.area_estudio,
+        perfil: r.perfil_desc, edu: r.nivel_estudio,
+        edu_estado: r.estudiando === 'si' ? 'En curso' : 'Graduado',
+        institucion: r.institucion, titulo: r.titulo,
+        anio_grado: r.fecha_graduacion,
+        emp_exp: r.empresa_exp, cargo_exp: r.cargo,
+        funciones: r.funciones_exp, idiomas: r.idiomas,
+        habilidades: r.habilidades,
+        competencias: (r.competencias || '').split(', ').filter(Boolean),
+        completitud: r.completitud || 0
+      };
+    }
+    return null;
+  } catch(e) { console.error('Error cargando HV:', e); return null; }
+}
+
+// Eliminar HV (solo modo embebido)
+async function eliminarHVDeBD(doc) {
+  if (!confirm('¿Desactivar la hoja de vida del documento ' + doc + '?')) return;
+  try {
+    var client = getSupaHV();
+    await client.from('candidatos').update({ activo: false }).eq('documento', doc);
+    toast('HV desactivada');
+    if (window._onHVEliminada) window._onHVEliminada();
+  } catch(e) { toast('Error: ' + e.message); }
+}
+
 // ═══════════════════════════════════════════════════
 // DATOS
 // ═══════════════════════════════════════════════════
@@ -730,10 +824,15 @@ function calcCompletitud(h){
   return Math.round((ok/campos.length)*100);
 }
 
-function guardarHVFinal(){
+async function guardarHVFinal(){
   hvActual.completitud=calcCompletitud(hvActual);
-  // En producción: guardar en Neon
-  toast('Hoja de vida guardada exitosamente ('+hvActual.completitud+'% completa)');
+  toast('⏳ Guardando hoja de vida...');
+  var ok = await guardarHVEnBD(hvActual);
+  if (ok) {
+    toast('✅ Hoja de vida guardada exitosamente ('+hvActual.completitud+'% completa)');
+  } else {
+    toast('⚠️ HV guardada localmente. Error al sincronizar con la base de datos.');
+  }
   var cfill=document.getElementById('cfill');
   if(cfill) cfill.style.width=hvActual.completitud+'%';
 }
@@ -1176,6 +1275,23 @@ document.addEventListener('keydown', function(e){
     }
   }
 }, true);
+
+
+// ── MODO EMBEBIDO (iframe desde interno.html) ────────────────
+(function() {
+  var params = new URLSearchParams(window.location.search);
+  if (params.get('embedded') === '1') {
+    window._modoComfenalco = true;
+    // Ocultar topbar
+    var st = document.createElement('style');
+    st.textContent = '#topbar{display:none!important}body{padding-top:0!important}';
+    document.head.appendChild(st);
+    // Ir directo a Mi HV sin esperar Clerk
+    setTimeout(function(){
+      nav('mi-hv');
+    }, 500);
+  }
+})();
 </script>
 </body>
 </html>
