@@ -640,12 +640,34 @@ function renderPasoHV(){
 }
 
 function renderPaso1(){
-  return '<div class="card"><div class="ctitle">🔑 Paso 1 — Cuenta creada</div>'+
-    '<div style="text-align:center;padding:20px">'+
-      '<div style="font-size:48px;margin-bottom:12px">✅</div>'+
-      '<p style="color:var(--texto-g);font-size:14px;margin-bottom:20px">Tu cuenta está activa. Ahora completa tu información personal para crear tu hoja de vida.</p>'+
-      '<button type="button" class="btn btn-primary btn-lg" onclick="pasoActual=2;renderPasoHV()">Continuar →</button>'+
+  return '<div class="card"><div class="ctitle">📄 Mi Hoja de Vida</div>'+
+    '<div style="text-align:center;padding:30px">'+
+      '<div style="font-size:48px;margin-bottom:16px">📋</div>'+
+      '<p style="color:var(--texto-g);font-size:14px;margin-bottom:24px">Crea una nueva hoja de vida o actualiza una existente ingresando tu número de documento.</p>'+
+      '<div style="max-width:400px;margin:0 auto 20px">'+
+        '<input type="text" id="hv-doc-buscar" class="fval" placeholder="Número de documento" style="text-align:center;font-size:16px;margin-bottom:12px"/>'+
+        '<div style="display:flex;gap:10px;justify-content:center">'+
+          '<button type="button" class="btn btn-azul btn-lg" onclick="buscarHVExistente()" style="flex:1">🔍 Buscar mi HV</button>'+
+          '<button type="button" class="btn btn-primary btn-lg" onclick="pasoActual=2;renderPasoHV()" style="flex:1">➕ Crear nueva</button>'+
+        '</div>'+
+        '<div id="hv-buscar-msg" style="margin-top:12px;font-size:13px;color:var(--texto-g)"></div>'+
+      '</div>'+
     '</div></div>';}
+
+async function buscarHVExistente() {
+  var doc = (document.getElementById('hv-doc-buscar')||{}).value.trim();
+  var msg = document.getElementById('hv-buscar-msg');
+  if (!doc) { if(msg) msg.innerHTML='<span style="color:#c62828">Ingresa tu número de documento</span>'; return; }
+  if(msg) msg.innerHTML='<span style="color:var(--verde)">⏳ Buscando...</span>';
+  var datos = await cargarHVDeBD(doc);
+  if (datos) {
+    hvActual = datos;
+    if(msg) msg.innerHTML='<span style="color:#2e7d32">✅ HV encontrada — cargando datos...</span>';
+    setTimeout(function(){ pasoActual=2; renderPasoHV(); }, 800);
+  } else {
+    if(msg) msg.innerHTML='<span style="color:#e65100">No se encontró HV con ese documento. Puedes crear una nueva.</span>';
+  }
+}
 
 function renderPaso2(){
   var h=hvActual;
@@ -820,7 +842,7 @@ function renderPaso6(){
   '</div>';}
 
 function calcCompletitud(h){
-  var campos=[h.nombre1,h.apell1,h.doc,h.celular,h.municipio,h.edu,h.perfil,h.area,h.correo,h.exp_meses>0?'si':null];
+  var campos=[h.nombre1, h.apell1, h.doc, h.celular, h.municipio, h.edu, h.perfil, h.area, h.correo, 'si'];
   var ok=campos.filter(Boolean).length;
   return Math.round((ok/campos.length)*100);
 }
