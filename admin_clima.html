@@ -274,6 +274,7 @@ const SUPABASE_ANON_KEY = "sb_publishable_1DWQpwxDAehdRRX994eNWA_IjBd3Sas";
       </div>
       <div class="pdf-section">
         <button class="btn-pdf" onclick="generarPDF()">⬇ Descargar Informe PDF</button>
+        <button class="btn-pdf" style="background:#2d4a6b;box-shadow:0 6px 20px rgba(45,74,107,0.3);margin-left:12px" onclick="enviarPDFClima()">📧 Enviar por correo</button>
       </div>
 
     </div>
@@ -1153,6 +1154,40 @@ function descargarExcel() {
     setTimeout(function() { cargarEmpresas(); }, 300);
   }
 })();
+
+
+// ── ENVIAR PDF POR CORREO ─────────────────────────────────────
+function enviarPDFClima() {
+  var emp = empresaActual || document.getElementById("selEmpresa").value || 'la empresa';
+  var fecha = new Date().toLocaleDateString('es-CO');
+  var asunto = 'Informe de Clima Organizacional - ' + emp + ' - ' + fecha;
+  var cuerpo = [
+    'Cordial saludo,',
+    '',
+    'Reciba un atento saludo de parte del equipo de la Agencia de Empleo y Emprendimiento de Comfenalco Antioquia.',
+    '',
+    'Nos permitimos hacer entrega del informe de Clima Organizacional correspondiente a ' + emp + ', con fecha de elaboración ' + fecha + '.',
+    '',
+    'El documento adjunto contiene:',
+    '• Análisis general del clima organizacional',
+    '• Resultados detallados por las 7 dimensiones evaluadas',
+    '• Gráficas de distribución y comparativo por dimensión',
+    '• Recomendaciones específicas para cada área evaluada',
+    '',
+    'Le invitamos a revisar los resultados y, en caso de requerir acompañamiento para la implementación de las recomendaciones, no dude en contactarnos. Comfenalco Antioquia cuenta con programas de bienestar, capacitación y desarrollo organizacional que pueden apoyar la mejora del clima laboral en su empresa.',
+    '',
+    'IMPORTANTE: Por favor descargue primero el PDF y adjúntelo a este correo antes de enviarlo.',
+    '',
+    'Quedamos atentos a cualquier inquietud.',
+    '',
+    'Cordialmente,',
+    'Agencia de Empleo y Emprendimiento',
+    'Comfenalco Antioquia',
+    'agenciaempleo@comfenalco.com',
+  ].join('\n');
+  window.open('mailto:?subject=' + encodeURIComponent(asunto) + '&body=' + encodeURIComponent(cuerpo));
+  toast('📧 Se abrió tu correo. Recuerda adjuntar el PDF descargado.');
+}
 </script>
 </body>
 </html>

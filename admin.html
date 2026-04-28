@@ -304,6 +304,7 @@ const SUPABASE_ANON_KEY = "sb_publishable_1DWQpwxDAehdRRX994eNWA_IjBd3Sas";
       </div>
       <div class="pdf-section">
         <button class="btn-pdf" onclick="generarPDF()">⬇ Descargar Informe PDF</button>
+        <button class="btn-pdf" style="background:#2d4a6b;box-shadow:0 6px 20px rgba(45,74,107,0.3);margin-left:12px" onclick="enviarPDFClima()">📧 Enviar por correo</button>
       </div>
 
     </div>
@@ -359,6 +360,7 @@ const SUPABASE_ANON_KEY = "sb_publishable_1DWQpwxDAehdRRX994eNWA_IjBd3Sas";
         <div style="text-align:center;margin-bottom:40px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
           <button class="btn-pdf" style="background:#1d6f42;box-shadow:0 6px 20px rgba(29,111,66,0.3)" onclick="descargarExcelDiag()">⬇ Descargar Excel Diagnósticos</button>
           <button class="btn-pdf" onclick="generarPDFDiag()">⬇ Descargar Informe PDF</button>
+        <button class="btn-pdf" style="background:#2d4a6b;box-shadow:0 6px 20px rgba(45,74,107,0.3);margin-left:12px" onclick="enviarPDFDiag()">📧 Enviar por correo</button>
         </div>
       </div>
     </div><!-- /secDiag -->
@@ -2005,6 +2007,72 @@ function descargarExcelDiag() {
     setTimeout(initEmbedded, 500);
   }
 })();
+
+
+// ── ENVIAR PDF POR CORREO ─────────────────────────────────────
+function enviarPDFClima() {
+  var emp = empresaActual || document.getElementById("selEmpresa").value || 'la empresa';
+  var fecha = new Date().toLocaleDateString('es-CO');
+  var asunto = 'Informe de Clima Organizacional - ' + emp + ' - ' + fecha;
+  var cuerpo = [
+    'Cordial saludo,',
+    '',
+    'Reciba un atento saludo de parte del equipo de la Agencia de Empleo y Emprendimiento de Comfenalco Antioquia.',
+    '',
+    'Nos permitimos hacer entrega del informe de Clima Organizacional correspondiente a ' + emp + ', con fecha de elaboración ' + fecha + '.',
+    '',
+    'El documento adjunto contiene:',
+    '• Análisis general del clima organizacional',
+    '• Resultados detallados por dimensión',
+    '• Gráficas de distribución y comparativo',
+    '• Recomendaciones específicas para cada área evaluada',
+    '',
+    'Le invitamos a revisar los resultados y, en caso de requerir acompañamiento para la implementación de las recomendaciones, no dude en contactarnos. Comfenalco Antioquia cuenta con programas de bienestar, capacitación y desarrollo organizacional que pueden apoyar la mejora del clima laboral en su empresa.',
+    '',
+    'IMPORTANTE: Por favor descargue primero el PDF y adjúntelo a este correo antes de enviarlo.',
+    '',
+    'Quedamos atentos a cualquier inquietud.',
+    '',
+    'Cordialmente,',
+    'Agencia de Empleo y Emprendimiento',
+    'Comfenalco Antioquia',
+    'agenciaempleo@comfenalco.com',
+  ].join('\n');
+  window.open('mailto:?subject=' + encodeURIComponent(asunto) + '&body=' + encodeURIComponent(cuerpo));
+  toast('📧 Se abrió tu correo. Recuerda adjuntar el PDF descargado.');
+}
+
+function enviarPDFDiag() {
+  var emp = empresaActual || document.getElementById("selEmpresa").value || 'la empresa';
+  var fecha = new Date().toLocaleDateString('es-CO');
+  var asunto = 'Informe de Diagnóstico Empresarial - ' + emp + ' - ' + fecha;
+  var cuerpo = [
+    'Cordial saludo,',
+    '',
+    'Reciba un atento saludo de parte del equipo de la Agencia de Empleo y Emprendimiento de Comfenalco Antioquia.',
+    '',
+    'Nos permitimos hacer entrega del informe del Diagnóstico Empresarial Integral correspondiente a ' + emp + ', con fecha de elaboración ' + fecha + '.',
+    '',
+    'El documento adjunto contiene:',
+    '• Diagnóstico integral en 8 áreas: SST, Psicosocial, Administrativo, Gerencia, Legal, Clima/Bienestar, Capacitación y Talento Humano',
+    '• Resultados y nivel por cada dimensión evaluada',
+    '• Gráficas de análisis visual',
+    '• Recomendaciones específicas con los programas de apoyo de Comfenalco Antioquia',
+    '',
+    'Le invitamos a socializar estos resultados con su equipo directivo y a contactarnos para diseñar un plan de acción. Comfenalco Antioquia ofrece programas de fomento empresarial, capacitación, bienestar y gestión del talento humano que pueden fortalecer las áreas de oportunidad identificadas.',
+    '',
+    'IMPORTANTE: Por favor descargue primero el PDF y adjúntelo a este correo antes de enviarlo.',
+    '',
+    'Quedamos atentos a cualquier inquietud.',
+    '',
+    'Cordialmente,',
+    'Agencia de Empleo y Emprendimiento',
+    'Comfenalco Antioquia',
+    'agenciaempleo@comfenalco.com',
+  ].join('\n');
+  window.open('mailto:?subject=' + encodeURIComponent(asunto) + '&body=' + encodeURIComponent(cuerpo));
+  toast('📧 Se abrió tu correo. Recuerda adjuntar el PDF descargado.');
+}
 </script>
 </body>
 </html>
