@@ -156,8 +156,9 @@
     @keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
     @media(max-width:768px){#shell{grid-template-columns:1fr}#sidebar{display:none}#main{padding:16px}.fgrid,.fgrid.three{grid-template-columns:1fr}}
   </style>
-  <script src="api.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="api.js"></script>
+
 </head>
 <body>
 
@@ -376,11 +377,11 @@
 
 <script>
 // ── SUPABASE ─────────────────────────────────────────────────
-var SUPA_URL = "https://dgecpttrvfbsuhsorxtm.supabase.co";
-var SUPA_KEY = "sb_publishable_1DWQpwxDAehdRRX994eNWA_IjBd3Sas";
+var HV_SUPA_URL = "https://dgecpttrvfbsuhsorxtm.supabase.co";
+var HV_SUPA_KEY = "sb_publishable_1DWQpwxDAehdRRX994eNWA_IjBd3Sas";
 var _supaHV  = null;
 function getSupaHV() {
-  if (!_supaHV) _supaHV = supabase.createClient(SUPA_URL, SUPA_KEY);
+  if (!_supaHV) _supaHV = supabase.createClient(HV_SUPA_URL, HV_SUPA_KEY);
   return _supaHV;
 }
 
