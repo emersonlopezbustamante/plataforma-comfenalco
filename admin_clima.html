@@ -400,7 +400,11 @@ async function cargarEmpresas() {
   }
   sel.oninput = function() {
     var v = sel.value.trim();
-    if (v) cargarDatos();
+    if (v) {
+      var base = window.location.href.replace(/\/[^\/]*$/, '');
+      document.getElementById("linkEncuesta").value = base + '/encuesta.html?empresa=' + encodeURIComponent(v);
+      cargarDatos();
+    }
   };
 }
 
@@ -417,7 +421,10 @@ function copiarLink() {
 // ── CARGAR DATOS ───────────────────────────────────────────
 async function cargarDatos() {
   empresaActual = document.getElementById("selEmpresa").value;
-  if (!empresaActual) { alert("Seleccione una empresa."); return; }
+  if (!empresaActual) return;
+  // Generar link de encuesta
+  const base = window.location.href.replace(/\/[^\/]*$/, '');
+  document.getElementById("linkEncuesta").value = base + '/encuesta.html?empresa=' + encodeURIComponent(empresaActual);
 
   const { data, error } = await supabaseClient
     .from("respuestas_clima")
